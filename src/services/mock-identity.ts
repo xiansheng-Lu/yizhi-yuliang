@@ -19,6 +19,17 @@ export class MockIdentityAdapter {
         !Array.isArray(data.permissions)
       )
         throw new Error();
+      if (
+        data.userId === "demo-operator" &&
+        data.permissions.length === 3 &&
+        ["snapshot.read", "task.create", "task.approve"].every((permission) =>
+          data.permissions.includes(permission),
+        )
+      ) {
+        data.shopIds = ["shop-tea", "shop-mountain"];
+        data.permissions.push("task.execute", "policy.edit");
+        this.storage.setItem(identityKey, JSON.stringify(data));
+      }
       return data;
     } catch {
       throw new ServiceError(
@@ -40,8 +51,14 @@ export class MockIdentityAdapter {
       userId: "demo-operator",
       displayName: "演示运营员",
       tenantId: "tenant-demo",
-      shopIds: ["shop-tea"],
-      permissions: ["snapshot.read", "task.create", "task.approve"],
+      shopIds: ["shop-tea", "shop-mountain"],
+      permissions: [
+        "snapshot.read",
+        "task.create",
+        "task.approve",
+        "task.execute",
+        "policy.edit",
+      ],
       mode: "MOCK",
     };
     this.storage.setItem(identityKey, JSON.stringify(identity));

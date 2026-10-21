@@ -3,13 +3,27 @@ import { connectorIds, type FrontendSnapshot } from "@/lib/domain";
 export function createMockSnapshot(): FrontendSnapshot {
   const at = "2026-10-21T06:35:00.000Z";
   const plans = [
-    ["plan-qc", "秋茶新品｜直播推广", "qianchuan", 600000, 426000, 3412000],
+    [
+      "plan-qc",
+      "千川A计划｜秋茶直播推广",
+      "qianchuan",
+      600000,
+      426000,
+      3412000,
+    ],
     ["plan-adq", "办公室茶饮｜人群拓展", "adq", 520000, 318000, 1925000],
     ["plan-wx", "秋季礼盒｜小店推广", "wxpromo", 450000, 258000, 1641000],
     ["plan-red", "种草短视频｜聚光测试", "juguang", 400000, 243000, 1654000],
   ] as const;
-  return {
-    schemaVersion: "g1a-draft-1",
+  const snapshot: FrontendSnapshot = {
+    schemaVersion: "command-job-v1.0",
+    scope: {
+      shop_id: "shop-tea",
+      live_session_id: "live-tea",
+      connector_id: "all",
+      date: "2026-10-21",
+      timezone: "Asia/Shanghai",
+    },
     revision: 1,
     source: "MOCK",
     tenants: [{ id: "tenant-demo", name: "易致科技 · 演示企业" }],
@@ -50,6 +64,10 @@ export function createMockSnapshot(): FrontendSnapshot {
         adAccountId: `account-${connector}`,
         liveSessionId: "live-tea",
         name,
+        aliases:
+          connector === "qianchuan"
+            ? ["千川A计划", "A计划", "秋茶新品"]
+            : [name.split("｜")[0]],
         budgetMinor,
         spendMinor,
         paidGmvMinor,
@@ -106,43 +124,19 @@ export function createMockSnapshot(): FrontendSnapshot {
         status: "DRAFT",
       },
     ],
-    tasks: [
-      {
-        id: "task-seed",
-        tenantId: "tenant-demo",
-        shopId: "shop-tea",
-        liveSessionId: "live-tea",
-        adAccountId: "account-qianchuan",
-        planId: "plan-qc",
-        origin: "AUTOPILOT",
-        action: { type: "AD_SET_BUDGET", budgetMinor: 650000 },
-        intent: "自主投放演示：提出预算调整申请",
-        status: "AWAITING_APPROVAL",
-        createdAt: at,
-        idempotencyKey: "mock-seed-1",
-        version: 1,
-        mode: "MOCK",
-      },
-    ],
+    tasks: [],
     riskPolicies: [
       {
         id: "policy-demo",
         tenantId: "tenant-demo",
         dailyBudgetMinor: 2000000,
+        targetRoi: 5,
+        maxChangePercent: 50,
+        cooldownMinutes: 5,
         mode: "COPILOT",
+        version: 1,
       },
     ],
-    riskChecks: [
-      {
-        id: "risk-seed",
-        taskId: "task-seed",
-        status: "MOCK_NOT_EVALUATED",
-        reason: "仅演示审批结构；没有执行服务端风控。",
-        policyId: "policy-demo",
-      },
-    ],
-    approvals: [],
-    receipts: [],
     replaySegments: [
       {
         id: "segment-1",
@@ -191,4 +185,70 @@ export function createMockSnapshot(): FrontendSnapshot {
       checkedAt: null,
     })),
   };
+  snapshot.shops.push({
+    id: "shop-mountain",
+    tenantId: "tenant-demo",
+    name: "山海好物",
+    connectorId: "douyinshop",
+  });
+  snapshot.adAccounts.push({
+    id: "account-qianchuan-mountain",
+    tenantId: "tenant-demo",
+    shopId: "shop-mountain",
+    connectorId: "qianchuan",
+    name: "山海好物千川账户",
+  });
+  snapshot.adAccounts.forEach((account) => {
+    account.name =
+      account.id === "account-qianchuan-mountain"
+        ? "山海好物千川账户"
+        : account.id === "account-qianchuan"
+          ? "茶韵千川账户"
+          : account.id === "account-adq"
+            ? "茶韵ADQ账户"
+            : account.id === "account-wxpromo"
+              ? "茶韵微信小店推广账户"
+              : "茶韵聚光账户";
+  });
+  snapshot.plans.push({
+    ...snapshot.plans[0],
+    id: "plan-qc-b",
+    nativePlanId: "mock-plan-qc-b",
+    name: "千川B计划｜素材观察",
+    aliases: ["千川B计划", "B计划"],
+    budgetMinor: 30000,
+    spendMinor: 12000,
+    paidGmvMinor: 72000,
+  });
+  snapshot.liveSessions.push({
+    ...snapshot.liveSessions[0],
+    id: "live-mountain",
+    shopId: "shop-mountain",
+    name: "山海好物晚间专场",
+    online: 326,
+    productClicks: 87,
+  });
+  snapshot.plans.push({
+    ...snapshot.plans[0],
+    id: "plan-mountain-a",
+    nativePlanId: "mock-plan-mountain-a",
+    name: "千川A计划｜山海专场",
+    aliases: ["千川A计划", "A计划"],
+    shopId: "shop-mountain",
+    liveSessionId: "live-mountain",
+    adAccountId: "account-qianchuan-mountain",
+    budgetMinor: 100000,
+    spendMinor: 18000,
+    paidGmvMinor: 126000,
+  });
+  snapshot.products.push({
+    ...snapshot.products[0],
+    id: "product-mountain",
+    shopId: "shop-mountain",
+    skuId: "sku-mountain",
+    name: "山海礼盒",
+    stock: 83,
+  });
+  snapshot.plans.find((plan) => plan.id === "plan-adq")!.budgetMinor = 420000;
+  return snapshot;
 }

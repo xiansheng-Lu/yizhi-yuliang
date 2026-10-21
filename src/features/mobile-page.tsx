@@ -10,9 +10,16 @@ import {
   Sparkle,
 } from "@phosphor-icons/react";
 import { AuthGuard, SnapshotView } from "@/components/provider";
-import { Badge, EmptyState, Panel } from "@/components/ui";
-import { TaskComposer, TaskList } from "@/components/task-controls";
-import { CoreMetrics, Goods, Review } from "./business-page";
+import { Badge, Panel } from "@/components/ui";
+import { TaskList } from "@/components/task-controls";
+import { CommandPanel } from "@/components/command-panel";
+import {
+  CoreMetrics,
+  LiveSummary,
+  ScopeControls,
+} from "@/components/operating-context";
+import { Goods, Review } from "./business-page";
+import { scopedEvidence } from "@/lib/reporting";
 const mobileTabs = [
   ["chat", "AI指挥", ChatCircleDots],
   ["live", "直播数据", Broadcast],
@@ -47,15 +54,14 @@ export function MobilePage() {
               </header>
               <main>
                 <div className="phone-summary">
-                  <Badge tone="blue">{snapshot.source} · 直播指挥</Badge>
+                  <Badge tone="blue">{snapshot.source} · AI指挥</Badge>
                   <h1>一个人，指挥整个直播运营。</h1>
-                  <p>
-                    {snapshot.tenants[0]?.name} ·{" "}
-                    {snapshot.liveSessions[0]?.name}
-                  </p>
+                  <p>{snapshot.tenants[0]?.name} · 指令与审批双端共享</p>
+                  <ScopeControls snapshot={snapshot} />
                   <CoreMetrics snapshot={snapshot} />
                   <small>
-                    仅演示同源浏览器共享；真实手机跨设备同步待后端。
+                    仅本浏览器同源 Mock 演示；localStorage
+                    不支持真实跨设备同步。
                   </small>
                 </div>
                 <nav
@@ -78,63 +84,54 @@ export function MobilePage() {
                 <section className="phone-view" role="tabpanel">
                   {tab === "chat" && (
                     <>
-                      <div className="chat-message">
-                        <Sparkle size={20} />
-                        <div>
-                          <b>先明确意图，再确认操作对象。</b>
-                          <p>
-                            本阶段接收结构化申请。预算、出价和 ROI
-                            目标分别记录；直播开关播交给负责人确认。
-                          </p>
-                        </div>
-                      </div>
-                      <Panel title="向 AI 提交运营意图">
-                        <TaskComposer snapshot={snapshot} origin="MOBILE" />
+                      <Panel
+                        title="向AI下达指令"
+                        detail="先核对具体对象、变更差异与风控"
+                      >
+                        <CommandPanel
+                          snapshot={snapshot}
+                          source="MOBILE_COMMAND"
+                        />
                       </Panel>
-                      <Panel title="同一任务，双端查看">
-                        <TaskList snapshot={snapshot} limit={3} />
+                      <Panel title="最近任务与审批状态">
+                        <TaskList
+                          snapshot={snapshot}
+                          limit={3}
+                          review={false}
+                        />
                       </Panel>
                     </>
                   )}
                   {tab === "live" && (
                     <>
                       <Panel title="当前直播场次">
-                        <div className="live-figures">
-                          <div>
-                            <span>直播在线</span>
-                            <b>{snapshot.liveSessions[0]?.online ?? "缺失"}</b>
-                          </div>
-                          <div>
-                            <span>商品点击</span>
-                            <b>
-                              {snapshot.liveSessions[0]?.productClicks ??
-                                "缺失"}
-                            </b>
-                          </div>
-                        </div>
-                        <p>Mock 固定采样，不代表实时平台数据。</p>
+                        <LiveSummary snapshot={snapshot} />
                       </Panel>
                       <Panel title="货盘与主播话术">
-                        <Goods snapshot={snapshot} />
-                      </Panel>
-                    </>
-                  )}
-                  {tab === "tasks" && (
-                    <>
-                      <Panel title="PC / 手机 / 自主投放共享任务">
-                        <TaskList snapshot={snapshot} />
-                      </Panel>
-                      <Panel title="平台执行回执">
-                        <EmptyState
-                          title="尚无真实执行回执"
-                          description="人工批准不等于平台执行成功。"
+                        <Goods
+                          snapshot={{
+                            ...snapshot,
+                            products: snapshot.products.filter(
+                              (p) =>
+                                snapshot.scope.shop_id === "all" ||
+                                p.shopId === snapshot.scope.shop_id,
+                            ),
+                          }}
                         />
                       </Panel>
                     </>
                   )}
+                  {tab === "tasks" && (
+                    <Panel
+                      title="PC / 手机 / 自主投放共享流水"
+                      detail="展开任务查看执行回执与核验结果"
+                    >
+                      <TaskList snapshot={snapshot} review={false} />
+                    </Panel>
+                  )}
                   {tab === "report" && (
                     <Panel title="直播联合复盘">
-                      <Review snapshot={snapshot} />
+                      <Review snapshot={scopedEvidence(snapshot)} />
                       <Link href="/app/reports" className="button secondary">
                         打开 PC 完整复盘 <ArrowSquareOut size={16} />
                       </Link>

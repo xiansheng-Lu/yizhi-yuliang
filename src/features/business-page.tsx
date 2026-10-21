@@ -3,7 +3,6 @@ import { useState } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
-  Broadcast,
   ClockCounterClockwise,
   FilmStrip,
   LockKey,
@@ -12,12 +11,7 @@ import {
   ShieldCheck,
   Sparkle,
 } from "@phosphor-icons/react";
-import {
-  businessTotals,
-  connectorNames,
-  money,
-  type FrontendSnapshot,
-} from "@/lib/domain";
+import { connectorNames, money, type FrontendSnapshot } from "@/lib/domain";
 import { pageName, type PageId } from "@/lib/routes";
 import { ServiceError } from "@/services/contracts";
 import { useWorkspace } from "@/components/provider";
@@ -26,33 +20,14 @@ import {
   EmptyState,
   ErrorState,
   LoadingState,
-  Metric,
   Panel,
 } from "@/components/ui";
 import { TaskComposer, TaskList } from "@/components/task-controls";
+import { CoreMetrics } from "@/components/operating-context";
+import { scopedPlans, scopedEvidence } from "@/lib/reporting";
+import { ControlWorkspace } from "./control-workspace";
 
-export function CoreMetrics({ snapshot }: { snapshot: FrontendSnapshot }) {
-  const totals = businessTotals(snapshot.plans);
-  return (
-    <section className="metrics-grid" aria-label="三个核心经营指标">
-      <Metric
-        label="今日广告消耗"
-        value={money(totals.spend)}
-        note={`当前企业 · ${snapshot.source === "MOCK" ? "Mock 当日样例" : "后端同步"}`}
-      />
-      <Metric
-        label="支付GMV"
-        value={money(totals.gmv)}
-        note="支付归因口径 · 非利润"
-      />
-      <Metric
-        label="投放ROI"
-        value={totals.roi === null ? "暂无口径" : totals.roi.toFixed(2)}
-        note="支付GMV ÷ 广告消耗"
-      />
-    </section>
-  );
-}
+export { CoreMetrics } from "@/components/operating-context";
 export function PlanTable({ snapshot }: { snapshot: FrontendSnapshot }) {
   return (
     <div className="table-scroll">
@@ -226,7 +201,7 @@ const contentPages: Partial<
   agents: {
     subtitle: "AI 岗位与任务来源",
     steps: ["内容运营", "自主投放", "经营复盘"],
-    note: "自主投放与手机指挥使用相同 CommandTask 和审批定义；策略运行由后端负责。",
+    note: "自主投放与手机指挥使用相同 command_job 和审批定义；策略运行由后端负责。",
   },
 };
 function StatePreview() {
@@ -312,55 +287,31 @@ export function BusinessPage({
   snapshot: FrontendSnapshot;
 }) {
   const { service } = useWorkspace();
-  if (pageId === "overview")
+  if (["overview", "goals", "monitor", "tasks"].includes(pageId))
     return (
-      <>
-        <CoreMetrics snapshot={snapshot} />
-        <div className="two-columns">
-          <Panel
-            title="AI 工作状态"
-            detail="审批状态与实际执行分开呈现"
-            action={
-              <Badge tone="blue">
-                <Robot size={13} />
-                演示观察中
-              </Badge>
-            }
-          >
-            <div className="workflow-path">
-              {["任务申请", "风控检查", "人工审批", "执行回读"].map((x, i) => (
-                <div key={x}>
-                  <span>0{i + 1}</span>
-                  <b>{x}</b>
-                  <small>{i < 3 ? "前端结构已建立" : "待后端提供"}</small>
-                </div>
-              ))}
-            </div>
-            <div className="notice">
-              经营数据均为 Mock。批准申请不会更改广告平台，也不会产生执行回执。
-            </div>
-          </Panel>
-          <Panel
-            title="待关注的任务"
-            action={
-              <Link href="/app/tasks" className="text-link">
-                查看全部 <ArrowRight size={14} />
-              </Link>
-            }
-          >
-            <TaskList snapshot={snapshot} limit={2} />
-          </Panel>
-        </div>
-        <Panel title="当前投放计划" detail="广告出价与 ROI 目标使用不同字段">
-          <PlanTable snapshot={snapshot} />
-        </Panel>
-      </>
+      <ControlWorkspace
+        pageId={pageId}
+        snapshot={snapshot}
+        plans={
+          <PlanTable snapshot={{ ...snapshot, plans: scopedPlans(snapshot) }} />
+        }
+        liveEvidence={
+          <>
+            <Panel title="回放时间轴与主播话术">
+              <Replay snapshot={scopedEvidence(snapshot)} />
+            </Panel>
+            <Panel title="直播货盘诊断">
+              <Goods snapshot={scopedEvidence(snapshot)} />
+            </Panel>
+          </>
+        }
+      />
     );
-  if (pageId === "tasks" || pageId === "decisions")
+  if (pageId === "decisions")
     return (
       <div className="two-columns">
         <Panel
-          title={pageId === "tasks" ? "统一任务与审批" : "决策候选与依据"}
+          title="决策候选与依据"
           detail="PC、手机与 AUTOPILOT 共用同一任务列表"
         >
           <TaskList snapshot={snapshot} />
@@ -373,54 +324,6 @@ export function BusinessPage({
         </Panel>
       </div>
     );
-  if (pageId === "monitor") {
-    const live = snapshot.liveSessions[0];
-    return (
-      <>
-        <div className="live-banner">
-          <Broadcast size={28} />
-          <div>
-            <h2>{live?.name ?? "暂无直播场次"}</h2>
-            <p>
-              模拟采样 ·{" "}
-              {live
-                ? new Date(live.sourceUpdatedAt).toLocaleString("zh-CN")
-                : "暂无更新时间"}{" "}
-              · 非秒级广告报表
-            </p>
-          </div>
-          <Badge tone="blue">Mock 直播</Badge>
-        </div>
-        <div className="two-columns">
-          <Panel title="直播观察">
-            <div className="live-figures">
-              <div>
-                <span>直播间在线</span>
-                <b>{live?.online ?? "数据缺失"}</b>
-              </div>
-              <div>
-                <span>商品点击</span>
-                <b>{live?.productClicks ?? "数据缺失"}</b>
-              </div>
-            </div>
-            <div className="notice">
-              AI 诊断与异常检测待后端提供。直播开关播仅建立人工交接任务。
-            </div>
-            <TaskComposer snapshot={snapshot} origin="PC" />
-          </Panel>
-          <Panel title="回放时间轴与主播话术">
-            <Replay snapshot={snapshot} />
-            <Link className="text-link" href="/app/reports">
-              查看完整复盘 <ArrowRight size={15} />
-            </Link>
-          </Panel>
-        </div>
-        <Panel title="直播货盘诊断">
-          <Goods snapshot={snapshot} />
-        </Panel>
-      </>
-    );
-  }
   if (pageId === "plans")
     return (
       <>
@@ -500,16 +403,25 @@ export function BusinessPage({
           title="执行回执"
           detail="审批通过、平台受理、回读核验和效果观察各自独立"
         >
-          {snapshot.receipts.length ? (
-            snapshot.receipts.map((receipt) => (
-              <div key={receipt.id} className="list-row">
-                <Badge>{receipt.source}</Badge>
-                <span>
-                  {receipt.status} / {receipt.verification}
-                </span>
-                <code>{receipt.platformReceiptId ?? "无平台回执"}</code>
-              </div>
-            ))
+          {snapshot.tasks.some((job) => job.execution_receipt) ? (
+            snapshot.tasks
+              .flatMap((job) =>
+                job.execution_receipt ? [job.execution_receipt] : [],
+              )
+              .map((receipt) => (
+                <div key={receipt.receipt_id} className="list-row">
+                  <Badge>{receipt.source}</Badge>
+                  <span>
+                    {receipt.accepted === null
+                      ? "未知"
+                      : receipt.accepted
+                        ? "已受理"
+                        : "未受理"}{" "}
+                    / {receipt.verification}
+                  </span>
+                  <code>{receipt.platform_receipt_id ?? "无平台回执"}</code>
+                </div>
+              ))
           ) : (
             <EmptyState
               title="尚无平台执行回执"
@@ -522,7 +434,7 @@ export function BusinessPage({
         </Panel>
       </>
     );
-  if (pageId === "goals" || pageId === "budgets")
+  if (pageId === "budgets")
     return (
       <div className="two-columns">
         <Panel title="经营目标与预算边界">
@@ -631,7 +543,7 @@ export function BusinessPage({
         />
         <div className="row">
           <Badge tone="blue">{snapshot.source}</Badge>
-          <Badge>契约 g1a-draft-1</Badge>
+          <Badge>契约 command-job-v1.0</Badge>
         </div>
       </Panel>
     </div>

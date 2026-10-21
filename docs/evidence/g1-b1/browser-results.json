@@ -1,0 +1,229 @@
+{
+  "date": "2026-10-21",
+  "origin": "http://127.0.0.1:3000",
+  "tool": "CUA actual Next.js browser interaction",
+  "scope": "same origin same browser profile Mock only",
+  "cases": [
+    {
+      "case": 1,
+      "result": "PASS",
+      "observed": "秋茶直播专场 / 1284在线 / 367商品点击 / 更新时间2026/10/21 14:35:00 Asia/Shanghai"
+    },
+    {
+      "case": "目标消歧",
+      "result": "PASS",
+      "createDisabled": true
+    },
+    {
+      "case": 2,
+      "result": "PASS",
+      "job_id": "8d9ee047-b590-4715-89fc-024a03e755ee",
+      "old": "CNY 600000分",
+      "new": "CNY 500000分",
+      "delta": "-100000分",
+      "account": "account-qianchuan"
+    },
+    {
+      "case": "3–4",
+      "result": "PASS",
+      "job_id": "8d9ee047-b590-4715-89fc-024a03e755ee",
+      "status": "PENDING_APPROVAL"
+    },
+    {
+      "case": 5,
+      "result": "PASS",
+      "mobileStatus": "APPROVED / 已批准·未执行",
+      "receiptBeforeExecution": "none"
+    },
+    {
+      "case": 6,
+      "result": "PASS",
+      "job_id": "8d9ee047-b590-4715-89fc-024a03e755ee",
+      "sequence": [
+        "APPROVED",
+        "EXECUTING",
+        "VERIFYING",
+        "SUCCEEDED"
+      ],
+      "receipt": "MOCK / platform_receipt_id=null / verification=MATCHED / observed=CNY500000分"
+    },
+    {
+      "case": 7,
+      "result": "PASS",
+      "scope": "茶韵/秋茶/全部平台/Asia/Shanghai",
+      "observed": "预算9000后合计24000 > 企业上限20000；BLOCKED；无批准按钮"
+    },
+    {
+      "case": 8,
+      "result": "PASS",
+      "job_id": "d88e69c5-c2ff-4008-bc89-ddf540609544",
+      "metricsBefore": "今日广告消耗\n¥12,570.00\n支付GMV\n¥87,040.00\n投放ROI\n6.92",
+      "metricsAfter": "今日广告消耗\n¥12,570.00\n支付GMV\n¥87,040.00\n投放ROI\n6.92"
+    },
+    {
+      "case": 9,
+      "result": "PASS",
+      "before": "千川A计划｜秋茶直播推广\nmock-plan-qc\n\t巨量千川\t¥5,000.00\t¥2.80\t5\t¥4,260.00\t演示暂停",
+      "after": "千川A计划｜秋茶直播推广\nmock-plan-qc\n\t巨量千川\t¥5,000.00\t¥2.80\t6\t¥4,260.00\t演示暂停"
+    },
+    {
+      "case": "10-request-failure",
+      "result": "PASS",
+      "observed": "PC与手机FAILED / MOCK_REQUEST_FAILED / 未受理 / UNKNOWN"
+    },
+    {
+      "case": "10-timeout",
+      "result": "PASS",
+      "observed": "PC与手机FAILED / MOCK_TIMEOUT / 受理未知 / UNKNOWN；无自动重试"
+    },
+    {
+      "case": "10-rejection",
+      "result": "PASS",
+      "observed": "PC与手机REJECTED；无执行回执"
+    },
+    {
+      "case": "10-expiry",
+      "result": "PASS",
+      "observed": "PC与手机EXPIRED；无法批准或推进"
+    },
+    {
+      "case": "10-verification-failure",
+      "result": "PASS",
+      "observed": "PC与手机FAILED / MOCK_VERIFY_MISMATCH / 回读5000而非4500 / 无成功状态"
+    },
+    {
+      "case": "店铺/直播间同步",
+      "result": "PASS",
+      "pc": [
+        "¥180.00",
+        "¥1,260.00",
+        "7.00"
+      ],
+      "mobile": [
+        "¥180.00",
+        "¥1,260.00",
+        "7.00"
+      ],
+      "scope": "山海好物/live-mountain/all/Asia-Shanghai"
+    },
+    {
+      "case": "21业务路由",
+      "result": "PASS",
+      "routes": [
+        {
+          "href": "/app/overview",
+          "name": "AI总控台",
+          "result": "PASS"
+        },
+        {
+          "href": "/app/goals",
+          "name": "经营目标",
+          "result": "PASS"
+        },
+        {
+          "href": "/app/monitor",
+          "name": "AI直播作战室",
+          "result": "PASS"
+        },
+        {
+          "href": "/app/tasks",
+          "name": "AI任务与审批",
+          "result": "PASS"
+        },
+        {
+          "href": "/app/planning",
+          "name": "内容策划",
+          "result": "PASS"
+        },
+        {
+          "href": "/app/scripts",
+          "name": "脚本工厂",
+          "result": "PASS"
+        },
+        {
+          "href": "/app/videos",
+          "name": "视频工厂",
+          "result": "PASS"
+        },
+        {
+          "href": "/app/graphics",
+          "name": "图片图文",
+          "result": "PASS"
+        },
+        {
+          "href": "/app/editing",
+          "name": "智能剪辑",
+          "result": "PASS"
+        },
+        {
+          "href": "/app/assets",
+          "name": "素材资产库",
+          "result": "PASS"
+        },
+        {
+          "href": "/app/experiments",
+          "name": "素材测试",
+          "result": "PASS"
+        },
+        {
+          "href": "/app/plans",
+          "name": "投放计划",
+          "result": "PASS"
+        },
+        {
+          "href": "/app/decisions",
+          "name": "AI投手决策",
+          "result": "PASS"
+        },
+        {
+          "href": "/app/executions",
+          "name": "执行记录",
+          "result": "PASS"
+        },
+        {
+          "href": "/app/products",
+          "name": "商品与货盘",
+          "result": "PASS"
+        },
+        {
+          "href": "/app/budgets",
+          "name": "跨平台预算",
+          "result": "PASS"
+        },
+        {
+          "href": "/app/analytics",
+          "name": "经营分析",
+          "result": "PASS"
+        },
+        {
+          "href": "/app/reports",
+          "name": "完整复盘",
+          "result": "PASS"
+        },
+        {
+          "href": "/app/agents",
+          "name": "AI岗位管理",
+          "result": "PASS"
+        },
+        {
+          "href": "/app/connections",
+          "name": "平台连接",
+          "result": "PASS"
+        },
+        {
+          "href": "/app/settings",
+          "name": "企业和权限设置",
+          "result": "PASS"
+        }
+      ]
+    },
+    {
+      "case": "手机执行流水",
+      "result": "PASS",
+      "job_id": "8d9ee047-b590-4715-89fc-024a03e755ee",
+      "status": "SUCCEEDED",
+      "verification": "MATCHED",
+      "screenshot": "mobile-verified.jpg"
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+G1-B1 实际修改文件清单
+目录 D:\易致-驭量；分支 feat/g1a-frontend；基线 2a71a15
+M=基线文件修改；A=本阶段新增；不含运行时/依赖/构建产物
+
+M	docs/代码复用与边界.md
+A	docs/command_job前后端契约V1.0.md
+A	docs/evidence/g1-b1/browser-console.json
+A	docs/evidence/g1-b1/browser-results.json
+A	docs/evidence/g1-b1/build.txt
+A	docs/evidence/g1-b1/homepage-hashes.txt
+A	docs/evidence/g1-b1/lint.txt
+A	docs/evidence/g1-b1/mobile-confirmation.jpg
+A	docs/evidence/g1-b1/mobile-verified.jpg
+A	docs/evidence/g1-b1/pc-overview.jpg
+A	docs/evidence/g1-b1/pc-verified.jpg
+A	docs/evidence/g1-b1/routes.txt
+A	docs/evidence/g1-b1/typecheck.txt
+A	docs/evidence/g1-b1/unit-tests.txt
+A	docs/G1-B1文件清单.txt
+A	docs/G1-B1验收记录.md
+M	README.md
+A	src/components/command-panel.tsx
+A	src/components/operating-context.tsx
+M	src/components/task-controls.tsx
+M	src/components/workspace-shell.tsx
+M	src/features/business-page.tsx
+A	src/features/control-workspace.tsx
+M	src/features/mobile-page.tsx
+A	src/lib/command-job.ts
+M	src/lib/domain.ts
+A	src/lib/reporting.ts
+M	src/services/api-client.ts
+M	src/services/contracts.ts
+M	src/services/mock-adapter.ts
+A	src/services/mock-command.ts
+M	src/services/mock-data.ts
+M	src/services/mock-identity.ts
+A	src/services/mock-migration.ts
+M	src/styles/workspace.css
+M	tests/frontend.test.ts

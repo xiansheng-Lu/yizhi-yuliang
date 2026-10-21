@@ -1215,3 +1215,223 @@ td small {
     scroll-behavior: auto !important;
   }
 }
+/* G1-B1 shared operating context and command-job details. */
+.scope-controls {
+  margin-bottom: 20px;
+  padding: 15px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+}
+.scope-fields {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.scope-controls label {
+  margin-bottom: 8px;
+}
+.scope-controls > small {
+  font-size: 10px;
+  color: #788ba9;
+  line-height: 1.7;
+  display: block;
+}
+.task-item summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  font-size: 12px;
+}
+.task-item summary > span {
+  flex: 1;
+  min-width: 0;
+}
+.task-item summary small {
+  display: block;
+  margin-top: 6px;
+  color: #7c8fab;
+  font-size: 10px;
+}
+.task-item[open] summary {
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 16px;
+  padding-bottom: 15px;
+}
+.job-facts {
+  margin: 12px 0;
+  font-size: 10px;
+}
+.job-facts > div {
+  display: grid;
+  grid-template-columns: 80px minmax(0, 1fr);
+  gap: 10px;
+  padding: 7px 0;
+  border-bottom: 1px solid #edf1f7;
+}
+.job-facts dt {
+  color: #8494ac;
+}
+.job-facts dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.change-diff {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border: 1px solid #dae6fa;
+  border-radius: 8px;
+  background: #f3f7ff;
+  margin: 15px 0;
+}
+.change-diff > div {
+  padding: 12px 9px;
+  min-width: 0;
+}
+.change-diff span {
+  display: block;
+  font-size: 10px;
+  color: #7f91b0;
+  margin-bottom: 6px;
+}
+.change-diff b {
+  font-size: 12px;
+  display: block;
+  overflow-wrap: anywhere;
+  color: #4264a2;
+}
+.risk-details {
+  font-size: 11px;
+  padding: 12px;
+  border: 1px solid #e9e5d4;
+  background: #fffdf6;
+  border-radius: 8px;
+}
+.risk-details ul {
+  padding-left: 18px;
+  margin: 8px 0;
+  line-height: 1.9;
+}
+.risk-details small {
+  font-size: 9px;
+}
+.job-history {
+  padding-left: 20px;
+  font-size: 10px;
+  color: #6b809f;
+}
+.job-history li {
+  padding: 8px 0;
+}
+.job-history b,
+.job-history small,
+.job-history span {
+  display: block;
+}
+.job-history small {
+  color: #94a3ba;
+  margin: 3px 0;
+}
+.job-error {
+  background: #fff1f0;
+  color: #a64d4d;
+  border: 1px solid #f3d6d3;
+  padding: 12px;
+  border-radius: 8px;
+}
+.receipt {
+  padding: 13px;
+  border: 1px solid #d9e8df;
+  background: #f3faf6;
+  border-radius: 8px;
+  font-size: 11px;
+}
+.receipt p {
+  margin: 8px 0;
+}
+.task-actions {
+  flex-wrap: wrap;
+}
+.task-filters {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.task-filters label {
+  font-size: 10px;
+}
+.created-job {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+.task-form textarea {
+  resize: vertical;
+  min-height: 96px;
+  padding: 12px;
+  border: 1px solid #dce5f4;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 12px;
+  color: #3d5275;
+  line-height: 1.7;
+  width: 100%;
+}
+.command-hint {
+  font-size: 10px;
+  margin: 12px 0;
+}
+.command-result {
+  margin-top: 15px;
+}
+.todo-links {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.live-summary > p {
+  font-size: 11px;
+}
+.phone-summary .scope-controls {
+  padding: 12px;
+  margin-top: 14px;
+}
+.phone-summary .scope-fields {
+  grid-template-columns: 1fr;
+  gap: 5px;
+}
+.phone-summary .scope-controls select {
+  height: 36px;
+  padding: 7px 9px;
+  font-size: 11px;
+}
+.phone-view .change-diff {
+  grid-template-columns: 1fr;
+}
+.phone-view .change-diff > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 12px;
+}
+.phone-view .change-diff span {
+  margin: 0;
+}
+.phone-view .change-diff b {
+  font-size: 12px;
+}
+@media (max-width: 760px) {
+  .scope-fields {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  .task-item summary {
+    flex-wrap: wrap;
+  }
+  .job-facts > div {
+    grid-template-columns: 65px minmax(0, 1fr);
+  }
+}

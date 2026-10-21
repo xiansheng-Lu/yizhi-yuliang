@@ -156,7 +156,7 @@ export function WorkspaceShell({
           {children}
         </main>
         <footer className="workspace-footer">
-          自主投放，让每一份增长都有据可依。<span>G1-A · 前端工程基础</span>
+          自主投放，让每一份增长都有据可依。<span>G1-B1 · 统一任务交互</span>
         </footer>
       </div>
     </div>

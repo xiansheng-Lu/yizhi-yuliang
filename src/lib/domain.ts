@@ -1,3 +1,4 @@
+import type { CommandJob, ReportingScope } from "./command-job";
 export const connectorIds = [
   "adq",
   "wxpromo",
@@ -55,6 +56,7 @@ export interface AdPlan {
   adAccountId: string;
   liveSessionId?: string;
   name: string;
+  aliases?: string[];
   budgetMinor: number;
   bidMinor: number;
   targetRoi: number;
@@ -85,96 +87,15 @@ export interface Material {
   kind: "VIDEO" | "IMAGE" | "SCRIPT";
   status: "DRAFT" | "REVIEW" | "READY";
 }
-export type TaskAction =
-  | { type: "AD_SET_BUDGET"; budgetMinor: number }
-  | { type: "AD_SET_BID"; bidMinor: number }
-  | { type: "AD_SET_ROI_TARGET"; targetRoi: number }
-  | { type: "AD_PAUSE" | "AD_RESUME" }
-  | { type: "REQUEST_LIVE_START" | "REQUEST_LIVE_END" };
-export const taskStatuses = [
-  "DRAFT",
-  "NEEDS_CLARIFICATION",
-  "RISK_PENDING",
-  "BLOCKED",
-  "AWAITING_APPROVAL",
-  "APPROVED",
-  "REJECTED",
-  "EXPIRED",
-  "QUEUED",
-  "EXECUTING",
-  "RECEIPT_PENDING",
-  "VERIFYING",
-  "VERIFIED",
-  "FAILED",
-  "UNKNOWN",
-  "MANUAL_REQUIRED",
-] as const;
-export type TaskStatus = (typeof taskStatuses)[number];
-export const taskStatusNames: Record<TaskStatus, string> = {
-  DRAFT: "草稿",
-  NEEDS_CLARIFICATION: "待明确对象",
-  RISK_PENDING: "待服务端风控",
-  BLOCKED: "已阻断",
-  AWAITING_APPROVAL: "待审批",
-  APPROVED: "已批准 · 未执行",
-  REJECTED: "已驳回",
-  EXPIRED: "审批已失效",
-  QUEUED: "待执行",
-  EXECUTING: "执行中",
-  RECEIPT_PENDING: "待平台回执",
-  VERIFYING: "待回读核验",
-  VERIFIED: "回读已核验",
-  FAILED: "失败",
-  UNKNOWN: "结果未知",
-  MANUAL_REQUIRED: "待人工交接",
-};
-export type TaskOrigin = "PC" | "MOBILE" | "AUTOPILOT";
-export interface CommandTask {
-  id: string;
-  tenantId: string;
-  shopId: string;
-  liveSessionId?: string;
-  adAccountId?: string;
-  planId?: string;
-  origin: TaskOrigin;
-  action: TaskAction;
-  intent: string;
-  status: TaskStatus;
-  createdAt: string;
-  idempotencyKey: string;
-  version: number;
-  mode: "MOCK" | "API";
-}
 export interface RiskPolicy {
   id: string;
   tenantId: string;
   dailyBudgetMinor: number;
+  targetRoi: number;
+  maxChangePercent: number;
+  cooldownMinutes: number;
   mode: "MANUAL" | "COPILOT" | "AUTOPILOT";
-}
-export interface RiskCheck {
-  id: string;
-  taskId: string;
-  status: "MOCK_NOT_EVALUATED" | "PASSED" | "BLOCKED";
-  reason: string;
-  policyId: string;
-}
-export interface Approval {
-  id: string;
-  taskId: string;
-  actorId: string;
-  decision: "APPROVE" | "REJECT";
-  createdAt: string;
-  taskVersion: number;
-  mode: "MOCK" | "API";
-}
-export interface ExecutionReceipt {
-  id: string;
-  taskId: string;
-  source: "MOCK" | "PLATFORM";
-  status: "ACCEPTED" | "REJECTED" | "UNKNOWN";
-  verification: "PENDING" | "VERIFIED" | "NOT_APPLIED" | "UNKNOWN";
-  platformReceiptId: string | null;
-  createdAt: string;
+  version: number;
 }
 export interface ReplaySegment {
   id: string;
@@ -199,7 +120,7 @@ export interface Connector {
   checkedAt: string | null;
 }
 export interface FrontendSnapshot {
-  schemaVersion: "g1a-draft-1";
+  schemaVersion: "command-job-v1.0";
   revision: number;
   source: "MOCK" | "API";
   tenants: Tenant[];
@@ -209,11 +130,9 @@ export interface FrontendSnapshot {
   plans: AdPlan[];
   products: Product[];
   materials: Material[];
-  tasks: CommandTask[];
+  tasks: CommandJob[];
+  scope: ReportingScope;
   riskPolicies: RiskPolicy[];
-  riskChecks: RiskCheck[];
-  approvals: Approval[];
-  receipts: ExecutionReceipt[];
   replaySegments: ReplaySegment[];
   replayReports: ReplayReport[];
   connectors: Connector[];
@@ -225,25 +144,6 @@ export interface Identity {
   shopIds: string[];
   permissions: string[];
   mode: "MOCK" | "API";
-}
-export interface CreateTaskRequest {
-  planId?: string;
-  liveSessionId?: string;
-  origin: "PC" | "MOBILE";
-  intent: string;
-  action: TaskAction;
-  idempotencyKey: string;
-}
-export function actionName(action: TaskAction): string {
-  return {
-    AD_SET_BUDGET: "广告预算调整",
-    AD_SET_BID: "广告出价调整",
-    AD_SET_ROI_TARGET: "投放ROI目标调整",
-    AD_PAUSE: "暂停广告计划",
-    AD_RESUME: "恢复广告计划",
-    REQUEST_LIVE_START: "直播开播人工交接",
-    REQUEST_LIVE_END: "直播关播人工交接",
-  }[action.type];
 }
 export function money(minor: number | null) {
   return minor === null

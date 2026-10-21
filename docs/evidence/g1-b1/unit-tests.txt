@@ -1,0 +1,35 @@
+✔ four workspaces retain the audited 21 IDs (1.4916ms)
+✔ login allowlist restores valid targets and rejects external or malformed URLs (0.7153ms)
+✔ frozen homepage HTML CSS and JS match the pre-migration SHA256 (1.0283ms)
+✔ all eight business connectors remain independent (0.6658ms)
+✔ 1: live query resolves associated sample and Asia/Shanghai timestamp (12.7689ms)
+✔ 2–6: mobile budget → shared draft → confirmation → PC approval → execution → verified result (4.7057ms)
+✔ 7: aggregate budget limit blocks without granting approval or execution (1.159ms)
+✔ 8: pausing plan retains historical spend and GMV, scoped identically (1.1274ms)
+✔ 9: ROI target never changes bid; units remain distinct (1.4037ms)
+✔ 10: REQUEST_FAILURE is consistent on PC/mobile with no false success (0.8605ms)
+✔ 10: TIMEOUT is consistent on PC/mobile with no false success (0.707ms)
+✔ 10: VERIFY_FAILURE is consistent on PC/mobile with no false success (0.821ms)
+✔ 10: rejection, cancellation and expiry are shared terminal states (1.4257ms)
+✔ ambiguous target requires selection; shops and 8 connectors are never conflated (0.6726ms)
+✔ plan-specific bid change is distinct from budget and ROI (1.0883ms)
+✔ live handoff never pauses ads or controls stream (0.4254ms)
+✔ autopilot candidates use the same protocol and cannot auto approve (0.4734ms)
+✔ idempotency and version checks prevent duplicate and stale mutation (0.3567ms)
+✔ policy changes and stale targets require reconfirmation (1.233ms)
+✔ approval expiry uses adapter clock; executing tasks are not marked expired (0.6691ms)
+✔ scope changes persist across clients and preserve metric definitions (0.4593ms)
+✔ money parsing uses exact integer CNY minor units; unknown metrics never become zero (0.1737ms)
+✔ invalid action values and unscoped/unauthorized mutations fail explicitly (0.5536ms)
+✔ G1-A migration preserves original storage and does not inherit approvals (0.4716ms)
+✔ corrupted state can be reset without destroying identity or legacy backup (0.1906ms)
+✔ API mode refuses Mock execution and invalid authoritative results, no fallback (13.5284ms)
+✔ no Next business Route Handlers or database files are introduced (1.3309ms)
+ℹ tests 27
+ℹ suites 0
+ℹ pass 27
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 390.4661

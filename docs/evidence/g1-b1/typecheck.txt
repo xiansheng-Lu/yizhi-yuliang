@@ -1,0 +1,1 @@
+PASS TypeScript --noEmit / exit 0

@@ -1,0 +1,16 @@
+/* V11.1 light workspace palette, extracted without changing frozen homepage CSS. */
+:root {
+  --ink: #22304c;
+  --muted: #7485a0;
+  --blue: #355fe1;
+  --blue-soft: #edf3ff;
+  --surface: #fff;
+  --canvas: #f8faff;
+  --line: #e7ecf6;
+  --warning: #91601b;
+  --radius: 14px;
+  --font:
+    Inter, -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei",
+    system-ui, sans-serif;
+  --shadow: 0 9px 30px #304f8b06;
+}

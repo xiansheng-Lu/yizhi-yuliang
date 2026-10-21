@@ -1,0 +1,45 @@
+{
+  "routesPassed": 21,
+  "desktop": {
+    "groups": 4,
+    "kpis": [
+      "今日广告消耗",
+      "支付GMV",
+      "投放ROI"
+    ],
+    "overflow": false,
+    "pages": 21
+  },
+  "mobileTabs": [
+    {
+      "tab": "直播数据",
+      "selected": "true",
+      "hasPanel": true
+    },
+    {
+      "tab": "执行流水",
+      "selected": "true",
+      "hasPanel": true
+    },
+    {
+      "tab": "直播复盘",
+      "selected": "true",
+      "hasPanel": true
+    },
+    {
+      "tab": "AI指挥",
+      "selected": "true",
+      "hasPanel": true
+    }
+  ],
+  "consoleErrors": [],
+  "verifiedFlows": [
+    "unauthenticated-deep-link",
+    "campaigns-to-plans-login",
+    "legacy-html-hash-reports",
+    "invalid-next-falls-back",
+    "refresh-retains-mock-identity",
+    "same-origin-logout",
+    "mobile-roi-request-pc-approval-shared"
+  ]
+}

@@ -1,0 +1,7 @@
+* text=auto eol=lf
+
+# Frozen homepage bytes must survive Git staging and checkout unchanged.
+/public/index.html -text
+/public/assets/styles.css -text
+/public/assets/site.js -text
+*.jpg binary

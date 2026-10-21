@@ -1,0 +1,20 @@
+✔ four workspaces retain the audited 21 IDs (0.947ms)
+✔ login allowlist restores valid targets and rejects external or malformed URLs (0.248ms)
+✔ frozen homepage HTML CSS and JS match the pre-migration SHA256 (0.6462ms)
+✔ all eight business connectors remain independent (0.3439ms)
+✔ PC and mobile share distinct budget, bid and ROI actions and approval history (3.3064ms)
+✔ live handoff cannot be treated as an ad pause or change streaming state (0.2194ms)
+✔ duplicate mock submissions are deduplicated; stale approvals are rejected (0.5142ms)
+✔ invalid values, unscoped objects, unauthenticated and forbidden access fail explicitly (0.3043ms)
+✔ historical metrics include paused plans, and unknown data never becomes zero (0.1859ms)
+✔ corrupted demo state fails explicitly and can be restored without destroying identity (0.4693ms)
+✔ API mode never silently falls back to Mock and exposes auth, permission and response errors (13.5544ms)
+✔ no Next business Route Handlers or database files are introduced (1.2271ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 388.0326

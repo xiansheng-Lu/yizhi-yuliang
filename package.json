@@ -1,0 +1,34 @@
+{
+  "name": "yizhi-yuliang-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=24.19.0 <25"
+  },
+  "scripts": {
+    "setup": "node scripts/run.mjs install",
+    "dev": "node scripts/run.mjs dev",
+    "build": "node scripts/run.mjs build",
+    "start": "node scripts/run.mjs start",
+    "lint": "node scripts/run.mjs lint",
+    "typecheck": "node scripts/run.mjs typecheck",
+    "test": "node scripts/run.mjs test",
+    "test:routes": "node scripts/run.mjs routes",
+    "verify:homepage": "node scripts/verify-homepage.mjs"
+  },
+  "dependencies": {
+    "@phosphor-icons/react": "2.1.10",
+    "next": "16.2.6",
+    "react": "19.2.6",
+    "react-dom": "19.2.6"
+  },
+  "devDependencies": {
+    "@types/node": "24.10.0",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "eslint": "9.39.4",
+    "eslint-config-next": "16.2.6",
+    "tsx": "4.20.6",
+    "typescript": "5.9.3"
+  }
+}

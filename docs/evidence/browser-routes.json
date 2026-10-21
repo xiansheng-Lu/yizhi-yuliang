@@ -1,0 +1,107 @@
+[
+  {
+    "path": "/app/overview",
+    "title": "AI总控台",
+    "pass": true
+  },
+  {
+    "path": "/app/goals",
+    "title": "经营目标",
+    "pass": true
+  },
+  {
+    "path": "/app/monitor",
+    "title": "AI直播作战室",
+    "pass": true
+  },
+  {
+    "path": "/app/tasks",
+    "title": "AI任务与审批",
+    "pass": true
+  },
+  {
+    "path": "/app/planning",
+    "title": "内容策划",
+    "pass": true
+  },
+  {
+    "path": "/app/scripts",
+    "title": "脚本工厂",
+    "pass": true
+  },
+  {
+    "path": "/app/videos",
+    "title": "视频工厂",
+    "pass": true
+  },
+  {
+    "path": "/app/graphics",
+    "title": "图片图文",
+    "pass": true
+  },
+  {
+    "path": "/app/editing",
+    "title": "智能剪辑",
+    "pass": true
+  },
+  {
+    "path": "/app/assets",
+    "title": "素材资产库",
+    "pass": true
+  },
+  {
+    "path": "/app/experiments",
+    "title": "素材测试",
+    "pass": true
+  },
+  {
+    "path": "/app/plans",
+    "title": "投放计划",
+    "pass": true
+  },
+  {
+    "path": "/app/decisions",
+    "title": "AI投手决策",
+    "pass": true
+  },
+  {
+    "path": "/app/executions",
+    "title": "执行记录",
+    "pass": true
+  },
+  {
+    "path": "/app/products",
+    "title": "商品与货盘",
+    "pass": true
+  },
+  {
+    "path": "/app/budgets",
+    "title": "跨平台预算",
+    "pass": true
+  },
+  {
+    "path": "/app/analytics",
+    "title": "经营分析",
+    "pass": true
+  },
+  {
+    "path": "/app/reports",
+    "title": "完整复盘",
+    "pass": true
+  },
+  {
+    "path": "/app/agents",
+    "title": "AI岗位管理",
+    "pass": true
+  },
+  {
+    "path": "/app/connections",
+    "title": "平台连接",
+    "pass": true
+  },
+  {
+    "path": "/app/settings",
+    "title": "企业和权限设置",
+    "pass": true
+  }
+]

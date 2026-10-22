@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState, type FormEvent } from "react";
 import { ArrowLeft, ArrowRight } from "@phosphor-icons/react";
-import { loginTarget } from "@/lib/routes";
+import { loginTarget, pageName } from "@/lib/routes";
 import { useWorkspace } from "@/components/provider";
 import { Badge } from "@/components/ui";
 import { BrandLogo } from "@/components/brand-logo";
@@ -57,7 +57,7 @@ export function LoginPage() {
           </p>
         </div>
         <span>
-          {mock ? "G1-A 前端演示 · 无真实广告操作" : "正式登录由独立后端验证"}
+          {mock ? "V12 前端演示 · 无真实广告操作" : "正式登录由独立后端验证"}
         </span>
       </aside>
       <section className="login-form-wrap">
@@ -68,7 +68,7 @@ export function LoginPage() {
         <div className="login-panel">
           <Badge tone="blue">{mock ? "Mock 身份适配器" : "API 登录"}</Badge>
           <h2>登录工作台</h2>
-          <p>继续你的 AI 自主投放工作流程。</p>
+          <p>从一句话开始，让 AI 协助你的日常运营。</p>
           <form onSubmit={login}>
             <label>
               账号 / 邮箱
@@ -95,7 +95,7 @@ export function LoginPage() {
               />
             </label>
             <button className="button primary" disabled={!ready || busy}>
-              {busy ? "正在验证…" : "进入 AI 工作台"}
+              {busy ? "正在验证…" : `进入 ${pageName("command")}`}
               <ArrowRight size={18} />
             </button>
             <p role="alert" className="form-error">

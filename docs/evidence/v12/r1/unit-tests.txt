@@ -1,0 +1,38 @@
+✔ four workspaces retain the audited 21 IDs (1.2261ms)
+✔ login allowlist restores valid targets and rejects external or malformed URLs (0.2365ms)
+✔ homepage files match the approved branding SHA256 baseline (3.4472ms)
+✔ all eight business connectors remain independent (0.4424ms)
+✔ 1: live query resolves associated sample and Asia/Shanghai timestamp (58.0616ms)
+✔ 2–6: mobile budget → shared draft → confirmation → PC approval → execution → verified result (9.2765ms)
+✔ 7: aggregate budget limit blocks without granting approval or execution (0.8251ms)
+✔ 8: pausing plan retains historical spend and GMV, scoped identically (1.1417ms)
+✔ 9: ROI target never changes bid; units remain distinct (0.9521ms)
+✔ 10: REQUEST_FAILURE is consistent on PC/mobile with no false success (0.8959ms)
+✔ 10: TIMEOUT is consistent on PC/mobile with no false success (1.3649ms)
+✔ 10: VERIFY_FAILURE is consistent on PC/mobile with no false success (0.7505ms)
+✔ 10: rejection, cancellation and expiry are shared terminal states (1.2263ms)
+✔ ambiguous target requires selection; shops and 8 connectors are never conflated (0.6815ms)
+✔ plan-specific bid change is distinct from budget and ROI (0.7056ms)
+✔ live handoff never pauses ads or controls stream (0.3805ms)
+✔ autopilot candidates use the same protocol and cannot auto approve (0.2997ms)
+✔ idempotency and version checks prevent duplicate and stale mutation (0.3953ms)
+✔ policy changes and stale targets require reconfirmation (1.5211ms)
+✔ approval expiry uses adapter clock; executing tasks are not marked expired (1.001ms)
+✔ scope changes persist across clients and preserve metric definitions (0.8869ms)
+✔ money parsing uses exact integer CNY minor units; unknown metrics never become zero (0.1854ms)
+✔ invalid action values and unscoped/unauthorized mutations fail explicitly (0.5534ms)
+✔ G1-A migration preserves original storage and does not inherit approvals (0.325ms)
+✔ corrupted state can be reset without destroying identity or legacy backup (0.1844ms)
+✔ API mode refuses Mock execution and invalid authoritative results, no fallback (13.6802ms)
+✔ no Next business Route Handlers or database files are introduced (1.7913ms)
+✔ V12 seven groups cover 21 legacy IDs and one command page exactly once (0.8911ms)
+✔ V12 default and frozen homepage CTA open command while explicit overview deep links survive (0.1845ms)
+✔ approved logo exception leaves every other homepage byte and original CSS/JS unchanged (0.6261ms)
+ℹ tests 30
+ℹ suites 0
+ℹ pass 30
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 710.5852

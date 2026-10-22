@@ -1,0 +1,156 @@
+[
+  {
+    "active": "AI运营指挥台",
+    "heading": "AI运营指挥台",
+    "path": "/app/command",
+    "scrollWidth": 1425,
+    "width": 1440
+  },
+  {
+    "active": "经营总览",
+    "heading": "经营总览",
+    "path": "/app/overview",
+    "scrollWidth": 1425,
+    "width": 1440
+  },
+  {
+    "active": "经营目标",
+    "heading": "经营目标",
+    "path": "/app/goals",
+    "scrollWidth": 1440,
+    "width": 1440
+  },
+  {
+    "active": "AI直播作战室",
+    "heading": "AI直播作战室",
+    "path": "/app/monitor",
+    "scrollWidth": 1425,
+    "width": 1440
+  },
+  {
+    "active": "AI任务与审批",
+    "heading": "AI任务与审批",
+    "path": "/app/tasks",
+    "scrollWidth": 1425,
+    "width": 1440
+  },
+  {
+    "active": "内容策划",
+    "heading": "内容策划",
+    "path": "/app/planning",
+    "scrollWidth": 1440,
+    "width": 1440
+  },
+  {
+    "active": "脚本工厂",
+    "heading": "脚本工厂",
+    "path": "/app/scripts",
+    "scrollWidth": 1440,
+    "width": 1440
+  },
+  {
+    "active": "视频工厂",
+    "heading": "视频工厂",
+    "path": "/app/videos",
+    "scrollWidth": 1440,
+    "width": 1440
+  },
+  {
+    "active": "图片图文",
+    "heading": "图片图文",
+    "path": "/app/graphics",
+    "scrollWidth": 1440,
+    "width": 1440
+  },
+  {
+    "active": "智能剪辑",
+    "heading": "智能剪辑",
+    "path": "/app/editing",
+    "scrollWidth": 1440,
+    "width": 1440
+  },
+  {
+    "active": "素材资产库",
+    "heading": "素材资产库",
+    "path": "/app/assets",
+    "scrollWidth": 1440,
+    "width": 1440
+  },
+  {
+    "active": "素材测试",
+    "heading": "素材测试",
+    "path": "/app/experiments",
+    "scrollWidth": 1440,
+    "width": 1440
+  },
+  {
+    "active": "投放计划",
+    "heading": "投放计划",
+    "path": "/app/plans",
+    "scrollWidth": 1425,
+    "width": 1440
+  },
+  {
+    "active": "AI投手决策",
+    "heading": "AI投手决策",
+    "path": "/app/decisions",
+    "scrollWidth": 1440,
+    "width": 1440
+  },
+  {
+    "active": "执行记录",
+    "heading": "执行记录",
+    "path": "/app/executions",
+    "scrollWidth": 1440,
+    "width": 1440
+  },
+  {
+    "active": "商品与货盘",
+    "heading": "商品与货盘",
+    "path": "/app/products",
+    "scrollWidth": 1440,
+    "width": 1440
+  },
+  {
+    "active": "跨平台预算",
+    "heading": "跨平台预算",
+    "path": "/app/budgets",
+    "scrollWidth": 1440,
+    "width": 1440
+  },
+  {
+    "active": "经营分析",
+    "heading": "经营分析",
+    "path": "/app/analytics",
+    "scrollWidth": 1440,
+    "width": 1440
+  },
+  {
+    "active": "完整复盘",
+    "heading": "完整复盘",
+    "path": "/app/reports",
+    "scrollWidth": 1440,
+    "width": 1440
+  },
+  {
+    "active": "AI岗位管理",
+    "heading": "AI岗位管理",
+    "path": "/app/agents",
+    "scrollWidth": 1440,
+    "width": 1440
+  },
+  {
+    "active": "平台连接",
+    "heading": "平台连接",
+    "path": "/app/connections",
+    "scrollWidth": 1440,
+    "width": 1440
+  },
+  {
+    "active": "企业与权限",
+    "heading": "企业和权限设置",
+    "path": "/app/settings",
+    "scrollWidth": 1440,
+    "width": 1440
+  }
+]

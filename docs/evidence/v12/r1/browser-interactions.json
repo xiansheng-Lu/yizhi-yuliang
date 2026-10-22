@@ -1,0 +1,50 @@
+{
+  "base": "http://127.0.0.1:3002",
+  "defaultLogin": "http://127.0.0.1:3002/app/command",
+  "responsive": [
+    {
+      "page": "/app/command",
+      "scrollWidth": 1425,
+      "width": 1440
+    },
+    {
+      "page": "/app/command",
+      "scrollWidth": 1905,
+      "width": 1920
+    },
+    {
+      "page": "/app/command",
+      "scrollWidth": 375,
+      "width": 390
+    },
+    {
+      "page": "/app/command",
+      "scrollWidth": 360,
+      "width": 375
+    },
+    {
+      "page": "/mobile",
+      "scrollWidth": 375,
+      "width": 390
+    }
+  ],
+  "contextSwitch": "shop-tea → shop-mountain → shop-tea; live reset to all by existing Service",
+  "enterSendsBudgetIntent": "请选择具体对象\n千川A计划｜秋茶直播推广 · 茶韵旗舰店",
+  "newCommandClearedDraft": true,
+  "workspaceSearch": [
+    "素材资产库",
+    "素材测试"
+  ],
+  "searchNavigates": "http://127.0.0.1:3002/app/assets",
+  "overviewMetrics": "今日广告消耗\n¥12,570.00\n2026-10-21 · Asia/Shanghai\n支付GMV\n¥87,040.00\n同一店铺 / 场次 / 平台 · 支付归因\n投放ROI\n6.92\n支付GMV ÷ 广告消耗",
+  "frozenHomepageCta": "http://127.0.0.1:3002/app/command",
+  "refreshRestored": "http://127.0.0.1:3002/app/command",
+  "mobileEscapeClosesNavigation": true,
+  "logoutUrl": "http://127.0.0.1:3002/login?next=%2Fapp%2Fcommand",
+  "unauthenticatedDeepLink": "http://127.0.0.1:3002/login?next=%2Fapp%2Freports",
+  "loginRestoredDeepLink": "http://127.0.0.1:3002/app/reports",
+  "legacyHashOverview": "http://127.0.0.1:3002/app/overview",
+  "campaignsCompatibility": "http://127.0.0.1:3002/app/plans",
+  "invalidTargetSafeFallback": "http://127.0.0.1:3002/app/command",
+  "consoleErrors": []
+}

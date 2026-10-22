@@ -30,6 +30,7 @@ for (const path of [
   "/",
   "/login",
   "/mobile",
+  "/app/command",
   ...pages.map((id) => `/app/${id}`),
 ]) {
   const response = await fetch(base + path);
@@ -58,6 +59,7 @@ for (const [path, expected] of [
   ["/mobile.html", "/mobile"],
   ["/app.html", "/legacy"],
   ["/app/campaigns", "/app/plans"],
+  ["/app", "/app/command"],
 ]) {
   const response = await fetch(base + path, { redirect: "manual" });
   assert.equal(response.status, 307);
@@ -72,7 +74,7 @@ for (const path of ["/app/not-a-page", "/api/v1/frontend/snapshot"])
   assert.equal((await fetch(base + path)).status, 404, path);
 console.log(
   JSON.stringify(
-    { base, rootHashVerified: true, routeCount: pages.length, rows },
+    { base, rootHashVerified: true, legacyRouteCount: pages.length, addedRouteCount: 1, rows },
     null,
     2,
   ),

@@ -26,6 +26,7 @@ import { TaskComposer, TaskList } from "@/components/task-controls";
 import { CoreMetrics } from "@/components/operating-context";
 import { scopedPlans, scopedEvidence } from "@/lib/reporting";
 import { ControlWorkspace } from "./control-workspace";
+import { CommandDesk } from "./command-desk";
 
 export { CoreMetrics } from "@/components/operating-context";
 export function PlanTable({ snapshot }: { snapshot: FrontendSnapshot }) {
@@ -287,6 +288,7 @@ export function BusinessPage({
   snapshot: FrontendSnapshot;
 }) {
   const { service } = useWorkspace();
+  if (pageId === "command") return <CommandDesk snapshot={snapshot} />;
   if (["overview", "goals", "monitor", "tasks"].includes(pageId))
     return (
       <ControlWorkspace

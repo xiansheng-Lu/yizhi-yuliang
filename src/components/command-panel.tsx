@@ -9,18 +9,31 @@ import type { FrontendSnapshot } from "@/lib/domain";
 import { useWorkspace } from "./provider";
 import { JobDetails, MockScenarioSelect } from "./task-controls";
 import { LiveSummary } from "./operating-context";
+import Link from "next/link";
+import { ArrowUp, Sparkle } from "@phosphor-icons/react";
 
 export function CommandPanel({
   snapshot,
   source,
+  value,
+  onChange,
+  desk = false,
 }: {
   snapshot: FrontendSnapshot;
   source: JobSource;
+  value?: string;
+  onChange?: (value: string) => void;
+  desk?: boolean;
 }) {
   const { service, reload } = useWorkspace();
-  const [text, setText] = useState(""),
+  const [localText, setLocalText] = useState(""),
     [busy, setBusy] = useState(false),
     [error, setError] = useState("");
+  const text = value ?? localText;
+  function setText(next: string) {
+    setLocalText(next);
+    onChange?.(next);
+  }
   const [result, setResult] = useState<{
     interpretation: CommandInterpretation;
     scope: string;
@@ -32,9 +45,9 @@ export function CommandPanel({
     [scenario, setScenario] = useState<MockScenario>("SUCCESS");
   const scopeKey = JSON.stringify(snapshot.scope);
   const interpretation =
-    result?.scope === scopeKey ? result.interpretation : null;
+    result?.scope === scopeKey && result.intent === text.trim() ? result.interpretation : null;
   const job =
-    result?.scope === scopeKey
+    result?.scope === scopeKey && result.intent === text.trim()
       ? snapshot.tasks.find((j) => j.job_id === created)
       : undefined;
   async function parse(e: FormEvent) {
@@ -108,26 +121,36 @@ export function CommandPanel({
     }
   }
   return (
-    <div className="command-panel">
+    <div className={`command-panel ${desk ? "desk-command" : ""}`}>
       <form className="task-form" onSubmit={parse}>
         <label>
-          自然语言指令
+          {desk ? "告诉驭量，你想完成什么？" : "自然语言指令"}
           <textarea
             aria-label="自然语言指令"
             required
             disabled={busy}
             maxLength={500}
+            onKeyDown={(e) => {
+              if (desk && e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
+                e.preventDefault();
+                if (text.trim() && !busy) e.currentTarget.form?.requestSubmit();
+              }
+            }}
             value={text}
             onChange={(e) => {
               setText(e.target.value);
               setResult(null);
             }}
-            placeholder="看看现在直播间情况；或：把千川A计划日预算调到5000"
+            placeholder={desk ? "描述你的经营目标，或试试：把千川A计划日预算调到5000…" : "看看现在直播间情况；或：把千川A计划日预算调到5000"}
           />
         </label>
-        <button className="button primary" disabled={busy}>
-          {busy ? "处理中…" : "分析指令"}
-        </button>
+        <div className="command-compose-footer">
+          {desk && <span><Sparkle size={15} /> AI 运营协作 <i>·</i> {service?.mode === "mock" ? "Mock 规则解析" : "API 解析"}</span>}
+          <button className="button primary" disabled={busy || !text.trim()}>
+            {busy ? "处理中…" : desk ? "发送指令" : "分析指令"}
+            {desk && <ArrowUp size={17} weight="bold" />}
+          </button>
+        </div>
         <p className="command-hint">
           {service?.mode === "mock"
             ? "Mock 规则解析，仅支持明确预算、出价、ROI、计划启停及直播交接指令；真实 AI 解析待后端。"
@@ -135,9 +158,11 @@ export function CommandPanel({
         </p>
       </form>
       {interpretation?.kind === "UNRECOGNIZED" && (
-        <p role="status" className="notice">
-          {interpretation.text}
-        </p>
+        <div role="status" className="notice command-guide">
+          <b>需求已收到 · Mock 能力说明</b>
+          <p>{interpretation.text}</p>
+          {desk && <><p>当前自然语言演示支持计划预算、出价、ROI、启停与直播查询。其他运营需求可继续进入对应工作区；尚未调用生成或投放服务。</p><div className="row"><Link href="/app/planning">内容生产 →</Link><Link href="/app/plans">自主投放 →</Link><Link href="/app/monitor">直播运营 →</Link><Link href="/app/analytics">经营分析 →</Link><Link href="/app/reports">经营复盘 →</Link></div></>}
+        </div>
       )}
       {interpretation?.kind === "QUERY" && (
         <LiveSummary

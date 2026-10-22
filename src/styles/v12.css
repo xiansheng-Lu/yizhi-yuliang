@@ -45,6 +45,9 @@ textarea:focus-visible { outline: 3px solid var(--brand-focus); outline-offset: 
 .v12-workspace .nav-group a { font-size: 12px; padding: 6px 12px 6px 29px; gap: 11px; margin: 1px 0; color: var(--text-muted); }
 .v12-workspace .nav-group a.active { color: var(--brand-primary); background: var(--brand-tint); box-shadow: inset 3px 0 var(--brand-primary); }
 .v12-workspace .nav-group a > span { border-radius: 50%; width: 3px; height: 3px; }
+.v12-workspace .nav-group a.nav-direct { padding: 11px 10px; gap: 10px; font-size: 13px; color: var(--text-secondary); }
+.v12-workspace .nav-group a.nav-direct:hover { background: var(--brand-tint); }
+.v12-workspace .nav-group a.nav-direct.active { color: var(--brand-primary); }
 .v12-workspace .sidebar-footer { margin-top: 14px; padding-top: 10px; }
 .v12-workspace .sidebar-footer a, .v12-workspace .sidebar-footer button { padding: 7px; }
 .v12-workspace .topbar { height: 62px; padding: 0 30px; color: var(--text-secondary); font-size: 11px; background: var(--surface-panel); }

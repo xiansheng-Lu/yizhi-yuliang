@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight, Broadcast, ChartLineUp, CheckCircle, Clock, FilmStrip, Lightning, Robot, ShieldCheck, TrendUp } from "@phosphor-icons/react";
 import type { FrontendSnapshot } from "@/lib/domain";
+import { pageName } from "@/lib/routes";
 import { displayTime, jobStatusNames } from "@/lib/command-job";
 import { scopedJobs } from "@/lib/reporting";
 import { CommandPanel } from "@/components/command-panel";
@@ -37,7 +38,7 @@ export function CommandDesk({ snapshot }: { snapshot: FrontendSnapshot }) {
   const completed = jobs.filter((job) => job.status === "SUCCEEDED");
   return (
     <div className="command-desk">
-      <div className="desk-titlebar"><div><span className="eyebrow">YOUR AI OPERATIONS PARTNER</span><h1>AI运营指挥台</h1></div><Link href="/app/goals" className="desk-goals"><ShieldCheck size={15} />经营目标与边界<ArrowUpRight size={14} /></Link></div>
+      <div className="desk-titlebar"><div><span className="eyebrow">YOUR AI OPERATIONS PARTNER</span><h1>{pageName("command")}</h1></div><Link href="/app/goals" className="desk-goals"><ShieldCheck size={15} />经营目标与边界<ArrowUpRight size={14} /></Link></div>
       <div className="desk-grid">
         <section className="conversation-area" aria-label="AI 运营对话">
           <div className="desk-welcome"><span className="desk-ai-mark"><BrandMark /></span><div className="welcome-kicker">你好，我是你的 AI 运营伙伴</div><h2>把经营目标交给 AI，<br /><em>让增长有序发生。</em></h2><p>从一条指令开始，连接内容生产、投放执行与经营复盘。</p></div>

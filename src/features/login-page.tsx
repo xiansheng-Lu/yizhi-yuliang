@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState, type FormEvent } from "react";
 import { ArrowLeft, ArrowRight } from "@phosphor-icons/react";
-import { loginTarget } from "@/lib/routes";
+import { loginTarget, pageName } from "@/lib/routes";
 import { useWorkspace } from "@/components/provider";
 import { Badge } from "@/components/ui";
 import { BrandLogo } from "@/components/brand-logo";
@@ -95,7 +95,7 @@ export function LoginPage() {
               />
             </label>
             <button className="button primary" disabled={!ready || busy}>
-              {busy ? "正在验证…" : "进入 AI运营指挥台"}
+              {busy ? "正在验证…" : `进入 ${pageName("command")}`}
               <ArrowRight size={18} />
             </button>
             <p role="alert" className="form-error">

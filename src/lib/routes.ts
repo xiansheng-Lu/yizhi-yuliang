@@ -50,7 +50,7 @@ export function isPageId(value: string): value is PageId {
   return value === "command" || pages.some(([id]) => id === value);
 }
 export function pageName(id: PageId) {
-  if (id === "command") return "AI运营指挥台";
+  if (id === "command") return "AI驭量中枢";
   return pages.find(([value]) => value === id)![1];
 }
 export function loginTarget(raw: string | null): string {
@@ -65,7 +65,7 @@ export function loginTarget(raw: string | null): string {
 
 /** V12 navigation. The original registry above preserves all audited IDs. */
 export const navigationGroups: { name: string; pages: readonly (readonly [PageId, string])[] }[] = [
-  { name: "AI指挥台", pages: [["command", "AI运营指挥台"]] },
+  { name: "AI驭量中枢", pages: [["command", pageName("command")]] },
   { name: "任务中心", pages: [["tasks", "AI任务与审批"], ["executions", "执行记录"]] },
   { name: "直播运营", pages: [["monitor", "AI直播作战室"], ["products", "商品与货盘"]] },
   { name: "投放管理", pages: [["goals", "经营目标"], ["plans", "投放计划"], ["decisions", "AI投手决策"], ["budgets", "跨平台预算"]] },

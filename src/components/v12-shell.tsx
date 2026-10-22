@@ -52,6 +52,16 @@ export function WorkspaceShell({ pageId, children }: { pageId: PageId; children:
           {navigationGroups.map((group, index) => {
             const Icon = groupIcons[index];
             const activeGroup = group === currentGroup;
+            if (group.pages.length === 1) {
+              const [id, name] = group.pages[0];
+              return (
+                <section className="nav-group" key={group.name}>
+                  <Link href={`/app/${id}`} onClick={() => setMenu(false)} aria-current={pageId === id ? "page" : undefined} className={`nav-direct ${pageId === id ? "active" : ""}`}>
+                    <Icon size={17} weight={activeGroup ? "fill" : "regular"} />{name}
+                  </Link>
+                </section>
+              );
+            }
             const open = expanded[group.name] ?? activeGroup;
             return (
               <section className={`nav-group ${activeGroup ? "nav-group-current" : ""}`} key={group.name}>
@@ -84,7 +94,7 @@ export function WorkspaceShell({ pageId, children }: { pageId: PageId; children:
         <header className="topbar">
           <div className="row">
             <button className="icon-button mobile-trigger" aria-label="展开菜单" aria-expanded={menu} onClick={() => setMenu(true)}><List size={22} /></button>
-            <span className="topbar-breadcrumb">{currentGroup?.name}<i>/</i><b>{pageName(pageId)}</b></span>
+            <span className="topbar-breadcrumb">{currentGroup && currentGroup.pages.length > 1 && <>{currentGroup.name}<i>/</i></>}<b>{pageName(pageId)}</b></span>
           </div>
           <div className="row topbar-actions">
             <button className="context-switch" aria-expanded={contextOpen} aria-controls="global-context" onClick={() => {setContextOpen(!contextOpen); setSearching(false);}}>

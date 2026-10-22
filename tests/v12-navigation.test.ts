@@ -5,7 +5,7 @@ import { createHash } from "node:crypto";
 import { isPageId, loginTarget, navigationGroups, pageName, pages } from "../src/lib/routes";
 
 test("V12 seven groups cover 21 legacy IDs and one command page exactly once", () => {
-  assert.deepEqual(navigationGroups.map((group) => group.name), ["AI指挥台", "任务中心", "直播运营", "投放管理", "内容工厂", "数据复盘", "管理设置"]);
+  assert.deepEqual(navigationGroups.map((group) => group.name), ["AI驭量中枢", "任务中心", "直播运营", "投放管理", "内容工厂", "数据复盘", "管理设置"]);
   const ids = navigationGroups.flatMap((group) => group.pages.map(([id]) => id));
   assert.equal(ids.length, 22);
   assert.equal(new Set(ids).size, 22);
@@ -13,7 +13,7 @@ test("V12 seven groups cover 21 legacy IDs and one command page exactly once", (
   assert.ok(isPageId("command"));
   assert.ok(!isPageId("unknown"));
   assert.equal(pageName("overview"), "经营总览");
-  assert.equal(pageName("command"), "AI运营指挥台");
+  assert.equal(pageName("command"), "AI驭量中枢");
 });
 
 test("V12 default and frozen homepage CTA open command while explicit overview deep links survive", () => {

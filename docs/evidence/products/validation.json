@@ -1,0 +1,52 @@
+{
+  "date": "2026-10-22",
+  "timezone": "Asia/Shanghai",
+  "route": "/app/products",
+  "integrationBase": "1f20d615090eadf37d77c75b674d25ebf99e2ea7",
+  "scope": "Frontend only; no backend, database, product mutations or approval-rule changes",
+  "checks": {
+    "productionBuild": "passed",
+    "typecheck": "passed",
+    "eslintMaxWarningsZero": "passed",
+    "gitDiffCheck": "passed",
+    "automatedTests": { "passed": 80, "failed": 0, "newProductTests": 11 },
+    "productionRoutes": { "http200": 26, "redirects": 5, "frozenHomepageHash": "passed" }
+  },
+  "browser": {
+    "dataMode": "explicit MOCK",
+    "desktop": { "width": 1440, "height": 1000, "documentWidth": 1425, "horizontalOverflow": false },
+    "mobile": { "width": 390, "height": 844, "documentWidth": 375, "horizontalOverflow": false },
+    "errorLogs": 0,
+    "verified": [
+      "Product selection, SKU search and stock display",
+      "Reorder updates the linked speaking schedule",
+      "Local draft save explicitly says it is not synchronized to WeChat Shop",
+      "Draft reload restores saved products and ordering",
+      "Add/remove draft SKUs leaves official session KPI values unchanged",
+      "Shop-scope metrics differ from live-session metrics without changing session totals",
+      "Changing shops does not inherit the previous shop's lineup or KPIs",
+      "Unavailable official lineup shows -- instead of shop totals",
+      "Review mode defaults to actual replay segments",
+      "Mock analysis is labeled as fixed-rule simulation",
+      "Failed product images show a missing-image state; final demo images load"
+    ]
+  },
+  "realData": {
+    "readAdapter": "Existing GET /v1/frontend/snapshot",
+    "analysis": "Existing POST /v1/command-interpretations; task.create required in API mode; QUERY-only display",
+    "merchantIntegrationTested": false,
+    "missingCapabilities": [
+      "Merchant product photos, specifications and inventory source timestamps",
+      "Explicit SHOP/LIVE_SESSION SKU performance, actual paid units and paid GMV",
+      "Same-scope product time series and true SKU advertising attribution",
+      "Complete live-session lineup and official speaking-plan persistence",
+      "Backend draft writes with versions, authorization, approval and verified receipts",
+      "Product-specific read-only AI analysis semantics"
+    ]
+  },
+  "buildNotes": [
+    "The isolated integration worktree shares the installed node_modules and produces a non-blocking Next.js multiple-lockfile warning.",
+    "Shared workspace changes outside this task were preserved and excluded from the task commit."
+  ],
+  "evidence": ["products-1440.png", "products-390.png", "products-preview.png"]
+}

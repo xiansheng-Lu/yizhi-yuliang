@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowClockwise, ArrowRight, Broadcast, ChartLineUp, Clock, Eye, Info, Play, Robot, ShieldCheck, WarningCircle, Waveform, Users, ShoppingBag, CurrencyCny, Lightning } from "@phosphor-icons/react";
 import { connectorNames, type FrontendSnapshot } from "@/lib/domain";
 import { formatLiveTime, isDelayed, liveCadence, liveDuration, liveStatus, liveRefreshConfiguration, oldestTime, moduleNames, selectedRoom, statusNames, type LiveModule, type LiveModules, type LiveStatus, type ModuleState } from "@/lib/live-room";
@@ -12,6 +13,8 @@ import { initialLiveModules, LiveRoomController } from "@/services/live-room-con
 import { canAccessPage } from "@/lib/access";
 import { scopedEvidence } from "@/lib/reporting";
 import { Goods, Replay } from "./business-page";
+import { liveMetricDefinitions, liveMetricHref, parseLiveMetric } from "@/lib/live-metric";
+import { LiveMetricDetails } from "./live-metric-details";
 import "@/styles/live-room.css";
 
 const numbers = new Intl.NumberFormat("zh-CN");
@@ -31,8 +34,13 @@ function ReadTime({ state, module, status, now, minimum = 0 }: { state: ModuleSt
     {state.error && <strong role="alert">获取失败，{state.data ? "保留上次数据" : "暂无有效数据"}：{state.error}</strong>}
   </div>;
 }
-function Section({ title, icon, action, children, className = "" }: { title: string; icon: ReactNode; action?: ReactNode; children: ReactNode; className?: string }) {
-  return <section className={`lr-panel ${className}`} aria-label={title}><header className="lr-panel-heading"><h2>{icon}{title}</h2>{action}</header>{children}</section>;
+function Section({ title, icon, action, children, className = "", id }: { title: string; icon: ReactNode; action?: ReactNode; children: ReactNode; className?: string; id?: string }) {
+  return <section id={id} className={`lr-panel ${className}`} aria-label={title}><header className="lr-panel-heading"><h2>{icon}{title}</h2>{action}</header>{children}</section>;
+}
+function focusLiveCommand() {
+  const input = document.querySelector<HTMLTextAreaElement>('.live-room textarea[aria-label="自然语言指令"]');
+  input?.scrollIntoView({ block: "center" });
+  input?.focus({ preventScroll: true });
 }
 function TrendPanel({ selected, range, setRange, metric, setMetric }: { selected: boolean; range: string; setRange: (s: string) => void; metric: string; setMetric: (s: string) => void }) {
   return <Section title="直播趋势" icon={<ChartLineUp size={18} />} action={<div className="lr-segment" aria-label="趋势时间范围">{["15分钟", "30分钟", "本场"].map((label) => <button key={label} aria-pressed={range === label} onClick={() => setRange(label)}>{label}</button>)}</div>}>
@@ -44,6 +52,16 @@ function TrendPanel({ selected, range, setRange, metric, setMetric }: { selected
 
 export function LiveRoomPage({ snapshot }: { snapshot: FrontendSnapshot }) {
   const { service, identity } = useWorkspace();
+  const router = useRouter(), query = useSearchParams();
+  const search = query.toString(), requestedMetric = query.get("metric");
+  const detailMetric = parseLiveMetric(requestedMetric);
+  const pendingCommandFocus = useRef(false);
+  useEffect(() => {
+    if (requestedMetric === null && pendingCommandFocus.current) {
+      pendingCommandFocus.current = false;
+      focusLiveCommand();
+    }
+  }, [requestedMetric]);
   const configuration = useMemo(() => liveRefreshConfiguration(), []);
   const [retryAt, setRetryAt] = useState(0);
   const selected = selectedRoom(snapshot);
@@ -117,21 +135,32 @@ export function LiveRoomPage({ snapshot }: { snapshot: FrontendSnapshot }) {
   const commandSnapshot = { ...snapshot, liveSessions: room ? [room] : [], plans: modules.plans.data ?? [], tasks: modules.tasks.data ?? [] };
   const canCreate = !!identity?.permissions.includes("task.create");
   const canTasks = canAccessPage(identity, "tasks");
+  function requestOperation(text: string) {
+    if (!selected || !canCreate) return;
+    setCommand(text);
+    if (requestedMetric !== null) {
+      pendingCommandFocus.current = true;
+      router.push(`${liveMetricHref(null, search)}#live-command`, { scroll: false });
+    } else focusLiveCommand();
+  }
   const metrics = [
-    { name: "在线人数", value: live?.online === null || live?.online === undefined ? "--" : numbers.format(live.online), unit: "人", icon: Users, module: "live" as const, detail: "直播间当前在线" },
-    { name: "累计观看", value: live?.viewers === null || live?.viewers === undefined ? "--" : numbers.format(live.viewers), unit: "人", icon: Eye, module: "live" as const, detail: live?.viewers == null ? "累计观看字段待接入" : "本场累计观看" },
-    { name: "支付GMV", value: money(commerce?.gmv), unit: "", icon: CurrencyCny, module: "commerce" as const, detail: "关联计划 · 支付归因" },
-    { name: "成交订单", value: commerce?.orders == null ? "--" : numbers.format(commerce.orders), unit: "单", icon: ShoppingBag, module: "commerce" as const, detail: commerce?.orders == null ? "成交订单字段待接入" : "本场成交订单" },
-    { name: "广告消耗", value: money(commerce?.spend), unit: "", icon: Lightning, module: "commerce" as const, detail: "含暂停计划历史消耗" },
-    { name: "投放ROI", value: commerce?.roi?.toFixed(2) ?? "--", unit: "", icon: ChartLineUp, module: "commerce" as const, detail: "沿用现有支付归因口径" },
+    { id: "online" as const, name: "在线人数", value: live?.online === null || live?.online === undefined ? "--" : numbers.format(live.online), unit: "人", icon: Users, module: "live" as const, detail: "直播间当前在线" },
+    { id: "viewers" as const, name: "累计观看", value: live?.viewers === null || live?.viewers === undefined ? "--" : numbers.format(live.viewers), unit: "人", icon: Eye, module: "live" as const, detail: live?.viewers == null ? "累计观看字段待接入" : "本场累计观看" },
+    { id: "gmv" as const, name: "支付GMV", value: money(commerce?.gmv), unit: "", icon: CurrencyCny, module: "commerce" as const, detail: "关联计划 · 支付归因" },
+    { id: "orders" as const, name: "成交订单", value: commerce?.orders == null ? "--" : numbers.format(commerce.orders), unit: "单", icon: ShoppingBag, module: "commerce" as const, detail: commerce?.orders == null ? "成交订单字段待接入" : "本场成交订单" },
+    { id: "spend" as const, name: "广告消耗", value: money(commerce?.spend), unit: "", icon: Lightning, module: "commerce" as const, detail: "含暂停计划历史消耗" },
+    { id: "roi" as const, name: "投放ROI", value: commerce?.roi?.toFixed(2) ?? "--", unit: "", icon: ChartLineUp, module: "commerce" as const, detail: "沿用现有支付归因口径" },
   ];
   const planRoi = (gmv: number | null, spend: number | null) => gmv !== null && spend !== null && spend > 0 ? (gmv / spend).toFixed(2) : "--";
   const roiTarget = snapshot.riskPolicies.find((policy) => policy.tenantId === room?.tenantId)?.targetRoi;
   const roiWarning = commerce?.roi !== null && commerce?.roi !== undefined && roiTarget !== undefined && commerce.roi < roiTarget;
   const clock = now ?? 0;
+  const detailModule = detailMetric ? liveMetricDefinitions[detailMetric].module : "live";
+  const statusBar = <div className="lr-status-bar" aria-label="直播与数据状态"><div><span className={`lr-status ${status === "live" ? "is-live" : ""}`}><i />{demo && status === "live" ? "演示直播中" : statusNames[status]}</span><span className={`lr-source ${demo ? "is-mock" : ""}`}>{demo ? "模拟数据 · 本地演示" : "API数据"}</span><span className={delayed ? "lr-warning" : ""}>{hasErrors ? "同步失败 · 保留历史值" : delayed ? "数据更新延迟" : refreshing ? "正在同步" : ended ? "展示历史数据" : !syncedAt ? "尚未同步" : !oldest ? "平台更新时间待提供" : "数据已同步"} · 最近同步 {formatLiveTime(syncedAt)}</span><span>平台更新 {formatLiveTime(oldest)}</span></div><span>{!visible ? "页面不可见 · 自动刷新暂停" : ended ? "本场已结束 · 自动刷新已停止" : !selected ? "选择直播间以获取场次数据" : !automatic ? "接口限频待确认 · 仅手动刷新" : status === "live" ? demo ? "分模块获取 · 固定模拟采样" : "分模块自动刷新 · 遵循接口限频" : "当前场次仅手动刷新"}</span></div>;
+  if (requestedMetric !== null) return <LiveMetricDetails metric={detailMetric} metrics={metrics} snapshot={snapshot} modules={modules} status={status} statusBar={statusBar} scopeControls={<ScopeControls snapshot={snapshot} />} readTime={<ReadTime state={modules[detailModule]} module={detailModule} status={status} now={clock} minimum={minimum} />} plansReadTime={<ReadTime state={modules.plans} module="plans" status={status} now={clock} minimum={minimum} />} refreshing={refreshing} waiting={waiting} canCreate={canCreate} canManagePlans={canAccessPage(identity, "plans")} search={search} onRefresh={() => { void controller.current?.refresh(true); }} onOperation={requestOperation} />;
   return <div className="live-room" data-source={snapshot.source} data-live-status={status}>
-    <div className="lr-heading"><div><span className="lr-kicker"><Broadcast size={15} />直播运营</span><h1>AI直播作战室</h1><p>看清直播现场，让每一次决策有据可依。</p></div><div className="lr-heading-actions"><Link href="/app/reports" className="button secondary"><ChartLineUp size={16} />直播复盘</Link><button className="button primary" disabled={!selected || refreshing || waiting} onClick={() => { void controller.current?.refresh(true); }}><ArrowClockwise size={16} className={refreshing ? "lr-spin" : ""} />{refreshing ? "刷新中…" : waiting ? "稍后可刷新" : "刷新数据"}</button></div></div>
-    <div className="lr-status-bar" aria-label="直播与数据状态"><div><span className={`lr-status ${status === "live" ? "is-live" : ""}`}><i />{demo && status === "live" ? "演示直播中" : statusNames[status]}</span><span className={`lr-source ${demo ? "is-mock" : ""}`}>{demo ? "模拟数据 · 本地演示" : "API数据"}</span><span className={delayed ? "lr-warning" : ""}>{hasErrors ? "同步失败 · 保留历史值" : delayed ? "数据更新延迟" : refreshing ? "正在同步" : ended ? "展示历史数据" : !syncedAt ? "尚未同步" : !oldest ? "平台更新时间待提供" : "数据已同步"} · 最近同步 {formatLiveTime(syncedAt)}</span><span>平台更新 {formatLiveTime(oldest)}</span></div><span>{!visible ? "页面不可见 · 自动刷新暂停" : ended ? "本场已结束 · 自动刷新已停止" : !selected ? "选择直播间以获取场次数据" : !automatic ? "接口限频待确认 · 仅手动刷新" : status === "live" ? demo ? "分模块获取 · 固定模拟采样" : "分模块自动刷新 · 遵循接口限频" : "当前场次仅手动刷新"}</span></div>
+    <div className="lr-heading"><div><span className="lr-kicker"><Broadcast size={15} />直播运营</span><h1>AI直播作战室</h1><p>看清直播现场，让每一次决策有据可依。</p></div><div className="lr-heading-actions"><button className="button secondary" disabled={!selected || !canCreate} onClick={() => requestOperation(command)}><Lightning size={16} />申请投放操作</button><Link href="/app/reports" className="button secondary"><ChartLineUp size={16} />直播复盘</Link><button className="button primary" disabled={!selected || refreshing || waiting} onClick={() => { void controller.current?.refresh(true); }}><ArrowClockwise size={16} className={refreshing ? "lr-spin" : ""} />{refreshing ? "刷新中…" : waiting ? "稍后可刷新" : "刷新数据"}</button></div></div>
+    {statusBar}
     <ScopeControls snapshot={snapshot} />
     {!selected ? <div className="lr-select-guide"><Broadcast size={32} weight="light" /><h2>选择一个直播间，开启作战视图</h2><p>请使用上方筛选选择具体场次。未选择直播间时，不请求场次数据。</p></div> : <>
       <Section title="直播主画面" icon={<Broadcast size={18} />} action={<span className="lr-muted">画面与经营数据独立更新</span>} className="lr-stage-panel">
@@ -140,14 +169,14 @@ export function LiveRoomPage({ snapshot }: { snapshot: FrontendSnapshot }) {
           <div className="lr-video-label"><span><Broadcast size={13} />{demo ? "演示场次" : "直播画面"}</span><span>{room?.videoUrl && !demo && status === "live" ? "视频源已提供" : "视频流未接入"}</span></div>
         </div><div className="lr-session"><div className="lr-session-tag">当前直播场次</div><h2>{room?.name ?? "场次数据未返回"}</h2><p>{snapshot.shops.find((shop) => shop.id === room?.shopId)?.name ?? "--"}</p><dl><div><dt>直播状态</dt><dd>{demo && status === "live" ? "演示直播中" : statusNames[status]}</dd></div><div><dt>{ended ? "本场时长" : "开播时长"}</dt><dd className="lr-duration">{liveDuration(room, status, clock)}</dd></div><div><dt>场次ID</dt><dd>{room?.id ?? "--"}</dd></div><div><dt>统计日期</dt><dd>{snapshot.scope.date} · 上海时区</dd></div></dl><div className="lr-session-note"><Info size={15} /><span>{room?.startedAt ? "时长依据接口返回的开播时间计算" : "开播时间未提供，时长暂无数据"}</span></div><ReadTime state={modules.live} module="live" status={status} now={clock} minimum={minimum} /></div></div>
       </Section>
-      <Section title="实时经营指标" icon={<Waveform size={18} />} action={<span className="lr-muted">{ended ? "本场最终或最新快照" : "当前统计日 · 同店铺 / 场次 / 平台"}</span>}>
-        <div className="lr-metrics">{metrics.map((item) => <article key={item.name} className={item.name === "支付GMV" ? "lr-primary-metric" : ""}><div className="lr-metric-name">{item.name}<item.icon size={16} /></div>{modules[item.module].status === "loading" ? <Skeleton label={item.name} /> : <strong>{item.value}<small>{item.value === "--" ? "" : item.unit}</small></strong>}<span>{item.detail}</span></article>)}</div>
+      <Section title="实时经营指标" icon={<Waveform size={18} />} action={<span className="lr-muted">点击指标查看明细 · {ended ? "本场最终或最新快照" : "同店铺 / 场次 / 平台"}</span>}>
+        <div className="lr-metrics">{metrics.map((item) => <article key={item.name} className={item.name === "支付GMV" ? "lr-primary-metric" : ""}><div className="lr-metric-name">{item.name}<item.icon size={16} /></div>{modules[item.module].status === "loading" ? <Skeleton label={item.name} /> : <strong>{item.value}<small>{item.value === "--" ? "" : item.unit}</small></strong>}<span>{item.detail}</span><Link href={liveMetricHref(item.id, search)} className="lr-metric-entry" aria-label={`查看${item.name}明细`}>查看明细 <ArrowRight size={12} /></Link></article>)}</div>
         {live && !live.platformCovered && <p className="lr-inline-notice">所选平台未提供直播细分统计，在线人数、累计观看和订单显示 --。</p>}
         <div className="lr-metrics-times"><ReadTime state={modules.live} module="live" status={status} now={clock} minimum={minimum} /><ReadTime state={modules.commerce} module="commerce" status={status} now={clock} minimum={minimum} /></div><p className="lr-footnote">{commerce?.note ?? "经营数据获取中"}。{demo ? "所有数值为固定模拟样本，无实时增长。" : "数据时间使用来源时间，成功获取为本页请求完成时间。"}</p>
       </Section>
     </>}
     <TrendPanel selected={!!selected} range={range} setRange={setRange} metric={metric} setMetric={setMetric} />
-    <Section title="AI作战指挥台" icon={<Robot size={19} />} action={<span className="lr-approval-tag"><ShieldCheck size={14} />投放变更须人工审批</span>}>
+    <Section id="live-command" title="AI作战指挥台" icon={<Robot size={19} />} action={<span className="lr-approval-tag"><ShieldCheck size={14} />投放变更须人工审批</span>}>
       <div className="lr-command-grid"><div className="lr-command-compose"><h3>让驭量协助你的下一步</h3><p>描述需求，核对操作对象与风险，再提交审批。</p><div className="lr-shortcuts">{["看看现在直播间情况", "检查投放ROI", "调整计划预算"].map((text, index) => <button key={text} disabled={!selected || !canCreate} onClick={() => setCommand(index === 0 ? text : index === 1 ? "查看当前直播间投放ROI" : "把预算调到5000")}><Lightning size={12} />{text}</button>)}</div>{selected && canCreate ? <CommandPanel snapshot={commandSnapshot} source="PC_MANUAL" value={command} onChange={setCommand} /> : <div className="lr-command-disabled">{!selected ? "选择直播间后可输入指令" : "当前账号没有任务创建权限"}</div>}</div><div className="lr-task-column"><div className="lr-task-summary"><div><strong>{selected && modules.tasks.lastSuccessAt ? running : "--"}</strong><span>执行 / 核验中</span></div><div><strong>{selected && modules.tasks.lastSuccessAt ? pending : "--"}</strong><span>等待人工审批</span></div></div>{selected ? modules.tasks.status === "loading" ? <Skeleton label="AI任务" /> : <TaskList snapshot={commandSnapshot} limit={3} /> : <p className="lr-task-empty">任务进度随所选直播场次同步</p>}<div className="lr-task-bottom"><ReadTime state={modules.tasks} module="tasks" status={status} now={clock} minimum={minimum} />{canTasks && <Link href="/app/tasks">全部任务与审批 <ArrowRight size={13} /></Link>}</div></div></div>
     </Section>
     <Section title="异常监控" icon={<WarningCircle size={18} />} action={<span className="lr-muted">跟随对应指标更新</span>}>

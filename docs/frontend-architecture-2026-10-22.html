@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="description" content="依据易致·驭量当前前端代码整理的技术架构、页面地图、业务流程、任务状态机与接口边界。">
+<title>易致·驭量｜前端技术架构与业务流</title>
+<style>
+:root{--ink:#22304c;--sub:#53627a;--brand:#355fe1;--soft:#edf3ff;--paper:#fff;--canvas:#f5f7fb;--line:#dce2ec;--warn:#85530e;--warn-bg:#fff5e5;--green:#186044;--green-bg:#eaf5ef;--muted:#647087;--mono:Consolas,"SFMono-Regular",monospace}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:24px}body{margin:0;color:var(--ink);background:var(--canvas);font:15px/1.75 -apple-system,BlinkMacSystemFont,"Microsoft YaHei","PingFang SC",sans-serif}a{color:var(--brand);text-underline-offset:3px}button{font:inherit;cursor:pointer}button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid var(--brand);outline-offset:4px}button:disabled{cursor:default;opacity:.5}h1,h2,h3,h4,p{margin:0}h1{font-size:38px;line-height:1.35;letter-spacing:-1px;font-weight:650}h2{font-size:25px;line-height:1.5;font-weight:650}h3{font-size:17px;line-height:1.6;font-weight:600}h4{font-size:15px}p+p{margin-top:12px}code{font:13px/1.7 var(--mono);overflow-wrap:anywhere;background:var(--canvas);padding:2px 5px;border-radius:3px}small,.small{font-size:12px;line-height:1.7}.muted{color:var(--sub)}.mono{font-family:var(--mono)}.eyebrow{color:var(--brand);font-size:12px;font-weight:600;letter-spacing:.08em}.layout{display:grid;grid-template-columns:224px minmax(0,1fr);max-width:1580px;margin:auto}.sidebar{padding:36px 20px 30px 28px;position:sticky;top:0;height:100vh;overflow:auto}.brand{font-size:19px;font-weight:650;letter-spacing:.02em;margin-bottom:8px}.sidebar nav{margin-top:28px;display:grid;gap:3px}.sidebar nav a{color:var(--sub);text-decoration:none;padding:8px 10px;border-radius:4px;font-size:13px}.sidebar nav a:hover,.sidebar nav a[aria-current="location"]{background:var(--soft);color:var(--brand)}.sidebar-footer{margin-top:28px;padding-top:20px;border-top:1px solid var(--line);font-size:12px;color:var(--sub)}main{min-width:0;background:var(--paper);padding:48px clamp(24px,4vw,64px) 72px;border-left:1px solid var(--line)}.hero{max-width:960px;padding-bottom:30px}.hero h1{margin:12px 0 16px}.hero .lead{font-size:17px;max-width:810px}.meta{display:flex;gap:8px 20px;flex-wrap:wrap;font-size:12px;color:var(--sub);margin-top:20px}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}.button{border:1px solid var(--line);border-radius:4px;background:var(--paper);color:var(--ink);padding:7px 14px;text-decoration:none;font-size:13px}.button.primary{background:var(--brand);color:#fff;border-color:var(--brand)}.status-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;border-block:1px solid var(--line);padding:20px 0}.stat strong{display:block;font-size:26px;line-height:1.3;font-weight:600}.stat span{font-size:13px;color:var(--sub)}section.chapter{padding-top:40px;margin-top:20px;border-top:1px solid var(--line)}section.chapter:first-of-type{border-top:0}.chapter-head{display:flex;align-items:baseline;gap:13px;margin-bottom:14px}.chapter-num{font-family:var(--mono);font-size:13px;color:var(--brand)}.intro{color:var(--sub);margin-bottom:22px;max-width:920px}.note{border-left:3px solid var(--brand);background:var(--soft);padding:14px 18px;font-size:13px;margin:18px 0}.note.warning{border-color:var(--warn);background:var(--warn-bg)}.note strong{font-weight:600}.tag{display:inline-block;font-size:11px;line-height:1.6;padding:2px 6px;border-radius:3px;white-space:nowrap;background:var(--canvas);color:var(--sub)}.tag.mock{background:var(--soft);color:#284daf}.tag.pending{background:var(--warn-bg);color:var(--warn)}.tag.done{background:var(--green-bg);color:var(--green)}.columns{display:grid;grid-template-columns:1fr 1fr;gap:28px}.columns.three{grid-template-columns:repeat(3,minmax(0,1fr))}.item{padding:16px 0;border-bottom:1px solid var(--line)}.item h3{margin-bottom:6px}.item p{font-size:13px;color:var(--sub)}.sources-line{font-size:12px;color:var(--sub);margin-top:12px}.diagram{margin:22px 0}.diagram-caption{font-size:12px;color:var(--sub);margin-top:10px}.layers{display:grid;gap:0}.layer{display:grid;grid-template-columns:110px minmax(0,1fr);gap:14px;position:relative;padding-bottom:23px}.layer:not(:last-child):after{content:"↓";position:absolute;bottom:0;left:calc(50% + 40px);color:var(--muted)}.layer-label{font-size:12px;color:var(--sub);padding-top:15px}.layer-nodes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.node{border:1px solid var(--line);background:var(--paper);padding:14px;text-align:left;border-radius:4px;min-width:0;color:var(--ink)}.node b{display:block;font-size:14px;font-weight:600}.node small{display:block;color:var(--sub);margin-top:4px;overflow-wrap:anywhere}.node[aria-pressed="true"]{border-color:var(--brand);background:var(--soft)}.node.future{border-style:dashed;background:var(--canvas)}.node.wide{grid-column:1/-1}.node.span2{grid-column:span 2}.layer-detail{font-size:13px;padding:14px 0;border-block:1px solid var(--line);min-height:78px}.layer-detail strong{color:var(--brand)}.tech-table,.data-table{width:100%;min-width:640px;border-collapse:collapse;font-size:13px}.tech-table th,.data-table th{font-weight:600;text-align:left;background:var(--canvas)}.tech-table td,.tech-table th,.data-table td,.data-table th{padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top}.data-table td:first-child{font-weight:500}.table-wrap{overflow:auto;margin:18px 0}.route-groups{display:grid;grid-template-columns:1fr 1fr;gap:24px}.route-group{border-top:2px solid var(--ink);padding-top:10px}.route-group h3{margin:0 0 8px}.route-row{padding:10px 0;border-bottom:1px solid var(--line)}.route-row .row-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.route-row code{background:none;padding:0;color:var(--sub);font-size:12px}.route-row p{font-size:12px;color:var(--sub);margin-top:4px}.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--sub);margin:14px 0}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}.tab{border:1px solid var(--line);border-radius:4px;background:var(--paper);color:var(--sub);padding:7px 12px;font-size:13px}.tab[aria-selected="true"]{background:var(--brand);border-color:var(--brand);color:white}[hidden]{display:none!important}.flow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px 24px;list-style:none;padding:0;margin:20px 0}.flow li{padding:14px 0 16px;border-top:2px solid var(--brand);position:relative;min-width:0}.flow .index{font:12px var(--mono);color:var(--brand);margin-bottom:8px;display:block}.flow h4{margin:4px 0 6px}.flow p{font-size:13px;color:var(--sub)}.flow .owner{display:block;font-size:11px;color:var(--brand);margin-top:10px}.swimlane{display:grid;gap:0}.lane{display:grid;grid-template-columns:110px minmax(0,1fr);gap:18px;border-bottom:1px solid var(--line);padding:16px 0}.lane-name{font-size:13px;font-weight:600}.lane p{font-size:13px;color:var(--sub)}.lane b{font-weight:600}.journey{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:20px 0}.journey div{border-top:2px dashed var(--muted);padding-top:12px;font-size:13px}.journey strong{display:block;margin-bottom:6px}.journey span{font-size:12px;color:var(--sub)}.state-main{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px;list-style:none;padding:0}.state-main li{background:var(--soft);padding:13px 10px;min-width:0;position:relative}.state-main li:not(:last-child):after{content:"→";position:absolute;right:-13px;top:23px;color:var(--muted)}.state-main b{display:block;font-size:13px;font-weight:600}.state-main code{font-size:11px;background:none;padding:0;display:block;margin-top:5px;word-break:break-word}.state-main small{display:block;margin-top:8px;color:var(--sub);font-size:11px}.scenario-box{border-block:1px solid var(--line);padding:16px 0;margin-top:20px}.scenario-box label{display:block;font-size:13px;font-weight:600;margin-bottom:9px}.scenario-box select{font:inherit;font-size:13px;max-width:100%;padding:8px;border:1px solid var(--line);border-radius:4px;background:var(--paper);color:var(--ink)}.scenario-path{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:14px 0;font-size:12px}.scenario-step{padding:6px 8px;background:var(--soft)}.scenario-step.terminal{background:var(--warn-bg);color:var(--warn)}.scenario-result{font-size:13px;color:var(--sub)}.entity-tree{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}.entity-col{min-width:0}.entity{border-left:2px solid var(--line);padding:10px 14px;margin-top:12px;background:var(--canvas)}.entity.core{border-color:var(--brand);background:var(--soft)}.entity b{font-size:14px;display:block}.entity p{font-size:12px;color:var(--sub);margin-top:4px}.rel{font-size:12px;color:var(--sub);padding:6px 0 0 14px}.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 24px}.field-grid .item{padding:12px 0}.field-grid code{font-size:12px}.contract-flow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin:20px 0}.contract-flow div{padding:12px 0;border-top:2px solid var(--brand);font-size:13px}.contract-flow span{display:block;font-size:12px;color:var(--sub);margin-top:6px}.endpoint{font-family:var(--mono);font-size:12px;overflow-wrap:anywhere}.method{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--brand)}details{border-bottom:1px solid var(--line);padding:12px 0}summary{cursor:pointer;font-size:14px;font-weight:500}details p{font-size:13px;color:var(--sub);margin:12px 0}details .sources-line{margin-top:8px}.source-list{display:grid;grid-template-columns:1fr 1fr;gap:0 24px}.source-entry{padding:11px 0;border-bottom:1px solid var(--line);font-size:12px;overflow-wrap:anywhere}.source-entry b{display:block;font-size:13px;font-weight:500}.source-entry a{margin-right:9px}.footer{font-size:12px;color:var(--sub);border-top:1px solid var(--line);margin-top:40px;padding-top:20px}.print-only{display:none}.skip{position:absolute;top:-60px;left:20px;background:var(--paper);padding:8px;z-index:9}.skip:focus{top:10px}
+@media(max-width:1150px){.layout{grid-template-columns:190px minmax(0,1fr)}.sidebar{padding-left:18px}.layer{grid-template-columns:85px minmax(0,1fr)}.node{padding:11px}.state-main{grid-template-columns:repeat(3,minmax(0,1fr));gap:20px 14px}.state-main li:nth-child(3):after{content:"↓"}.columns.three{grid-template-columns:1fr}}
+@media(max-width:800px){.layout{display:block}.sidebar{position:static;height:auto;padding:20px;border-bottom:1px solid var(--line)}.sidebar nav{display:flex;flex-wrap:wrap;margin-top:16px;gap:4px}.sidebar nav a{padding:5px 8px;font-size:12px}.sidebar-footer{display:none}main{border:0;padding:30px 22px 50px}h1{font-size:29px}.hero .lead{font-size:15px}.columns,.route-groups,.source-list{grid-template-columns:1fr}.entity-tree{grid-template-columns:1fr}.layer{grid-template-columns:1fr;gap:6px}.layer-label{padding-top:0}.layer:not(:last-child):after{left:50%}.flow{grid-template-columns:1fr 1fr}.lane{grid-template-columns:85px minmax(0,1fr)}.journey{grid-template-columns:1fr 1fr}.contract-flow{grid-template-columns:1fr}.layer-detail{min-height:0}}
+@media(max-width:600px){.table-wrap:before{content:"左右滑动查看完整表格";display:block;font-size:12px;color:var(--sub);margin-bottom:8px}}
+@media(max-width:480px){main{padding-inline:16px}.sidebar{padding:16px}.status-strip{grid-template-columns:1fr 1fr;gap:16px}.layer-nodes{grid-template-columns:1fr}.node.span2{grid-column:auto}.flow,.field-grid{grid-template-columns:1fr}.state-main{grid-template-columns:1fr 1fr}.state-main li:nth-child(3):after{content:"→"}.state-main li:nth-child(even):after{content:"↓"}.lane{grid-template-columns:1fr;gap:6px}.journey{grid-template-columns:1fr 1fr}.tech-table td,.tech-table th,.data-table td,.data-table th{padding:9px 8px}.chapter-head{gap:8px}h2{font-size:22px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{@page{size:A4;margin:14mm}body{font-size:10pt;background:white;color:#17243a}.layout{display:block;max-width:none}.sidebar,.actions,.tabs,.scenario-box,.layer-detail{display:none!important}main{padding:0;border:0}h1{font-size:25pt}h2{font-size:17pt}h3{font-size:12pt}.hero .lead{font-size:11pt}section.chapter{break-before:auto;padding-top:20px;margin-top:20px}.chapter-head,h3,h4{break-after:avoid}.node,.entity,.route-row,.flow li,tr,details{break-inside:avoid}.node,.entity,.note,.state-main li{background:#f5f7fb!important;print-color-adjust:exact}.node{border-color:#c4ccd9!important}.node.future{border-style:dashed!important}.print-only{display:block}.flow-panel[hidden]{display:block!important}.flow-panel{margin-top:20px}.flow-panel:before{content:attr(data-print-title);display:block;font-size:12pt;font-weight:bold}.flow-panel h3{display:none}details>*{display:block}summary{display:block}details p{display:block!important}.source-list{grid-template-columns:1fr 1fr}.table-wrap{overflow:visible}.state-main{grid-template-columns:repeat(3,minmax(0,1fr))}.state-main li:nth-child(3):after{content:"↓"}.state-main li:nth-child(4):after{content:"→"}.columns.three{grid-template-columns:repeat(3,minmax(0,1fr))}.layer{grid-template-columns:80px minmax(0,1fr)}.layer-nodes{grid-template-columns:repeat(3,minmax(0,1fr))}a{text-decoration:none;color:inherit}code{font-size:8pt}.footer{font-size:8pt}}
+</style>
+</head>
+<body>
+<a href="#main" class="skip">跳到文档正文</a>
+<div class="layout">
+<aside class="sidebar" aria-label="文档目录">
+  <div class="brand">易致·驭量</div><div class="small muted">前端架构与业务流</div>
+  <nav>
+    <a href="#overview">01 架构结论</a><a href="#architecture">02 技术分层</a><a href="#pages">03 页面与职责</a><a href="#flows">04 核心业务流</a><a href="#states">05 任务状态机</a><a href="#data">06 数据模型与口径</a><a href="#api">07 前后端契约</a><a href="#gaps">08 边界与演进</a><a href="#evidence">09 代码依据</a>
+  </nav>
+  <div class="sidebar-footer">代码基线 <code>5d4b568</code><br>G1-B1 · 2026-10-22<br>以当前实现为准<br><br>实线：已有前端实现<br>虚线：后续外部能力<br>Mock：浏览器演示</div>
+</aside>
+<main id="main">
+  <header class="hero">
+    <div class="eyebrow">技术与业务共同阅读</div>
+    <h1>前端技术架构<br>与业务流</h1>
+    <p class="lead">从经营目标、直播观察到操作申请、人工审批和回读核验，梳理 PC 与手机如何共用一套任务协议，以及真实后端需要承接的职责。</p>
+    <div class="meta"><span>整理日期：2026-10-22 · Asia/Shanghai</span><span>代码基线：5d4b568</span><span>范围：当前前端仓库</span></div>
+    <div class="actions"><button class="button primary" id="print-button" type="button">打印 / 保存为 PDF</button><a class="button" href="#flows">先看业务流程</a><a class="button" href="api-handoff-2026-10-22/README.md">已有 API 对接包</a></div>
+  </header>
+  <div class="status-strip" aria-label="当前代码规模">
+    <div class="stat"><strong>4 / 21</strong><span>PC 工作区 / 业务路由</span></div><div class="stat"><strong>4</strong><span>手机标签，共用业务协议</span></div><div class="stat"><strong>12 / 7</strong><span>任务状态 / 操作类型</span></div><div class="stat"><strong>11</strong><span>客户端声明的 HTTP 操作</span></div>
+  </div>
+
+  <section class="chapter" id="overview">
+    <div class="chapter-head"><span class="chapter-num">01</span><h2>当前架构结论</h2></div>
+    <p class="intro">这是一个独立的 Next.js 前端。已完成浏览器内的任务交互演示；业务服务通过统一接口隔离，真实登录、风控、AI、广告执行与核验仍依赖独立后端。</p>
+    <div class="columns three">
+      <article class="item"><h3>一套前端，两种终端</h3><p>PC 负责经营管理、审批和模拟执行；手机负责指令、直播观察、任务跟踪与复盘。两端复用 Provider、Service、任务详情与统计函数。</p></article>
+      <article class="item"><h3>一套协议，两种适配器</h3><p><code>FrontendService</code> 隔离 UI 与数据来源。MockAdapter 写入 localStorage；ApiClient 只声明独立后端调用，失败时明确报错。</p></article>
+      <article class="item"><h3>任务是核心业务对象</h3><p>PC、手机及预置 AUTOPILOT 候选统一为 <code>CommandJob</code>。批准、受理、核验成功是三个不同事实，只有核验匹配才能完成。</p></article>
+    </div>
+    <div class="note warning"><strong>实现程度：</strong>当前默认 <code>mock</code>。21 个路由可达不代表 21 个完整业务模块；内容生成、平台授权、真实 AI 自主投放均未落地。本文件描述现状，后续建议另行标明。</div>
+    <p class="sources-line">依据：<a href="#src-service">Service 工厂</a> · <a href="#src-business">业务页面分发</a> · <a href="#src-job">任务协议</a></p>
+  </section>
+
+  <section class="chapter" id="architecture">
+    <div class="chapter-head"><span class="chapter-num">02</span><h2>技术分层与运行时数据流</h2></div>
+    <p class="intro">服务端路由负责入口与页面 ID 校验；业务交互集中在 Client Components。点击节点可查看职责、数据流和代码位置。</p>
+    <div class="diagram layers" aria-label="前端分层架构图">
+      <div class="layer"><div class="layer-label">入口层</div><div class="layer-nodes">
+        <button class="node" type="button" data-layer="website" aria-pressed="false"><b>冻结官网 /</b><small>rewrite → public/index.html</small></button>
+        <button class="node" type="button" data-layer="routing" aria-pressed="false"><b>登录与 PC 路由</b><small>/login · /app/[pageId]</small></button>
+        <button class="node" type="button" data-layer="mobile" aria-pressed="false"><b>手机入口 /mobile</b><small>4 标签 · 同一业务协议</small></button>
+      </div></div>
+      <div class="layer"><div class="layer-label">页面与组件</div><div class="layer-nodes">
+        <button class="node" type="button" data-layer="features" aria-pressed="false"><b>Features / WorkspaceShell</b><small>页面分发、导航、经营工作区</small></button>
+        <button class="node" type="button" data-layer="commands" aria-pressed="false"><b>共享任务组件</b><small>CommandPanel · TaskComposer · JobDetails</small></button>
+        <button class="node" type="button" data-layer="reporting" aria-pressed="false"><b>经营上下文与状态组件</b><small>ScopeControls · CoreMetrics · UI</small></button>
+      </div></div>
+      <div class="layer"><div class="layer-label">状态与领域</div><div class="layer-nodes">
+        <button class="node span2" type="button" data-layer="provider" aria-pressed="true"><b>WorkspaceProvider / React Context</b><small>service · identity · ready · Resource&lt;FrontendSnapshot&gt; · reload</small></button>
+        <button class="node" type="button" data-layer="domain" aria-pressed="false"><b>lib 领域模型与纯函数</b><small>domain · command-job · reporting · routes</small></button>
+      </div></div>
+      <div class="layer"><div class="layer-label">服务契约</div><div class="layer-nodes"><button class="node wide" type="button" data-layer="service" aria-pressed="false"><b>FrontendService → createFrontendService()</b><small>NEXT_PUBLIC_DATA_MODE：mock（默认） / api；构建时注入</small></button></div></div>
+      <div class="layer"><div class="layer-label">数据适配</div><div class="layer-nodes">
+        <button class="node" type="button" data-layer="mock" aria-pressed="false"><b>MockAdapter</b><small>localStorage + 规则解析 + 模拟状态机</small></button>
+        <button class="node" type="button" data-layer="api" aria-pressed="false"><b>ApiClient</b><small>fetch · Cookie · 15 秒超时 · 11 操作</small></button>
+        <button class="node future" type="button" data-layer="backend" aria-pressed="false"><b>独立后端与外部平台</b><small>待接入：身份、AI、风控、执行、回读</small></button>
+      </div></div>
+    </div>
+    <div class="layer-detail" id="layer-detail" aria-live="polite"><strong>WorkspaceProvider</strong>：挂载时读取身份，再读取统一快照。组件动作成功后 reload；Mock 存储事件触发刷新。generation 计数丢弃过时读取结果。</div>
+    <p class="diagram-caption">图中向下表示依赖与调用；快照读取与操作结果向上返回。官网由 beforeFiles rewrite 单独返回静态文件，不经过业务 Provider 页面树。</p>
+    <div class="table-wrap"><table class="tech-table"><thead><tr><th>层面</th><th>当前选型</th><th>实现含义</th></tr></thead><tbody>
+      <tr><td>运行框架</td><td>Next.js 16.2.6 · App Router</td><td>React Strict Mode；动态页面校验白名单；无 Next 业务 Route Handler。</td></tr>
+      <tr><td>界面与语言</td><td>React 19.2.6 · TypeScript 5.9.3</td><td>strict 类型检查；业务交互以 Client Components 为主；<code>@/*</code> 映射 <code>src/*</code>。</td></tr>
+      <tr><td>状态管理</td><td>React Context + useState / useRef</td><td>共享全量快照；表单、标签、筛选控件的临时状态在各组件内。无 Redux、Zustand、查询缓存库。</td></tr>
+      <tr><td>样式与图标</td><td>CSS Tokens + workspace.css · Phosphor 2.1.10</td><td>业务样式由 (frontend)/layout 导入；官网保留独立原始资源。未使用 Tailwind 或通用组件库。</td></tr>
+      <tr><td>本地工程</td><td>项目 Node 24.19.0 · ESLint 9.39.4 · tsx</td><td>scripts/run.mjs 优先选择 .runtime；测试基于 Node test runner，构建显式使用 webpack。</td></tr>
+    </tbody></table></div>
+    <div class="contract-flow" aria-label="Provider 读取与更新顺序"><div><strong>① 读取身份</strong><span>getIdentity → identity / 未登录跳转</span></div><div><strong>② 读取快照</strong><span>getSnapshot → Resource.ready → 页面渲染</span></div><div><strong>③ 操作后重读</strong><span>页面调用 service → reload → 最新快照</span></div></div>
+    <div class="note"><strong>刷新边界：</strong>Mock 同页通过自定义事件刷新，其他同源标签页通过 storage 事件刷新。ApiClient.subscribe 当前为空实现；尚无轮询、SSE 或 WebSocket。API 模式下其他客户端的变化不会自动推送到当前页面。</div>
+  </section>
+
+  <section class="chapter" id="pages">
+    <div class="chapter-head"><span class="chapter-num">03</span><h2>页面地图与业务职责</h2></div>
+    <p class="intro">按当前 <code>routes.ts</code> 分组，保留现有导航命名。下列“核心交互 / 展示与申请 / 骨架”是本文对源码行为的归类，不代表正式产品验收状态。</p>
+    <div class="legend"><span class="tag mock">4 页 · 核心 Mock 交互</span><span class="tag done">10 页 · 展示与申请入口</span><span class="tag pending">7 页 · 骨架待实现</span></div>
+    <div class="route-groups"><article class="route-group"><h3>经营总控 <span class="small muted">/ 4 页</span></h3>
+<div class="route-row" data-page-id="overview"><div class="row-head"><strong>AI总控台</strong><span class="tag mock">核心交互</span></div><code>/app/overview</code><p>范围内经营 KPI、任务待办、共享计划与工作模式。</p></div>
+<div class="route-row" data-page-id="goals"><div class="row-head"><strong>经营目标</strong><span class="tag mock">核心交互</span></div><code>/app/goals</code><p>经营目标表单、预算上限、变化幅度、冷却与规则版本。</p></div>
+<div class="route-row" data-page-id="monitor"><div class="row-head"><strong>AI直播作战室</strong><span class="tag mock">核心交互</span></div><code>/app/monitor</code><p>直播状态与指标、自然语言指令、计划、货盘与回放证据。</p></div>
+<div class="route-row" data-page-id="tasks"><div class="row-head"><strong>AI任务与审批</strong><span class="tag mock">核心交互</span></div><code>/app/tasks</code><p>任务创建、对象确认、人工审批、Mock 执行与核验。</p></div>
+</article>
+<article class="route-group"><h3>内容中心 <span class="small muted">/ 7 页</span></h3>
+<div class="route-row" data-page-id="planning"><div class="row-head"><strong>内容策划</strong><span class="tag pending">骨架</span></div><code>/app/planning</code><p>商品、人群、Brief 步骤占位；策划保存与生成待接。</p></div>
+<div class="route-row" data-page-id="scripts"><div class="row-head"><strong>脚本工厂</strong><span class="tag pending">骨架</span></div><code>/app/scripts</code><p>脚本编辑、审核、版本关系占位；未实现保存与生成。</p></div>
+<div class="route-row" data-page-id="videos"><div class="row-head"><strong>视频工厂</strong><span class="tag pending">骨架</span></div><code>/app/videos</code><p>生产任务、成片回收步骤占位；NEXORA API 待接。</p></div>
+<div class="route-row" data-page-id="graphics"><div class="row-head"><strong>图片图文</strong><span class="tag pending">骨架</span></div><code>/app/graphics</code><p>生成需求、审核、入库步骤占位；生成与上传待接。</p></div>
+<div class="route-row" data-page-id="editing"><div class="row-head"><strong>智能剪辑</strong><span class="tag pending">骨架</span></div><code>/app/editing</code><p>素材、字幕、剪辑需求与结果步骤占位；未运行渲染服务。</p></div>
+<div class="route-row" data-page-id="assets"><div class="row-head"><strong>素材资产库</strong><span class="tag done">展示与申请</span></div><code>/app/assets</code><p>素材样例、类型、版本、状态与商品关联；无上传管理流程。</p></div>
+<div class="route-row" data-page-id="experiments"><div class="row-head"><strong>素材测试</strong><span class="tag pending">骨架</span></div><code>/app/experiments</code><p>实验假设、预算归因、观察步骤占位；无真实实验样本。</p></div>
+</article>
+<article class="route-group"><h3>投放中心 <span class="small muted">/ 5 页</span></h3>
+<div class="route-row" data-page-id="plans"><div class="row-head"><strong>投放计划</strong><span class="tag done">展示与申请</span></div><code>/app/plans</code><p>计划列表 + 结构化操作任务入口；不是直接修改广告。</p></div>
+<div class="route-row" data-page-id="decisions"><div class="row-head"><strong>AI投手决策</strong><span class="tag done">展示与申请</span></div><code>/app/decisions</code><p>共享候选任务列表 + 结构化申请；无真实 AI 决策引擎。</p></div>
+<div class="route-row" data-page-id="executions"><div class="row-head"><strong>执行记录</strong><span class="tag done">展示与申请</span></div><code>/app/executions</code><p>受理 / 核验回执 + 共享任务流水；无真实平台回执。</p></div>
+<div class="route-row" data-page-id="products"><div class="row-head"><strong>商品与货盘</strong><span class="tag done">展示与申请</span></div><code>/app/products</code><p>商品、SKU、库存、点击支付率与讲品片段样例。</p></div>
+<div class="route-row" data-page-id="budgets"><div class="row-head"><strong>跨平台预算</strong><span class="tag done">展示与申请</span></div><code>/app/budgets</code><p>企业预算与工作模式展示 + 预算相关任务入口；无分配算法。</p></div>
+</article>
+<article class="route-group"><h3>经营与系统中心 <span class="small muted">/ 5 页</span></h3>
+<div class="route-row" data-page-id="analytics"><div class="row-head"><strong>经营分析</strong><span class="tag done">展示与申请</span></div><code>/app/analytics</code><p>核心指标 + 计划归因窗口与更新时间；无真实经营趋势。</p></div>
+<div class="route-row" data-page-id="reports"><div class="row-head"><strong>完整复盘</strong><span class="tag done">展示与申请</span></div><code>/app/reports</code><p>8 类经营复盘章节占位 + 直播复盘样例；无报告生成服务。</p></div>
+<div class="route-row" data-page-id="agents"><div class="row-head"><strong>AI岗位管理</strong><span class="tag pending">骨架</span></div><code>/app/agents</code><p>岗位职责与来源步骤占位；无策略调度、岗位启停。</p></div>
+<div class="route-row" data-page-id="connections"><div class="row-head"><strong>平台连接</strong><span class="tag done">展示与申请</span></div><code>/app/connections</code><p>8 类连接器与待核验状态展示；无真实授权接入。</p></div>
+<div class="route-row" data-page-id="settings"><div class="row-head"><strong>企业和权限设置</strong><span class="tag done">展示与申请</span></div><code>/app/settings</code><p>企业、身份与权限边界说明 + 基础状态预览；无成员角色管理。</p></div>
+</article></div>
+    <div class="columns" style="margin-top:24px">
+      <article class="item"><h3>手机 /mobile</h3><p><b>AI指挥：</b>指令解析、对象选择、草稿确认。<br><b>直播数据：</b>场次、指标、商品与讲解建议。<br><b>执行流水：</b>共享任务、回执与历史。<br><b>直播复盘：</b>复盘章节与证据。<br>标签切换是组件内状态，不是四条独立 URL。</p></article>
+      <article class="item"><h3>入口兼容与访问控制</h3><p><code>/login.html</code> → /login；<code>/mobile.html</code> → /mobile；<code>/app.html#...</code> → /legacy → 白名单页面；<code>campaigns</code> → plans。非法 pageId 返回 404；非法 next 回到 overview。AuthGuard 是前端访问体验，正式数据权限由服务端执行。</p></article>
+    </div>
+    <p class="sources-line">依据：<a href="#src-routes">路由白名单</a> · <a href="#src-business">BusinessPage</a> · <a href="#src-mobile">MobilePage</a>。未将未提交的《后台页面规划》作为当前实现依据。</p>
+  </section>
+
+  <section class="chapter" id="flows">
+    <div class="chapter-head"><span class="chapter-num">04</span><h2>核心业务流</h2></div>
+    <p class="intro">当前最完整的链路围绕操作任务展开。选择流程查看跨页面、跨终端和服务调用的对应关系。</p>
+    <div class="tabs" role="tablist" aria-label="业务流程">
+      <button class="tab" role="tab" id="flow-command-tab" aria-controls="flow-command" aria-selected="true" type="button">双端操作任务</button><button class="tab" role="tab" id="flow-goals-tab" aria-controls="flow-goals" aria-selected="false" type="button">经营目标与观察</button><button class="tab" role="tab" id="flow-content-tab" aria-controls="flow-content" aria-selected="false" type="button">内容与复盘</button><button class="tab" role="tab" id="flow-auth-tab" aria-controls="flow-auth" aria-selected="false" type="button">登录与会话</button>
+    </div>
+    <div class="flow-panel" id="flow-command" role="tabpanel" aria-labelledby="flow-command-tab" data-print-title="双端操作任务">
+      <h3>“把千川 A 计划日预算调到 5000”</h3>
+      <ol class="flow">
+        <li><span class="index">01 → 解析</span><h4>手机或 PC 输入指令</h4><p>CommandPanel 调用 interpretCommand。QUERY 只读直播情况；UNRECOGNIZED 显示原因；ACTION 返回动作、目标值和候选对象。</p><span class="owner">手机 AI指挥 / PC 直播作战室</span></li>
+        <li><span class="index">02 → 对象</span><h4>锁定唯一广告计划</h4><p>范围约束候选；多对象必须选择。改店铺、场次或平台后需重新解析。PC 也可通过 TaskComposer 结构化填写。</p><span class="owner">CommandPanel / TaskComposer</span></li>
+        <li><span class="index">03 → 草稿</span><h4>创建标准任务并确认</h4><p>createJob 携带幂等键；Mock 预检不通过直接 BLOCKED。查看 old/new、差额和风险，confirmJob 后进入待审批。</p><span class="owner">手机与 PC · task.create</span></li>
+        <li><span class="index">04 → 审批</span><h4>PC 批准或驳回</h4><p>reviewJob 携带 expected_version。批准只进入 APPROVED；Mock 再检查对象旧值、规则版本与当前风险。</p><span class="owner">PC · task.approve</span></li>
+        <li><span class="index">05 → 执行与核验</span><h4>逐步模拟，核验后完成</h4><p>PC 点击开始模拟执行、接收模拟回执、运行模拟核验。回读 MATCHED 才更新演示计划值；失败不会投影新值。</p><span class="owner">Mock：PC · task.execute / 正式：后端</span></li>
+        <li><span class="index">06 → 跟踪</span><h4>双端查看流水和结果</h4><p>TaskList / JobDetails 展示任务历史与回执。手机不显示审批和模拟执行按钮，可创建、确认、取消尚未执行的申请。</p><span class="owner">统一 snapshot.tasks</span></li>
+      </ol>
+      <div class="swimlane" aria-label="双端任务职责泳道">
+        <div class="lane"><div class="lane-name">操作人 / 手机</div><p>指令 → 选择计划 → 查看差异 → <b>确认对象与风险</b> → 跟踪任务；当前手机组件 <code>review=false</code>。</p></div>
+        <div class="lane"><div class="lane-name">审批人 / PC</div><p>读取同一任务 → <b>批准 / 驳回</b> → 在 Mock 模式逐步模拟；角色身份的权限字段控制按钮显示。</p></div>
+        <div class="lane"><div class="lane-name">共享业务服务</div><p><code>interpretCommand → createJob → confirmJob → reviewJob</code>；状态变化后重读快照。</p></div>
+        <div class="lane"><div class="lane-name">正式后端 / 待接</div><p>权威鉴权、真实 AI、风控、平台写入与回读核验。API 模式拒绝 <code>advanceMockJob</code> 与手工过期。</p></div>
+      </div>
+      <div class="note warning"><strong>同屏联动 ≠ 跨设备：</strong>当前可在同源、同浏览器配置的 PC/手机页面间演示共享任务。不同手机或浏览器设备需要正式会话、后端存储与同步机制。</div>
+    </div>
+    <div class="flow-panel" id="flow-goals" role="tabpanel" aria-labelledby="flow-goals-tab" hidden data-print-title="经营目标与观察">
+      <h3>先约束经营边界，再观察、申请与核验</h3>
+      <ol class="flow">
+        <li><span class="index">01</span><h4>设置经营目标</h4><p>/app/goals 保存企业日预算上限、经营 ROI、单次预算/出价变化上限、冷却期与工作模式。</p><span class="owner">GoalsForm → updatePolicy</span></li>
+        <li><span class="index">02</span><h4>规则版本递增</h4><p>Mock 更新 policy.version。已有申请在确认、批准或推进时再次核对版本；规则变更后不能沿用旧申请继续执行。</p><span class="owner">MockAdapter.fresh</span></li>
+        <li><span class="index">03</span><h4>选择统计范围</h4><p>店铺 / 场次 / 连接器；修改店铺重置场次。时间口径为 Asia/Shanghai；Mock 只支持当前快照日期。</p><span class="owner">ScopeControls → setScope</span></li>
+        <li><span class="index">04</span><h4>观察经营与直播证据</h4><p>总控、直播页共用消耗、支付 GMV、ROI 函数。回放、货盘、话术均是固定 Mock 数据。</p><span class="owner">CoreMetrics / LiveSummary</span></li>
+        <li><span class="index">05</span><h4>提出单个动作任务</h4><p>预算、出价、ROI 目标与启停分别申请。AUTOPILOT 当前只有预置候选，不存在真实后台策略调度。</p><span class="owner">统一 command_job</span></li>
+        <li><span class="index">06</span><h4>审批、核验与重新观察</h4><p>核验匹配才变更演示参数；暂停计划仍保留历史消耗。当前没有真实平台效果回流或自动归因。</p><span class="owner">TaskList → 回执 → 指标观察</span></li>
+      </ol>
+      <div class="note"><strong>三个 ROI 不能混用：</strong>经营目标 ROI 是企业配置；计划 targetRoi 是单计划设置；指标 ROI 是支付 GMV / 消耗的计算值。修改企业目标不会直接修改每个计划，也不会修改出价。</div>
+    </div>
+    <div class="flow-panel" id="flow-content" role="tabpanel" aria-labelledby="flow-content-tab" hidden data-print-title="内容与复盘">
+      <h3>内容生产链路：页面骨架已建，持久化与生成待接入</h3>
+      <div class="journey" aria-label="未来内容生产关系"><div><strong>商品 → 内容策划</strong><span>商品、人群、渠道与 Brief</span></div><div><strong>策划 → 脚本</strong><span>脚本编写、审核与版本</span></div><div><strong>脚本 → 成片 / 图文</strong><span>视频、图文、剪辑任务</span></div><div><strong>资产 → 测试</strong><span>素材版本、实验与效果</span></div></div>
+      <p class="small muted">虚线表示计划中的业务关系。当前这些页面主要呈现步骤与接入说明，不能保存 Brief、生成脚本、提交渲染或运行素材实验。NEXORA 仅为后续 API 接入位置。</p>
+      <div class="columns" style="margin-top:20px">
+        <article class="item"><h3>现有可浏览的复盘</h3><p>商品 / 直播场次 → ReplaySegment（时间段、话术、建议）→ ReplayReport.sections（evidenceIds）。手机与 PC 共用 Review；reports 保留八类经营章节。</p></article>
+        <article class="item"><h3>下一轮业务衔接</h3><p>正式的“证据 → 复盘结论 → 新策划 / 新操作”尚未自动打通。当前 evidenceIds 主要是文本呈现；没有完整证据跳转、报告生成、版本固定与导出服务。</p></article>
+      </div>
+    </div>
+    <div class="flow-panel" id="flow-auth" role="tabpanel" aria-labelledby="flow-auth-tab" hidden data-print-title="登录与会话">
+      <h3>业务访问统一经过 Provider 与 AuthGuard</h3>
+      <ol class="flow">
+        <li><span class="index">01</span><h4>访问受保护页面</h4><p>Provider.reload 先读取身份。未登录时 AuthGuard 将当前 pathname 编码进 /login?next=...</p></li>
+        <li><span class="index">02</span><h4>验证登录</h4><p>MockIdentityAdapter 仅验证演示身份；API 模式调用 /v1/auth/login，以 credentials:include 参与 Cookie 会话。</p></li>
+        <li><span class="index">03</span><h4>恢复白名单目标</h4><p>登录成功 reload 后跳转。loginTarget 只接受已知业务 pageId 或 mobile，避免 next 外跳。</p></li>
+        <li><span class="index">04</span><h4>加载共享快照</h4><p>会话有效后 getSnapshot。Resource 区分 loading / ready / error；接口错误提供重试，Mock 可恢复演示数据。</p></li>
+        <li><span class="index">05</span><h4>按权限显示操作</h4><p>snapshot.read、task.create、task.approve、task.execute、policy.edit。正式后端仍须校验企业、店铺与操作权限。</p></li>
+        <li><span class="index">06</span><h4>退出会话</h4><p>logout 后清空当前 identity 并 reload；Mock 退出删除身份键，保留演示快照。</p></li>
+      </ol>
+    </div>
+    <p class="sources-line">依据：<a href="#src-command-panel">CommandPanel</a> · <a href="#src-task-ui">任务组件</a> · <a href="#src-control">经营工作区</a> · <a href="#src-provider">Provider</a></p>
+  </section>
+
+  <section class="chapter" id="states">
+    <div class="chapter-head"><span class="chapter-num">05</span><h2>command_job 状态机</h2></div>
+    <p class="intro">下面主链和分支取自当前 MockAdapter 的实现；正式状态由后端返回。七类动作共享这 12 个状态，前端不能把“批准”显示成“执行成功”。</p>
+    <ol class="state-main" aria-label="任务成功主链">
+      <li><b>对象与风险确认</b><code>DRAFT</code><small>createJob 正常创建</small></li><li><b>等待审批</b><code>PENDING_APPROVAL</code><small>confirmJob</small></li><li><b>已批准，未执行</b><code>APPROVED</code><small>reviewJob / APPROVE</small></li><li><b>执行中</b><code>EXECUTING</code><small>开始模拟执行</small></li><li><b>待回读核验</b><code>VERIFYING</code><small>模拟受理回执</small></li><li><b>已核验完成</b><code>SUCCEEDED</code><small>MATCHED 后投影</small></li>
+    </ol>
+    <div class="table-wrap"><table class="data-table"><thead><tr><th>分支终态</th><th>来自哪里</th><th>触发条件与业务结果</th></tr></thead><tbody>
+      <tr><td>BLOCKED · 风控阻断</td><td>创建阶段；DRAFT / PENDING_APPROVAL / APPROVED</td><td>创建时风险不通过；或后续检查发现旧值、策略版本、风险条件变化。执行前停止，不能继续沿用申请。</td></tr>
+      <tr><td>MANUAL_REQUIRED · 人工交接</td><td>DRAFT → confirmJob</td><td>请求开播 / 关播，仅生成交接任务。当前没有交接完成迁移；不会控制推流，也不会自动暂停广告。</td></tr>
+      <tr><td>REJECTED · 已驳回</td><td>PENDING_APPROVAL</td><td>审批人拒绝。记录审批人与历史，不写计划参数。</td></tr>
+      <tr><td>CANCELLED · 已取消</td><td>DRAFT / PENDING_APPROVAL / APPROVED</td><td>创建权限用户取消尚未执行的申请；执行中不能取消。</td></tr>
+      <tr><td>EXPIRED · 已过期</td><td>DRAFT / PENDING_APPROVAL / APPROVED</td><td>Mock 默认 15 分钟，读取快照时检查，或 PC 手工模拟；执行中、核验中不因该期限直接过期。</td></tr>
+      <tr><td>FAILED · 失败</td><td>EXECUTING / VERIFYING</td><td>请求失败、超时、回读不匹配；或执行阶段对象/策略/风险变化。超时结果标为未知，不自动重试。</td></tr>
+    </tbody></table></div>
+    <div class="scenario-box">
+      <label for="scenario">查看状态分支</label><select id="scenario"><option value="success">正常核验成功</option><option value="blocked">创建时预算 / 幅度 / 冷却阻断</option><option value="request">模拟请求失败</option><option value="timeout">模拟请求超时</option><option value="verify">模拟核验失败</option><option value="reject">人工驳回</option><option value="cancel">执行前取消</option><option value="expiry">申请到期</option><option value="handoff">开播 / 关播人工交接</option><option value="policy">批准后策略变更</option></select>
+      <div class="scenario-path" id="scenario-path" aria-label="所选状态路径"></div><p class="scenario-result" id="scenario-result" aria-live="polite"></p>
+    </div>
+    <div class="columns">
+      <article class="item"><h3>7 类动作与 4 类值</h3><p><code>CHANGE_DAILY_BUDGET / CHANGE_BID</code> → MONEY（CNY 整数分）<br><code>SET_ROI_TARGET</code> → RATIO（无单位）<br><code>PAUSE_AD_PLAN / RESUME_AD_PLAN</code> → BOOLEAN<br><code>REQUEST_LIVE_START / REQUEST_LIVE_END</code> → HANDOFF</p></article>
+      <article class="item"><h3>并发与重复请求</h3><p>创建携带 idempotency_key，相同键不能复用给不同申请。修改任务携带 expected_version；Mock 同时检查 snapshot.revision。localStorage 的检查与写入并非服务端事务，正式幂等与并发控制必须在后端实现。</p></article>
+    </div>
+    <p class="sources-line">依据：<a href="#src-job">状态 / 动作 / 值类型</a> · <a href="#src-mock">MockAdapter</a> · <a href="#src-risk">mockRisk</a></p>
+  </section>
+
+  <section class="chapter" id="data">
+    <div class="chapter-head"><span class="chapter-num">06</span><h2>共享数据模型与统计口径</h2></div>
+    <p class="intro">FrontendSnapshot 聚合业务实体。下图是前端引用关系示意，基于实体 ID 字段与筛选代码推导；项目没有数据库，也没有已实现的外键约束。</p>
+    <div class="entity-tree" aria-label="前端领域实体关系图">
+      <div class="entity-col"><h3>组织与投放对象</h3><div class="entity"><b>Tenant · 企业</b><p>tenantId 约束归属</p></div><div class="rel">↓ 1 : N（引用）</div><div class="entity"><b>Shop · 店铺</b><p>关联连接器与授权范围</p></div><div class="rel">↓ 1 : N（引用）</div><div class="entity"><b>AdAccount · 广告账户</b><p>shopId + connectorId</p></div><div class="rel">↓ 1 : N（引用）</div><div class="entity"><b>AdPlan · 广告计划</b><p>账户、可选场次、预算/出价/ROI/启停</p></div></div>
+      <div class="entity-col"><h3>统一操作与风险</h3><div class="entity core"><b>CommandJob · 操作任务</b><p>tenant / shop / account / live_session<br>target_type + target_id<br>AD_PLAN 或 LIVE_SESSION</p></div><div class="rel">内嵌风险、审批、回执、历史</div><div class="entity"><b>RiskSummary / Approval / Receipt</b><p>policy_version · approved_version<br>accepted · verification · observed_value</p></div><div class="rel">风险检查读取 ↓</div><div class="entity"><b>RiskPolicy · 企业规则</b><p>预算上限、经营 ROI、变化幅度、冷却与模式</p></div><div class="entity"><b>Identity · 当前身份</b><p>tenantId · shopIds · permissions</p></div></div>
+      <div class="entity-col"><h3>直播、商品与证据</h3><div class="entity"><b>LiveSession · 直播场次</b><p>属于店铺；通过 liveSessionId 关联计划</p></div><div class="rel">↓ 场次 / 商品引用</div><div class="entity"><b>Product / Material</b><p>商品属于店铺；素材通过 productId 关联商品与版本</p></div><div class="rel">↓ 证据与复盘</div><div class="entity"><b>ReplaySegment / ReplayReport</b><p>片段关联场次与商品；章节包含 evidenceIds。证据 ID 当前主要为文本引用。</p></div><div class="entity"><b>ReportingScope</b><p>shop / live_session / connector / date<br>timezone = Asia/Shanghai</p></div></div>
+    </div>
+    <div class="field-grid" style="margin-top:20px">
+      <article class="item"><h3>金额与 ROI</h3><p>预算、出价、消耗、GMV 均按整数分保存，界面除以 100 显示元。ROI 单独保存比值；消费为 0 或数据缺失时不生成 ROI。</p></article>
+      <article class="item"><h3>指标汇总</h3><p>businessTotals 要求范围内每个计划的 spend / GMV 都非 null；否则总额与 ROI 均为空。暂停计划不从历史指标剔除；广告归因不能代替利润。</p></article>
+      <article class="item"><h3>范围应用的现状</h3><p>scopedPlans / scopedJobs 按店铺、场次、连接器过滤。核心经营区和手机使用共享范围；plans、products、executions 等部分通用页面仍直接展示全快照，并非所有列表都统一筛选。</p></article>
+      <article class="item"><h3>日期与证据过滤</h3><p>Mock 仅接受快照既有日期，scopedPlans 不对 date 做独立时间过滤。scopedEvidence 按店铺/场次处理商品与复盘证据，不按 connector 过滤所有证据。</p></article>
+    </div>
+    <h3 style="margin-top:26px">浏览器演示存储</h3>
+    <div class="table-wrap"><table class="data-table"><thead><tr><th>存储键 / 机制</th><th>职责与限制</th></tr></thead><tbody>
+      <tr><td><code>yuliang:g1a:mock-identity</code></td><td>Mock 身份与权限。不是正式登录凭证。</td></tr><tr><td><code>yuliang:command-jobs:v1</code></td><td>统一演示快照、任务与统计范围；revision 递增。</td></tr><tr><td><code>yuliang:g1a:mock-snapshot</code></td><td>G1-A 原存储只读迁移、保留备份；旧审批不继承，任务重新确认。</td></tr><tr><td><code>yuliang:g1a:changed</code> + storage 事件</td><td>当前页自定义事件 + 其他同源标签页 storage 事件；不能实现真实跨设备同步。</td></tr>
+    </tbody></table></div>
+    <h3>8 类连接器保持独立</h3><p class="small muted" style="margin-top:10px">腾讯广告 ADQ（adq） · 微信小店推广（wxpromo） · 微信豆（beans） · 微信小店经营（wxshop） · 巨量千川（qianchuan） · 抖店经营（douyinshop） · 小红书聚光（juguang） · 小红书电商（redshop）。当前是领域标识和状态展示，未集成平台 SDK 或完成真实授权核验。</p>
+    <p class="sources-line">依据：<a href="#src-domain">domain</a> · <a href="#src-reporting">reporting</a> · <a href="#src-migration">迁移逻辑</a></p>
+  </section>
+
+  <section class="chapter" id="api">
+    <div class="chapter-head"><span class="chapter-num">07</span><h2>前后端契约与权威边界</h2></div>
+    <p class="intro">下列 11 个操作来自 ApiClient 和既有 OpenAPI 对接包，是前端声明的待联调契约。当前仓库没有实现这些服务端端点。</p>
+    <div class="contract-flow" aria-label="API 模式调用边界"><div><strong>浏览器前端</strong><span>输入、对象选择、差异展示、权限按钮与错误呈现</span></div><div><strong>独立后端 · 待接入</strong><span>会话、数据隔离、策略风控、AI、幂等、任务持久化</span></div><div><strong>平台 / 业务服务 · 待接入</strong><span>独立连接授权、广告写入、回执、回读、真实经营数据</span></div></div>
+    <div class="table-wrap"><table class="data-table"><thead><tr><th>HTTP</th><th>路径</th><th>Service 方法 / 用途</th></tr></thead><tbody><tr data-operation="getSession"><td><span class="method">GET</span></td><td class="endpoint">/v1/auth/session</td><td><code>getIdentity</code><br>获取当前会话</td></tr>
+<tr data-operation="login"><td><span class="method">POST</span></td><td class="endpoint">/v1/auth/login</td><td><code>login</code><br>登录</td></tr>
+<tr data-operation="logout"><td><span class="method">POST</span></td><td class="endpoint">/v1/auth/logout</td><td><code>logout</code><br>退出登录</td></tr>
+<tr data-operation="getSnapshot"><td><span class="method">GET</span></td><td class="endpoint">/v1/frontend/snapshot</td><td><code>getSnapshot</code><br>读取全量前端快照</td></tr>
+<tr data-operation="interpretCommand"><td><span class="method">POST</span></td><td class="endpoint">/v1/command-interpretations</td><td><code>interpretCommand</code><br>解析自然语言指令</td></tr>
+<tr data-operation="createJob"><td><span class="method">POST</span></td><td class="endpoint">/v1/command-jobs</td><td><code>createJob</code><br>创建标准任务</td></tr>
+<tr data-operation="confirmJob"><td><span class="method">POST</span></td><td class="endpoint">/v1/command-jobs/{job_id}/confirm</td><td><code>confirmJob</code><br>确认对象与风险并提交审批</td></tr>
+<tr data-operation="reviewJob"><td><span class="method">POST</span></td><td class="endpoint">/v1/command-jobs/{job_id}/approvals</td><td><code>reviewJob</code><br>批准或驳回任务</td></tr>
+<tr data-operation="cancelJob"><td><span class="method">POST</span></td><td class="endpoint">/v1/command-jobs/{job_id}/cancel</td><td><code>cancelJob</code><br>取消未执行任务</td></tr>
+<tr data-operation="updatePolicy"><td><span class="method">PUT</span></td><td class="endpoint">/v1/risk-policies/{id}</td><td><code>updatePolicy</code><br>更新经营目标与风控配置</td></tr>
+<tr data-operation="setScope"><td><span class="method">PUT</span></td><td class="endpoint">/v1/frontend/reporting-scope</td><td><code>setScope</code><br>更新共享统计范围</td></tr></tbody></table></div>
+    <div class="columns">
+      <article class="item"><h3>请求与响应</h3><p>fetch 使用 <code>credentials: include</code>、<code>cache: no-store</code>，15 秒超时。成功 envelope 为 <code>{data, requestId, schemaVersion}</code>，版本为 <code>command-job-v1.0</code>。401 返回未登录；403、404、409、400/422 等映射 ServiceError。</p></article>
+      <article class="item"><h3>任务的权威来源</h3><p>API 任务必须 <code>mode=API</code>、风险来源 SERVER、回执来源 PLATFORM；SUCCEEDED 要求 accepted 且 verification=MATCHED。前端验证只覆盖部分结构，完整数据与权限校验仍须后端完成。</p></article>
+      <article class="item"><h3>模式切换</h3><p><code>NEXT_PUBLIC_DATA_MODE=api</code> + <code>NEXT_PUBLIC_API_BASE_URL</code>。NEXT_PUBLIC 在构建时注入；开发重启，生产需重建。地址缺失、错误模式、网络失败都不会静默回退 Mock。</p></article>
+      <article class="item"><h3>前端不能推进正式执行</h3><p>advanceMockJob / expireMockJob 在 API 模式抛出 FORBIDDEN。AUTOPILOT 不能由浏览器 ApiClient.createJob 创建，须由后端策略授权生成。</p></article>
+    </div>
+    <div class="note warning"><strong>联调缺项：</strong>正式 Cookie 与 CSRF 协议、CORS、服务端授权、实时刷新、分页、生产直播状态枚举、真实执行与回读尚需确认；当前没有自动重试和后台任务追踪协议。</div>
+    <p class="sources-line">已有交接资料：<a href="api-handoff-2026-10-22/易致驭量前端RESTfulAPI全量接口文档V1.0.md">完整接口文档</a> · <a href="api-handoff-2026-10-22/openapi.json">OpenAPI</a> · <a href="api-handoff-2026-10-22/postman_collection.json">Postman 集合</a> · <a href="command_job前后端契约V1.0.md">任务契约草案</a></p>
+  </section>
+
+  <section class="chapter" id="gaps">
+    <div class="chapter-head"><span class="chapter-num">08</span><h2>实现边界与演进顺序</h2></div>
+    <p class="intro">以下先列可直接从代码核实的边界，再列本文建议。建议不代表已经批准的开发计划。</p>
+    <div class="table-wrap"><table class="data-table"><thead><tr><th>当前已有</th><th>仍需补齐</th><th>业务影响</th></tr></thead><tbody>
+      <tr><td>Mock 登录、前端路由守卫与按钮权限</td><td>服务端会话、租户/店铺授权与审计</td><td>浏览器身份与按钮显示不能承担生产访问控制。</td></tr>
+      <tr><td>统一快照与同源标签页联动</td><td>后端持久化、跨设备同步、任务更新订阅</td><td>正式两端不能依靠 localStorage 联动。</td></tr>
+      <tr><td>规则解析与人工确认链路</td><td>真实 AI 解析、策略调度、候选任务产生</td><td>AUTOPILOT 当前只有演示候选，不会自主投放。</td></tr>
+      <tr><td>Mock 风控、分步执行、模拟核验</td><td>真实预算额度、白名单、平台连接器与回读</td><td>当前不产生真实平台写入与执行成功。</td></tr>
+      <tr><td>21 页导航、内容模块步骤与实体</td><td>策划/脚本持久化、生成、上传、渲染与实验</td><td>页面骨架不能作为内容生产系统使用。</td></tr>
+      <tr><td>经营指标函数与复盘样例</td><td>统一全页筛选、真实时间范围、归因、利润与报告生成</td><td>部分列表不使用全局范围；固定样例不能推断实际经营结果。</td></tr>
+    </tbody></table></div>
+    <div class="journey" aria-label="建议演进顺序"><div><strong>① 服务端权威基础</strong><span>会话 / 数据范围 / 快照 / 幂等与并发</span></div><div><strong>② 单平台任务链</strong><span>风险 → 审批 → 执行 → 回读；覆盖失败与未知</span></div><div><strong>③ 真实双端与经营数据</strong><span>订阅 / 刷新、统一筛选、实时性与归因口径</span></div><div><strong>④ 内容与复盘扩展</strong><span>对象持久化、生成任务、证据与行动关联</span></div></div>
+    <details open><summary>验收时应优先看的证据</summary><p>任务成功必须有相应模式的回执来源与 MATCHED 核验。覆盖多对象消歧、预算阻断、重复提交、旧版本冲突、规则变更、审批驳回、执行超时与回读不一致。现有 tests/frontend.test.ts 已包含相应 Mock / API 防误用场景。</p><p>工程检查通过 scripts/run.mjs 执行 typecheck、lint、test、build；实际 HTTP 路由检查针对正在运行的服务，首页另有冻结哈希校验。本次仅整理文档，不把既有验收记录当成本次重新执行结果。</p></details>
+  </section>
+
+  <section class="chapter" id="evidence">
+    <div class="chapter-head"><span class="chapter-num">09</span><h2>代码依据与阅读入口</h2></div>
+    <p class="intro">分析基线为本地提交 <code>5d4b568065e432ed59b7a13cceec516dd763859e</code>。源码链接采用固定提交与起始行；“本地”链接要求保留本文件与仓库的相对位置。来源摘要与 SHA-256 见 <a href="frontend-architecture-sources-2026-10-22.json">来源清单</a>；交互、响应布局与复跑测试见 <a href="frontend-architecture-validation-2026-10-22.json">本次验证记录</a>。</p>
+    <div class="source-list"><div class="source-entry" id="src-package"><b>依赖与版本</b><span class="mono">package.json:19</span><br><a href="../package.json">本地文件</a><a href="https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/package.json#L19" target="_blank" rel="noopener">固定提交源码 ↗</a></div>
+<div class="source-entry" id="src-next"><b>官网隔离与旧路径兼容</b><span class="mono">next.config.ts:3</span><br><a href="../next.config.ts">本地文件</a><a href="https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/next.config.ts#L3" target="_blank" rel="noopener">固定提交源码 ↗</a></div>
+<div class="source-entry" id="src-routes"><b>四工作区、21 路由、next 白名单</b><span class="mono">src/lib/routes.ts:1</span><br><a href="../src/lib/routes.ts">本地文件</a><a href="https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/lib/routes.ts#L1" target="_blank" rel="noopener">固定提交源码 ↗</a></div>
+<div class="source-entry" id="src-route"><b>服务端 pageId 校验</b><span class="mono">src/app/(frontend)/app/[pageId]/page.tsx:4</span><br><a href="../src/app/%28frontend%29/app/%5BpageId%5D/page.tsx">本地文件</a><a href="https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/app/%28frontend%29/app/%5BpageId%5D/page.tsx#L4" target="_blank" rel="noopener">固定提交源码 ↗</a></div>
+<div class="source-entry" id="src-layout"><b>业务 Provider 与 CSS 入口</b><span class="mono">src/app/(frontend)/layout.tsx:5</span><br><a href="../src/app/%28frontend%29/layout.tsx">本地文件</a><a href="https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/app/%28frontend%29/layout.tsx#L5" target="_blank" rel="noopener">固定提交源码 ↗</a></div>
+<div class="source-entry" id="src-provider"><b>共享状态、读取、守卫与错误边界</b><span class="mono">src/components/provider.tsx:30</span><br><a href="../src/components/provider.tsx">本地文件</a><a href="https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/components/provider.tsx#L30" target="_blank" rel="noopener">固定提交源码 ↗</a></div>
+<div class="source-entry" id="src-shell"><b>PC 工作台导航与框架</b><span class="mono">src/components/workspace-shell.tsx:21</span><br><a href="../src/components/workspace-shell.tsx">本地文件</a><a href="https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/components/workspace-shell.tsx#L21" target="_blank" rel="noopener">固定提交源码 ↗</a></div>
+<div class="source-entry" id="src-business"><b>页面能力、骨架与复盘</b><span class="mono">src/features/business-page.tsx:282</span><br><a href="../src/features/business-page.tsx">本地文件</a><a href="https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/features/business-page.tsx#L282" target="_blank" rel="noopener">固定提交源码 ↗</a></div>
+<div class="source-entry" id="src-control"><b>经营目标与核心四页</b><span class="mono">src/features/control-workspace.tsx:17</span><br><a href="../src/features/control-workspace.tsx">本地文件</a><a href="https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/features/control-workspace.tsx#L17" target="_blank" rel="noopener">固定提交源码 ↗</a></div>
+<div class="source-entry" id="src-mobile"><b>手机四标签与 review=false</b><span class="mono">src/features/mobile-page.tsx:23</span><br><a href="../src/features/mobile-page.tsx">本地文件</a><a href="https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/features/mobile-page.tsx#L23" target="_blank" rel="noopener">固定提交源码 ↗</a></div>
+<div class="source-entry" id="src-command-panel"><b>指令、消歧与任务创建</b><span class="mono">src/components/command-panel.tsx:13</span><br><a href="../src/components/command-panel.tsx">本地文件</a><a href="https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/components/command-panel.tsx#L13" target="_blank" rel="noopener">固定提交源码 ↗</a></div>
+<div class="source-entry" id="src-task-ui"><b>任务详情、审批与执行按钮</b><span class="mono">src/components/task-controls.tsx:52</span><br><a href="../src/components/task-controls.tsx">本地文件</a><a href="https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/components/task-controls.tsx#L52" target="_blank" rel="noopener">固定提交源码 ↗</a></div>
+<div class="source-entry" id="src-operating"><b>统计范围、KPI 与直播观察</b><span class="mono">src/components/operating-context.tsx:14</span><br><a href="../src/components/operating-context.tsx">本地文件</a><a href="https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/components/operating-context.tsx#L14" target="_blank" rel="noopener">固定提交源码 ↗</a></div>
+<div class="source-entry" id="src-domain"><b>领域实体与金额 / ROI 汇总</b><span class="mono">src/lib/domain.ts:2</span><br><a href="../src/lib/domain.ts">本地文件</a><a href="https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/lib/domain.ts#L2" target="_blank" rel="noopener">固定提交源码 ↗</a></div>
+<div class="source-entry" id="src-job"><b>任务、状态、动作、值类型</b><span class="mono">src/lib/command-job.ts:3</span><br><a href="../src/lib/command-job.ts">本地文件</a><a href="https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/lib/command-job.ts#L3" target="_blank" rel="noopener">固定提交源码 ↗</a></div>
+<div class="source-entry" id="src-reporting"><b>范围筛选与证据过滤</b><span class="mono">src/lib/reporting.ts:3</span><br><a href="../src/lib/reporting.ts">本地文件</a><a href="https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/lib/reporting.ts#L3" target="_blank" rel="noopener">固定提交源码 ↗</a></div>
+<div class="source-entry" id="src-contracts"><b>Service 接口与统一错误</b><span class="mono">src/services/contracts.ts:43</span><br><a href="../src/services/contracts.ts">本地文件</a><a href="https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/services/contracts.ts#L43" target="_blank" rel="noopener">固定提交源码 ↗</a></div>
+<div class="source-entry" id="src-service"><b>Mock / API 适配器工厂</b><span class="mono">src/services/index.ts:4</span><br><a href="../src/services/index.ts">本地文件</a><a href="https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/services/index.ts#L4" target="_blank" rel="noopener">固定提交源码 ↗</a></div>
+<div class="source-entry" id="src-mock"><b>存储、任务状态机、版本与幂等</b><span class="mono">src/services/mock-adapter.ts:40</span><br><a href="../src/services/mock-adapter.ts">本地文件</a><a href="https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/services/mock-adapter.ts#L40" target="_blank" rel="noopener">固定提交源码 ↗</a></div>
+<div class="source-entry" id="src-risk"><b>Mock 规则解析与风险检查</b><span class="mono">src/services/mock-command.ts:144</span><br><a href="../src/services/mock-command.ts">本地文件</a><a href="https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/services/mock-command.ts#L144" target="_blank" rel="noopener">固定提交源码 ↗</a></div>
+<div class="source-entry" id="src-identity"><b>演示身份与权限</b><span class="mono">src/services/mock-identity.ts:9</span><br><a href="../src/services/mock-identity.ts">本地文件</a><a href="https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/services/mock-identity.ts#L9" target="_blank" rel="noopener">固定提交源码 ↗</a></div>
+<div class="source-entry" id="src-migration"><b>只读迁移，不继承旧审批</b><span class="mono">src/services/mock-migration.ts:11</span><br><a href="../src/services/mock-migration.ts">本地文件</a><a href="https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/services/mock-migration.ts#L11" target="_blank" rel="noopener">固定提交源码 ↗</a></div>
+<div class="source-entry" id="src-mock-data"><b>初始演示数据与默认规则</b><span class="mono">src/services/mock-data.ts:3</span><br><a href="../src/services/mock-data.ts">本地文件</a><a href="https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/services/mock-data.ts#L3" target="_blank" rel="noopener">固定提交源码 ↗</a></div>
+<div class="source-entry" id="src-api-client"><b>HTTP 客户端与 API 结果约束</b><span class="mono">src/services/api-client.ts:20</span><br><a href="../src/services/api-client.ts">本地文件</a><a href="https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/services/api-client.ts#L20" target="_blank" rel="noopener">固定提交源码 ↗</a></div>
+<div class="source-entry" id="src-tests"><b>现有任务与边界测试</b><span class="mono">tests/frontend.test.ts:48</span><br><a href="../tests/frontend.test.ts">本地文件</a><a href="https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/tests/frontend.test.ts#L48" target="_blank" rel="noopener">固定提交源码 ↗</a></div>
+<div class="source-entry" id="src-runtime"><b>固定运行时与检查命令</b><span class="mono">scripts/run.mjs:7</span><br><a href="../scripts/run.mjs">本地文件</a><a href="https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/scripts/run.mjs#L7" target="_blank" rel="noopener">固定提交源码 ↗</a></div>
+<div class="source-entry" id="src-api-package"><b>既有 11 个接口与 Schema</b><span class="mono">docs/api-handoff-2026-10-22/openapi.json:34</span><br><a href="../docs/api-handoff-2026-10-22/openapi.json">本地文件</a><a href="https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/docs/api-handoff-2026-10-22/openapi.json#L34" target="_blank" rel="noopener">固定提交源码 ↗</a></div></div>
+    <div class="note"><strong>阅读顺序：</strong>产品与运营可按 01 → 03 → 04 → 05 阅读；前端接手可按 02 → 06 → 代码入口阅读；后端联调可按 05 → 07 → 08 → API 对接包阅读。</div>
+  </section>
+  <footer class="footer">本文基于代码静态梳理，未连接真实后端、广告平台或 AI 服务。所有“已实现”均指当前前端行为；未来能力和演进建议已分别标记。HTML 无外部资源依赖，可离线阅读与打印。</footer>
+</main>
+</div>
+<script>
+(() => {
+  const layerDetails = {
+    website:['冻结官网','next.config.ts 的 beforeFiles rewrite 将 / 指向 public/index.html。原始 HTML、CSS、JS 由独立静态资源提供，避免业务工作台改动影响官网。','next.config.ts / public/'],
+    routing:['登录与 PC 路由','服务端 BusinessRoute 校验 pageId 白名单，未知 ID 返回 404；WorkspaceEntry 组合 AuthGuard、WorkspaceShell、SnapshotView 与 BusinessPage。登录 next 经过白名单归一。','src/app/(frontend)/app/[pageId]/page.tsx / src/lib/routes.ts'],
+    mobile:['手机入口','四标签切换保存在 MobilePage 的 useState。复用 CommandPanel、TaskList、CoreMetrics 和 Review；review=false 隐藏审批和模拟执行，允许创建、确认和取消尚未执行的申请。','src/features/mobile-page.tsx'],
+    features:['页面与导航','BusinessPage 按 pageId 分发。overview/goals/monitor/tasks 进入 ControlWorkspace；其余为展示、申请入口或骨架。WorkspaceShell 从 routes.ts 生成四组导航。','src/features/business-page.tsx / src/features/control-workspace.tsx'],
+    commands:['共享任务组件','CommandPanel 区分 QUERY / ACTION / UNRECOGNIZED，处理候选消歧；TaskComposer 是结构化入口；JobDetails / TaskList 展示差异、风险、审批、回执和历史。','src/components/command-panel.tsx / task-controls.tsx'],
+    reporting:['经营上下文与状态','ScopeControls 更新共享范围；CoreMetrics 和 LiveSummary 复用统计纯函数。LoadingState、ErrorState、EmptyState 统一基础呈现；部分通用列表仍直接读取全快照。','src/components/operating-context.tsx / ui.tsx'],
+    provider:['WorkspaceProvider','挂载时读取身份，再读取统一快照。组件动作成功后 reload；Mock 存储事件触发刷新。generation 计数丢弃过时读取结果；AuthGuard 负责前端登录跳转。','src/components/provider.tsx'],
+    domain:['领域模型与纯函数','domain.ts 定义组织、计划、商品、素材和快照；command-job.ts 定义任务、动作、状态和值；reporting.ts 处理范围与证据；不承载真实平台执行。','src/lib/domain.ts / command-job.ts / reporting.ts'],
+    service:['FrontendService','统一 Promise 接口与 ServiceError，页面不直接访问 localStorage 或 fetch。工厂根据 NEXT_PUBLIC_DATA_MODE 选 MockAdapter 或 ApiClient，无运行时静默降级。','src/services/contracts.ts / index.ts'],
+    mock:['MockAdapter','在浏览器演示身份、快照、规则解析、风险预检、人工审批与分步模拟回执。默认申请 15 分钟有效、成功动作冷却 5 分钟；读快照时检查未执行申请过期。','src/services/mock-adapter.ts / mock-command.ts / mock-data.ts'],
+    api:['ApiClient','11 个待联调 HTTP 操作，Cookie credentials:include、no-store、15 秒超时。验证 envelope 和部分实体约束；subscribe 为空，正式执行推进由后端负责。','src/services/api-client.ts'],
+    backend:['独立后端与平台（待接入）','会话与权限、CSRF、任务持久化、幂等、AI、策略风控、平台执行和回读核验须由独立后端提供。当前仓库无数据库、业务 Route Handler、广告 SDK、执行 Worker。','README.md / docs/代码复用与边界.md']
+  };
+  document.querySelectorAll('[data-layer]').forEach(button => button.addEventListener('click', () => {
+    document.querySelectorAll('[data-layer]').forEach(node => node.setAttribute('aria-pressed', String(node === button)));
+    const value = layerDetails[button.dataset.layer], detail = document.getElementById('layer-detail');
+    detail.replaceChildren();
+    const strong = document.createElement('strong'); strong.textContent = value[0] + '：';
+    const code = document.createElement('code'); code.textContent = value[2];
+    detail.append(strong, document.createTextNode(value[1] + ' '), code);
+  }));
+  const tabs = [...document.querySelectorAll('.tab[role=tab]')];
+  function selectTab(tab, focus) {
+    tabs.forEach(button => { const active = button === tab; button.setAttribute('aria-selected', String(active)); button.tabIndex = active ? 0 : -1; document.getElementById(button.getAttribute('aria-controls')).hidden = !active; });
+    if (focus) tab.focus();
+  }
+  tabs.forEach((tab, index) => {
+    tab.tabIndex = index === 0 ? 0 : -1;
+    tab.addEventListener('click', () => selectTab(tab, false));
+    tab.addEventListener('keydown', event => { let next; if (event.key === 'ArrowRight') next=(index+1)%tabs.length; if (event.key === 'ArrowLeft') next=(index+tabs.length-1)%tabs.length; if (event.key === 'Home') next=0; if (event.key === 'End') next=tabs.length-1; if (next !== undefined) { event.preventDefault(); selectTab(tabs[next], true); } });
+  });
+  const scenarios = {
+    success:[['DRAFT','PENDING_APPROVAL','APPROVED','EXECUTING','VERIFYING','SUCCEEDED'],'仅在模拟回读 MATCHED 后投影新参数；回执来源始终是 MOCK，无真实平台写入。'],
+    blocked:[['BLOCKED'],'创建时预检发现预算硬上限、变化幅度或冷却期不满足；任务直接阻断。history 仍保留 DRAFT 创建记录。'],
+    request:[['DRAFT','PENDING_APPROVAL','APPROVED','EXECUTING','FAILED'],'模拟请求失败：accepted=false、verification=UNKNOWN，计划保持旧值。'],
+    timeout:[['DRAFT','PENDING_APPROVAL','APPROVED','EXECUTING','FAILED'],'模拟请求超时：accepted=null、verification=UNKNOWN；结果未知，不自动重试，不投影目标值。'],
+    verify:[['DRAFT','PENDING_APPROVAL','APPROVED','EXECUTING','VERIFYING','FAILED'],'模拟受理后回读不匹配：verification=MISMATCH；不能显示成功，计划保持旧值。'],
+    reject:[['DRAFT','PENDING_APPROVAL','REJECTED'],'审批人拒绝；approval.state=REJECTED，不进入执行。'],
+    cancel:[['DRAFT','PENDING_APPROVAL','APPROVED','CANCELLED'],'此处示意批准后取消；也允许在 DRAFT 或 PENDING_APPROVAL 取消。EXECUTING / VERIFYING 不允许取消。'],
+    expiry:[['DRAFT','PENDING_APPROVAL','EXPIRED'],'此处示意待审批时过期；DRAFT / APPROVED 也可过期。读取快照时检查默认 15 分钟期限，执行和核验阶段除外。'],
+    handoff:[['DRAFT','MANUAL_REQUIRED'],'开播 / 关播请求确认后进入人工交接终态；当前没有自动控制推流或交接完成迁移。'],
+    policy:[['DRAFT','PENDING_APPROVAL','APPROVED','BLOCKED'],'批准后、执行前发现策略版本变化，停止推进并要求重新申请；若已处于 EXECUTING / VERIFYING，则转 FAILED。']
+  };
+  function showScenario() {
+    const value=scenarios[document.getElementById('scenario').value], path=document.getElementById('scenario-path'); path.replaceChildren();
+    value[0].forEach((status,index) => { if(index) path.append(document.createTextNode('→')); const span=document.createElement('span'); span.className='scenario-step'+(index===value[0].length-1 && status!=='SUCCEEDED'?' terminal':''); span.textContent=status; path.append(span); });
+    document.getElementById('scenario-result').textContent=value[1];
+  }
+  document.getElementById('scenario').addEventListener('change', showScenario); showScenario();
+  document.getElementById('print-button').addEventListener('click', () => window.print());
+  if ('IntersectionObserver' in window) {
+    const links=[...document.querySelectorAll('.sidebar nav a')];
+    const observer=new IntersectionObserver(entries => { entries.forEach(entry => { if (entry.isIntersecting) links.forEach(link => { if(link.hash==='#'+entry.target.id) link.setAttribute('aria-current','location'); else link.removeAttribute('aria-current'); }); }); },{rootMargin:'0px 0px -65% 0px'});
+    document.querySelectorAll('section.chapter').forEach(section => observer.observe(section));
+  }
+})();
+</script>
+</body>
+</html>

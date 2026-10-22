@@ -1,0 +1,76 @@
+{
+  "document": "frontend-architecture-2026-10-22.html",
+  "routes": 21,
+  "operations": 11,
+  "sources": 27,
+  "layerNodes": 12,
+  "flowTabs": 4,
+  "scenarios": 10,
+  "responsive": [
+    {
+      "width": 1440,
+      "viewport": 1440,
+      "scrollWidth": 1440,
+      "clipped": []
+    },
+    {
+      "width": 1366,
+      "viewport": 1366,
+      "scrollWidth": 1366,
+      "clipped": []
+    },
+    {
+      "width": 1024,
+      "viewport": 1024,
+      "scrollWidth": 1024,
+      "clipped": []
+    },
+    {
+      "width": 800,
+      "viewport": 800,
+      "scrollWidth": 800,
+      "clipped": []
+    },
+    {
+      "width": 768,
+      "viewport": 768,
+      "scrollWidth": 768,
+      "clipped": []
+    },
+    {
+      "width": 390,
+      "viewport": 390,
+      "scrollWidth": 390,
+      "clipped": []
+    },
+    {
+      "width": 320,
+      "viewport": 320,
+      "scrollWidth": 320,
+      "clipped": []
+    }
+  ],
+  "printAllFlowsVisible": true,
+  "runtimeErrors": [],
+  "externalNetworkRequests": [],
+  "verifiedDate": "2026-10-22",
+  "unitTests": {
+    "passed": 27,
+    "command": ".runtime/node.exe scripts/run.mjs test",
+    "failed": 0
+  },
+  "homepageBaseline": {
+    "command": ".runtime/node.exe scripts/verify-homepage.mjs",
+    "matchedFiles": 3
+  },
+  "scope": "Document-only change; no full build or live backend integration was performed",
+  "sourceHashesMatched": 27,
+  "sourceCountsVerified": {
+    "jobStatuses": 12,
+    "commandActions": 7,
+    "connectors": 8,
+    "httpOperations": 11,
+    "pcRoutes": 21
+  },
+  "mobileTables": "Horizontal scrolling within tables; no document-level overflow"
+}

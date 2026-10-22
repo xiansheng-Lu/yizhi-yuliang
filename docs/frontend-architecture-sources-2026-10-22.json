@@ -1,0 +1,410 @@
+{
+  "generatedDate": "2026-10-22",
+  "timezone": "Asia/Shanghai",
+  "baselineCommit": "5d4b568065e432ed59b7a13cceec516dd763859e",
+  "scope": "Current local frontend implementation; future capabilities explicitly marked",
+  "excludedFromImplementationEvidence": [
+    "docs/后台页面规划_2026-10-22.md (untracked planning document)"
+  ],
+  "counts": {
+    "workspaces": 4,
+    "pcRoutes": 21,
+    "mobileTabs": 4,
+    "jobStatuses": 12,
+    "commandActions": 7,
+    "connectors": 8,
+    "httpOperations": 11
+  },
+  "routeGroups": [
+    {
+      "name": "经营总控",
+      "pages": [
+        [
+          "overview",
+          "AI总控台"
+        ],
+        [
+          "goals",
+          "经营目标"
+        ],
+        [
+          "monitor",
+          "AI直播作战室"
+        ],
+        [
+          "tasks",
+          "AI任务与审批"
+        ]
+      ]
+    },
+    {
+      "name": "内容中心",
+      "pages": [
+        [
+          "planning",
+          "内容策划"
+        ],
+        [
+          "scripts",
+          "脚本工厂"
+        ],
+        [
+          "videos",
+          "视频工厂"
+        ],
+        [
+          "graphics",
+          "图片图文"
+        ],
+        [
+          "editing",
+          "智能剪辑"
+        ],
+        [
+          "assets",
+          "素材资产库"
+        ],
+        [
+          "experiments",
+          "素材测试"
+        ]
+      ]
+    },
+    {
+      "name": "投放中心",
+      "pages": [
+        [
+          "plans",
+          "投放计划"
+        ],
+        [
+          "decisions",
+          "AI投手决策"
+        ],
+        [
+          "executions",
+          "执行记录"
+        ],
+        [
+          "products",
+          "商品与货盘"
+        ],
+        [
+          "budgets",
+          "跨平台预算"
+        ]
+      ]
+    },
+    {
+      "name": "经营与系统中心",
+      "pages": [
+        [
+          "analytics",
+          "经营分析"
+        ],
+        [
+          "reports",
+          "完整复盘"
+        ],
+        [
+          "agents",
+          "AI岗位管理"
+        ],
+        [
+          "connections",
+          "平台连接"
+        ],
+        [
+          "settings",
+          "企业和权限设置"
+        ]
+      ]
+    }
+  ],
+  "httpOperations": [
+    {
+      "method": "GET",
+      "path": "/v1/auth/session",
+      "operationId": "getSession",
+      "summary": "获取当前会话"
+    },
+    {
+      "method": "POST",
+      "path": "/v1/auth/login",
+      "operationId": "login",
+      "summary": "登录"
+    },
+    {
+      "method": "POST",
+      "path": "/v1/auth/logout",
+      "operationId": "logout",
+      "summary": "退出登录"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/frontend/snapshot",
+      "operationId": "getSnapshot",
+      "summary": "读取全量前端快照"
+    },
+    {
+      "method": "POST",
+      "path": "/v1/command-interpretations",
+      "operationId": "interpretCommand",
+      "summary": "解析自然语言指令"
+    },
+    {
+      "method": "POST",
+      "path": "/v1/command-jobs",
+      "operationId": "createJob",
+      "summary": "创建标准任务"
+    },
+    {
+      "method": "POST",
+      "path": "/v1/command-jobs/{job_id}/confirm",
+      "operationId": "confirmJob",
+      "summary": "确认对象与风险并提交审批"
+    },
+    {
+      "method": "POST",
+      "path": "/v1/command-jobs/{job_id}/approvals",
+      "operationId": "reviewJob",
+      "summary": "批准或驳回任务"
+    },
+    {
+      "method": "POST",
+      "path": "/v1/command-jobs/{job_id}/cancel",
+      "operationId": "cancelJob",
+      "summary": "取消未执行任务"
+    },
+    {
+      "method": "PUT",
+      "path": "/v1/risk-policies/{id}",
+      "operationId": "updatePolicy",
+      "summary": "更新经营目标与风控配置"
+    },
+    {
+      "method": "PUT",
+      "path": "/v1/frontend/reporting-scope",
+      "operationId": "setScope",
+      "summary": "更新共享统计范围"
+    }
+  ],
+  "sources": [
+    {
+      "id": "src-package",
+      "file": "package.json",
+      "label": "依赖与版本",
+      "line": 19,
+      "sha256": "c312a2b69e8d0e5c5674e7d0e4a4f3b8d82d6a6df52d6b6f08ae069af0ddd05b",
+      "codeUrl": "https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/package.json#L19"
+    },
+    {
+      "id": "src-next",
+      "file": "next.config.ts",
+      "label": "官网隔离与旧路径兼容",
+      "line": 3,
+      "sha256": "d371671971dd2121cca28908cfa5463fe380ba2c083e1d55d0d370a7dfb0790d",
+      "codeUrl": "https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/next.config.ts#L3"
+    },
+    {
+      "id": "src-routes",
+      "file": "src/lib/routes.ts",
+      "label": "四工作区、21 路由、next 白名单",
+      "line": 1,
+      "sha256": "edcafa2b6290fbbedac5322006eb960a7458aca4cf3213a91eb217e5c70f3a88",
+      "codeUrl": "https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/lib/routes.ts#L1"
+    },
+    {
+      "id": "src-route",
+      "file": "src/app/(frontend)/app/[pageId]/page.tsx",
+      "label": "服务端 pageId 校验",
+      "line": 4,
+      "sha256": "5e2f7b462f9fb76b277cff89a4ad93d28736a34a381ef9d3ec2f113bd436d760",
+      "codeUrl": "https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/app/%28frontend%29/app/%5BpageId%5D/page.tsx#L4"
+    },
+    {
+      "id": "src-layout",
+      "file": "src/app/(frontend)/layout.tsx",
+      "label": "业务 Provider 与 CSS 入口",
+      "line": 5,
+      "sha256": "0ccd9c147403e312bbdaacb887c1c5d57f0f61203ddace48a1105da5de8207d3",
+      "codeUrl": "https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/app/%28frontend%29/layout.tsx#L5"
+    },
+    {
+      "id": "src-provider",
+      "file": "src/components/provider.tsx",
+      "label": "共享状态、读取、守卫与错误边界",
+      "line": 30,
+      "sha256": "8e800752b169d382cd2e4405852508109a57c5f752e793c4f8e78d9603a49e0f",
+      "codeUrl": "https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/components/provider.tsx#L30"
+    },
+    {
+      "id": "src-shell",
+      "file": "src/components/workspace-shell.tsx",
+      "label": "PC 工作台导航与框架",
+      "line": 21,
+      "sha256": "6bbfcf39d600431fd6e14b89bf5ab27a67c676c9c6b7d6822e49b997b269f0fb",
+      "codeUrl": "https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/components/workspace-shell.tsx#L21"
+    },
+    {
+      "id": "src-business",
+      "file": "src/features/business-page.tsx",
+      "label": "页面能力、骨架与复盘",
+      "line": 282,
+      "sha256": "9948783928bbf52b30e1b783f7fbb19c047a20ca863f91b92d5bdb18479ab86a",
+      "codeUrl": "https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/features/business-page.tsx#L282"
+    },
+    {
+      "id": "src-control",
+      "file": "src/features/control-workspace.tsx",
+      "label": "经营目标与核心四页",
+      "line": 17,
+      "sha256": "1d2bc5b6940d1cccc6666a7928582ef2279902acd97fcd323258235f3cce7bba",
+      "codeUrl": "https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/features/control-workspace.tsx#L17"
+    },
+    {
+      "id": "src-mobile",
+      "file": "src/features/mobile-page.tsx",
+      "label": "手机四标签与 review=false",
+      "line": 23,
+      "sha256": "15aeeb2fcd30ea3259223c8c92d2944f92ea176f1573da973cc7b682eaf58a47",
+      "codeUrl": "https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/features/mobile-page.tsx#L23"
+    },
+    {
+      "id": "src-command-panel",
+      "file": "src/components/command-panel.tsx",
+      "label": "指令、消歧与任务创建",
+      "line": 13,
+      "sha256": "91e627bed1dbe3b8decf958badf5ca248fbe9841116feea4a9a8cbe696d01e7c",
+      "codeUrl": "https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/components/command-panel.tsx#L13"
+    },
+    {
+      "id": "src-task-ui",
+      "file": "src/components/task-controls.tsx",
+      "label": "任务详情、审批与执行按钮",
+      "line": 52,
+      "sha256": "8da24c89cc6a109bb3b7e56ff929cdb169d183d9e56ecc3957974605742fc206",
+      "codeUrl": "https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/components/task-controls.tsx#L52"
+    },
+    {
+      "id": "src-operating",
+      "file": "src/components/operating-context.tsx",
+      "label": "统计范围、KPI 与直播观察",
+      "line": 14,
+      "sha256": "6bac9ad44fbf33124d9de66012b68ceb46851d6e9ca5b38894d2b7e5225cf929",
+      "codeUrl": "https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/components/operating-context.tsx#L14"
+    },
+    {
+      "id": "src-domain",
+      "file": "src/lib/domain.ts",
+      "label": "领域实体与金额 / ROI 汇总",
+      "line": 2,
+      "sha256": "1de002eb752cf01f84fbe328743bde006358946bb4d97d8bd506004290a3d686",
+      "codeUrl": "https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/lib/domain.ts#L2"
+    },
+    {
+      "id": "src-job",
+      "file": "src/lib/command-job.ts",
+      "label": "任务、状态、动作、值类型",
+      "line": 3,
+      "sha256": "01532c981bd1e5b5860418b25d4133ae016380bf183d676ca659e6ddc9cab29f",
+      "codeUrl": "https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/lib/command-job.ts#L3"
+    },
+    {
+      "id": "src-reporting",
+      "file": "src/lib/reporting.ts",
+      "label": "范围筛选与证据过滤",
+      "line": 3,
+      "sha256": "c3628375f021afe1187b50f9e3615a9e835e7572af0162ccc068b21ee3b1b3d5",
+      "codeUrl": "https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/lib/reporting.ts#L3"
+    },
+    {
+      "id": "src-contracts",
+      "file": "src/services/contracts.ts",
+      "label": "Service 接口与统一错误",
+      "line": 43,
+      "sha256": "d9032e272ff617eb39ad2c568eb5f008cdf164401da717629bcb99cd35b05c86",
+      "codeUrl": "https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/services/contracts.ts#L43"
+    },
+    {
+      "id": "src-service",
+      "file": "src/services/index.ts",
+      "label": "Mock / API 适配器工厂",
+      "line": 4,
+      "sha256": "258c7cc2c7b6017f577cde9f2e11c588cb687e4a59b5197cae8e44932cdb288e",
+      "codeUrl": "https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/services/index.ts#L4"
+    },
+    {
+      "id": "src-mock",
+      "file": "src/services/mock-adapter.ts",
+      "label": "存储、任务状态机、版本与幂等",
+      "line": 40,
+      "sha256": "3363d68ce936b3599c3dc502b1420b690fa3be91eae1720c7216c20fe1976531",
+      "codeUrl": "https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/services/mock-adapter.ts#L40"
+    },
+    {
+      "id": "src-risk",
+      "file": "src/services/mock-command.ts",
+      "label": "Mock 规则解析与风险检查",
+      "line": 144,
+      "sha256": "4c4a497f1565ef5327735a2564034ef6dd45ffaa60a074ecb28ac960aeb0b060",
+      "codeUrl": "https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/services/mock-command.ts#L144"
+    },
+    {
+      "id": "src-identity",
+      "file": "src/services/mock-identity.ts",
+      "label": "演示身份与权限",
+      "line": 9,
+      "sha256": "6522d6ff1ffa5f013c954a9be4f4e7fb0d915971d4e896eb325362fb2560a0c3",
+      "codeUrl": "https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/services/mock-identity.ts#L9"
+    },
+    {
+      "id": "src-migration",
+      "file": "src/services/mock-migration.ts",
+      "label": "只读迁移，不继承旧审批",
+      "line": 11,
+      "sha256": "e991a406c69788b48fd646c9498df82754cff30fffb5d699376a707b493c71a5",
+      "codeUrl": "https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/services/mock-migration.ts#L11"
+    },
+    {
+      "id": "src-mock-data",
+      "file": "src/services/mock-data.ts",
+      "label": "初始演示数据与默认规则",
+      "line": 3,
+      "sha256": "3b9d1bc9fd59f5459ffb589860c5b7f9e1d4ab5128a5bc8dd1c58b950bcdd248",
+      "codeUrl": "https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/services/mock-data.ts#L3"
+    },
+    {
+      "id": "src-api-client",
+      "file": "src/services/api-client.ts",
+      "label": "HTTP 客户端与 API 结果约束",
+      "line": 20,
+      "sha256": "3211170cab4d6cfdf77ca7221348ad158cd8dcb5532aa13f44be4cea1d30eef8",
+      "codeUrl": "https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/services/api-client.ts#L20"
+    },
+    {
+      "id": "src-tests",
+      "file": "tests/frontend.test.ts",
+      "label": "现有任务与边界测试",
+      "line": 48,
+      "sha256": "7774cb4db76ac9b48b7fe227787bab7f75742bc08f4dadc71f2718687e4c93ce",
+      "codeUrl": "https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/tests/frontend.test.ts#L48"
+    },
+    {
+      "id": "src-runtime",
+      "file": "scripts/run.mjs",
+      "label": "固定运行时与检查命令",
+      "line": 7,
+      "sha256": "483ef452fafed557bc4046c0eb0d441f10e499504739dbd08898fd44fb3a56f6",
+      "codeUrl": "https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/scripts/run.mjs#L7"
+    },
+    {
+      "id": "src-api-package",
+      "file": "docs/api-handoff-2026-10-22/openapi.json",
+      "label": "既有 11 个接口与 Schema",
+      "line": 34,
+      "sha256": "cbdde3af39ef624102e4774b7507abb052c0515b4d4aa48eaa5f7ec2af57e337",
+      "codeUrl": "https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/docs/api-handoff-2026-10-22/openapi.json#L34"
+    }
+  ]
+}

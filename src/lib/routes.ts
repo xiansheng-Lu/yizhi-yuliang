@@ -23,11 +23,11 @@ export const workspaces = [
   {
     name: "投放中心",
     pages: [
-      ["plans", "投放计划"],
-      ["decisions", "AI投手决策"],
+      ["plans", "计划中心"],
+      ["decisions", "AI投放决策"],
       ["executions", "执行记录"],
       ["products", "商品与货盘"],
-      ["budgets", "跨平台预算"],
+      ["budgets", "预算调度"],
     ],
   },
   {
@@ -69,7 +69,7 @@ export const navigationGroups: { name: string; pages: readonly (readonly [PageId
   { name: "AI驭量中枢", pages: [["command", pageName("command")]] },
   { name: "经营概况", pages: [["overview", pageName("overview")]] },
   { name: "直播运营", pages: [["monitor", "AI直播作战室"], ["products", "商品与货盘"]] },
-  { name: "投放管理", pages: [["goals", "经营目标"], ["plans", "投放计划"], ["decisions", "AI投手决策"], ["budgets", "跨平台预算"], ["executions", "执行记录"]] },
+  { name: "投放管理", pages: [["goals", "经营目标"], ["plans", "计划中心"], ["decisions", "AI投放决策"], ["budgets", "预算调度"], ["executions", "执行记录"]] },
   { name: "内容工厂", pages: [["planning", "内容策划"], ["scripts", "脚本工厂"], ["videos", "视频工厂"], ["graphics", "图片图文"], ["editing", "智能剪辑"], ["assets", "素材资产库"], ["experiments", "素材测试"]] },
   { name: "数据复盘", pages: [["analytics", "经营分析"], ["reports", "完整复盘"]] },
 ];

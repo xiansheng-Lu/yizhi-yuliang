@@ -131,6 +131,11 @@ export class ApiClient implements FrontendService {
       throw error;
     }
   }
+  /** Delivery modules reuse the authenticated transport; endpoints are capability-gated. */
+  deliveryRequest<T>(path: string, method = "GET", body?: unknown, signal?: AbortSignal): Promise<T> {
+    if (!path.startsWith("/v1/delivery/")) throw new ServiceError("INVALID_INPUT", "投放接口路径不正确。");
+    return this.request<T>(path, method, body, signal);
+  }
   async login(input: LoginRequest) {
     const email = validEmail(input.email);
     if (input.method === "email_code" && (!/^\d{6}$/.test(input.code) || !input.challengeId))

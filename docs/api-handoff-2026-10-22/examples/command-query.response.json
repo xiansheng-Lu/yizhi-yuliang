@@ -1,0 +1,9 @@
+{
+  "data": {
+    "kind": "QUERY",
+    "text": "当前场次查询结果，展示快照中的直播与经营数据",
+    "live_session_id": "example-live"
+  },
+  "requestId": "example-request",
+  "schemaVersion": "command-job-v1.0"
+}

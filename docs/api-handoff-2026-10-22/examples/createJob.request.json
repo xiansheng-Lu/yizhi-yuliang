@@ -1,0 +1,14 @@
+{
+  "source": "MOBILE_COMMAND",
+  "shop_id": "example-shop",
+  "target_type": "AD_PLAN",
+  "target_id": "example-plan",
+  "action_type": "CHANGE_DAILY_BUDGET",
+  "new_value": {
+    "kind": "MONEY",
+    "currency": "CNY",
+    "amount_minor": 500000
+  },
+  "intent": "把千川A计划日预算调到5000",
+  "idempotency_key": "example-idempotency-001"
+}

@@ -1,0 +1,10 @@
+{
+  "id": "example-policy",
+  "tenantId": "example-tenant",
+  "dailyBudgetMinor": 2000000,
+  "targetRoi": 6,
+  "maxChangePercent": 50,
+  "cooldownMinutes": 5,
+  "mode": "COPILOT",
+  "version": 1
+}

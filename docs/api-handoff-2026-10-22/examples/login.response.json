@@ -1,0 +1,20 @@
+{
+  "data": {
+    "userId": "example-operator",
+    "displayName": "示例运营员",
+    "tenantId": "example-tenant",
+    "shopIds": [
+      "example-shop"
+    ],
+    "permissions": [
+      "snapshot.read",
+      "task.create",
+      "task.approve",
+      "task.execute",
+      "policy.edit"
+    ],
+    "mode": "API"
+  },
+  "requestId": "example-request",
+  "schemaVersion": "command-job-v1.0"
+}

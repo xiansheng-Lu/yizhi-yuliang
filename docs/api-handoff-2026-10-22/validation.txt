@@ -1,0 +1,10 @@
+PASS 11/11 ApiClient HTTP operations matched by TypeScript AST
+PASS 11 URL templates; all operationId unique
+PASS 166 interface fields exported; formal API provenance narrowed and mock_scenario excluded
+PASS 39 JSON schemas and 159 local references
+PASS 22 request/response examples checked with existing Ajv (JSON Schema compatible subset)
+PASS 11/11 Postman requests; templated JSON bodies parse after numeric substitution
+PASS 21/21 PC route mappings
+NOTE OpenAPI 3.1 document has local operation/reference/example checks; no dedicated full OpenAPI validator installed or run
+NOTE No HTTP requests were sent to a backend. Authentication/CSRF/real-time/live-status contracts remain unconfirmed.
+NOTE Production frontend source and frozen homepage unchanged by export.

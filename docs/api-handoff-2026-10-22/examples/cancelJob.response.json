@@ -1,0 +1,74 @@
+{
+  "data": {
+    "schema_version": "1.0",
+    "job_id": "example-job-001",
+    "source": "MOBILE_COMMAND",
+    "tenant_id": "example-tenant",
+    "shop_id": "example-shop",
+    "account_id": "example-account",
+    "live_session_id": "example-live",
+    "target_type": "AD_PLAN",
+    "target_id": "example-plan",
+    "action_type": "CHANGE_DAILY_BUDGET",
+    "old_value": {
+      "kind": "MONEY",
+      "currency": "CNY",
+      "amount_minor": 600000
+    },
+    "new_value": {
+      "kind": "MONEY",
+      "currency": "CNY",
+      "amount_minor": 500000
+    },
+    "intent": "把千川A计划日预算调到5000",
+    "status": "CANCELLED",
+    "created_at": "2026-10-22T02:00:00.000Z",
+    "updated_at": "2026-10-22T02:00:00.000Z",
+    "expires_at": "2026-10-22T02:15:00.000Z",
+    "risk_summary": {
+      "source": "SERVER",
+      "result": "REVIEW_REQUIRED",
+      "level": "MEDIUM",
+      "checks": [
+        {
+          "code": "OBJECT",
+          "passed": true,
+          "message": "示例：对象与账户属于当前授权店铺"
+        },
+        {
+          "code": "BUDGET_LIMIT",
+          "passed": true,
+          "message": "示例：合计预算未超过上限；具体规则待后端确认"
+        }
+      ],
+      "policy_version": 1,
+      "checked_at": "2026-10-22T02:00:00.000Z"
+    },
+    "approval": {
+      "state": "PENDING",
+      "actor_id": null,
+      "decided_at": null,
+      "method": null,
+      "approved_version": null
+    },
+    "execution_receipt": null,
+    "error": null,
+    "version": 3,
+    "idempotency_key": "example-idempotency-001",
+    "mode": "API",
+    "history": [
+      {
+        "status": "DRAFT",
+        "at": "2026-10-22T02:00:00.000Z",
+        "detail": "示例创建任务，非真实平台操作"
+      },
+      {
+        "status": "CANCELLED",
+        "at": "2026-10-22T02:00:00.000Z",
+        "detail": "仅为协议示例"
+      }
+    ]
+  },
+  "requestId": "example-request",
+  "schemaVersion": "command-job-v1.0"
+}

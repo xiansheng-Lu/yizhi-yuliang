@@ -1,0 +1,513 @@
+{
+  "info": {
+    "name": "易致驭量前端全量接口 G1-B1",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "11个实际声明的HTTP操作，基线84e3a6f51ccd960442c09ec9985079bd04703fe3。请求未对真实后端执行。先设置已授权测试环境与Cookie会话。写请求会改变测试任务/配置。认证Cookie名与CSRF尚待后端确认。幂等键需按同一逻辑请求复用；新意图需清空idempotencyKey后再生成。"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://backend.example.invalid"
+    },
+    {
+      "key": "email",
+      "value": ""
+    },
+    {
+      "key": "password",
+      "value": ""
+    },
+    {
+      "key": "jobId",
+      "value": "example-job-001"
+    },
+    {
+      "key": "jobVersion",
+      "value": "1"
+    },
+    {
+      "key": "shopId",
+      "value": "example-shop"
+    },
+    {
+      "key": "liveSessionId",
+      "value": "example-live"
+    },
+    {
+      "key": "planId",
+      "value": "example-plan"
+    },
+    {
+      "key": "policyId",
+      "value": "example-policy"
+    },
+    {
+      "key": "policyVersion",
+      "value": "1"
+    },
+    {
+      "key": "tenantId",
+      "value": "example-tenant"
+    },
+    {
+      "key": "idempotencyKey",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "GET /v1/auth/session 获取当前会话",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/v1/auth/session",
+        "description": "当前客户端把401转换为null，然后由路由守卫进入登录页。其他错误保留为错误状态。返回mode必须为API；tenantId非空、permissions必须为数组。 权限：已登录；无会话返回401"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.response.code >= 200 && pm.response.code < 300) {",
+              "  const p = pm.response.json();",
+              "  pm.test('JSON success envelope', () => { pm.expect(p.schemaVersion).to.eql('command-job-v1.0'); pm.expect(p.requestId).to.be.a('string'); pm.expect(p).to.have.property('data'); });",
+              "  if (p.data && p.data.job_id) { pm.collectionVariables.set('jobId', p.data.job_id); pm.collectionVariables.set('jobVersion', p.data.version); }",
+              "  if (p.data && p.data.id && typeof p.data.dailyBudgetMinor === 'number') { pm.collectionVariables.set('policyId', p.data.id); pm.collectionVariables.set('policyVersion', p.data.version); }",
+              "}"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "POST /v1/auth/login 登录",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/v1/auth/login",
+        "description": "后端建立正式会话。当前前端仅发送email/password；验证码、OAuth、CSRF、续期和Cookie属性均待确认。不要沿用Mock固定账号作为正式认证。 权限：无需已有会话；后端认证",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.response.code >= 200 && pm.response.code < 300) {",
+              "  const p = pm.response.json();",
+              "  pm.test('JSON success envelope', () => { pm.expect(p.schemaVersion).to.eql('command-job-v1.0'); pm.expect(p.requestId).to.be.a('string'); pm.expect(p).to.have.property('data'); });",
+              "  if (p.data && p.data.job_id) { pm.collectionVariables.set('jobId', p.data.job_id); pm.collectionVariables.set('jobVersion', p.data.version); }",
+              "  if (p.data && p.data.id && typeof p.data.dailyBudgetMinor === 'number') { pm.collectionVariables.set('policyId', p.data.id); pm.collectionVariables.set('policyVersion', p.data.version); }",
+              "}"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "POST /v1/auth/logout 退出登录",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/v1/auth/logout",
+        "description": "无请求体。后端撤销会话并返回带data:null的JSON信封；当前客户端会调用response.json()，204或空响应会被视为INVALID_RESPONSE。 权限：当前会话"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.response.code >= 200 && pm.response.code < 300) {",
+              "  const p = pm.response.json();",
+              "  pm.test('JSON success envelope', () => { pm.expect(p.schemaVersion).to.eql('command-job-v1.0'); pm.expect(p.requestId).to.be.a('string'); pm.expect(p).to.have.property('data'); });",
+              "  if (p.data && p.data.job_id) { pm.collectionVariables.set('jobId', p.data.job_id); pm.collectionVariables.set('jobVersion', p.data.version); }",
+              "  if (p.data && p.data.id && typeof p.data.dailyBudgetMinor === 'number') { pm.collectionVariables.set('policyId', p.data.id); pm.collectionVariables.set('policyVersion', p.data.version); }",
+              "}"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "GET /v1/frontend/snapshot 读取全量前端快照",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/v1/frontend/snapshot",
+        "description": "当前没有查询参数、分页参数或If-None-Match。返回当前身份授权范围内的全部实体及当前scope，前端再按scope筛选计划、指标和任务。所有十二个集合键必须是数组，即使为空；不得把分页对象直接放进数组字段。源必须为API、时区Asia/Shanghai，每条任务须通过正式任务检查。 权限：snapshot.read"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.response.code >= 200 && pm.response.code < 300) {",
+              "  const p = pm.response.json();",
+              "  pm.test('JSON success envelope', () => { pm.expect(p.schemaVersion).to.eql('command-job-v1.0'); pm.expect(p.requestId).to.be.a('string'); pm.expect(p).to.have.property('data'); });",
+              "  if (p.data && p.data.job_id) { pm.collectionVariables.set('jobId', p.data.job_id); pm.collectionVariables.set('jobVersion', p.data.version); }",
+              "  if (p.data && p.data.id && typeof p.data.dailyBudgetMinor === 'number') { pm.collectionVariables.set('policyId', p.data.id); pm.collectionVariables.set('policyVersion', p.data.version); }",
+              "}"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "POST /v1/command-interpretations 解析自然语言指令",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/v1/command-interpretations",
+        "description": "只返回查询或动作候选，不创建、不审批、不执行任务。QUERY关联已有快照场次，不包含直播数据本体；场次或计划不唯一时给出候选，用户选择后才允许创建。UNRECOGNIZED.text用于解释无法解析的原因。 权限：task.create（当前Mock/UI建议，后端确认）",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"text\": \"把千川A计划日预算调到5000\",\n  \"scope\": {\n    \"shop_id\": \"{{shopId}}\",\n    \"live_session_id\": \"{{liveSessionId}}\",\n    \"connector_id\": \"all\",\n    \"date\": \"2026-10-22\",\n    \"timezone\": \"Asia/Shanghai\"\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.response.code >= 200 && pm.response.code < 300) {",
+              "  const p = pm.response.json();",
+              "  pm.test('JSON success envelope', () => { pm.expect(p.schemaVersion).to.eql('command-job-v1.0'); pm.expect(p.requestId).to.be.a('string'); pm.expect(p).to.have.property('data'); });",
+              "  if (p.data && p.data.job_id) { pm.collectionVariables.set('jobId', p.data.job_id); pm.collectionVariables.set('jobVersion', p.data.version); }",
+              "  if (p.data && p.data.id && typeof p.data.dailyBudgetMinor === 'number') { pm.collectionVariables.set('policyId', p.data.id); pm.collectionVariables.set('policyVersion', p.data.version); }",
+              "}"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "POST /v1/command-jobs 创建标准任务",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/v1/command-jobs",
+        "description": "允许PC_MANUAL或MOBILE_COMMAND；浏览器ApiClient拒绝AUTOPILOT。后端从对象推导tenant/account/old_value，生成job_id、风险、版本和有效期。正常为DRAFT；业务风控阻断可返回完整BLOCKED任务供UI展示。创建不是确认、审批或执行。幂等键在JSON请求体，不是Idempotency-Key请求头。 权限：task.create",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"source\": \"MOBILE_COMMAND\",\n  \"shop_id\": \"{{shopId}}\",\n  \"target_type\": \"AD_PLAN\",\n  \"target_id\": \"{{planId}}\",\n  \"action_type\": \"CHANGE_DAILY_BUDGET\",\n  \"new_value\": {\n    \"kind\": \"MONEY\",\n    \"currency\": \"CNY\",\n    \"amount_minor\": 500000\n  },\n  \"intent\": \"把千川A计划日预算调到5000\",\n  \"idempotency_key\": \"{{idempotencyKey}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (!pm.collectionVariables.get('idempotencyKey')) pm.collectionVariables.set('idempotencyKey', pm.variables.replaceIn('{{$guid}}')); "
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.response.code >= 200 && pm.response.code < 300) {",
+              "  const p = pm.response.json();",
+              "  pm.test('JSON success envelope', () => { pm.expect(p.schemaVersion).to.eql('command-job-v1.0'); pm.expect(p.requestId).to.be.a('string'); pm.expect(p).to.have.property('data'); });",
+              "  if (p.data && p.data.job_id) { pm.collectionVariables.set('jobId', p.data.job_id); pm.collectionVariables.set('jobVersion', p.data.version); }",
+              "  if (p.data && p.data.id && typeof p.data.dailyBudgetMinor === 'number') { pm.collectionVariables.set('policyId', p.data.id); pm.collectionVariables.set('policyVersion', p.data.version); }",
+              "}"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "POST /v1/command-jobs/{job_id}/confirm 确认对象与风险并提交审批",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/v1/command-jobs/{{jobId}}/confirm",
+        "description": "路径与请求体job_id保持一致。重新核对旧值、对象、规则版本和权限，普通动作DRAFT→PENDING_APPROVAL；直播交接DRAFT→MANUAL_REQUIRED；条件变化返回BLOCKED或409。 权限：task.create",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"job_id\": \"{{jobId}}\",\n  \"expected_version\": {{jobVersion}}\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.response.code >= 200 && pm.response.code < 300) {",
+              "  const p = pm.response.json();",
+              "  pm.test('JSON success envelope', () => { pm.expect(p.schemaVersion).to.eql('command-job-v1.0'); pm.expect(p.requestId).to.be.a('string'); pm.expect(p).to.have.property('data'); });",
+              "  if (p.data && p.data.job_id) { pm.collectionVariables.set('jobId', p.data.job_id); pm.collectionVariables.set('jobVersion', p.data.version); }",
+              "  if (p.data && p.data.id && typeof p.data.dailyBudgetMinor === 'number') { pm.collectionVariables.set('policyId', p.data.id); pm.collectionVariables.set('policyVersion', p.data.version); }",
+              "}"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "POST /v1/command-jobs/{job_id}/approvals 批准或驳回任务",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/v1/command-jobs/{{jobId}}/approvals",
+        "description": "只对待审批版本处理APPROVE或REJECT。当前返回值必须是完整CommandJob，不是单独Approval。人工批准只进入APPROVED，不能直接宣称执行成功。审批职责分离及低风险SERVER_POLICY授权由后端决定。 权限：task.approve",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"job_id\": \"{{jobId}}\",\n  \"expected_version\": {{jobVersion}},\n  \"decision\": \"APPROVE\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.response.code >= 200 && pm.response.code < 300) {",
+              "  const p = pm.response.json();",
+              "  pm.test('JSON success envelope', () => { pm.expect(p.schemaVersion).to.eql('command-job-v1.0'); pm.expect(p.requestId).to.be.a('string'); pm.expect(p).to.have.property('data'); });",
+              "  if (p.data && p.data.job_id) { pm.collectionVariables.set('jobId', p.data.job_id); pm.collectionVariables.set('jobVersion', p.data.version); }",
+              "  if (p.data && p.data.id && typeof p.data.dailyBudgetMinor === 'number') { pm.collectionVariables.set('policyId', p.data.id); pm.collectionVariables.set('policyVersion', p.data.version); }",
+              "}"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "POST /v1/command-jobs/{job_id}/cancel 取消未执行任务",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/v1/command-jobs/{{jobId}}/cancel",
+        "description": "当前演示允许DRAFT/PENDING_APPROVAL/APPROVED取消，EXECUTING/VERIFYING不可从前端直接取消。过期、终态或版本过旧返回409。后端应确定审批后取消的权限和额度释放规则。 权限：task.create（当前Mock/UI；正式规则待确认）",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"job_id\": \"{{jobId}}\",\n  \"expected_version\": {{jobVersion}}\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.response.code >= 200 && pm.response.code < 300) {",
+              "  const p = pm.response.json();",
+              "  pm.test('JSON success envelope', () => { pm.expect(p.schemaVersion).to.eql('command-job-v1.0'); pm.expect(p.requestId).to.be.a('string'); pm.expect(p).to.have.property('data'); });",
+              "  if (p.data && p.data.job_id) { pm.collectionVariables.set('jobId', p.data.job_id); pm.collectionVariables.set('jobVersion', p.data.version); }",
+              "  if (p.data && p.data.id && typeof p.data.dailyBudgetMinor === 'number') { pm.collectionVariables.set('policyId', p.data.id); pm.collectionVariables.set('policyVersion', p.data.version); }",
+              "}"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "PUT /v1/risk-policies/{id} 更新经营目标与风控配置",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/v1/risk-policies/{{policyId}}",
+        "description": "发送完整RiskPolicy，包括id、tenantId、version。后端不得信任主体字段；检查版本后递增并返回新对象。保存经营ROI目标不直接改计划ROI或出价；更改AUTOPILOT工作模式不授予自动审批。当前UI使用riskPolicies[0]，有效配置应排第一。 权限：policy.edit",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"id\": \"{{policyId}}\",\n  \"tenantId\": \"{{tenantId}}\",\n  \"dailyBudgetMinor\": 2000000,\n  \"targetRoi\": 5,\n  \"maxChangePercent\": 50,\n  \"cooldownMinutes\": 5,\n  \"mode\": \"COPILOT\",\n  \"version\": {{policyVersion}}\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.response.code >= 200 && pm.response.code < 300) {",
+              "  const p = pm.response.json();",
+              "  pm.test('JSON success envelope', () => { pm.expect(p.schemaVersion).to.eql('command-job-v1.0'); pm.expect(p.requestId).to.be.a('string'); pm.expect(p).to.have.property('data'); });",
+              "  if (p.data && p.data.job_id) { pm.collectionVariables.set('jobId', p.data.job_id); pm.collectionVariables.set('jobVersion', p.data.version); }",
+              "  if (p.data && p.data.id && typeof p.data.dailyBudgetMinor === 'number') { pm.collectionVariables.set('policyId', p.data.id); pm.collectionVariables.set('policyVersion', p.data.version); }",
+              "}"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "PUT /v1/frontend/reporting-scope 更新共享统计范围",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/v1/frontend/reporting-scope",
+        "description": "返回data:null的JSON信封。后续GET快照应返回该scope，并保留有权访问的实体以便切换；当前客户端忽略PUT的返回data，随后reload。scope的存储维度、跨设备共享方式待确认，不能据客户端all返回越权数据。 权限：snapshot.read，且对象属于授权范围",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"shop_id\": \"{{shopId}}\",\n  \"live_session_id\": \"{{liveSessionId}}\",\n  \"connector_id\": \"all\",\n  \"date\": \"2026-10-22\",\n  \"timezone\": \"Asia/Shanghai\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.response.code >= 200 && pm.response.code < 300) {",
+              "  const p = pm.response.json();",
+              "  pm.test('JSON success envelope', () => { pm.expect(p.schemaVersion).to.eql('command-job-v1.0'); pm.expect(p.requestId).to.be.a('string'); pm.expect(p).to.have.property('data'); });",
+              "  if (p.data && p.data.job_id) { pm.collectionVariables.set('jobId', p.data.job_id); pm.collectionVariables.set('jobVersion', p.data.version); }",
+              "  if (p.data && p.data.id && typeof p.data.dailyBudgetMinor === 'number') { pm.collectionVariables.set('policyId', p.data.id); pm.collectionVariables.set('policyVersion', p.data.version); }",
+              "}"
+            ]
+          }
+        }
+      ],
+      "response": []
+    }
+  ]
+}

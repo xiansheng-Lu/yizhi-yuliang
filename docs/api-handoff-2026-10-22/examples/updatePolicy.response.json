@@ -1,0 +1,14 @@
+{
+  "data": {
+    "id": "example-policy",
+    "tenantId": "example-tenant",
+    "dailyBudgetMinor": 2000000,
+    "targetRoi": 6,
+    "maxChangePercent": 50,
+    "cooldownMinutes": 5,
+    "mode": "COPILOT",
+    "version": 2
+  },
+  "requestId": "example-request",
+  "schemaVersion": "command-job-v1.0"
+}

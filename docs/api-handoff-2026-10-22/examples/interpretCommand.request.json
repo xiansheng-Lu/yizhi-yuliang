@@ -1,0 +1,10 @@
+{
+  "text": "把千川A计划日预算调到5000",
+  "scope": {
+    "shop_id": "example-shop",
+    "live_session_id": "example-live",
+    "connector_id": "all",
+    "date": "2026-10-22",
+    "timezone": "Asia/Shanghai"
+  }
+}

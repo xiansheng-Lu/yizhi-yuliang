@@ -1,0 +1,4582 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "易致驭量前端 RESTful API 全量接口文档",
+    "version": "1.0.0",
+    "description": "2026-10-22 导出，前端基线 84e3a6f51ccd960442c09ec9985079bd04703fe3。11个当前ApiClient HTTP操作。仅前端声明，后端未联调、未确认。JSON模型来自当前TypeScript；API来源约束比Mock联合类型更严格。所有example均为构造的协议样例，不是真实业务数据或真实平台成功。正式Cookie名/CSRF协议未确定，因此不虚构securitySchemes；各operation的x-session-required及说明标记认证需求。"
+  },
+  "servers": [
+    {
+      "url": "https://backend.example.invalid",
+      "description": "占位地址；导入后替换为陆文龙提供的测试后端地址，禁止直接使用生产环境验收。"
+    }
+  ],
+  "tags": [
+    {
+      "name": "会话"
+    },
+    {
+      "name": "共享数据"
+    },
+    {
+      "name": "AI指挥"
+    },
+    {
+      "name": "任务"
+    },
+    {
+      "name": "审批"
+    },
+    {
+      "name": "经营目标"
+    }
+  ],
+  "paths": {
+    "/v1/auth/session": {
+      "get": {
+        "operationId": "getSession",
+        "summary": "获取当前会话",
+        "tags": [
+          "会话"
+        ],
+        "description": "当前客户端把401转换为null，然后由路由守卫进入登录页。其他错误保留为错误状态。返回mode必须为API；tenantId非空、permissions必须为数组。 权限：已登录；无会话返回401",
+        "x-session-required": true,
+        "x-frontend-service-method": "getIdentity",
+        "x-contract-status": "frontend-declared-backend-unconfirmed",
+        "responses": {
+          "200": {
+            "description": "JSON成功信封；样例均为构造的协议示例",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessIdentity"
+                },
+                "example": {
+                  "data": {
+                    "userId": "example-operator",
+                    "displayName": "示例运营员",
+                    "tenantId": "example-tenant",
+                    "shopIds": [
+                      "example-shop"
+                    ],
+                    "permissions": [
+                      "snapshot.read",
+                      "task.create",
+                      "task.approve",
+                      "task.execute",
+                      "policy.edit"
+                    ],
+                    "mode": "API"
+                  },
+                  "requestId": "example-request",
+                  "schemaVersion": "command-job-v1.0"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "INVALID_INPUT",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "UNAUTHENTICATED",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "FORBIDDEN",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "NO_DATA",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "CONFLICT",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "INVALID_INPUT",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "NETWORK_ERROR",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "NETWORK_ERROR",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "NETWORK_ERROR",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/auth/login": {
+      "post": {
+        "operationId": "login",
+        "summary": "登录",
+        "tags": [
+          "会话"
+        ],
+        "description": "后端建立正式会话。当前前端仅发送email/password；验证码、OAuth、CSRF、续期和Cookie属性均待确认。不要沿用Mock固定账号作为正式认证。 权限：无需已有会话；后端认证",
+        "x-session-required": false,
+        "x-frontend-service-method": "login",
+        "x-contract-status": "frontend-declared-backend-unconfirmed",
+        "responses": {
+          "200": {
+            "description": "JSON成功信封；样例均为构造的协议示例",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessIdentity"
+                },
+                "example": {
+                  "data": {
+                    "userId": "example-operator",
+                    "displayName": "示例运营员",
+                    "tenantId": "example-tenant",
+                    "shopIds": [
+                      "example-shop"
+                    ],
+                    "permissions": [
+                      "snapshot.read",
+                      "task.create",
+                      "task.approve",
+                      "task.execute",
+                      "policy.edit"
+                    ],
+                    "mode": "API"
+                  },
+                  "requestId": "example-request",
+                  "schemaVersion": "command-job-v1.0"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "INVALID_INPUT",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "UNAUTHENTICATED",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "FORBIDDEN",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "NO_DATA",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "CONFLICT",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "INVALID_INPUT",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "NETWORK_ERROR",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "NETWORK_ERROR",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "NETWORK_ERROR",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              },
+              "example": {
+                "email": "operator@example.invalid",
+                "password": "示例占位值，不是真实密码"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/auth/logout": {
+      "post": {
+        "operationId": "logout",
+        "summary": "退出登录",
+        "tags": [
+          "会话"
+        ],
+        "description": "无请求体。后端撤销会话并返回带data:null的JSON信封；当前客户端会调用response.json()，204或空响应会被视为INVALID_RESPONSE。 权限：当前会话",
+        "x-session-required": true,
+        "x-frontend-service-method": "logout",
+        "x-contract-status": "frontend-declared-backend-unconfirmed",
+        "responses": {
+          "200": {
+            "description": "JSON成功信封；样例均为构造的协议示例",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessNullData"
+                },
+                "example": {
+                  "data": null,
+                  "requestId": "example-request",
+                  "schemaVersion": "command-job-v1.0"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "INVALID_INPUT",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "UNAUTHENTICATED",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "FORBIDDEN",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "NO_DATA",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "CONFLICT",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "INVALID_INPUT",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "NETWORK_ERROR",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "NETWORK_ERROR",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "NETWORK_ERROR",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/frontend/snapshot": {
+      "get": {
+        "operationId": "getSnapshot",
+        "summary": "读取全量前端快照",
+        "tags": [
+          "共享数据"
+        ],
+        "description": "当前没有查询参数、分页参数或If-None-Match。返回当前身份授权范围内的全部实体及当前scope，前端再按scope筛选计划、指标和任务。所有十二个集合键必须是数组，即使为空；不得把分页对象直接放进数组字段。源必须为API、时区Asia/Shanghai，每条任务须通过正式任务检查。 权限：snapshot.read",
+        "x-session-required": true,
+        "x-frontend-service-method": "getSnapshot",
+        "x-contract-status": "frontend-declared-backend-unconfirmed",
+        "responses": {
+          "200": {
+            "description": "JSON成功信封；样例均为构造的协议示例",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessFrontendSnapshot"
+                },
+                "example": {
+                  "data": {
+                    "schemaVersion": "command-job-v1.0",
+                    "revision": 1,
+                    "source": "API",
+                    "tenants": [
+                      {
+                        "id": "example-tenant",
+                        "name": "示例企业"
+                      }
+                    ],
+                    "shops": [
+                      {
+                        "id": "example-shop",
+                        "tenantId": "example-tenant",
+                        "name": "示例店铺",
+                        "connectorId": "douyinshop"
+                      }
+                    ],
+                    "adAccounts": [
+                      {
+                        "id": "example-account",
+                        "tenantId": "example-tenant",
+                        "shopId": "example-shop",
+                        "connectorId": "qianchuan",
+                        "name": "示例千川账户"
+                      }
+                    ],
+                    "liveSessions": [
+                      {
+                        "id": "example-live",
+                        "tenantId": "example-tenant",
+                        "shopId": "example-shop",
+                        "name": "示例直播专场",
+                        "sourceUpdatedAt": "2026-10-22T02:00:00.000Z",
+                        "fetchedAt": "2026-10-22T02:00:00.000Z",
+                        "online": 1284,
+                        "productClicks": 367,
+                        "status": "UNKNOWN"
+                      }
+                    ],
+                    "plans": [
+                      {
+                        "id": "example-plan",
+                        "nativePlanId": "example-native-plan",
+                        "tenantId": "example-tenant",
+                        "shopId": "example-shop",
+                        "adAccountId": "example-account",
+                        "liveSessionId": "example-live",
+                        "name": "千川A计划",
+                        "aliases": [
+                          "千川A计划"
+                        ],
+                        "budgetMinor": 600000,
+                        "bidMinor": 280,
+                        "targetRoi": 5,
+                        "enabled": true,
+                        "spendMinor": 426000,
+                        "paidGmvMinor": 3412000,
+                        "sourceUpdatedAt": "2026-10-22T02:00:00.000Z",
+                        "attributionWindow": "示例：选定自然日支付归因，具体归因窗待双方确认"
+                      }
+                    ],
+                    "products": [
+                      {
+                        "id": "example-product",
+                        "tenantId": "example-tenant",
+                        "shopId": "example-shop",
+                        "skuId": "example-sku",
+                        "name": "示例商品",
+                        "priceMinor": 29900,
+                        "stock": 100,
+                        "clicks": 200,
+                        "paidOrders": 20,
+                        "speechAdvice": "示例：说明商品规格与优惠条件"
+                      }
+                    ],
+                    "materials": [
+                      {
+                        "id": "example-material",
+                        "tenantId": "example-tenant",
+                        "productId": "example-product",
+                        "name": "示例脚本",
+                        "version": "V1",
+                        "kind": "SCRIPT",
+                        "status": "DRAFT"
+                      }
+                    ],
+                    "tasks": [
+                      {
+                        "schema_version": "1.0",
+                        "job_id": "example-job-001",
+                        "source": "MOBILE_COMMAND",
+                        "tenant_id": "example-tenant",
+                        "shop_id": "example-shop",
+                        "account_id": "example-account",
+                        "live_session_id": "example-live",
+                        "target_type": "AD_PLAN",
+                        "target_id": "example-plan",
+                        "action_type": "CHANGE_DAILY_BUDGET",
+                        "old_value": {
+                          "kind": "MONEY",
+                          "currency": "CNY",
+                          "amount_minor": 600000
+                        },
+                        "new_value": {
+                          "kind": "MONEY",
+                          "currency": "CNY",
+                          "amount_minor": 500000
+                        },
+                        "intent": "把千川A计划日预算调到5000",
+                        "status": "DRAFT",
+                        "created_at": "2026-10-22T02:00:00.000Z",
+                        "updated_at": "2026-10-22T02:00:00.000Z",
+                        "expires_at": "2026-10-22T02:15:00.000Z",
+                        "risk_summary": {
+                          "source": "SERVER",
+                          "result": "REVIEW_REQUIRED",
+                          "level": "MEDIUM",
+                          "checks": [
+                            {
+                              "code": "OBJECT",
+                              "passed": true,
+                              "message": "示例：对象与账户属于当前授权店铺"
+                            },
+                            {
+                              "code": "BUDGET_LIMIT",
+                              "passed": true,
+                              "message": "示例：合计预算未超过上限；具体规则待后端确认"
+                            }
+                          ],
+                          "policy_version": 1,
+                          "checked_at": "2026-10-22T02:00:00.000Z"
+                        },
+                        "approval": {
+                          "state": "NOT_REQUESTED",
+                          "actor_id": null,
+                          "decided_at": null,
+                          "method": null,
+                          "approved_version": null
+                        },
+                        "execution_receipt": null,
+                        "error": null,
+                        "version": 1,
+                        "idempotency_key": "example-idempotency-001",
+                        "mode": "API",
+                        "history": [
+                          {
+                            "status": "DRAFT",
+                            "at": "2026-10-22T02:00:00.000Z",
+                            "detail": "示例创建任务，非真实平台操作"
+                          }
+                        ]
+                      }
+                    ],
+                    "scope": {
+                      "shop_id": "example-shop",
+                      "live_session_id": "example-live",
+                      "connector_id": "all",
+                      "date": "2026-10-22",
+                      "timezone": "Asia/Shanghai"
+                    },
+                    "riskPolicies": [
+                      {
+                        "id": "example-policy",
+                        "tenantId": "example-tenant",
+                        "dailyBudgetMinor": 2000000,
+                        "targetRoi": 5,
+                        "maxChangePercent": 50,
+                        "cooldownMinutes": 5,
+                        "mode": "COPILOT",
+                        "version": 1
+                      }
+                    ],
+                    "replaySegments": [
+                      {
+                        "id": "example-segment",
+                        "liveSessionId": "example-live",
+                        "productId": "example-product",
+                        "startSeconds": 60,
+                        "endSeconds": 120,
+                        "transcript": "示例转写文本",
+                        "advice": "示例话术建议",
+                        "videoUrl": null
+                      }
+                    ],
+                    "replayReports": [
+                      {
+                        "id": "example-report",
+                        "liveSessionId": "example-live",
+                        "source": "API",
+                        "sections": [
+                          {
+                            "title": "直播概览",
+                            "evidenceIds": [
+                              "example-segment"
+                            ],
+                            "text": "仅为协议样例，不是后端已生成的报告"
+                          }
+                        ]
+                      }
+                    ],
+                    "connectors": [
+                      {
+                        "id": "adq",
+                        "status": "UNKNOWN",
+                        "scopes": [],
+                        "checkedAt": null
+                      },
+                      {
+                        "id": "wxpromo",
+                        "status": "UNKNOWN",
+                        "scopes": [],
+                        "checkedAt": null
+                      },
+                      {
+                        "id": "beans",
+                        "status": "UNKNOWN",
+                        "scopes": [],
+                        "checkedAt": null
+                      },
+                      {
+                        "id": "wxshop",
+                        "status": "UNKNOWN",
+                        "scopes": [],
+                        "checkedAt": null
+                      },
+                      {
+                        "id": "qianchuan",
+                        "status": "UNKNOWN",
+                        "scopes": [],
+                        "checkedAt": null
+                      },
+                      {
+                        "id": "douyinshop",
+                        "status": "UNKNOWN",
+                        "scopes": [],
+                        "checkedAt": null
+                      },
+                      {
+                        "id": "juguang",
+                        "status": "UNKNOWN",
+                        "scopes": [],
+                        "checkedAt": null
+                      },
+                      {
+                        "id": "redshop",
+                        "status": "UNKNOWN",
+                        "scopes": [],
+                        "checkedAt": null
+                      }
+                    ]
+                  },
+                  "requestId": "example-request",
+                  "schemaVersion": "command-job-v1.0"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "INVALID_INPUT",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "UNAUTHENTICATED",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "FORBIDDEN",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "NO_DATA",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "CONFLICT",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "INVALID_INPUT",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "NETWORK_ERROR",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "NETWORK_ERROR",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "NETWORK_ERROR",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/command-interpretations": {
+      "post": {
+        "operationId": "interpretCommand",
+        "summary": "解析自然语言指令",
+        "tags": [
+          "AI指挥"
+        ],
+        "description": "只返回查询或动作候选，不创建、不审批、不执行任务。QUERY关联已有快照场次，不包含直播数据本体；场次或计划不唯一时给出候选，用户选择后才允许创建。UNRECOGNIZED.text用于解释无法解析的原因。 权限：task.create（当前Mock/UI建议，后端确认）",
+        "x-session-required": true,
+        "x-frontend-service-method": "interpretCommand",
+        "x-contract-status": "frontend-declared-backend-unconfirmed",
+        "responses": {
+          "200": {
+            "description": "JSON成功信封；样例均为构造的协议示例",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessCommandInterpretation"
+                },
+                "example": {
+                  "data": {
+                    "kind": "ACTION",
+                    "text": "请核对候选计划与目标值",
+                    "action_type": "CHANGE_DAILY_BUDGET",
+                    "new_value": {
+                      "kind": "MONEY",
+                      "currency": "CNY",
+                      "amount_minor": 500000
+                    },
+                    "target_type": "AD_PLAN",
+                    "candidate_ids": [
+                      "example-plan",
+                      "example-plan-b"
+                    ]
+                  },
+                  "requestId": "example-request",
+                  "schemaVersion": "command-job-v1.0"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "INVALID_INPUT",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "UNAUTHENTICATED",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "FORBIDDEN",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "NO_DATA",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "CONFLICT",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "INVALID_INPUT",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "NETWORK_ERROR",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "NETWORK_ERROR",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "NETWORK_ERROR",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InterpretCommandRequest"
+              },
+              "example": {
+                "text": "把千川A计划日预算调到5000",
+                "scope": {
+                  "shop_id": "example-shop",
+                  "live_session_id": "example-live",
+                  "connector_id": "all",
+                  "date": "2026-10-22",
+                  "timezone": "Asia/Shanghai"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/command-jobs": {
+      "post": {
+        "operationId": "createJob",
+        "summary": "创建标准任务",
+        "tags": [
+          "任务"
+        ],
+        "description": "允许PC_MANUAL或MOBILE_COMMAND；浏览器ApiClient拒绝AUTOPILOT。后端从对象推导tenant/account/old_value，生成job_id、风险、版本和有效期。正常为DRAFT；业务风控阻断可返回完整BLOCKED任务供UI展示。创建不是确认、审批或执行。幂等键在JSON请求体，不是Idempotency-Key请求头。 权限：task.create",
+        "x-session-required": true,
+        "x-frontend-service-method": "createJob",
+        "x-contract-status": "frontend-declared-backend-unconfirmed",
+        "responses": {
+          "200": {
+            "description": "JSON成功信封；样例均为构造的协议示例",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessCommandJob"
+                },
+                "example": {
+                  "data": {
+                    "schema_version": "1.0",
+                    "job_id": "example-job-001",
+                    "source": "MOBILE_COMMAND",
+                    "tenant_id": "example-tenant",
+                    "shop_id": "example-shop",
+                    "account_id": "example-account",
+                    "live_session_id": "example-live",
+                    "target_type": "AD_PLAN",
+                    "target_id": "example-plan",
+                    "action_type": "CHANGE_DAILY_BUDGET",
+                    "old_value": {
+                      "kind": "MONEY",
+                      "currency": "CNY",
+                      "amount_minor": 600000
+                    },
+                    "new_value": {
+                      "kind": "MONEY",
+                      "currency": "CNY",
+                      "amount_minor": 500000
+                    },
+                    "intent": "把千川A计划日预算调到5000",
+                    "status": "DRAFT",
+                    "created_at": "2026-10-22T02:00:00.000Z",
+                    "updated_at": "2026-10-22T02:00:00.000Z",
+                    "expires_at": "2026-10-22T02:15:00.000Z",
+                    "risk_summary": {
+                      "source": "SERVER",
+                      "result": "REVIEW_REQUIRED",
+                      "level": "MEDIUM",
+                      "checks": [
+                        {
+                          "code": "OBJECT",
+                          "passed": true,
+                          "message": "示例：对象与账户属于当前授权店铺"
+                        },
+                        {
+                          "code": "BUDGET_LIMIT",
+                          "passed": true,
+                          "message": "示例：合计预算未超过上限；具体规则待后端确认"
+                        }
+                      ],
+                      "policy_version": 1,
+                      "checked_at": "2026-10-22T02:00:00.000Z"
+                    },
+                    "approval": {
+                      "state": "NOT_REQUESTED",
+                      "actor_id": null,
+                      "decided_at": null,
+                      "method": null,
+                      "approved_version": null
+                    },
+                    "execution_receipt": null,
+                    "error": null,
+                    "version": 1,
+                    "idempotency_key": "example-idempotency-001",
+                    "mode": "API",
+                    "history": [
+                      {
+                        "status": "DRAFT",
+                        "at": "2026-10-22T02:00:00.000Z",
+                        "detail": "示例创建任务，非真实平台操作"
+                      }
+                    ]
+                  },
+                  "requestId": "example-request",
+                  "schemaVersion": "command-job-v1.0"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "JSON成功信封；样例均为构造的协议示例",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessCommandJob"
+                },
+                "example": {
+                  "data": {
+                    "schema_version": "1.0",
+                    "job_id": "example-job-001",
+                    "source": "MOBILE_COMMAND",
+                    "tenant_id": "example-tenant",
+                    "shop_id": "example-shop",
+                    "account_id": "example-account",
+                    "live_session_id": "example-live",
+                    "target_type": "AD_PLAN",
+                    "target_id": "example-plan",
+                    "action_type": "CHANGE_DAILY_BUDGET",
+                    "old_value": {
+                      "kind": "MONEY",
+                      "currency": "CNY",
+                      "amount_minor": 600000
+                    },
+                    "new_value": {
+                      "kind": "MONEY",
+                      "currency": "CNY",
+                      "amount_minor": 500000
+                    },
+                    "intent": "把千川A计划日预算调到5000",
+                    "status": "DRAFT",
+                    "created_at": "2026-10-22T02:00:00.000Z",
+                    "updated_at": "2026-10-22T02:00:00.000Z",
+                    "expires_at": "2026-10-22T02:15:00.000Z",
+                    "risk_summary": {
+                      "source": "SERVER",
+                      "result": "REVIEW_REQUIRED",
+                      "level": "MEDIUM",
+                      "checks": [
+                        {
+                          "code": "OBJECT",
+                          "passed": true,
+                          "message": "示例：对象与账户属于当前授权店铺"
+                        },
+                        {
+                          "code": "BUDGET_LIMIT",
+                          "passed": true,
+                          "message": "示例：合计预算未超过上限；具体规则待后端确认"
+                        }
+                      ],
+                      "policy_version": 1,
+                      "checked_at": "2026-10-22T02:00:00.000Z"
+                    },
+                    "approval": {
+                      "state": "NOT_REQUESTED",
+                      "actor_id": null,
+                      "decided_at": null,
+                      "method": null,
+                      "approved_version": null
+                    },
+                    "execution_receipt": null,
+                    "error": null,
+                    "version": 1,
+                    "idempotency_key": "example-idempotency-001",
+                    "mode": "API",
+                    "history": [
+                      {
+                        "status": "DRAFT",
+                        "at": "2026-10-22T02:00:00.000Z",
+                        "detail": "示例创建任务，非真实平台操作"
+                      }
+                    ]
+                  },
+                  "requestId": "example-request",
+                  "schemaVersion": "command-job-v1.0"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "INVALID_INPUT",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "UNAUTHENTICATED",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "FORBIDDEN",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "NO_DATA",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "CONFLICT",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "INVALID_INPUT",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "NETWORK_ERROR",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "NETWORK_ERROR",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "NETWORK_ERROR",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateJobRequest"
+              },
+              "example": {
+                "source": "MOBILE_COMMAND",
+                "shop_id": "example-shop",
+                "target_type": "AD_PLAN",
+                "target_id": "example-plan",
+                "action_type": "CHANGE_DAILY_BUDGET",
+                "new_value": {
+                  "kind": "MONEY",
+                  "currency": "CNY",
+                  "amount_minor": 500000
+                },
+                "intent": "把千川A计划日预算调到5000",
+                "idempotency_key": "example-idempotency-001"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/command-jobs/{job_id}/confirm": {
+      "post": {
+        "operationId": "confirmJob",
+        "summary": "确认对象与风险并提交审批",
+        "tags": [
+          "任务"
+        ],
+        "description": "路径与请求体job_id保持一致。重新核对旧值、对象、规则版本和权限，普通动作DRAFT→PENDING_APPROVAL；直播交接DRAFT→MANUAL_REQUIRED；条件变化返回BLOCKED或409。 权限：task.create",
+        "x-session-required": true,
+        "x-frontend-service-method": "confirmJob",
+        "x-contract-status": "frontend-declared-backend-unconfirmed",
+        "responses": {
+          "200": {
+            "description": "JSON成功信封；样例均为构造的协议示例",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessCommandJob"
+                },
+                "example": {
+                  "data": {
+                    "schema_version": "1.0",
+                    "job_id": "example-job-001",
+                    "source": "MOBILE_COMMAND",
+                    "tenant_id": "example-tenant",
+                    "shop_id": "example-shop",
+                    "account_id": "example-account",
+                    "live_session_id": "example-live",
+                    "target_type": "AD_PLAN",
+                    "target_id": "example-plan",
+                    "action_type": "CHANGE_DAILY_BUDGET",
+                    "old_value": {
+                      "kind": "MONEY",
+                      "currency": "CNY",
+                      "amount_minor": 600000
+                    },
+                    "new_value": {
+                      "kind": "MONEY",
+                      "currency": "CNY",
+                      "amount_minor": 500000
+                    },
+                    "intent": "把千川A计划日预算调到5000",
+                    "status": "PENDING_APPROVAL",
+                    "created_at": "2026-10-22T02:00:00.000Z",
+                    "updated_at": "2026-10-22T02:00:00.000Z",
+                    "expires_at": "2026-10-22T02:15:00.000Z",
+                    "risk_summary": {
+                      "source": "SERVER",
+                      "result": "REVIEW_REQUIRED",
+                      "level": "MEDIUM",
+                      "checks": [
+                        {
+                          "code": "OBJECT",
+                          "passed": true,
+                          "message": "示例：对象与账户属于当前授权店铺"
+                        },
+                        {
+                          "code": "BUDGET_LIMIT",
+                          "passed": true,
+                          "message": "示例：合计预算未超过上限；具体规则待后端确认"
+                        }
+                      ],
+                      "policy_version": 1,
+                      "checked_at": "2026-10-22T02:00:00.000Z"
+                    },
+                    "approval": {
+                      "state": "PENDING",
+                      "actor_id": null,
+                      "decided_at": null,
+                      "method": null,
+                      "approved_version": null
+                    },
+                    "execution_receipt": null,
+                    "error": null,
+                    "version": 2,
+                    "idempotency_key": "example-idempotency-001",
+                    "mode": "API",
+                    "history": [
+                      {
+                        "status": "DRAFT",
+                        "at": "2026-10-22T02:00:00.000Z",
+                        "detail": "示例创建任务，非真实平台操作"
+                      },
+                      {
+                        "status": "PENDING_APPROVAL",
+                        "at": "2026-10-22T02:00:00.000Z",
+                        "detail": "仅为协议示例"
+                      }
+                    ]
+                  },
+                  "requestId": "example-request",
+                  "schemaVersion": "command-job-v1.0"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "INVALID_INPUT",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "UNAUTHENTICATED",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "FORBIDDEN",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "NO_DATA",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "CONFLICT",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "INVALID_INPUT",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "NETWORK_ERROR",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "NETWORK_ERROR",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "NETWORK_ERROR",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JobVersionRequest"
+              },
+              "example": {
+                "job_id": "example-job-001",
+                "expected_version": 1
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "路径内部ID，URL编码；须与请求体中的同一ID一致。"
+          }
+        ]
+      }
+    },
+    "/v1/command-jobs/{job_id}/approvals": {
+      "post": {
+        "operationId": "reviewJob",
+        "summary": "批准或驳回任务",
+        "tags": [
+          "审批"
+        ],
+        "description": "只对待审批版本处理APPROVE或REJECT。当前返回值必须是完整CommandJob，不是单独Approval。人工批准只进入APPROVED，不能直接宣称执行成功。审批职责分离及低风险SERVER_POLICY授权由后端决定。 权限：task.approve",
+        "x-session-required": true,
+        "x-frontend-service-method": "reviewJob",
+        "x-contract-status": "frontend-declared-backend-unconfirmed",
+        "responses": {
+          "200": {
+            "description": "JSON成功信封；样例均为构造的协议示例",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessCommandJob"
+                },
+                "example": {
+                  "data": {
+                    "schema_version": "1.0",
+                    "job_id": "example-job-001",
+                    "source": "MOBILE_COMMAND",
+                    "tenant_id": "example-tenant",
+                    "shop_id": "example-shop",
+                    "account_id": "example-account",
+                    "live_session_id": "example-live",
+                    "target_type": "AD_PLAN",
+                    "target_id": "example-plan",
+                    "action_type": "CHANGE_DAILY_BUDGET",
+                    "old_value": {
+                      "kind": "MONEY",
+                      "currency": "CNY",
+                      "amount_minor": 600000
+                    },
+                    "new_value": {
+                      "kind": "MONEY",
+                      "currency": "CNY",
+                      "amount_minor": 500000
+                    },
+                    "intent": "把千川A计划日预算调到5000",
+                    "status": "APPROVED",
+                    "created_at": "2026-10-22T02:00:00.000Z",
+                    "updated_at": "2026-10-22T02:00:00.000Z",
+                    "expires_at": "2026-10-22T02:15:00.000Z",
+                    "risk_summary": {
+                      "source": "SERVER",
+                      "result": "REVIEW_REQUIRED",
+                      "level": "MEDIUM",
+                      "checks": [
+                        {
+                          "code": "OBJECT",
+                          "passed": true,
+                          "message": "示例：对象与账户属于当前授权店铺"
+                        },
+                        {
+                          "code": "BUDGET_LIMIT",
+                          "passed": true,
+                          "message": "示例：合计预算未超过上限；具体规则待后端确认"
+                        }
+                      ],
+                      "policy_version": 1,
+                      "checked_at": "2026-10-22T02:00:00.000Z"
+                    },
+                    "approval": {
+                      "state": "APPROVED",
+                      "actor_id": "example-approver",
+                      "decided_at": "2026-10-22T02:00:00.000Z",
+                      "method": "MANUAL",
+                      "approved_version": 2
+                    },
+                    "execution_receipt": null,
+                    "error": null,
+                    "version": 3,
+                    "idempotency_key": "example-idempotency-001",
+                    "mode": "API",
+                    "history": [
+                      {
+                        "status": "DRAFT",
+                        "at": "2026-10-22T02:00:00.000Z",
+                        "detail": "示例创建任务，非真实平台操作"
+                      },
+                      {
+                        "status": "APPROVED",
+                        "at": "2026-10-22T02:00:00.000Z",
+                        "detail": "仅为协议示例"
+                      }
+                    ]
+                  },
+                  "requestId": "example-request",
+                  "schemaVersion": "command-job-v1.0"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "INVALID_INPUT",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "UNAUTHENTICATED",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "FORBIDDEN",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "NO_DATA",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "CONFLICT",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "INVALID_INPUT",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "NETWORK_ERROR",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "NETWORK_ERROR",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "NETWORK_ERROR",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewJobRequest"
+              },
+              "example": {
+                "job_id": "example-job-001",
+                "expected_version": 2,
+                "decision": "APPROVE"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "路径内部ID，URL编码；须与请求体中的同一ID一致。"
+          }
+        ]
+      }
+    },
+    "/v1/command-jobs/{job_id}/cancel": {
+      "post": {
+        "operationId": "cancelJob",
+        "summary": "取消未执行任务",
+        "tags": [
+          "任务"
+        ],
+        "description": "当前演示允许DRAFT/PENDING_APPROVAL/APPROVED取消，EXECUTING/VERIFYING不可从前端直接取消。过期、终态或版本过旧返回409。后端应确定审批后取消的权限和额度释放规则。 权限：task.create（当前Mock/UI；正式规则待确认）",
+        "x-session-required": true,
+        "x-frontend-service-method": "cancelJob",
+        "x-contract-status": "frontend-declared-backend-unconfirmed",
+        "responses": {
+          "200": {
+            "description": "JSON成功信封；样例均为构造的协议示例",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessCommandJob"
+                },
+                "example": {
+                  "data": {
+                    "schema_version": "1.0",
+                    "job_id": "example-job-001",
+                    "source": "MOBILE_COMMAND",
+                    "tenant_id": "example-tenant",
+                    "shop_id": "example-shop",
+                    "account_id": "example-account",
+                    "live_session_id": "example-live",
+                    "target_type": "AD_PLAN",
+                    "target_id": "example-plan",
+                    "action_type": "CHANGE_DAILY_BUDGET",
+                    "old_value": {
+                      "kind": "MONEY",
+                      "currency": "CNY",
+                      "amount_minor": 600000
+                    },
+                    "new_value": {
+                      "kind": "MONEY",
+                      "currency": "CNY",
+                      "amount_minor": 500000
+                    },
+                    "intent": "把千川A计划日预算调到5000",
+                    "status": "CANCELLED",
+                    "created_at": "2026-10-22T02:00:00.000Z",
+                    "updated_at": "2026-10-22T02:00:00.000Z",
+                    "expires_at": "2026-10-22T02:15:00.000Z",
+                    "risk_summary": {
+                      "source": "SERVER",
+                      "result": "REVIEW_REQUIRED",
+                      "level": "MEDIUM",
+                      "checks": [
+                        {
+                          "code": "OBJECT",
+                          "passed": true,
+                          "message": "示例：对象与账户属于当前授权店铺"
+                        },
+                        {
+                          "code": "BUDGET_LIMIT",
+                          "passed": true,
+                          "message": "示例：合计预算未超过上限；具体规则待后端确认"
+                        }
+                      ],
+                      "policy_version": 1,
+                      "checked_at": "2026-10-22T02:00:00.000Z"
+                    },
+                    "approval": {
+                      "state": "PENDING",
+                      "actor_id": null,
+                      "decided_at": null,
+                      "method": null,
+                      "approved_version": null
+                    },
+                    "execution_receipt": null,
+                    "error": null,
+                    "version": 3,
+                    "idempotency_key": "example-idempotency-001",
+                    "mode": "API",
+                    "history": [
+                      {
+                        "status": "DRAFT",
+                        "at": "2026-10-22T02:00:00.000Z",
+                        "detail": "示例创建任务，非真实平台操作"
+                      },
+                      {
+                        "status": "CANCELLED",
+                        "at": "2026-10-22T02:00:00.000Z",
+                        "detail": "仅为协议示例"
+                      }
+                    ]
+                  },
+                  "requestId": "example-request",
+                  "schemaVersion": "command-job-v1.0"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "INVALID_INPUT",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "UNAUTHENTICATED",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "FORBIDDEN",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "NO_DATA",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "CONFLICT",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "INVALID_INPUT",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "NETWORK_ERROR",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "NETWORK_ERROR",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "NETWORK_ERROR",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JobVersionRequest"
+              },
+              "example": {
+                "job_id": "example-job-001",
+                "expected_version": 2
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "路径内部ID，URL编码；须与请求体中的同一ID一致。"
+          }
+        ]
+      }
+    },
+    "/v1/risk-policies/{id}": {
+      "put": {
+        "operationId": "updatePolicy",
+        "summary": "更新经营目标与风控配置",
+        "tags": [
+          "经营目标"
+        ],
+        "description": "发送完整RiskPolicy，包括id、tenantId、version。后端不得信任主体字段；检查版本后递增并返回新对象。保存经营ROI目标不直接改计划ROI或出价；更改AUTOPILOT工作模式不授予自动审批。当前UI使用riskPolicies[0]，有效配置应排第一。 权限：policy.edit",
+        "x-session-required": true,
+        "x-frontend-service-method": "updatePolicy",
+        "x-contract-status": "frontend-declared-backend-unconfirmed",
+        "responses": {
+          "200": {
+            "description": "JSON成功信封；样例均为构造的协议示例",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessRiskPolicy"
+                },
+                "example": {
+                  "data": {
+                    "id": "example-policy",
+                    "tenantId": "example-tenant",
+                    "dailyBudgetMinor": 2000000,
+                    "targetRoi": 6,
+                    "maxChangePercent": 50,
+                    "cooldownMinutes": 5,
+                    "mode": "COPILOT",
+                    "version": 2
+                  },
+                  "requestId": "example-request",
+                  "schemaVersion": "command-job-v1.0"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "INVALID_INPUT",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "UNAUTHENTICATED",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "FORBIDDEN",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "NO_DATA",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "CONFLICT",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "INVALID_INPUT",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "NETWORK_ERROR",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "NETWORK_ERROR",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "NETWORK_ERROR",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskPolicy"
+              },
+              "example": {
+                "id": "example-policy",
+                "tenantId": "example-tenant",
+                "dailyBudgetMinor": 2000000,
+                "targetRoi": 6,
+                "maxChangePercent": 50,
+                "cooldownMinutes": 5,
+                "mode": "COPILOT",
+                "version": 1
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "路径内部ID，URL编码；须与请求体中的同一ID一致。"
+          }
+        ]
+      }
+    },
+    "/v1/frontend/reporting-scope": {
+      "put": {
+        "operationId": "setScope",
+        "summary": "更新共享统计范围",
+        "tags": [
+          "共享数据"
+        ],
+        "description": "返回data:null的JSON信封。后续GET快照应返回该scope，并保留有权访问的实体以便切换；当前客户端忽略PUT的返回data，随后reload。scope的存储维度、跨设备共享方式待确认，不能据客户端all返回越权数据。 权限：snapshot.read，且对象属于授权范围",
+        "x-session-required": true,
+        "x-frontend-service-method": "setScope",
+        "x-contract-status": "frontend-declared-backend-unconfirmed",
+        "responses": {
+          "200": {
+            "description": "JSON成功信封；样例均为构造的协议示例",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessNullData"
+                },
+                "example": {
+                  "data": null,
+                  "requestId": "example-request",
+                  "schemaVersion": "command-job-v1.0"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "INVALID_INPUT",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "UNAUTHENTICATED",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "FORBIDDEN",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "NO_DATA",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "CONFLICT",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "INVALID_INPUT",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "NETWORK_ERROR",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "NETWORK_ERROR",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "错误JSON；当前客户端仅按HTTP状态映射，不读取后端message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiFailure"
+                },
+                "example": {
+                  "error": {
+                    "code": "NETWORK_ERROR",
+                    "message": "仅为错误响应示例"
+                  },
+                  "requestId": "example-error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReportingScope"
+              },
+              "example": {
+                "shop_id": "example-shop",
+                "live_session_id": "example-live",
+                "connector_id": "all",
+                "date": "2026-10-22",
+                "timezone": "Asia/Shanghai"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ConnectorId": {
+        "type": "string",
+        "enum": [
+          "adq",
+          "wxpromo",
+          "beans",
+          "wxshop",
+          "qianchuan",
+          "douyinshop",
+          "juguang",
+          "redshop"
+        ]
+      },
+      "Identity": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "shopIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "API"
+            ]
+          }
+        },
+        "required": [
+          "userId",
+          "displayName",
+          "tenantId",
+          "shopIds",
+          "permissions",
+          "mode"
+        ]
+      },
+      "Tenant": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "Shop": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "connectorId": {
+            "$ref": "#/components/schemas/ConnectorId"
+          }
+        },
+        "required": [
+          "id",
+          "tenantId",
+          "name",
+          "connectorId"
+        ]
+      },
+      "AdAccount": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "shopId": {
+            "type": "string"
+          },
+          "connectorId": {
+            "$ref": "#/components/schemas/ConnectorId"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "tenantId",
+          "shopId",
+          "connectorId",
+          "name"
+        ]
+      },
+      "LiveSession": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "shopId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "sourceUpdatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "fetchedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "online": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "productClicks": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "MOCK_LIVE",
+              "UNKNOWN"
+            ],
+            "description": "当前 TS 仅 MOCK_LIVE / UNKNOWN。真实 API 请勿伪装 MOCK_LIVE；暂用 UNKNOWN。LIVE / ENDED 等真实状态必须先双方确认并修改前端模型和UI。"
+          }
+        },
+        "required": [
+          "id",
+          "tenantId",
+          "shopId",
+          "name",
+          "sourceUpdatedAt",
+          "fetchedAt",
+          "online",
+          "productClicks",
+          "status"
+        ]
+      },
+      "AdPlan": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "nativePlanId": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "shopId": {
+            "type": "string"
+          },
+          "adAccountId": {
+            "type": "string"
+          },
+          "liveSessionId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "aliases": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "budgetMinor": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991,
+            "description": "CNY 整数分；禁止发送浮点元。"
+          },
+          "bidMinor": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991,
+            "description": "CNY 整数分；禁止发送浮点元。"
+          },
+          "targetRoi": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "description": "无货币单位的投放ROI比值，不是出价。"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "spendMinor": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991,
+                "description": "CNY 整数分；禁止发送浮点元。"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "paidGmvMinor": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991,
+                "description": "CNY 整数分；禁止发送浮点元。"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "sourceUpdatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "attributionWindow": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "nativePlanId",
+          "tenantId",
+          "shopId",
+          "adAccountId",
+          "name",
+          "budgetMinor",
+          "bidMinor",
+          "targetRoi",
+          "enabled",
+          "spendMinor",
+          "paidGmvMinor",
+          "sourceUpdatedAt",
+          "attributionWindow"
+        ]
+      },
+      "Product": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "shopId": {
+            "type": "string"
+          },
+          "skuId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "priceMinor": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "CNY 整数分；禁止发送浮点元。"
+          },
+          "stock": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "clicks": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "paidOrders": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "speechAdvice": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "tenantId",
+          "shopId",
+          "skuId",
+          "name",
+          "priceMinor",
+          "stock",
+          "clicks",
+          "paidOrders",
+          "speechAdvice"
+        ]
+      },
+      "Material": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "productId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "VIDEO",
+              "IMAGE",
+              "SCRIPT"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "REVIEW",
+              "READY"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "tenantId",
+          "productId",
+          "name",
+          "version",
+          "kind",
+          "status"
+        ]
+      },
+      "RiskPolicy": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "dailyBudgetMinor": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991,
+            "description": "CNY 整数分；禁止发送浮点元。"
+          },
+          "targetRoi": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "description": "无货币单位的投放ROI比值，不是出价。"
+          },
+          "maxChangePercent": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "maximum": 100
+          },
+          "cooldownMinutes": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "MANUAL",
+              "COPILOT",
+              "AUTOPILOT"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "id",
+          "tenantId",
+          "dailyBudgetMinor",
+          "targetRoi",
+          "maxChangePercent",
+          "cooldownMinutes",
+          "mode",
+          "version"
+        ]
+      },
+      "ReplaySegment": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "liveSessionId": {
+            "type": "string"
+          },
+          "productId": {
+            "type": "string"
+          },
+          "startSeconds": {
+            "type": "number",
+            "minimum": 0
+          },
+          "endSeconds": {
+            "type": "number",
+            "minimum": 0
+          },
+          "transcript": {
+            "type": "string"
+          },
+          "advice": {
+            "type": "string"
+          },
+          "videoUrl": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "liveSessionId",
+          "productId",
+          "startSeconds",
+          "endSeconds",
+          "transcript",
+          "advice",
+          "videoUrl"
+        ]
+      },
+      "ReplayReport": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "liveSessionId": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "API"
+            ]
+          },
+          "sections": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "evidenceIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "text": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "title",
+                "evidenceIds",
+                "text"
+              ]
+            }
+          }
+        },
+        "required": [
+          "id",
+          "liveSessionId",
+          "source",
+          "sections"
+        ]
+      },
+      "Connector": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ConnectorId"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "UNKNOWN",
+              "READ_ONLY",
+              "SUPPORTED",
+              "UNSUPPORTED",
+              "DEGRADED"
+            ]
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "checkedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "scopes",
+          "checkedAt"
+        ]
+      },
+      "ReportingScope": {
+        "type": "object",
+        "properties": {
+          "shop_id": {
+            "type": "string",
+            "description": "具体ID或 all；不得据此扩大服务端授权范围。"
+          },
+          "live_session_id": {
+            "type": "string",
+            "description": "具体ID或 all；不得据此扩大服务端授权范围。"
+          },
+          "connector_id": {
+            "type": "string",
+            "description": "all 或 ConnectorId；当前 TS 写为 string，后端须检查枚举与授权。"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "timezone": {
+            "type": "string",
+            "enum": [
+              "Asia/Shanghai"
+            ]
+          }
+        },
+        "required": [
+          "shop_id",
+          "live_session_id",
+          "connector_id",
+          "date",
+          "timezone"
+        ]
+      },
+      "CommandAction": {
+        "type": "string",
+        "enum": [
+          "CHANGE_DAILY_BUDGET",
+          "CHANGE_BID",
+          "SET_ROI_TARGET",
+          "PAUSE_AD_PLAN",
+          "RESUME_AD_PLAN",
+          "REQUEST_LIVE_START",
+          "REQUEST_LIVE_END"
+        ]
+      },
+      "JobSource": {
+        "type": "string",
+        "enum": [
+          "AUTOPILOT",
+          "PC_MANUAL",
+          "MOBILE_COMMAND"
+        ]
+      },
+      "JobStatus": {
+        "type": "string",
+        "enum": [
+          "DRAFT",
+          "PENDING_APPROVAL",
+          "APPROVED",
+          "EXECUTING",
+          "VERIFYING",
+          "SUCCEEDED",
+          "FAILED",
+          "REJECTED",
+          "CANCELLED",
+          "EXPIRED",
+          "BLOCKED",
+          "MANUAL_REQUIRED"
+        ]
+      },
+      "JobValue": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "MONEY"
+                ]
+              },
+              "currency": {
+                "type": "string",
+                "enum": [
+                  "CNY"
+                ]
+              },
+              "amount_minor": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991,
+                "description": "CNY 整数分；禁止发送浮点元。"
+              }
+            },
+            "required": [
+              "kind",
+              "currency",
+              "amount_minor"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "RATIO"
+                ]
+              },
+              "value": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              }
+            },
+            "required": [
+              "kind",
+              "value"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "BOOLEAN"
+                ]
+              },
+              "value": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "kind",
+              "value"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "HANDOFF"
+                ]
+              },
+              "value": {
+                "type": "string",
+                "enum": [
+                  "START",
+                  "END"
+                ]
+              }
+            },
+            "required": [
+              "kind",
+              "value"
+            ]
+          }
+        ],
+        "description": "动作联合值。预算/出价为MONEY，ROI为RATIO，计划暂停/恢复分别为BOOLEAN false/true，直播交接为HANDOFF START/END。除Schema校验外必须验证动作与值及目标对象的对应关系。"
+      },
+      "RiskSummary": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string",
+            "enum": [
+              "SERVER"
+            ]
+          },
+          "result": {
+            "type": "string",
+            "enum": [
+              "REVIEW_REQUIRED",
+              "BLOCKED",
+              "MANUAL_ONLY"
+            ]
+          },
+          "level": {
+            "type": "string",
+            "enum": [
+              "LOW",
+              "MEDIUM",
+              "HIGH"
+            ]
+          },
+          "checks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "passed": {
+                  "type": "boolean"
+                },
+                "message": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "code",
+                "passed",
+                "message"
+              ]
+            }
+          },
+          "policy_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "checked_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "source",
+          "result",
+          "level",
+          "checks",
+          "policy_version",
+          "checked_at"
+        ]
+      },
+      "JobApproval": {
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string",
+            "enum": [
+              "NOT_REQUESTED",
+              "PENDING",
+              "APPROVED",
+              "REJECTED"
+            ]
+          },
+          "actor_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "decided_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "method": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "MANUAL"
+                ]
+              },
+              {
+                "type": "string",
+                "enum": [
+                  "SERVER_POLICY"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "approved_version": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "state",
+          "actor_id",
+          "decided_at",
+          "method",
+          "approved_version"
+        ]
+      },
+      "JobReceipt": {
+        "type": "object",
+        "properties": {
+          "receipt_id": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "PLATFORM"
+            ]
+          },
+          "platform_receipt_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "accepted": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "received_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "verification": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "MATCHED",
+              "MISMATCH",
+              "UNKNOWN"
+            ]
+          },
+          "observed_value": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/JobValue"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "verified_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "receipt_id",
+          "source",
+          "platform_receipt_id",
+          "accepted",
+          "received_at",
+          "verification",
+          "observed_value",
+          "verified_at"
+        ]
+      },
+      "JobError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "retryable": {
+            "type": "boolean"
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "retryable",
+          "at"
+        ]
+      },
+      "CommandJob": {
+        "type": "object",
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "enum": [
+              "1.0"
+            ]
+          },
+          "job_id": {
+            "type": "string"
+          },
+          "source": {
+            "$ref": "#/components/schemas/JobSource"
+          },
+          "tenant_id": {
+            "type": "string"
+          },
+          "shop_id": {
+            "type": "string"
+          },
+          "account_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "live_session_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "target_type": {
+            "type": "string",
+            "enum": [
+              "AD_PLAN",
+              "LIVE_SESSION"
+            ]
+          },
+          "target_id": {
+            "type": "string"
+          },
+          "action_type": {
+            "$ref": "#/components/schemas/CommandAction"
+          },
+          "old_value": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/JobValue"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "new_value": {
+            "$ref": "#/components/schemas/JobValue"
+          },
+          "intent": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/JobStatus"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "risk_summary": {
+            "$ref": "#/components/schemas/RiskSummary"
+          },
+          "approval": {
+            "$ref": "#/components/schemas/JobApproval"
+          },
+          "execution_receipt": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/JobReceipt"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "error": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/JobError"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "idempotency_key": {
+            "type": "string"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "API"
+            ]
+          },
+          "history": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "$ref": "#/components/schemas/JobStatus"
+                },
+                "at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "detail": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "status",
+                "at",
+                "detail"
+              ]
+            }
+          }
+        },
+        "required": [
+          "schema_version",
+          "job_id",
+          "source",
+          "tenant_id",
+          "shop_id",
+          "account_id",
+          "live_session_id",
+          "target_type",
+          "target_id",
+          "action_type",
+          "old_value",
+          "new_value",
+          "intent",
+          "status",
+          "created_at",
+          "updated_at",
+          "expires_at",
+          "risk_summary",
+          "approval",
+          "execution_receipt",
+          "error",
+          "version",
+          "idempotency_key",
+          "mode",
+          "history"
+        ],
+        "description": "完整标准任务。后端生成主体、旧值、风险、状态、审批和回执。SUCCEEDED 必须已有 PLATFORM 受理和 MATCHED 核验；预算、出价和ROI动作必须与JobValue类型对应。mock_scenario不属于正式API。"
+      },
+      "FrontendSnapshot": {
+        "type": "object",
+        "properties": {
+          "schemaVersion": {
+            "type": "string",
+            "enum": [
+              "command-job-v1.0"
+            ]
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "API"
+            ]
+          },
+          "tenants": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Tenant"
+            }
+          },
+          "shops": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Shop"
+            }
+          },
+          "adAccounts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdAccount"
+            }
+          },
+          "liveSessions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LiveSession"
+            }
+          },
+          "plans": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdPlan"
+            }
+          },
+          "products": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Product"
+            }
+          },
+          "materials": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Material"
+            }
+          },
+          "tasks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CommandJob"
+            }
+          },
+          "scope": {
+            "$ref": "#/components/schemas/ReportingScope"
+          },
+          "riskPolicies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RiskPolicy"
+            }
+          },
+          "replaySegments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReplaySegment"
+            }
+          },
+          "replayReports": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReplayReport"
+            }
+          },
+          "connectors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Connector"
+            }
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "revision",
+          "source",
+          "tenants",
+          "shops",
+          "adAccounts",
+          "liveSessions",
+          "plans",
+          "products",
+          "materials",
+          "tasks",
+          "scope",
+          "riskPolicies",
+          "replaySegments",
+          "replayReports",
+          "connectors"
+        ]
+      },
+      "LoginRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
+      },
+      "CreateJobRequest": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string",
+            "enum": [
+              "PC_MANUAL",
+              "MOBILE_COMMAND"
+            ],
+            "description": "真实 AUTOPILOT 由后端创建；当前 ApiClient 拒绝浏览器以该来源创建。"
+          },
+          "shop_id": {
+            "type": "string"
+          },
+          "target_type": {
+            "type": "string",
+            "enum": [
+              "AD_PLAN",
+              "LIVE_SESSION"
+            ]
+          },
+          "target_id": {
+            "type": "string"
+          },
+          "action_type": {
+            "$ref": "#/components/schemas/CommandAction"
+          },
+          "new_value": {
+            "$ref": "#/components/schemas/JobValue"
+          },
+          "intent": {
+            "type": "string"
+          },
+          "idempotency_key": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "source",
+          "shop_id",
+          "target_type",
+          "target_id",
+          "action_type",
+          "new_value",
+          "intent",
+          "idempotency_key"
+        ]
+      },
+      "JobVersionRequest": {
+        "type": "object",
+        "properties": {
+          "job_id": {
+            "type": "string"
+          },
+          "expected_version": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "job_id",
+          "expected_version"
+        ]
+      },
+      "CommandInterpretation": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "QUERY"
+                ]
+              },
+              "text": {
+                "type": "string"
+              },
+              "live_session_id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "kind",
+              "text",
+              "live_session_id"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "ACTION"
+                ]
+              },
+              "text": {
+                "type": "string"
+              },
+              "action_type": {
+                "$ref": "#/components/schemas/CommandAction"
+              },
+              "new_value": {
+                "$ref": "#/components/schemas/JobValue"
+              },
+              "target_type": {
+                "type": "string",
+                "enum": [
+                  "AD_PLAN",
+                  "LIVE_SESSION"
+                ]
+              },
+              "candidate_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "kind",
+              "text",
+              "action_type",
+              "new_value",
+              "target_type",
+              "candidate_ids"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "UNRECOGNIZED"
+                ]
+              },
+              "text": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "kind",
+              "text"
+            ]
+          }
+        ]
+      },
+      "ErrorCode": {
+        "type": "string",
+        "enum": [
+          "UNAUTHENTICATED",
+          "FORBIDDEN",
+          "NO_DATA",
+          "API_NOT_CONFIGURED",
+          "NETWORK_ERROR",
+          "TIMEOUT",
+          "INVALID_RESPONSE",
+          "INVALID_INPUT",
+          "CONFLICT"
+        ]
+      },
+      "ApiFailure": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "$ref": "#/components/schemas/ErrorCode"
+              },
+              "message": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "code",
+              "message"
+            ]
+          },
+          "requestId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "error",
+          "requestId"
+        ]
+      },
+      "ReviewJobRequest": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/JobVersionRequest"
+          },
+          {
+            "type": "object",
+            "required": [
+              "decision"
+            ],
+            "properties": {
+              "decision": {
+                "type": "string",
+                "enum": [
+                  "APPROVE",
+                  "REJECT"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "InterpretCommandRequest": {
+        "type": "object",
+        "required": [
+          "text",
+          "scope"
+        ],
+        "properties": {
+          "text": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          },
+          "scope": {
+            "$ref": "#/components/schemas/ReportingScope"
+          }
+        }
+      },
+      "NullData": {
+        "type": "null"
+      },
+      "SuccessIdentity": {
+        "type": "object",
+        "required": [
+          "data",
+          "requestId",
+          "schemaVersion"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "requestId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "schemaVersion": {
+            "type": "string",
+            "enum": [
+              "command-job-v1.0"
+            ]
+          }
+        }
+      },
+      "SuccessNullData": {
+        "type": "object",
+        "required": [
+          "data",
+          "requestId",
+          "schemaVersion"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/NullData"
+          },
+          "requestId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "schemaVersion": {
+            "type": "string",
+            "enum": [
+              "command-job-v1.0"
+            ]
+          }
+        }
+      },
+      "SuccessFrontendSnapshot": {
+        "type": "object",
+        "required": [
+          "data",
+          "requestId",
+          "schemaVersion"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/FrontendSnapshot"
+          },
+          "requestId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "schemaVersion": {
+            "type": "string",
+            "enum": [
+              "command-job-v1.0"
+            ]
+          }
+        }
+      },
+      "SuccessCommandInterpretation": {
+        "type": "object",
+        "required": [
+          "data",
+          "requestId",
+          "schemaVersion"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/CommandInterpretation"
+          },
+          "requestId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "schemaVersion": {
+            "type": "string",
+            "enum": [
+              "command-job-v1.0"
+            ]
+          }
+        }
+      },
+      "SuccessCommandJob": {
+        "type": "object",
+        "required": [
+          "data",
+          "requestId",
+          "schemaVersion"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/CommandJob"
+          },
+          "requestId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "schemaVersion": {
+            "type": "string",
+            "enum": [
+              "command-job-v1.0"
+            ]
+          }
+        }
+      },
+      "SuccessRiskPolicy": {
+        "type": "object",
+        "required": [
+          "data",
+          "requestId",
+          "schemaVersion"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/RiskPolicy"
+          },
+          "requestId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "schemaVersion": {
+            "type": "string",
+            "enum": [
+              "command-job-v1.0"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "x-frontend-commit": "84e3a6f51ccd960442c09ec9985079bd04703fe3",
+  "x-generated-date": "2026-10-22",
+  "x-no-backend-implementation": true
+}

@@ -1,0 +1,47 @@
+{
+  "exportedDate": "2026-10-22",
+  "timezone": "Asia/Shanghai",
+  "frontendCommit": "84e3a6f51ccd960442c09ec9985079bd04703fe3",
+  "operationCount": 11,
+  "pathCount": 11,
+  "schemaCount": 39,
+  "interfaceFieldCount": 166,
+  "files": [
+    {
+      "file": "src/lib/domain.ts",
+      "sha256": "1de002eb752cf01f84fbe328743bde006358946bb4d97d8bd506004290a3d686"
+    },
+    {
+      "file": "src/lib/command-job.ts",
+      "sha256": "01532c981bd1e5b5860418b25d4133ae016380bf183d676ca659e6ddc9cab29f"
+    },
+    {
+      "file": "src/services/contracts.ts",
+      "sha256": "d9032e272ff617eb39ad2c568eb5f008cdf164401da717629bcb99cd35b05c86"
+    },
+    {
+      "file": "src/services/api-client.ts",
+      "sha256": "3211170cab4d6cfdf77ca7221348ad158cd8dcb5532aa13f44be4cea1d30eef8"
+    },
+    {
+      "file": "src/services/index.ts",
+      "sha256": "258c7cc2c7b6017f577cde9f2e11c588cb687e4a59b5197cae8e44932cdb288e"
+    },
+    {
+      "file": "src/lib/reporting.ts",
+      "sha256": "c3628375f021afe1187b50f9e3615a9e835e7572af0162ccc068b21ee3b1b3d5"
+    },
+    {
+      "file": "src/lib/routes.ts",
+      "sha256": "edcafa2b6290fbbedac5322006eb960a7458aca4cf3213a91eb217e5c70f3a88"
+    },
+    {
+      "file": "src/components/provider.tsx",
+      "sha256": "8e800752b169d382cd2e4405852508109a57c5f752e793c4f8e78d9603a49e0f"
+    },
+    {
+      "file": "src/components/operating-context.tsx",
+      "sha256": "6bac9ad44fbf33124d9de66012b68ceb46851d6e9ca5b38894d2b7e5225cf929"
+    }
+  ]
+}

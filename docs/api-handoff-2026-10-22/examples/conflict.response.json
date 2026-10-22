@@ -1,0 +1,7 @@
+{
+  "error": {
+    "code": "CONFLICT",
+    "message": "任务版本已变化，请刷新后重新确认"
+  },
+  "requestId": "example-request-conflict"
+}

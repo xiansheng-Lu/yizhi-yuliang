@@ -1,0 +1,19 @@
+{
+  "data": {
+    "kind": "ACTION",
+    "text": "请核对候选计划与目标值",
+    "action_type": "CHANGE_DAILY_BUDGET",
+    "new_value": {
+      "kind": "MONEY",
+      "currency": "CNY",
+      "amount_minor": 500000
+    },
+    "target_type": "AD_PLAN",
+    "candidate_ids": [
+      "example-plan",
+      "example-plan-b"
+    ]
+  },
+  "requestId": "example-request",
+  "schemaVersion": "command-job-v1.0"
+}

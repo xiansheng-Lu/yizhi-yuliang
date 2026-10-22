@@ -1,0 +1,1 @@
+PASS typecheck exit 0

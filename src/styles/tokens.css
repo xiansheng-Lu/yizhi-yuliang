@@ -1,14 +1,50 @@
-/* V11.1 light workspace palette, extracted without changing frozen homepage CSS. */
+/* V12 tokens derived from frozen public/assets/styles.css. Internal routes only. */
 :root {
-  --ink: #22304c;
-  --muted: #7485a0;
-  --blue: #355fe1;
-  --blue-soft: #edf3ff;
-  --surface: #fff;
-  --canvas: #f8faff;
-  --line: #e7ecf6;
-  --warning: #91601b;
-  --radius: 14px;
+  --brand-primary: #335fe1;
+  --brand-hover: #244dca;
+  --brand-deep: #193d87;
+  --brand-sky: #3d79ed;
+  --brand-tint: #edf3ff;
+  --brand-subtle: #f5f8ff;
+  --brand-selected: #e3ecff;
+  --brand-border: #cad9f8;
+  --brand-focus: #9fb7ff;
+  --text-primary: #17213b;
+  --text-heading: #2b4671;
+  --text-secondary: #536b90;
+  --text-muted: #657792;
+  --text-caption: #7e8ca3;
+  --text-inverse: #ffffff;
+  --text-on-deep: #d6e4ff;
+  --text-muted-on-deep: #b8cef5;
+  --border-subtle: #e6edf8;
+  --surface-canvas: #f5f8fd;
+  --surface-panel: #ffffff;
+  --surface-muted: #f8faff;
+  --state-warning: #91601b;
+  --state-success: #24765e;
+  --state-danger: #b23838;
+  --gradient-hero: linear-gradient(119deg, #edf5ff 0%, #f9fcff 42%, #e7f0ff 69%, #dfeafe 100%);
+  --gradient-focus: linear-gradient(95deg, #3d79ed, #6578db);
+  --gradient-deep: linear-gradient(135deg, #335fe1, #193d87);
+  --gradient-sidebar: linear-gradient(180deg, #edf3ff 0, #f8faff 180px, #fff 420px);
+  --gradient-mark: linear-gradient(135deg, #fff 20%, #e3ecff);
+  --shadow-panel: 0 6px 24px #305dae0b;
+  --shadow-focus: 0 5px 24px #335fe114;
+  --shadow-popover: 0 12px 40px #304d9020;
+  --shadow-brand: 0 4px 12px #335fe114;
+  --inverse-line: #ffffff20;
+  --inverse-tint: #ffffff18;
+  --inverse-ring: #ffffff10;
+  --ink: var(--text-primary);
+  --muted: var(--text-muted);
+  --blue: var(--brand-primary);
+  --blue-soft: var(--brand-tint);
+  --surface: var(--surface-panel);
+  --canvas: var(--surface-canvas);
+  --line: var(--border-subtle);
+  --warning: var(--state-warning);
+  --radius: 16px;
   --font:
     Inter, -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei",
     system-ui, sans-serif;

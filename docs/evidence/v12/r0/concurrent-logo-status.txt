@@ -1,0 +1,34 @@
+ M AGENTS.md
+ M README.md
+ M docs/homepage-baseline.json
+ M next.config.ts
+ M public/index.html
+ M scripts/check-routes.mjs
+ M scripts/verify-homepage.mjs
+ M src/app/(frontend)/layout.tsx
+ M src/app/layout.tsx
+ M src/components/command-panel.tsx
+ M src/components/workspace-shell.tsx
+ M src/features/business-page.tsx
+ M src/features/login-page.tsx
+ M src/features/mobile-page.tsx
+ M src/features/workspace-entry.tsx
+ M src/lib/routes.ts
+ M src/styles/tokens.css
+ M src/styles/workspace.css
+ M tests/frontend.test.ts
+?? docs/evidence/logo/
+?? docs/evidence/v12/
+?? docs/frontend-architecture-2026-10-22.md
+?? docs/v12-logo-integration.patch
+?? docs/v12/
+?? "docs/\345\220\216\345\217\260\351\241\265\351\235\242\350\247\204\345\210\222_2026-10-22.md"
+?? public/assets/brand.css
+?? public/assets/yuliang-logo-white.png
+?? public/assets/yuliang-logo.png
+?? public/assets/yuliang-mark.svg
+?? src/components/brand-logo.tsx
+?? src/components/v12-shell.tsx
+?? src/features/command-desk.tsx
+?? src/styles/v12.css
+?? tests/v12-navigation.test.ts

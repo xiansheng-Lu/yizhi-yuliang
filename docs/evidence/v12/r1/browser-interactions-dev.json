@@ -1,0 +1,10 @@
+{
+  "defaultLogin": "http://127.0.0.1:3000/app/command",
+  "logoutRestoredTarget": true,
+  "refreshRestored": "http://127.0.0.1:3000/app/command",
+  "budgetIntent": "请选择具体对象\n千川A计划｜秋茶直播推广 · 茶韵旗舰店",
+  "searchNavigates": "http://127.0.0.1:3000/app/assets",
+  "overviewKpis": "今日广告消耗\n¥12,570.00\n2026-10-21 · Asia/Shanghai\n支付GMV\n¥87,040.00\n同一店铺 / 场次 / 平台 · 支付归因\n投放ROI\n6.92\n支付GMV ÷ 广告消耗",
+  "legacyHash": "http://127.0.0.1:3000/app/reports",
+  "explicitOverviewDeepLink": "http://127.0.0.1:3000/app/overview"
+}

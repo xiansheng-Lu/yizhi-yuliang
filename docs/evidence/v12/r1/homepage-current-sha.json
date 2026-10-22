@@ -1,0 +1,17 @@
+[
+  {
+    "Algorithm": "SHA256",
+    "Hash": "12BCD9B51A75267522240986003CC91E03B202E71FD922EF8C7F247A87A2713B",
+    "Path": "D:\\易致-驭量\\public\\index.html"
+  },
+  {
+    "Algorithm": "SHA256",
+    "Hash": "6281438A8B2C363C4A9FE5486727F3F996FA4FC7DE95F351EA792E083263A5ED",
+    "Path": "D:\\易致-驭量\\public\\assets\\styles.css"
+  },
+  {
+    "Algorithm": "SHA256",
+    "Hash": "C03C34B14868D84ACAAC3038B62A45F532C3E47D0D29862A677CBF4D664F230E",
+    "Path": "D:\\易致-驭量\\public\\assets\\site.js"
+  }
+]

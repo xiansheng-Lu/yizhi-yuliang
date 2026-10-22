@@ -94,9 +94,9 @@ test("login allowlist restores valid targets and rejects external or malformed U
     "unknown",
     "/app/../settings",
   ])
-    assert.equal(loginTarget(input), "/app/overview");
+    assert.equal(loginTarget(input), "/app/command");
 });
-test("frozen homepage HTML CSS and JS match the pre-migration SHA256", () => {
+test("homepage files match the approved branding SHA256 baseline", () => {
   const baseline = JSON.parse(
     readFileSync("docs/homepage-baseline.json", "utf8"),
   );

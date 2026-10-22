@@ -1,0 +1,133 @@
+{
+  "base": "http://127.0.0.1:3002",
+  "rootHashVerified": true,
+  "legacyRouteCount": 21,
+  "addedRouteCount": 1,
+  "rows": [
+    {
+      "path": "/",
+      "status": 200
+    },
+    {
+      "path": "/login",
+      "status": 200
+    },
+    {
+      "path": "/mobile",
+      "status": 200
+    },
+    {
+      "path": "/app/command",
+      "status": 200
+    },
+    {
+      "path": "/app/overview",
+      "status": 200
+    },
+    {
+      "path": "/app/goals",
+      "status": 200
+    },
+    {
+      "path": "/app/monitor",
+      "status": 200
+    },
+    {
+      "path": "/app/tasks",
+      "status": 200
+    },
+    {
+      "path": "/app/planning",
+      "status": 200
+    },
+    {
+      "path": "/app/scripts",
+      "status": 200
+    },
+    {
+      "path": "/app/videos",
+      "status": 200
+    },
+    {
+      "path": "/app/graphics",
+      "status": 200
+    },
+    {
+      "path": "/app/editing",
+      "status": 200
+    },
+    {
+      "path": "/app/assets",
+      "status": 200
+    },
+    {
+      "path": "/app/experiments",
+      "status": 200
+    },
+    {
+      "path": "/app/plans",
+      "status": 200
+    },
+    {
+      "path": "/app/decisions",
+      "status": 200
+    },
+    {
+      "path": "/app/executions",
+      "status": 200
+    },
+    {
+      "path": "/app/products",
+      "status": 200
+    },
+    {
+      "path": "/app/budgets",
+      "status": 200
+    },
+    {
+      "path": "/app/analytics",
+      "status": 200
+    },
+    {
+      "path": "/app/reports",
+      "status": 200
+    },
+    {
+      "path": "/app/agents",
+      "status": 200
+    },
+    {
+      "path": "/app/connections",
+      "status": 200
+    },
+    {
+      "path": "/app/settings",
+      "status": 200
+    },
+    {
+      "path": "/login.html?next=campaigns",
+      "status": 307,
+      "destination": "/login?next=campaigns"
+    },
+    {
+      "path": "/mobile.html",
+      "status": 307,
+      "destination": "/mobile"
+    },
+    {
+      "path": "/app.html",
+      "status": 307,
+      "destination": "/legacy"
+    },
+    {
+      "path": "/app/campaigns",
+      "status": 307,
+      "destination": "/app/plans"
+    },
+    {
+      "path": "/app",
+      "status": 307,
+      "destination": "/app/command"
+    }
+  ]
+}

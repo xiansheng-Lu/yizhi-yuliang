@@ -1,8 +1,8 @@
-# 易致·驭量前端 · G1-B1
+# 易致·驭量前端 · V12 R1
 
 自主投放，让每一份增长都有据可依。
 
-独立 Next.js 16.2.6 / React 19.2.6 / TypeScript 前端。官网保持冻结，PC 保留四大工作区、21 个路由；本阶段建设总控台、经营目标、直播作战室、任务审批和手机四标签的统一任务交互，其余页面延续 G1-A。没有数据库、Next.js 业务 Route Handler、平台适配器、广告执行或 AI 策略引擎。
+独立 Next.js 16.2.6 / React 19.2.6 / TypeScript 前端。V12 R1 增加蓝白应用外壳、七组导航及默认 `/app/command` 指挥台，保留 21 个旧路由，合计 22 个业务入口。官网仅按用户授权替换 Logo，其他文案、布局、三层卡包以及原 CSS/JS 冻结。G1-A/G1-B1 任务、审批与 Mock/API 边界保留；R2—R5 尚未实施。没有数据库、Next.js 业务 Route Handler、平台适配器、广告执行或 AI 策略引擎。详见 `docs/v12/R1-验收记录.md`。
 
 ## Windows 本地运行
 
@@ -27,16 +27,17 @@ npm run dev
 | `npm test` | 路由、哈希、任务类型、共享状态、权限与 API 错误测试 |
 | `npm run build` | Next.js 生产构建，非部署 |
 | `npm start` | 启动已构建本地服务；先停止同端口开发服务 |
-| `npm run test:routes` | 对实际运行服务检查根路径、21 路由、404 与历史入口 |
-| `npm run verify:homepage` | 校验冻结官网哈希；原型仍存在时同时对照源文件 |
+| `npm run test:routes` | 检查根路径、21 旧路由＋新指挥台、404 与历史入口 |
+| `npm run verify:homepage` | 校验当前获批官网及品牌资源哈希；保留并校验原型源文件哈希 |
 
 ## 入口与演示
 
-- `/`：通过 Next beforeFiles rewrite 提供冻结官网，响应内容与原始 HTML 一致。
+- `/`：通过 Next beforeFiles rewrite 提供官网；仅 Logo 例外，其他内容与原始 HTML 一致。
 - `/login`：Mock 身份登录，演示账号 `demo@yuliang.local`，密码 `demo123`，支持一键填入。不要输入真实凭据。
-- `/app/[pageId]`：21 个白名单业务页面。
+- `/app/command`：登录默认进入 AI运营指挥台；自然语言入口复用既有 Mock Service。
+- `/app/[pageId]`：21 个旧业务页面继续保留；overview 为经营总览，仅三项顶层 KPI。
 - `/mobile`：AI 指挥、直播数据、执行流水、直播复盘。
-- 历史 `/login.html`、`/mobile.html`、`/app.html#/reports` 均有兼容。`campaigns` 归一为 `plans`。非法 next 参数进入 `/app/overview`，不会外跳。
+- 历史 `/login.html`、`/mobile.html`、`/app.html#/reports` 均有兼容。`campaigns` 归一为 `plans`。默认及非法 next 参数进入 `/app/command`，不会外跳；显式 `/app/overview` 深链仍进入经营总览。
 
 PC 和手机在同源、同浏览器配置中使用同一 Mock 存储、`command_job`、统计范围和任务详情组件。**localStorage 不提供真实跨设备同步。** 手机创建后确认对象、差异与风险，进入待审批；PC 批准后依次点击“开始模拟执行”“接收模拟执行回执”“运行模拟核验”。只有模拟回读匹配后才更新演示计划参数，始终不产生真实平台回执，也不控制推流。
 
@@ -59,7 +60,7 @@ NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:<后端端口>
 
 ## 目录与交接
 
-- `public/`：冻结官网及原始 CSS、JS，不能修改。
+- `public/`：官网原 CSS/JS 冻结；Logo 替换已授权，原始及获批版本哈希均保留。
 - `src/app/(frontend)/`：前端路由、加载和错误边界；没有业务 Route Handler。
 - `src/features/`：页面骨架与手机 UI。
 - `src/components/`：导航、状态、共享任务表单和审批组件。
@@ -70,4 +71,4 @@ NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:<后端端口>
 - `docs/G1-B1验收记录.md`：实际运行、10 类核心场景、截图、日志、修改范围和未完成事项。
 - `docs/API契约需求初稿.md`、`docs/G1-A验收记录.md`：保留的 G1-A 历史记录。
 
-仓库：https://github.com/xiansheng-Lu/yizhi-yuliang 。本阶段按用户指令不 push、不部署；G1-B1 完成后停止，等待验收。后续上传也不得强推、覆盖他人提交或提交密钥、依赖、运行时及构建产物。
+仓库：https://github.com/xiansheng-Lu/yizhi-yuliang 。本阶段按用户指令仅本地提交，不 push、不部署；R1 完成后停止，等待验收。后续上传也不得强推、覆盖他人提交或提交密钥、依赖、运行时及构建产物。

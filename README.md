@@ -60,6 +60,7 @@ NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:<后端端口>
 
 ## 目录与交接
 
+- [后端技术架构与实施设计 V1.1（Python）](docs/backend/后端技术架构与实施设计V1.0.md)：内部服务商与运营优先，采用 FastAPI、SQLAlchemy/Alembic、Celery/RabbitMQ、多模型适配；当前为设计文档，尚未创建后端工程。
 - `public/`：官网原 CSS/JS 冻结；Logo 替换已授权，原始及获批版本哈希均保留。
 - `src/app/(frontend)/`：前端路由、加载和错误边界；没有业务 Route Handler。
 - `src/features/`：页面骨架与手机 UI。

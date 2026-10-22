@@ -1,0 +1,57 @@
+{
+  "date": "2026-10-22",
+  "baseMainCommit": "6783175545318edff5b60db4e9e24385692baf15",
+  "scope": "Frontend only; isolated main checkout excludes unrelated in-progress overview changes",
+  "checks": {
+    "productionBuild": "PASS Next.js 16.2.6 webpack; includes TypeScript",
+    "lint": "PASS zero warnings",
+    "tests": { "passed": 64, "failed": 0, "liveRefreshCases": 22 },
+    "productionRoutes": { "base": "http://127.0.0.1:3003", "http200": 26, "legacyRedirects307": 5, "unknownAndBusinessApiRoutes404": 2 },
+    "homepageAndBrandHashes": "PASS approved SHA256 baseline unchanged"
+  },
+  "refreshCoverage": [
+    "10/15/30 second module cadence and combined snapshot reads",
+    "No selected room does not request session data",
+    "Not-started and ended sessions do not poll",
+    "Hidden pause, fresh resume, stale resume",
+    "Manual single flight with retained values",
+    "Initial refresh failure retains valid bootstrap data",
+    "Failure retention and exponential retry backoff",
+    "429 Retry-After and confirmed endpoint cadence",
+    "Unknown API limit never enables guessed automatic polling",
+    "Live-to-ended transition captures latest values before stopping",
+    "Unmount cancellation and ignored late adapter responses",
+    "Invalidation serializes old and new scopes and combines consumers",
+    "Provider bootstrap reuse avoids duplicate entrance reads",
+    "Shared consumer cancellation isolation",
+    "Transport-level rate limit and queued-read cancellation",
+    "Source and scope mismatch rejection",
+    "Approval reload reflected immediately without a new poller",
+    "Scope-change suspension and recovery",
+    "Controller remount cannot bypass endpoint cooldown",
+    "Platform publication time remains unchanged on successful polling",
+    "Module-specific configurable freshness thresholds",
+    "Null, real zero, platform coverage and attribution-window boundaries"
+  ],
+  "browser": {
+    "dataMode": "Explicit MOCK; no real-platform integration claimed",
+    "width1440": { "scrollWidth": 1425, "metricOverflow": false, "screenshot": "monitor-1440.png" },
+    "width1920": { "scrollWidth": 1905, "metricOverflow": false, "screenshot": "monitor-1920.png" },
+    "interactions": [
+      "Platform changed to qianchuan: only two related sample plans, GMV 34840 CNY, spend 4380 CNY, ROI 7.95; online unavailable for platform scope remains --",
+      "Trend changed to GMV and 15 minutes: selected state changes, explicit unavailable state remains",
+      "Session changed to all: room-selection guide, refresh disabled, operation input unavailable",
+      "Specific session selected again: selected source and scope restored",
+      "Manual refresh updates successful-sync timestamp while preserving fixed platform timestamp and values"
+    ],
+    "console": "Browser timer binding issue fixed; no later runtime errors observed. Development Fast Refresh reload warnings occur during source editing."
+  },
+  "pendingBackend": [
+    "Confirm snapshot minimum interval before enabling automatic refresh in API mode",
+    "Live state, platform coverage, total viewers, paid orders, start/end times and source update timestamps",
+    "Authorized cover/video stream and format/authentication contract",
+    "Scoped time-series endpoint for online, GMV and interactions",
+    "Traffic/conversion comparison windows, denominators and anomaly thresholds",
+    "Real-platform end-to-end validation"
+  ]
+}

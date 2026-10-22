@@ -13,6 +13,7 @@ import {
 import { usePathname, useRouter } from "next/navigation";
 import type { FrontendSnapshot, Identity } from "@/lib/domain";
 import { createFrontendService } from "@/services";
+import { readSnapshot } from "@/services/snapshot-reader";
 import {
   ServiceError,
   type FrontendService,
@@ -25,6 +26,7 @@ interface WorkspaceContextValue {
   identity: Identity | null;
   ready: boolean;
   data: Resource<FrontendSnapshot>;
+  lastValidSnapshot: FrontendSnapshot | null;
   reload: () => Promise<Identity | null>;
   logout: () => Promise<void>;
   sidebarCollapsed: boolean;
@@ -39,6 +41,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const [data, setData] = useState<Resource<FrontendSnapshot>>({
     status: "loading",
   });
+  const [lastValidSnapshot, setLastValidSnapshot] = useState<FrontendSnapshot | null>(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const generation = useRef(0);
   const owner = useRef<string | null>(null);
@@ -52,18 +55,21 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
       if (request !== generation.current) return null;
       setIdentity(actor);
       const nextOwner = actor ? `${actor.mode}:${actor.tenantId}:${actor.userId}` : null;
-      if (nextOwner !== owner.current) setData({ status: "loading" });
+      if (nextOwner !== owner.current) { setData({ status: "loading" }); setLastValidSnapshot(null); }
       owner.current = nextOwner;
       if (actor) {
-        const snapshot = await service.current.getSnapshot();
-        if (request === generation.current)
+        const snapshot = await readSnapshot(service.current);
+        if (request === generation.current) {
           setData({ status: "ready", data: snapshot });
+          setLastValidSnapshot(snapshot);
+        }
       } else setData({ status: "loading" });
     } catch (error) {
       if (request === generation.current) {
         if (error instanceof ServiceError && error.code === "UNAUTHENTICATED") {
           actor = null;
           setIdentity(null);
+          setLastValidSnapshot(null);
           setData({ status: "loading" });
         } else {
           setData({
@@ -90,11 +96,12 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     await service.current?.logout();
     ++generation.current;
     setIdentity(null);
+    setLastValidSnapshot(null);
     setData({ status: "loading" });
   }
   return (
     <WorkspaceContext.Provider
-      value={{ service: client, identity, ready, data, reload, logout, sidebarCollapsed, setSidebarCollapsed }}
+      value={{ service: client, identity, ready, data, lastValidSnapshot, reload, logout, sidebarCollapsed, setSidebarCollapsed }}
     >
       {children}
     </WorkspaceContext.Provider>
@@ -105,7 +112,7 @@ export function useWorkspace() {
   if (!context) throw new Error("WorkspaceProvider missing");
   return context;
 }
-export function AuthGuard({ children, requireSnapshot = true }: { children: ReactNode; requireSnapshot?: boolean }) {
+export function AuthGuard({ children, requireSnapshot = true, loading }: { children: ReactNode; requireSnapshot?: boolean; loading?: ReactNode }) {
   const { ready, identity, data, reload, service } = useWorkspace();
   const pathname = usePathname(),
     router = useRouter();
@@ -127,17 +134,25 @@ export function AuthGuard({ children, requireSnapshot = true }: { children: Reac
         }
       />
     );
-  if (!ready || !identity || (requireSnapshot && data.status === "loading")) return <LoadingState />;
+  if (!ready || !identity || (requireSnapshot && data.status === "loading")) return loading ?? <LoadingState />;
   return children;
 }
 export function SnapshotView({
   children,
+  loading,
+  retainOnError = false,
 }: {
   children: (snapshot: FrontendSnapshot) => ReactNode;
+  loading?: ReactNode;
+  retainOnError?: boolean;
 }) {
-  const { data, reload } = useWorkspace();
+  const { data, reload, lastValidSnapshot } = useWorkspace();
+  if (retainOnError && (data.status === "ready" || lastValidSnapshot)) {
+    const snapshot = data.status === "ready" ? data.data : lastValidSnapshot!;
+    return <>{data.status === "error" && <p className="feedback" role="alert">数据获取失败，仍显示上次成功同步的原筛选范围：{data.error.message}</p>}{children(snapshot)}</>;
+  }
   return data.status === "loading" ? (
-    <LoadingState />
+    loading ?? <LoadingState />
   ) : data.status === "error" ? (
     <ErrorState error={data.error} retry={() => void reload()} />
   ) : (

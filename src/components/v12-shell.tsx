@@ -99,7 +99,7 @@ export function WorkspaceShell({ pageId, children }: { pageId: PageId; children:
             </button>
             <button className="icon-button" aria-label="搜索工作区" aria-expanded={searching} aria-controls="workspace-search" onClick={() => {setSearching(!searching); setContextOpen(false);}}><MagnifyingGlass size={18} /></button>
             {isMock && <Badge tone="blue">本地预览</Badge>}
-            <button className="icon-button" aria-label="刷新工作区" onClick={() => void reload()}><ArrowClockwise size={18} /></button>
+            <button className="icon-button" aria-label="刷新工作区" onClick={() => { if (pageId === "monitor") window.dispatchEvent(new Event("yuliang:refresh-live-room")); else void reload(); }}><ArrowClockwise size={18} /></button>
             <Link href="/app/account" className="avatar" aria-label="打开用户中心">{identity?.displayName?.slice(0, 1) ?? "易"}</Link>
           </div>
         </header>

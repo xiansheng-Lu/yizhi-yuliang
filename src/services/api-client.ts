@@ -32,6 +32,7 @@ export class ApiClient implements FrontendService {
     path: string,
     method = "GET",
     body?: unknown,
+    signal?: AbortSignal,
   ): Promise<T> {
     if (!this.baseUrl)
       throw new ServiceError(
@@ -54,10 +55,11 @@ export class ApiClient implements FrontendService {
               : { "Content-Type": "application/json" }),
           },
           ...(body === undefined ? {} : { body: JSON.stringify(body) }),
-          signal: AbortSignal.timeout(15000),
+          signal: signal ? AbortSignal.any([signal, AbortSignal.timeout(15000)]) : AbortSignal.timeout(15000),
         },
       );
     } catch (error) {
+      if (signal?.aborted) throw signal.reason;
       if (
         error instanceof Error &&
         (error.name === "TimeoutError" || error.name === "AbortError")
@@ -187,8 +189,8 @@ export class ApiClient implements FrontendService {
   async assignTaskProject(input: { jobId: string; projectId: string | null }) {
     await this.request<null>(`/v1/command-jobs/${encodeURIComponent(input.jobId)}/project`, "PUT", { projectId: input.projectId });
   }
-  async getSnapshot() {
-    const data = await this.request<FrontendSnapshot>("/v1/frontend/snapshot");
+  async getSnapshot(options?: { signal?: AbortSignal }) {
+    const data = await this.request<FrontendSnapshot>("/v1/frontend/snapshot", "GET", undefined, options?.signal);
     const arrays = [
       "tenants",
       "shops",

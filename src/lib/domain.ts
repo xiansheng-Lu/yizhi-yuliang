@@ -46,7 +46,15 @@ export interface LiveSession {
   fetchedAt: string;
   online: number | null;
   productClicks: number | null;
-  status: "MOCK_LIVE" | "UNKNOWN";
+  status: "MOCK_LIVE" | "UNKNOWN" | "NOT_STARTED" | "LIVE" | "ENDED";
+  /** Optional read-only fields; absent until supplied by the backend. */
+  connectorId?: ConnectorId;
+  coverUrl?: string | null;
+  videoUrl?: string | null;
+  startedAt?: string | null;
+  endedAt?: string | null;
+  totalViewers?: number | null;
+  paidOrders?: number | null;
 }
 export interface AdPlan {
   id: string;

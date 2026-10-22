@@ -10,6 +10,7 @@ import { displayTime, type ReportingScope } from "@/lib/command-job";
 import { scopedPlans } from "@/lib/reporting";
 import { useWorkspace } from "./provider";
 import { Badge, EmptyState, Metric } from "./ui";
+import { invalidateSnapshotRead } from "@/services/snapshot-reader";
 
 export function ScopeControls({ snapshot }: { snapshot: FrontendSnapshot }) {
   const { service, reload } = useWorkspace();
@@ -20,11 +21,14 @@ export function ScopeControls({ snapshot }: { snapshot: FrontendSnapshot }) {
     setBusy(true);
     setError("");
     try {
+      window.dispatchEvent(new Event("yuliang:scope-changing"));
+      invalidateSnapshotRead(service);
       await service.setScope({ ...snapshot.scope, ...patch });
       await reload();
     } catch (e) {
       setError(e instanceof Error ? e.message : "统计范围未保存");
     } finally {
+      window.dispatchEvent(new Event("yuliang:scope-settled"));
       setBusy(false);
     }
   }

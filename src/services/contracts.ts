@@ -54,7 +54,7 @@ export interface FrontendService {
   requestEmailCode(input: { email: string }): Promise<EmailLoginChallenge>;
   updateProfile(input: { displayName: string }): Promise<Identity>;
   logout(): Promise<void>;
-  getSnapshot(): Promise<FrontendSnapshot>;
+  getSnapshot(options?: { signal?: AbortSignal }): Promise<FrontendSnapshot>;
   getHistory(): Promise<HistorySnapshot>;
   createProject(input: { name: string }): Promise<WorkProject>;
   moveConversation(input: { conversationId: string; projectId: string | null }): Promise<Conversation>;

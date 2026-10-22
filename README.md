@@ -28,7 +28,7 @@ npm run dev
 | `npm run build` | Next.js 生产构建，非部署 |
 | `npm start` | 启动已构建本地服务；先停止同端口开发服务 |
 | `npm run test:routes` | 对实际运行服务检查根路径、21 路由、404 与历史入口 |
-| `npm run verify:homepage` | 校验冻结官网哈希；原型仍存在时同时对照源文件 |
+| `npm run verify:homepage` | 校验当前获批官网及品牌资源哈希；保留并校验原型源文件哈希 |
 
 ## 入口与演示
 

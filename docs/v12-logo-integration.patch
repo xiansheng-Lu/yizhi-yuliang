@@ -1,0 +1,58 @@
+diff --git a/src/components/v12-shell.tsx b/src/components/v12-shell.tsx
+index a92c876..6faab78 100644
+--- a/src/components/v12-shell.tsx
++++ b/src/components/v12-shell.tsx
+@@ -3,13 +3,14 @@ import { useState, type ReactNode } from "react";
+ import Link from "next/link";
+ import {
+   ArrowClockwise, ArrowSquareOut, Broadcast, ChartLineUp, ChatCircleDots,
+-  DeviceMobile, List, SignOut, Sparkle, X, CaretDown, Plus,
++  DeviceMobile, List, SignOut, X, CaretDown, Plus,
+   CheckSquare, House, Question, MagnifyingGlass, Lightning, Gear, FilmStrip,
+ } from "@phosphor-icons/react";
+ import { pageName, navigationGroups, type PageId } from "@/lib/routes";
+ import { useWorkspace } from "./provider";
+ import { ScopeControls } from "./operating-context";
+ import { Badge } from "./ui";
++import { BrandLogo } from "./brand-logo";
+ 
+ const groupIcons = [ChatCircleDots, CheckSquare, Broadcast, Lightning, FilmStrip, ChartLineUp, Gear];
+ 
+@@ -36,8 +37,7 @@ export function WorkspaceShell({ pageId, children }: { pageId: PageId; children:
+       {menu && <button className="sidebar-scrim" aria-label="关闭导航遮罩" onClick={() => setMenu(false)} />}
+       <aside className={`sidebar ${menu ? "open" : ""}`} aria-label="工作区侧栏">
+         <Link href="/" className="brand">
+-          <span className="brand-symbol"><Sparkle size={24} weight="fill" /></span>
+-          <span><b>易致·驭量</b><small>YULIANG INTELLIGENCE</small></span>
++          <BrandLogo />
+           <span className="version-label">V12</span>
+         </Link>
+         <button className="mobile-close icon-button" aria-label="关闭菜单" onClick={() => setMenu(false)}><X size={18} /></button>
+diff --git a/src/features/command-desk.tsx b/src/features/command-desk.tsx
+index 1e1bc41..7f670f2 100644
+--- a/src/features/command-desk.tsx
++++ b/src/features/command-desk.tsx
+@@ -1,12 +1,13 @@
+ "use client";
+ import { useEffect, useState } from "react";
+ import Link from "next/link";
+-import { ArrowRight, ArrowUpRight, Broadcast, ChartLineUp, CheckCircle, Clock, FilmStrip, Lightning, Robot, ShieldCheck, Sparkle, TrendUp } from "@phosphor-icons/react";
++import { ArrowRight, ArrowUpRight, Broadcast, ChartLineUp, CheckCircle, Clock, FilmStrip, Lightning, Robot, ShieldCheck, TrendUp } from "@phosphor-icons/react";
+ import type { FrontendSnapshot } from "@/lib/domain";
+ import { displayTime, jobStatusNames } from "@/lib/command-job";
+ import { scopedJobs } from "@/lib/reporting";
+ import { CommandPanel } from "@/components/command-panel";
+ import { Badge } from "@/components/ui";
++import { BrandMark } from "@/components/brand-logo";
+ 
+ const capabilities = [
+   { name: "内容生产", icon: FilmStrip, text: "为秋茶新品策划一组短视频投流素材", href: "/app/planning", note: "从创意到投放素材" },
+@@ -39,7 +40,7 @@ export function CommandDesk({ snapshot }: { snapshot: FrontendSnapshot }) {
+       <div className="desk-titlebar"><div><span className="eyebrow">YOUR AI OPERATIONS PARTNER</span><h1>AI运营指挥台</h1></div><Link href="/app/goals" className="desk-goals"><ShieldCheck size={15} />经营目标与边界<ArrowUpRight size={14} /></Link></div>
+       <div className="desk-grid">
+         <section className="conversation-area" aria-label="AI 运营对话">
+-          <div className="desk-welcome"><span className="desk-ai-mark"><Sparkle size={29} weight="fill" /></span><div className="welcome-kicker">你好，我是你的 AI 运营伙伴</div><h2>把经营目标交给 AI，<br /><em>让增长有序发生。</em></h2><p>从一条指令开始，连接内容生产、投放执行与经营复盘。</p></div>
++          <div className="desk-welcome"><span className="desk-ai-mark"><BrandMark /></span><div className="welcome-kicker">你好，我是你的 AI 运营伙伴</div><h2>把经营目标交给 AI，<br /><em>让增长有序发生。</em></h2><p>从一条指令开始，连接内容生产、投放执行与经营复盘。</p></div>
+           <div className="capability-tabs" role="tablist" aria-label="AI 运营能力">{capabilities.map((item, index) => <button key={item.name} role="tab" aria-selected={capability === index} aria-controls="capability-prompt" id={`capability-${index}`} onClick={() => {setCapability(index); setDraft(item.text);}}><item.icon size={17} />{item.name}</button>)}</div>
+           <div id="capability-prompt" className="capability-prompt" role="tabpanel" aria-labelledby={`capability-${capability}`}><span>{capabilities[capability].note}</span><Link href={capabilities[capability].href}>进入专业工作区<ArrowUpRight size={14} /></Link></div>
+           <CommandPanel key={composerVersion} snapshot={snapshot} source="PC_MANUAL" desk value={draft} onChange={setDraft} />

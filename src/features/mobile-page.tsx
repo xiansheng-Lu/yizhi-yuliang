@@ -7,12 +7,12 @@ import {
   ChatCircleDots,
   ClockCounterClockwise,
   ListChecks,
-  Sparkle,
 } from "@phosphor-icons/react";
 import { AuthGuard, SnapshotView } from "@/components/provider";
 import { Badge, Panel } from "@/components/ui";
 import { TaskList } from "@/components/task-controls";
 import { CommandPanel } from "@/components/command-panel";
+import { BrandLogo } from "@/components/brand-logo";
 import {
   CoreMetrics,
   LiveSummary,
@@ -36,13 +36,7 @@ export function MobilePage() {
             <div className="phone-shell">
               <header className="phone-top">
                 <div className="brand">
-                  <span className="brand-symbol">
-                    <Sparkle size={22} weight="fill" />
-                  </span>
-                  <span>
-                    <b>驭量 AI 指挥官</b>
-                    <small>YULIANG MOBILE COMMAND</small>
-                  </span>
+                  <BrandLogo />
                 </div>
                 <Link
                   href="/app/monitor"

@@ -11,7 +11,8 @@ for (const [name, expected] of Object.entries(baseline.files)) {
     source = resolve(baseline.sourceRoot, name);
   if (
     hash(target) !== expected ||
-    (existsSync(source) && hash(source) !== expected)
+    (existsSync(source) &&
+      hash(source) !== (baseline.sourceFiles?.[name] ?? expected))
   )
     throw new Error(`Frozen homepage changed: ${name}`);
   console.log(`PASS ${name} ${expected}`);

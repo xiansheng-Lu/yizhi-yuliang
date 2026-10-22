@@ -16,6 +16,7 @@ import {
 import { pageName, workspaces, type PageId } from "@/lib/routes";
 import { useWorkspace } from "./provider";
 import { Badge } from "./ui";
+import { BrandLogo } from "./brand-logo";
 const groupIcons = [ChartLineUp, Sparkle, Broadcast, Stack];
 
 export function WorkspaceShell({
@@ -43,13 +44,7 @@ export function WorkspaceShell({
       )}
       <aside className={`sidebar ${menu ? "open" : ""}`}>
         <Link href="/" className="brand">
-          <span className="brand-symbol">
-            <Sparkle size={23} weight="fill" />
-          </span>
-          <span>
-            <b>易致·驭量</b>
-            <small>YULIANG WORKSPACE</small>
-          </span>
+          <BrandLogo />
         </Link>
         <button
           className="mobile-close icon-button"

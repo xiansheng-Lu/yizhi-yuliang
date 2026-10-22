@@ -2,7 +2,7 @@ import { ApiClient } from "./api-client";
 import { browserMockAdapter } from "./mock-adapter";
 import { ServiceError, type FrontendService } from "./contracts";
 export function createFrontendService(): FrontendService {
-  const mode = process.env.NEXT_PUBLIC_DATA_MODE ?? "mock";
+  const mode = process.env.NEXT_PUBLIC_DATA_MODE ?? "api";
   if (mode === "mock") return browserMockAdapter();
   if (mode === "api")
     return new ApiClient(process.env.NEXT_PUBLIC_API_BASE_URL ?? "");

@@ -2,17 +2,20 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { createHash } from "node:crypto";
-import { isPageId, loginTarget, navigationGroups, pageName, pages } from "../src/lib/routes";
+import { customerPageIds, isPageId, loginTarget, navigationGroups, pageName, pages } from "../src/lib/routes";
 
-test("V12 seven groups cover 21 legacy IDs and one command page exactly once", () => {
-  assert.deepEqual(navigationGroups.map((group) => group.name), ["AI驭量中枢", "任务中心", "直播运营", "投放管理", "内容工厂", "数据复盘", "管理设置"]);
+test("six customer navigation entries exclude administration and preserve legacy routes", () => {
+  assert.deepEqual(navigationGroups.map((group) => group.name), ["AI驭量中枢", "经营概况", "直播运营", "投放管理", "内容工厂", "数据复盘"]);
   const ids = navigationGroups.flatMap((group) => group.pages.map(([id]) => id));
-  assert.equal(ids.length, 22);
-  assert.equal(new Set(ids).size, 22);
-  for (const [id] of pages) assert.ok(ids.includes(id), id);
+  assert.equal(ids.length, 18);
+  assert.equal(new Set(ids).size, 18);
+  for (const [id] of pages) assert.ok(isPageId(id), id);
+  for (const id of ["agents", "connections", "settings", "tasks"]) assert.ok(!ids.some((value) => value === id));
+  assert.ok(customerPageIds.includes("tasks"));
+  assert.ok(isPageId("account"));
   assert.ok(isPageId("command"));
   assert.ok(!isPageId("unknown"));
-  assert.equal(pageName("overview"), "经营总览");
+  assert.equal(pageName("overview"), "经营概况");
   assert.equal(pageName("command"), "AI驭量中枢");
 });
 

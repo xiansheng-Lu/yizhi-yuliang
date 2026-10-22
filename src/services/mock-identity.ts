@@ -19,6 +19,7 @@ export class MockIdentityAdapter {
         !Array.isArray(data.permissions)
       )
         throw new Error();
+      if (data.userId === "demo-operator" && !data.email) data.email = "demo@yuliang.local";
       if (
         data.userId === "demo-operator" &&
         data.permissions.length === 3 &&
@@ -40,6 +41,7 @@ export class MockIdentityAdapter {
   }
   async login(input: LoginRequest): Promise<Identity> {
     if (
+      !("password" in input) ||
       input.email.trim() !== "demo@yuliang.local" ||
       input.password !== "demo123"
     )
@@ -50,6 +52,7 @@ export class MockIdentityAdapter {
     const identity: Identity = {
       userId: "demo-operator",
       displayName: "演示运营员",
+      email: "demo@yuliang.local",
       tenantId: "tenant-demo",
       shopIds: ["shop-tea", "shop-mountain"],
       permissions: [
@@ -63,6 +66,15 @@ export class MockIdentityAdapter {
     };
     this.storage.setItem(identityKey, JSON.stringify(identity));
     return identity;
+  }
+  async updateProfile(input: { displayName: string }) {
+    const actor = await this.getIdentity();
+    if (!actor) throw new ServiceError("UNAUTHENTICATED", "请先登录。");
+    const displayName = input.displayName.trim();
+    if (!displayName || displayName.length > 40) throw new ServiceError("INVALID_INPUT", "昵称需要 1–40 个字符。");
+    const updated = { ...actor, displayName };
+    this.storage.setItem(identityKey, JSON.stringify(updated));
+    return updated;
   }
   async logout() {
     this.storage.removeItem(identityKey);

@@ -1,4 +1,5 @@
 import type { FrontendSnapshot, Identity, RiskPolicy } from "@/lib/domain";
+import type { Conversation, ConversationTurn, HistorySnapshot, SendMessageRequest, WorkProject } from "@/lib/workspace-history";
 import type {
   CommandJob,
   CreateJobRequest,
@@ -17,19 +18,25 @@ export type ErrorCode =
   | "TIMEOUT"
   | "INVALID_RESPONSE"
   | "INVALID_INPUT"
+  | "RATE_LIMITED"
   | "CONFLICT";
 export class ServiceError extends Error {
   constructor(
     public code: ErrorCode,
     message: string,
+    public retryAfterSeconds?: number,
   ) {
     super(message);
     this.name = "ServiceError";
   }
 }
-export interface LoginRequest {
-  email: string;
-  password: string;
+export type LoginRequest =
+  | { email: string; password: string; method?: "password" }
+  | { email: string; code: string; challengeId: string; method: "email_code" };
+export interface EmailLoginChallenge {
+  challengeId: string;
+  expiresAt: string;
+  retryAfterSeconds: number;
 }
 export interface ApiSuccess<T> {
   data: T;
@@ -44,8 +51,16 @@ export interface FrontendService {
   readonly mode: DataMode;
   getIdentity(): Promise<Identity | null>;
   login(input: LoginRequest): Promise<Identity>;
+  requestEmailCode(input: { email: string }): Promise<EmailLoginChallenge>;
+  updateProfile(input: { displayName: string }): Promise<Identity>;
   logout(): Promise<void>;
   getSnapshot(): Promise<FrontendSnapshot>;
+  getHistory(): Promise<HistorySnapshot>;
+  createProject(input: { name: string }): Promise<WorkProject>;
+  moveConversation(input: { conversationId: string; projectId: string | null }): Promise<Conversation>;
+  sendMessage(input: SendMessageRequest): Promise<ConversationTurn>;
+  attachConversationJob(input: { conversationId: string; messageId: string; jobId: string }): Promise<Conversation>;
+  assignTaskProject(input: { jobId: string; projectId: string | null }): Promise<void>;
   interpretCommand(input: {
     text: string;
     scope: ReportingScope;

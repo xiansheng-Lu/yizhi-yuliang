@@ -90,6 +90,12 @@ export interface DecisionReviewRequest {
   proposedValue?: number | boolean;
   idempotencyKey: string;
 }
+export interface ApprovalReviewRequest {
+  expectedVersion: number;
+  decision: "APPROVE" | "REJECT";
+  comment: string;
+  idempotencyKey: string;
+}
 export interface AnalysisRequest {
   scope: DeliveryScope;
   kind: "GOAL_GAP" | "PLAN" | "DECISION" | "BUDGET" | "EXECUTION";
@@ -405,11 +411,35 @@ function scoped(
         )),
   );
   plans = plans.map((plan) => {
-    const cap = data.capabilities.find((c) => c.accountId === plan.accountId && c.platform === plan.platform);
+    const cap = data.capabilities.find(
+      (c) => c.accountId === plan.accountId && c.platform === plan.platform,
+    );
     if (!cap) return plan;
     const metrics = { ...plan.metrics };
-    for (const field of ["spend", "attributedGmvMinor", "roi", "conversions"] as const) if (!cap.supportedMetrics.includes(field)) metrics[field] = null;
-    return plan.kind === "PROMOTION_ORDER" ? { ...plan, metrics, progress: cap.supportedMetrics.includes("progress") ? plan.progress : null, extensions: { views: cap.supportedMetrics.includes("views") ? plan.extensions.views : null, interactions: cap.supportedMetrics.includes("interactions") ? plan.extensions.interactions : null } } : { ...plan, metrics };
+    for (const field of [
+      "spend",
+      "attributedGmvMinor",
+      "roi",
+      "conversions",
+    ] as const)
+      if (!cap.supportedMetrics.includes(field)) metrics[field] = null;
+    return plan.kind === "PROMOTION_ORDER"
+      ? {
+          ...plan,
+          metrics,
+          progress: cap.supportedMetrics.includes("progress")
+            ? plan.progress
+            : null,
+          extensions: {
+            views: cap.supportedMetrics.includes("views")
+              ? plan.extensions.views
+              : null,
+            interactions: cap.supportedMetrics.includes("interactions")
+              ? plan.extensions.interactions
+              : null,
+          },
+        }
+      : { ...plan, metrics };
   });
   const planIds = new Set(plans.map((p) => p.id));
   const decisions = data.decisions.filter(
@@ -458,9 +488,10 @@ function scoped(
     ),
     approvals: data.approvals.filter(
       (a) =>
-        (a.decisionId && decisions.some((d) => d.id === a.decisionId)) ||
-        (a.budgetId && budgets.some((b) => b.id === a.budgetId)) ||
-        (a.executionId && executions.some((t) => t.id === a.executionId)),
+        has(a.accountId) &&
+        ((a.decisionId && decisions.some((d) => d.id === a.decisionId)) ||
+          (a.budgetId && budgets.some((b) => b.id === a.budgetId)) ||
+          (a.executionId && executions.some((t) => t.id === a.executionId))),
     ),
     boundaries: data.boundaries.filter(
       (b) =>
@@ -492,7 +523,8 @@ export function validateDeliveryData(value: DeliveryData) {
     "budgetTrends",
   ] as const;
   if (
-    !value || value.contractVersion !== "delivery-v8.0" ||
+    !value ||
+    value.contractVersion !== "delivery-v8.0" ||
     arrays.some((key) => !Array.isArray(value[key])) ||
     !value.scope ||
     !value.sync
@@ -612,6 +644,18 @@ export function validateDeliveryData(value: DeliveryData) {
       !Number.isInteger(t.version)
     )
       fail("执行任务结构无效。");
+  for (const a of value.approvals)
+    if (
+      !a ||
+      !a.id ||
+      !a.accountId ||
+      !Number.isInteger(a.version) ||
+      a.version < 1 ||
+      !["PENDING", "APPROVED", "REJECTED"].includes(a.status) ||
+      a.before === undefined ||
+      a.after === undefined
+    )
+      fail("审批资源缺少账户、版本或变更内容。");
   for (const b of value.budgets)
     if (
       !b ||
@@ -840,6 +884,13 @@ export class DeliveryService {
   review(id: string, input: DecisionReviewRequest) {
     return this.transport<MutationResult>(
       `decisions/${encodeURIComponent(id)}/reviews`,
+      "POST",
+      input,
+    );
+  }
+  approval(id: string, input: ApprovalReviewRequest) {
+    return this.transport<MutationResult>(
+      `approvals/${encodeURIComponent(id)}/reviews`,
       "POST",
       input,
     );

@@ -259,9 +259,14 @@ export interface AIDecision {
   approvalId: string | null;
   executionId: string | null;
   outcome: string | null;
+  history?: { at: string; actorId: string; status: string; comment: string }[];
 }
 export interface ApprovalRequest {
   id: string;
+  accountId: string;
+  before: unknown;
+  after: unknown;
+  reason: string;
   decisionId: string | null;
   budgetId: string | null;
   executionId: string | null;
@@ -361,9 +366,26 @@ export function dailyGoalGaps(points: TrendPoint[], periodStart: string) {
   return sorted.map((point, i) => {
     const previous = sorted[i - 1];
     const first = !previous && point.date === periodStart;
-    const consecutive = previous && Date.parse(`${point.date}T00:00:00Z`) - Date.parse(`${previous.date}T00:00:00Z`) === 86_400_000;
-    const known = point.actualGmvMinor !== null && point.targetGmvMinor !== null && (first || consecutive && previous.actualGmvMinor !== null && previous.targetGmvMinor !== null);
-    return { date: point.date, gapMinor: known ? point.actualGmvMinor! - (previous?.actualGmvMinor ?? 0) - (point.targetGmvMinor! - (previous?.targetGmvMinor ?? 0)) : null };
+    const consecutive =
+      previous &&
+      Date.parse(`${point.date}T00:00:00Z`) -
+        Date.parse(`${previous.date}T00:00:00Z`) ===
+        86_400_000;
+    const known =
+      point.actualGmvMinor !== null &&
+      point.targetGmvMinor !== null &&
+      (first ||
+        (consecutive &&
+          previous.actualGmvMinor !== null &&
+          previous.targetGmvMinor !== null));
+    return {
+      date: point.date,
+      gapMinor: known
+        ? point.actualGmvMinor! -
+          (previous?.actualGmvMinor ?? 0) -
+          (point.targetGmvMinor! - (previous?.targetGmvMinor ?? 0))
+        : null,
+    };
   });
 }
 export const platforms = {

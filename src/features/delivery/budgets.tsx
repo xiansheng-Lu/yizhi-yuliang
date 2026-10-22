@@ -24,12 +24,14 @@ import {
   Trend,
 } from "./ui";
 import { AnalyzeButton } from "./shared";
+import { ApprovalReview } from "./approval";
 
 export function Budgets() {
   const d = useDelivery();
   const [tab, setTab] = useState("预算分配"),
     [edit, setEdit] = useState<BudgetAllocation | null>(null),
     [create, setCreate] = useState(false);
+  const [approval, setApproval] = useState<BudgetAllocation | null>(null);
   const rows = d.data.budgets.filter(
     (b) => !d.query.get("planId") || b.planId === d.query.get("planId"),
   );
@@ -170,6 +172,14 @@ export function Budgets() {
                           >
                             调整分配
                           </button>
+                          {b.internalStatus === "PENDING_APPROVAL" && (
+                            <button
+                              className="dw-link"
+                              onClick={() => setApproval(b)}
+                            >
+                              查看并审批
+                            </button>
+                          )}
                           {b.executionId && (
                             <Link
                               className="dw-link"
@@ -353,6 +363,14 @@ export function Budgets() {
         </button>
       )}
       {create && <NewBudget close={() => setCreate(false)} />}
+      {approval && (
+        <ApprovalReview
+          approvalId={approval.approvalId}
+          accountId={approval.accountId}
+          budgetId={approval.id}
+          close={() => setApproval(null)}
+        />
+      )}
       {edit && (
         <BudgetEditor
           key={edit.id}

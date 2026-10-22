@@ -6,6 +6,7 @@ import {
   actionAvailability,
   decisionTypes,
   platforms,
+  redact,
   time,
   type AIDecision,
 } from "@/lib/delivery";
@@ -312,6 +313,24 @@ export function Decisions() {
                 )}
                 <p>{selected.outcome ?? "尚无执行后的实际效果记录"}</p>
                 <small>执行后的自然波动不直接归因为AI优化贡献。</small>
+                <details>
+                  <summary>策略处置历史</summary>
+                  {selected.history?.length ? (
+                    selected.history.map((h, i) => (
+                      <article className="dw-audit-line" key={`${h.at}-${i}`}>
+                        <span>{time(h.at)}</span>
+                        <div>
+                          <b>
+                            {h.actorId} · {h.status}
+                          </b>
+                          <p>{String(redact(h.comment))}</p>
+                        </div>
+                      </article>
+                    ))
+                  ) : (
+                    <p>尚无后端返回的处置历史。</p>
+                  )}
+                </details>
               </div>
             </>
           ) : (
@@ -367,7 +386,14 @@ function Review({
           decision: choice,
           comment,
           expectedVersion: x.version,
-          ...(choice === "MODIFY" ? { proposedValue: typeof x.proposedValue === "boolean" ? value === "true" : Number(value) } : {}),
+          ...(choice === "MODIFY"
+            ? {
+                proposedValue:
+                  typeof x.proposedValue === "boolean"
+                    ? value === "true"
+                    : Number(value),
+              }
+            : {}),
           idempotencyKey: crypto.randomUUID(),
         }),
       close,
@@ -405,25 +431,47 @@ function Review({
         {choice === "MODIFY" && (
           <label>
             修订值（平台原生最小单位）
-            {typeof x.proposedValue === "boolean" ? <select aria-label="修订计划状态" value={value} onChange={(e) => { setValue(e.target.value); setPreview(false); d.markDirty(true); d.saveDraft({ kind: "REVIEW", decisionId: x.id, choice, comment, value: e.target.value }); }}><option value="true">开启</option><option value="false">暂停</option></select> : <input
-              type="number"
-              min="1"
-              step="1"
-              required
-              value={value}
-              onChange={(e) => {
-                setValue(e.target.value);
-                setPreview(false);
-                d.markDirty(true);
-                d.saveDraft({
-                  kind: "REVIEW",
-                  decisionId: x.id,
-                  choice,
-                  comment,
-                  value: e.target.value,
-                });
-              }}
-            />}
+            {typeof x.proposedValue === "boolean" ? (
+              <select
+                aria-label="修订计划状态"
+                value={value}
+                onChange={(e) => {
+                  setValue(e.target.value);
+                  setPreview(false);
+                  d.markDirty(true);
+                  d.saveDraft({
+                    kind: "REVIEW",
+                    decisionId: x.id,
+                    choice,
+                    comment,
+                    value: e.target.value,
+                  });
+                }}
+              >
+                <option value="true">开启</option>
+                <option value="false">暂停</option>
+              </select>
+            ) : (
+              <input
+                type="number"
+                min="1"
+                step="1"
+                required
+                value={value}
+                onChange={(e) => {
+                  setValue(e.target.value);
+                  setPreview(false);
+                  d.markDirty(true);
+                  d.saveDraft({
+                    kind: "REVIEW",
+                    decisionId: x.id,
+                    choice,
+                    comment,
+                    value: e.target.value,
+                  });
+                }}
+              />
+            )}
           </label>
         )}
         <label>

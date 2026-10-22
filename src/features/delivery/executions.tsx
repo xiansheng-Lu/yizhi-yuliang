@@ -19,6 +19,7 @@ import {
 import { useDelivery } from "./context";
 import { Gate, Json, Metrics, Missing, Modal, Section, Status } from "./ui";
 import { AnalyzeButton } from "./shared";
+import { ApprovalReview } from "./approval";
 
 export function Executions() {
   const d = useDelivery();
@@ -314,7 +315,11 @@ function TaskDetail({
           </article>
         ))}
       </div>
-      {t.failure && <p className="dw-notice danger">失败原因：{String(redact(t.failure))}</p>}
+      {t.failure && (
+        <p className="dw-notice danger">
+          失败原因：{String(redact(t.failure))}
+        </p>
+      )}
       {["UNKNOWN", "MANUAL", "PARTIAL"].includes(t.status) && (
         <p className="dw-notice">
           请核对账户授权、平台响应和当前配置；超时及未知结果不能自动重放。
@@ -330,7 +335,7 @@ function TaskDetail({
           </button>
         )}
         {t.status === "PENDING_APPROVAL" &&
-          legacy?.status === "PENDING_APPROVAL" && (
+          (!t.legacyJobId || legacy?.status === "PENDING_APPROVAL") && (
             <>
               <button
                 className="button primary"
@@ -407,6 +412,16 @@ function TaskOperation({
 }) {
   const d = useDelivery(),
     { service } = useWorkspace();
+  if (!t.legacyJobId && (action === "approve" || action === "reject"))
+    return (
+      <ApprovalReview
+        approvalId={t.approvalId}
+        accountId={t.accountId}
+        executionId={t.id}
+        initial={action === "approve" ? "APPROVE" : "REJECT"}
+        close={close}
+      />
+    );
   const capability = actionAvailability(
     d.data,
     d.identity,

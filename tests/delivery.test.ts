@@ -498,7 +498,11 @@ test("delivery: API acceptance cannot masquerade as a verified effect and retrie
   assert.equal(Object.keys(executionStates).length, 10);
 });
 test("delivery: nested receipts redact credentials and token-bearing strings", () => {
-  assert.ok(!String(redact('{"access_token":"sensitive-value","observed":100}')).includes("sensitive-value"));
+  assert.ok(
+    !String(
+      redact('{"access_token":"sensitive-value","observed":100}'),
+    ).includes("sensitive-value"),
+  );
   const safe = redact({
     access_token: "secret",
     nested: [
@@ -536,7 +540,57 @@ test("delivery: no production mutation is available through the browser mock ada
   assert.equal(scopeKey(scope), scopeKey({ ...scope }));
 });
 test("delivery: daily goal gaps derive only from consecutive cumulative evidence", () => {
-  const point = { actualGmvMinor: 2000, targetGmvMinor: 1000, spend: null, budget: null, roi: null, targetRoi: null };
-  const gaps = dailyGoalGaps([{ ...point, date: "2026-10-01" }, { ...point, date: "2026-10-02", actualGmvMinor: 2500, targetGmvMinor: 3000 }, { ...point, date: "2026-10-05" }], "2026-10-01");
-  assert.deepEqual(gaps.map((g) => g.gapMinor), [1000, -1500, null]);
+  const point = {
+    actualGmvMinor: 2000,
+    targetGmvMinor: 1000,
+    spend: null,
+    budget: null,
+    roi: null,
+    targetRoi: null,
+  };
+  const gaps = dailyGoalGaps(
+    [
+      { ...point, date: "2026-10-01" },
+      {
+        ...point,
+        date: "2026-10-02",
+        actualGmvMinor: 2500,
+        targetGmvMinor: 3000,
+      },
+      { ...point, date: "2026-10-05" },
+    ],
+    "2026-10-01",
+  );
+  assert.deepEqual(
+    gaps.map((g) => g.gapMinor),
+    [1000, -1500, null],
+  );
+});
+test("delivery: generic approval reviews retain the approval resource version and never imply platform success", async () => {
+  let url = "",
+    body: Record<string, unknown> = {};
+  const api = new DeliveryService(
+    new ApiClient("https://api.test", async (input, init) => {
+      url = String(input);
+      body = JSON.parse(String(init?.body));
+      assert.equal(init?.credentials, "include");
+      return envelope({
+        resourceId: "approval/1",
+        state: "APPROVED",
+        executionId: "execution-1",
+        approvalId: "approval/1",
+      });
+    }),
+  );
+  const response = await api.approval("approval/1", {
+    expectedVersion: 7,
+    decision: "APPROVE",
+    comment: "已核对前后参数",
+    idempotencyKey: "approval-key",
+  });
+  assert.ok(url.endsWith("/v1/delivery/approvals/approval%2F1/reviews"));
+  assert.equal(body.expectedVersion, 7);
+  assert.equal(body.idempotencyKey, "approval-key");
+  assert.equal(response.state, "APPROVED");
+  assert.notEqual(response.state, "EFFECTIVE");
 });

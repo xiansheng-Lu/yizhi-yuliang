@@ -1,0 +1,73 @@
+/* Shared artwork and sizing for the public site, login, PC and mobile. */
+.brand-logo {
+  display: block;
+  width: 216px;
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+.brand:has(> .brand-logo) {
+  min-width: 0;
+}
+.sidebar > .brand > .brand-logo {
+  width: 100%;
+  min-width: 0;
+}
+.sidebar > .brand:has(> .brand-logo) {
+  position: relative;
+}
+.sidebar > .brand:has(> .brand-logo) > .version-label {
+  position: absolute;
+  top: -15px;
+  right: 0;
+  margin: 0;
+}
+.login-visual .brand-logo {
+  width: 300px;
+}
+.phone-top .brand-logo {
+  width: 232px;
+}
+.brand-mark {
+  display: block;
+  flex: none;
+  width: 48px;
+  height: 48px;
+  background: url("/assets/yuliang-mark.svg") center / contain no-repeat;
+}
+.desk-ai-mark:has(> .brand-mark) {
+  width: 58px;
+  height: 58px;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+.desk-ai-mark > .brand-mark {
+  width: 100%;
+  height: 100%;
+}
+@media (max-width: 760px) {
+  .sidebar > .brand:has(> .brand-logo) {
+    padding-right: 32px;
+  }
+  .site-header-inner {
+    gap: 12px;
+  }
+  .site-header .brand-logo {
+    width: clamp(124px, 40vw, 190px);
+  }
+  .site-footer .brand-logo {
+    width: 216px;
+  }
+  .login-visual .brand-logo {
+    width: 250px;
+  }
+  .phone-top .brand-logo {
+    width: min(232px, 65vw);
+  }
+  .desk-ai-mark:has(> .brand-mark) {
+    width: 48px;
+    height: 48px;
+  }
+}

@@ -2,10 +2,11 @@
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState, type FormEvent } from "react";
-import { ArrowLeft, ArrowRight, Sparkle } from "@phosphor-icons/react";
+import { ArrowLeft, ArrowRight } from "@phosphor-icons/react";
 import { loginTarget } from "@/lib/routes";
 import { useWorkspace } from "@/components/provider";
 import { Badge } from "@/components/ui";
+import { BrandLogo } from "@/components/brand-logo";
 export function LoginPage() {
   const { service, ready, identity, reload, logout, data } = useWorkspace();
   const query = useSearchParams(),
@@ -38,10 +39,7 @@ export function LoginPage() {
     <main className="login-layout">
       <aside className="login-visual">
         <Link href="/" className="brand">
-          <span className="brand-symbol">
-            <Sparkle size={25} weight="fill" />
-          </span>
-          <b>易致·驭量</b>
+          <BrandLogo />
         </Link>
         <div>
           <div className="eyebrow">YULIANG INTELLIGENCE</div>

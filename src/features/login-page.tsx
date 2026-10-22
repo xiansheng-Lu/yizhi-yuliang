@@ -2,128 +2,98 @@
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState, type FormEvent } from "react";
-import { ArrowLeft, ArrowRight } from "@phosphor-icons/react";
-import { loginTarget, pageName } from "@/lib/routes";
+import { ArrowRight, CheckCircle, DeviceMobile, EnvelopeSimple, ShieldCheck } from "@phosphor-icons/react";
+import { loginTarget } from "@/lib/routes";
+import { authorizedLoginTarget } from "@/lib/access";
 import { useWorkspace } from "@/components/provider";
-import { Badge } from "@/components/ui";
 import { BrandLogo } from "@/components/brand-logo";
+import { ServiceError, type EmailLoginChallenge } from "@/services/contracts";
+
+function loginError(error: unknown) {
+  if (error instanceof ServiceError && error.code === "API_NOT_CONFIGURED") return "登录服务暂未连接，请稍后再试。";
+  return error instanceof Error ? error.message : "登录未完成，请重试。";
+}
+
 export function LoginPage() {
   const { service, ready, identity, reload, logout, data } = useWorkspace();
-  const query = useSearchParams(),
-    router = useRouter(),
-    target = loginTarget(query.get("next"));
-  const [email, setEmail] = useState(""),
-    [password, setPassword] = useState(""),
-    [error, setError] = useState(""),
-    [busy, setBusy] = useState(false);
-  const mock = (process.env.NEXT_PUBLIC_DATA_MODE ?? "mock") === "mock";
+  const router = useRouter();
+  const query = useSearchParams();
+  const target = loginTarget(query.get("next"));
+  const mock = (process.env.NEXT_PUBLIC_DATA_MODE ?? "api") === "mock";
+  const [method, setMethod] = useState<"email_code" | "password">(mock ? "password" : "email_code");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [code, setCode] = useState("");
+  const [challenge, setChallenge] = useState<EmailLoginChallenge | null>(null);
+  const [retryAt, setRetryAt] = useState(0);
+  const [now, setNow] = useState(() => Date.now());
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [sending, setSending] = useState(false);
+  const retrySeconds = Math.max(0, Math.ceil((retryAt - now) / 1000));
+  const expired = Boolean(challenge && now >= Date.parse(challenge.expiresAt));
   useEffect(() => {
-    if (ready && identity) router.replace(target);
+    if (ready && identity) router.replace(authorizedLoginTarget(identity, target));
   }, [ready, identity, target, router]);
-  async function login(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    if (!service || busy) return;
-    setBusy(true);
-    setError("");
+  useEffect(() => {
+    if (!challenge && !retryAt) return;
+    const timer = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(timer);
+  }, [challenge, retryAt]);
+  async function sendCode() {
+    if (!service || !ready || sending || busy || retrySeconds) return;
+    setSending(true); setError("");
     try {
-      await service.login({ email, password });
-      await reload();
-      router.replace(target);
+      const result = await service.requestEmailCode({ email });
+      setChallenge(result); setCode("");
+      const sentAt = Date.now(); setNow(sentAt); setRetryAt(sentAt + result.retryAfterSeconds * 1000);
     } catch (error) {
-      setError(error instanceof Error ? error.message : "登录未完成，请重试。");
-    } finally {
-      setBusy(false);
-    }
+      setError(loginError(error));
+      if (error instanceof ServiceError && error.code === "RATE_LIMITED") {
+        const limitedAt = Date.now(); setNow(limitedAt); setRetryAt(limitedAt + (error.retryAfterSeconds ?? 60) * 1000);
+      }
+    } finally { setSending(false); }
+  }
+  async function login(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!service || busy || sending) return;
+    setBusy(true); setError("");
+    try {
+      if (method === "password") await service.login({ email, password, method: "password" });
+      else {
+        if (!challenge || Date.now() >= Date.parse(challenge.expiresAt)) throw new ServiceError("INVALID_INPUT", "请重新获取邮箱验证码。");
+        await service.login({ email, code, challengeId: challenge.challengeId, method: "email_code" });
+      }
+      const actor = await reload();
+      if (!actor) throw new ServiceError("UNAUTHENTICATED", "未能建立登录会话，请重试。");
+      router.replace(authorizedLoginTarget(actor, target));
+    } catch (error) { setError(loginError(error)); }
+    finally { setBusy(false); }
   }
   return (
     <main className="login-layout">
       <aside className="login-visual">
-        <Link href="/" className="brand">
-          <BrandLogo />
-        </Link>
-        <div>
-          <div className="eyebrow">YULIANG INTELLIGENCE</div>
-          <h1>
-            自主投放，
-            <br />
-            让每一份增长
-            <br />
-            <em>都有据可依。</em>
-          </h1>
-          <p>
-            同一工作台，连接经营目标、内容生产、
-            <br />
-            投放申请与完整复盘。
-          </p>
-        </div>
-        <span>
-          {mock ? "V12 前端演示 · 无真实广告操作" : "正式登录由独立后端验证"}
-        </span>
+        <Link href="/" className="brand"><BrandLogo /></Link>
+        <div><div className="eyebrow">YULIANG INTELLIGENCE</div><h1>自主投放，<br />让每一份增长<br /><em>都有据可依。</em></h1><p>同一工作台，连接经营目标、内容生产、<br />投放协作与经营复盘。</p></div>
+        <span>安全登录 · 多端协同</span>
       </aside>
       <section className="login-form-wrap">
-        <a href="/" className="back-link">
-          <ArrowLeft size={16} />
-          返回官网
-        </a>
         <div className="login-panel">
-          <Badge tone="blue">{mock ? "Mock 身份适配器" : "API 登录"}</Badge>
-          <h2>登录工作台</h2>
-          <p>从一句话开始，让 AI 协助你的日常运营。</p>
-          <form onSubmit={login}>
-            <label>
-              账号 / 邮箱
-              <input
-                name="email"
-                type="email"
-                autoComplete="username"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                placeholder={mock ? "演示邮箱" : "账号邮箱"}
-              />
-            </label>
-            <label>
-              密码
-              <input
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                placeholder={mock ? "请使用演示密码" : "密码"}
-              />
-            </label>
-            <button className="button primary" disabled={!ready || busy}>
-              {busy ? "正在验证…" : `进入 ${pageName("command")}`}
-              <ArrowRight size={18} />
-            </button>
-            <p role="alert" className="form-error">
-              {error || (data.status === "error" ? data.error.message : "")}
-            </p>
+          <span className="login-symbol"><EnvelopeSimple size={25} /></span>
+          <h2>账号登录</h2><p>{mock ? "本地功能预览，请使用测试账号。" : "登录你的邮箱账号，进入运营工作空间。"}</p>
+          <div className="login-methods" role="tablist" aria-label="登录方式">{([ ["email_code", "邮箱验证码"], ["password", "邮箱密码"] ] as const).map(([value, name]) => <button key={value} type="button" role="tab" id={`login-${value}`} aria-selected={method === value} aria-controls="login-form" disabled={busy || sending} onClick={() => { setMethod(value); setError(""); setPassword(""); }}>{name}</button>)}</div>
+          <form onSubmit={login} id="login-form" role="tabpanel" aria-labelledby={`login-${method}`}>
+            <label>邮箱地址<input name="email" type="email" autoComplete="email" required value={email} disabled={busy || sending} placeholder="请输入你的邮箱" onChange={(event) => { setEmail(event.target.value); setChallenge(null); setCode(""); setError(""); }} /></label>
+            {method === "password" ? <label>{mock ? "预览密码" : "密码"}<input name="password" type="password" autoComplete="current-password" required value={password} disabled={busy} onChange={(event) => setPassword(event.target.value)} placeholder="请输入账号密码" /></label> : <>
+              <label>邮箱验证码<div className="email-code-field"><input name="code" inputMode="numeric" autoComplete="one-time-code" required pattern="[0-9]{6}" maxLength={6} value={code} disabled={busy || sending} placeholder="6 位验证码" onChange={(event) => setCode(event.target.value.replace(/\D/g, "").slice(0, 6))} /><button type="button" disabled={!ready || sending || busy || retrySeconds > 0 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())} onClick={() => void sendCode()}>{sending ? "正在发送…" : retrySeconds > 0 ? `${retrySeconds} 秒后重发` : challenge ? "重新发送" : "获取验证码"}</button></div></label>
+              {challenge && <p className={`login-code-status ${expired ? "expired" : ""}`} role="status">{expired ? "验证码已过期，请重新获取。" : <><CheckCircle size={14} />验证码已发送，请检查邮箱及垃圾邮件。</>}</p>}
+            </>}
+            <button className="button primary" disabled={!ready || busy || sending || (method === "email_code" && (!challenge || expired || code.length !== 6))}>{busy ? "正在登录…" : "登录并进入工作台"}<ArrowRight size={18} /></button>
+            <p role="alert" className="form-error">{error || (data.status === "error" ? loginError(data.error) : "")}</p>
           </form>
-          {mock && (
-            <>
-              <button
-                className="demo-fill"
-                onClick={() => {
-                  setEmail("demo@yuliang.local");
-                  setPassword("demo123");
-                }}
-              >
-                一键填入演示账号
-              </button>
-              <div className="demo-account">
-                <b>仅供浏览器内演示</b>
-                <span>demo@yuliang.local / demo123</span>
-                <p>请勿输入真实账号密码。正式服务端认证由后端提供。</p>
-                <button className="text-link" onClick={() => void logout()}>
-                  清除演示身份
-                </button>
-              </div>
-            </>
-          )}
-          <small className="login-destination">登录后进入：{target}</small>
+          {!mock && <p className="login-security"><ShieldCheck size={15} />请妥善保管账号凭证，勿向他人转发验证码。</p>}
+          {mock && <div className="demo-account"><b>仅供本地开发预览</b><span>demo@yuliang.local / demo123</span><button className="demo-fill" onClick={() => { setMethod("password"); setEmail("demo@yuliang.local"); setPassword("demo123"); }}>填入测试账号</button><button className="text-link" onClick={() => void logout().catch((error) => setError(loginError(error)))}>清除测试登录</button></div>}
+          <Link className="login-app-link" href="/mobile"><DeviceMobile size={16} />APP端<ArrowRight size={14} /></Link>
         </div>
       </section>
     </main>

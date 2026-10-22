@@ -2,7 +2,7 @@
 
 自主投放，让每一份增长都有据可依。
 
-独立 Next.js 16.2.6 / React 19.2.6 / TypeScript 前端。V12 R1 增加蓝白应用外壳、七组导航及默认 `/app/command` 指挥台，保留 21 个旧路由，合计 22 个业务入口。官网仅按用户授权替换 Logo，其他文案、布局、三层卡包以及原 CSS/JS 冻结。G1-A/G1-B1 任务、审批与 Mock/API 边界保留；R2—R5 尚未实施。没有数据库、Next.js 业务 Route Handler、平台适配器、广告执行或 AI 策略引擎。详见 `docs/v12/R1-验收记录.md`。
+独立 Next.js 16.2.6 / React 19.2.6 / TypeScript 前端。主导航依次为 AI驭量中枢、经营概况、直播运营、投放管理、内容工厂、数据复盘；用户中心和 APP端位于侧栏底部。保留 21 个旧路由，新增中枢及用户中心。支持邮箱验证码和邮箱密码两种登录界面、会话检查、个人资料保存与服务端工作区授权。默认使用 API 客户端；当前尚无实际后端地址或腾讯云配置，真实登录、邮件发送和业务执行均未联调。官网原有布局、文案和 CSS/JS 保持冻结。
 
 ## Windows 本地运行
 
@@ -33,9 +33,11 @@ npm run dev
 ## 入口与演示
 
 - `/`：通过 Next beforeFiles rewrite 提供官网；仅 Logo 例外，其他内容与原始 HTML 一致。
-- `/login`：Mock 身份登录，演示账号 `demo@yuliang.local`，密码 `demo123`，支持一键填入。不要输入真实凭据。
-- `/app/command`：登录默认进入 AI运营指挥台；自然语言入口复用既有 Mock Service。
-- `/app/[pageId]`：21 个旧业务页面继续保留；overview 为经营总览，仅三项顶层 KPI。
+- `/login`：邮箱验证码 / 邮箱密码登录。API 未配置时明确提示服务未连接，不模拟发送邮件或登录成功。
+- `/app/account`：个人资料保存、账号状态、授权店铺、已授权工作区、任务与审批入口、退出登录。
+- `/app/command`：AI驭量中枢；登录目标未授权时进入用户中心。
+- 中枢采用对话式首页；侧栏保存最近对话与任务，可新建项目、移动对话及归类已有任务。桌面侧栏可收起为 72px 图标栏。对话使用幂等发送标识，任务通过消息 ID 关联，不会因重试重复创建。
+- `/app/[pageId]`：21 个旧业务 ID 保留；overview 为经营概况。管理设置不再出现在客户导航中，也不通过客户路由授权。
 - `/mobile`：AI 指挥、直播数据、执行流水、直播复盘。
 - 历史 `/login.html`、`/mobile.html`、`/app.html#/reports` 均有兼容。`campaigns` 归一为 `plans`。默认及非法 next 参数进入 `/app/command`，不会外跳；显式 `/app/overview` 深链仍进入经营总览。
 
@@ -49,14 +51,18 @@ PC 和手机在同源、同浏览器配置中使用同一 Mock 存储、`command
 
 ## Mock / API 切换
 
-默认 `NEXT_PUBLIC_DATA_MODE=mock`。未来接入后，在未提交的 `.env.local` 中设置：
+默认 `NEXT_PUBLIC_DATA_MODE=api`。实际后端可用后，在未提交的 `.env.local` 中设置：
 
 ```env
 NEXT_PUBLIC_DATA_MODE=api
 NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:<后端端口>
 ```
 
-变更后重启开发服务；NEXT_PUBLIC 变量在构建时注入，生产模式须重新构建。API 地址和接口均需陆文龙确认。客户端失败会显示错误，不回退 Mock；正式会话、服务端权限、CSRF 和数据协议尚未完成联调，不能上线使用。
+本地查看页面时，可在仅用于开发的 `.env.development.local` 显式设置 `NEXT_PUBLIC_DATA_MODE=mock`；测试账号为 `demo@yuliang.local / demo123`。该文件不会进入生产构建。Mock 不发送验证码，不能验证真实邮箱，不能跨设备同步。
+
+Mock 对话、项目与任务归类使用按企业和用户隔离的 `yuliang:history:v1:*` 本地存储；刷新和同源标签页可以恢复。API 模式通过独立后端保存会话、对话和项目，不使用本地存储降级。前端没有接入大模型，预览模式只提供明确标注的运营规则解析。
+
+变更后重启开发服务；NEXT_PUBLIC 变量在构建时注入，生产模式须重新构建。API 地址和接口需后端确认。客户端失败会显示错误，不回退 Mock；正式会话、服务端权限、CSRF 和数据协议尚未完成联调，不能上线使用。腾讯云邮件推送只由后端调用；SecretId、SecretKey、验证码校验及 Cookie 签发不得放进浏览器。当前账号接口见 `docs/v12/API契约补充清单-R1.md` 和更新后的 `docs/api-handoff-2026-10-22/openapi.json`。
 
 ## 目录与交接
 
@@ -71,4 +77,4 @@ NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:<后端端口>
 - `docs/G1-B1验收记录.md`：实际运行、10 类核心场景、截图、日志、修改范围和未完成事项。
 - `docs/API契约需求初稿.md`、`docs/G1-A验收记录.md`：保留的 G1-A 历史记录。
 
-仓库：https://github.com/xiansheng-Lu/yizhi-yuliang 。本阶段按用户指令仅本地提交，不 push、不部署；R1 完成后停止，等待验收。后续上传也不得强推、覆盖他人提交或提交密钥、依赖、运行时及构建产物。
+仓库：https://github.com/xiansheng-Lu/yizhi-yuliang 。按最新项目约定，检查通过后整合并推送至 main；不部署，不强推，不覆盖其他人的提交，不提交密钥、依赖、运行时及构建产物。

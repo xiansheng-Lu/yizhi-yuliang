@@ -15,6 +15,7 @@ import {
   ServiceError,
   type FrontendService,
   type LoginRequest,
+  type EmailLoginChallenge,
 } from "./contracts";
 import { createMockSnapshot } from "./mock-data";
 import { createMockJob, interpretMockCommand, mockRisk } from "./mock-command";
@@ -24,6 +25,8 @@ import {
   identityKey,
 } from "./mock-identity";
 import { migrateG1a } from "./mock-migration";
+import { MockHistoryStore } from "./mock-history";
+import type { SendMessageRequest } from "@/lib/workspace-history";
 export const snapshotKey = "yuliang:command-jobs:v1";
 export const legacySnapshotKey = "yuliang:g1a:mock-snapshot";
 const changedEvent = "yuliang:g1a:changed";
@@ -40,12 +43,14 @@ const terminal = new Set([
 export class MockAdapter implements FrontendService {
   readonly mode = "mock" as const;
   private identity: MockIdentityAdapter;
+  private history: MockHistoryStore;
   constructor(
     private storage: MockStorage,
     private notify = () => {},
     private clock = () => new Date(),
   ) {
     this.identity = new MockIdentityAdapter(storage);
+    this.history = new MockHistoryStore(storage, notify, clock);
   }
   getIdentity() {
     return this.identity.getIdentity();
@@ -55,6 +60,14 @@ export class MockAdapter implements FrontendService {
     this.notify();
     return actor;
   }
+  async requestEmailCode(): Promise<EmailLoginChallenge> {
+    throw new ServiceError("API_NOT_CONFIGURED", "本地预览不发送邮件，请连接登录服务。");
+  }
+  async updateProfile(input: { displayName: string }) {
+    const identity = await this.identity.updateProfile(input);
+    this.notify();
+    return identity;
+  }
   async logout() {
     await this.identity.logout();
     this.notify();
@@ -63,6 +76,26 @@ export class MockAdapter implements FrontendService {
     const data = this.seed();
     this.storage.setItem(snapshotKey, JSON.stringify(data));
     this.notify();
+  }
+  async getHistory() { return this.history.read(await this.requirePermission("snapshot.read")); }
+  async createProject(input: { name: string }) { return this.history.createProject(await this.requirePermission("snapshot.read"), input); }
+  async moveConversation(input: { conversationId: string; projectId: string | null }) { return this.history.move(await this.requirePermission("snapshot.read"), input); }
+  async sendMessage(input: SendMessageRequest) {
+    const actor = await this.requirePermission("snapshot.read");
+    if (input.source === "AUTOPILOT") throw new ServiceError("FORBIDDEN", "自主任务不能伪装成人工对话。");
+    const interpretation = await this.interpretCommand({ text: input.text, scope: input.scope });
+    return this.history.send(actor, input, interpretation);
+  }
+  async attachConversationJob(input: { conversationId: string; messageId: string; jobId: string }) {
+    const actor = await this.requirePermission("snapshot.read");
+    const snapshot = await this.getSnapshot();
+    if (!snapshot.tasks.some((job) => job.job_id === input.jobId)) throw new ServiceError("NO_DATA", "没有找到对应任务。");
+    return this.history.attach(actor, input);
+  }
+  async assignTaskProject(input: { jobId: string; projectId: string | null }) {
+    const actor = await this.requirePermission("snapshot.read");
+    if (!(await this.getSnapshot()).tasks.some((job) => job.job_id === input.jobId)) throw new ServiceError("NO_DATA", "没有找到对应任务。");
+    this.history.assign(actor, input);
   }
   private at() {
     return this.clock().toISOString();
@@ -508,7 +541,7 @@ export class MockAdapter implements FrontendService {
   subscribe(onChange: () => void) {
     if (typeof window === "undefined") return () => {};
     const listener = (event: StorageEvent) => {
-      if ([snapshotKey, identityKey, null].includes(event.key)) onChange();
+      if ([snapshotKey, identityKey, null].includes(event.key) || event.key?.startsWith("yuliang:history:v1:")) onChange();
     };
     window.addEventListener("storage", listener);
     window.addEventListener(changedEvent, onChange);

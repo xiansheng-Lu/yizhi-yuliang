@@ -1,18 +1,20 @@
 "use client";
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
 import {
   ArrowClockwise, ArrowSquareOut, Broadcast, ChartLineUp, ChatCircleDots,
-  DeviceMobile, List, SignOut, X, CaretDown, Plus,
-  CheckSquare, House, Question, MagnifyingGlass, Lightning, Gear, FilmStrip,
+  DeviceMobile, List, UserCircle, X, CaretDown,
+  SquaresFour, House, MagnifyingGlass, Lightning, FilmStrip, SidebarSimple,
 } from "@phosphor-icons/react";
 import { pageName, navigationGroups, type PageId } from "@/lib/routes";
+import { canAccessPage } from "@/lib/access";
 import { useWorkspace } from "./provider";
 import { ScopeControls } from "./operating-context";
 import { Badge } from "./ui";
 import { BrandLogo } from "./brand-logo";
+import { SidebarHistory } from "./sidebar-history";
 
-const groupIcons = [ChatCircleDots, CheckSquare, Broadcast, Lightning, FilmStrip, ChartLineUp, Gear];
+const groupIcons = [ChatCircleDots, SquaresFour, Broadcast, Lightning, FilmStrip, ChartLineUp];
 
 export function WorkspaceShell({ pageId, children }: { pageId: PageId; children: ReactNode }) {
   const [menu, setMenu] = useState(false);
@@ -20,44 +22,40 @@ export function WorkspaceShell({ pageId, children }: { pageId: PageId; children:
   const [searching, setSearching] = useState(false);
   const [contextOpen, setContextOpen] = useState(false);
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
-  const { identity, data, reload, logout, service } = useWorkspace();
+  const { identity, data, reload, service, sidebarCollapsed: collapsed, setSidebarCollapsed: setCollapsed } = useWorkspace();
   const snapshot = data.status === "ready" ? data.data : null;
-  const tenant = snapshot?.tenants.find((x) => x.id === identity?.tenantId);
   const isMock = service?.mode === "mock";
-  const pending = snapshot?.tasks.filter((job) => job.status === "PENDING_APPROVAL").length ?? 0;
   const command = pageId === "command";
   const currentGroup = navigationGroups.find((group) => group.pages.some(([id]) => id === pageId));
-  const allPages = navigationGroups.flatMap((group) => group.pages);
+  const allPages = navigationGroups.flatMap((group) => group.pages).filter(([id]) => canAccessPage(identity, id));
   const matchingPages = allPages.filter(([, name]) => name.includes(search.trim()));
   const currentShop = snapshot?.shops.find((shop) => shop.id === snapshot.scope.shop_id);
+  useEffect(() => {
+    const narrow = window.matchMedia("(max-width: 760px)");
+    const expandOnMobile = () => { if (narrow.matches) setCollapsed(false); };
+    narrow.addEventListener("change", expandOnMobile);
+    return () => narrow.removeEventListener("change", expandOnMobile);
+  }, [setCollapsed]);
 
   return (
-    <div className={`workspace-frame v12-workspace ${command ? "command-workspace" : ""}`} onKeyDown={(event) => { if (event.key === "Escape") { setMenu(false); setSearching(false); setContextOpen(false); } }}>
+    <div className={`workspace-frame v12-workspace ${command ? "command-workspace" : ""} ${collapsed ? "sidebar-collapsed" : ""}`} onKeyDown={(event) => { if (event.key === "Escape") { setMenu(false); setSearching(false); setContextOpen(false); } }}>
       <a className="skip-content" href="#workspace-content">跳到主要内容</a>
       {menu && <button className="sidebar-scrim" aria-label="关闭导航遮罩" onClick={() => setMenu(false)} />}
       <aside className={`sidebar ${menu ? "open" : ""}`} aria-label="工作区侧栏">
-        <Link href="/" className="brand">
-          <BrandLogo />
-          <span className="version-label">V12</span>
-        </Link>
+        <div className="sidebar-brandbar"><Link href="/" className="brand"><BrandLogo /></Link><button className="sidebar-collapse icon-button" aria-label={collapsed ? "展开侧栏" : "收起侧栏"} title={collapsed ? "展开侧栏" : "收起侧栏"} aria-expanded={!collapsed} aria-controls="workspace-navigation" onClick={() => setCollapsed((previous) => !previous)}><SidebarSimple size={20} /></button></div>
         <button className="mobile-close icon-button" aria-label="关闭菜单" onClick={() => setMenu(false)}><X size={18} /></button>
-        <div className="tenant-block">
-          <span>易</span><div><b>{tenant?.name ?? "当前企业"}</b><small>企业运营空间</small></div>
-          <Badge tone="blue">{isMock ? "演示" : "API"}</Badge>
-        </div>
-        <Link className="new-command" href="/app/command" onClick={() => { setMenu(false); window.dispatchEvent(new Event("yuliang:new-command")); }}>
-          <Plus size={17} weight="bold" />开始运营指挥<span>AI</span>
-        </Link>
-        <nav aria-label="V12 七组工作区">
+        <nav aria-label="业务导航" id="workspace-navigation">
           {navigationGroups.map((group, index) => {
+            const availablePages = group.pages.filter(([id]) => canAccessPage(identity, id));
+            if (!availablePages.length) return null;
             const Icon = groupIcons[index];
             const activeGroup = group === currentGroup;
-            if (group.pages.length === 1) {
-              const [id, name] = group.pages[0];
+            if (collapsed || group.pages.length === 1) {
+              const [id, name] = availablePages.find(([id]) => id === pageId) ?? availablePages[0];
               return (
                 <section className="nav-group" key={group.name}>
-                  <Link href={`/app/${id}`} onClick={() => setMenu(false)} aria-current={pageId === id ? "page" : undefined} className={`nav-direct ${pageId === id ? "active" : ""}`}>
-                    <Icon size={17} weight={activeGroup ? "fill" : "regular"} />{name}
+                  <Link href={`/app/${id}`} onClick={() => setMenu(false)} title={collapsed ? group.name : undefined} aria-label={collapsed ? group.name : name} aria-current={activeGroup ? "page" : undefined} className={`nav-direct ${activeGroup ? "active" : ""}`}>
+                    <Icon size={collapsed ? 21 : 17} weight={activeGroup ? "fill" : "regular"} /><span className="nav-label">{collapsed ? group.name : name}</span>
                   </Link>
                 </section>
               );
@@ -69,12 +67,11 @@ export function WorkspaceShell({ pageId, children }: { pageId: PageId; children:
                   <button aria-expanded={open} aria-controls={`navigation-${index}`} onClick={() => setExpanded((previous) => ({ ...previous, [group.name]: !open }))}>
                     <Icon size={17} weight={activeGroup ? "fill" : "regular"} />
                     <span>{group.name}</span>
-                    {group.name === "任务中心" && pending > 0 && <span className="nav-count">{pending}</span>}
                     <CaretDown size={12} className={open ? "caret-expanded" : ""} />
                   </button>
                 </h2>
                 <div id={`navigation-${index}`} hidden={!open}>
-                  {group.pages.map(([id, name]) => (
+                  {availablePages.map(([id, name]) => (
                     <Link key={id} href={`/app/${id}`} onClick={() => setMenu(false)} aria-current={pageId === id ? "page" : undefined} className={pageId === id ? "active" : ""}>
                       <span />{name}
                     </Link>
@@ -84,10 +81,10 @@ export function WorkspaceShell({ pageId, children }: { pageId: PageId; children:
             );
           })}
         </nav>
+        <SidebarHistory collapsed={collapsed} expand={() => setCollapsed(false)} onNavigate={() => setMenu(false)} />
         <div className="sidebar-footer">
-          <Link href="/mobile"><DeviceMobile size={16} />手机 AI 指挥<ArrowSquareOut size={13} /></Link>
-          <a href="/"><House size={16} />返回官网</a>
-          <button onClick={() => void logout()}><SignOut size={16} />{isMock ? "退出演示" : "退出登录"}</button>
+          <Link href={identity ? "/app/account" : "/login"} title={collapsed ? "用户中心" : undefined} aria-label={identity ? "用户中心" : "账号登录"} className={`sidebar-account ${pageId === "account" ? "active" : ""}`} aria-current={pageId === "account" ? "page" : undefined} onClick={() => setMenu(false)}><UserCircle size={collapsed ? 23 : 19} /><span><b>{identity ? "用户中心" : "账号登录"}</b><small>{identity?.email ?? identity?.displayName ?? "登录并管理你的账号"}</small></span></Link>
+          {canAccessPage(identity, "command") && <Link href="/mobile" aria-label="APP端" title={collapsed ? "APP端" : undefined} onClick={() => setMenu(false)}><DeviceMobile size={collapsed ? 21 : 16} /><span className="sidebar-app-label">APP端</span><ArrowSquareOut size={13} className="sidebar-out" /></Link>}
         </div>
       </aside>
       <div className="workspace-main">
@@ -101,10 +98,9 @@ export function WorkspaceShell({ pageId, children }: { pageId: PageId; children:
               <House size={14} />{currentShop?.name ?? "全部授权店铺"}<CaretDown size={11} />
             </button>
             <button className="icon-button" aria-label="搜索工作区" aria-expanded={searching} aria-controls="workspace-search" onClick={() => {setSearching(!searching); setContextOpen(false);}}><MagnifyingGlass size={18} /></button>
-            <Badge tone="blue">{isMock ? "Mock 演示" : "API 模式"}</Badge>
+            {isMock && <Badge tone="blue">本地预览</Badge>}
             <button className="icon-button" aria-label="刷新工作区" onClick={() => void reload()}><ArrowClockwise size={18} /></button>
-            <Link href="/app/settings" className="icon-button help-button" aria-label="帮助与设置"><Question size={19} /></Link>
-            <span className="avatar">{identity?.displayName?.slice(0, 1) ?? "易"}</span>
+            <Link href="/app/account" className="avatar" aria-label="打开用户中心">{identity?.displayName?.slice(0, 1) ?? "易"}</Link>
           </div>
         </header>
         {contextOpen && snapshot && (
@@ -121,16 +117,15 @@ export function WorkspaceShell({ pageId, children }: { pageId: PageId; children:
             {!matchingPages.length && <p>没有找到相关工作区，试试“素材”或“复盘”。</p>}
           </section>
         )}
-        <div className="mode-notice">
+        {isMock && <div className="mode-notice">
           <span className="mock-indicator" />
-          <span>{isMock ? "当前为前端 Mock 演示，数据与审批均为模拟，无真实广告操作。" : "API 模式 · 会话、业务数据与权限由独立后端提供。"}</span>
-          <Link href="/app/connections">平台连接<ArrowSquareOut size={12} /></Link>
-        </div>
+          <span>本地功能预览，数据与审批均为测试数据。</span>
+        </div>}
         <main id="workspace-content" className="page-main">
-          {!command && <div className="page-heading"><div><div className="eyebrow">YULIANG / OPERATIONS</div><h1>{pageName(pageId)}</h1><p>{pageId === "overview" ? "统一统计口径，查看经营指标与任务进展。" : "让经营目标、内容、投放与结果在同一条工作流中连接。"}</p></div><Link href="/app/command" className="button secondary"><Lightning size={16} />AI 帮我处理</Link></div>}
+          {!command && <div className="page-heading"><div><div className="eyebrow">YULIANG / OPERATIONS</div><h1>{pageName(pageId)}</h1><p>{pageId === "account" ? "管理个人资料，查看已授权的店铺与工作区。" : pageId === "overview" ? "统一统计口径，查看经营指标与任务进展。" : "让经营目标、内容、投放与结果在同一条工作流中连接。"}</p></div>{canAccessPage(identity, "command") && <Link href="/app/command" className="button secondary"><Lightning size={16} />AI 帮我处理</Link>}</div>}
           {children}
         </main>
-        <footer className="workspace-footer">自主投放，让每一份增长都有据可依。<span>易致·驭量 V12 · {isMock ? "Mock 前端工作空间" : "API 工作空间"}</span></footer>
+        <footer className="workspace-footer">自主投放，让每一份增长都有据可依。<span>易致·驭量 · {isMock ? "本地功能预览" : "运营工作空间"}</span></footer>
       </div>
     </div>
   );

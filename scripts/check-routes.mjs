@@ -31,6 +31,7 @@ for (const path of [
   "/login",
   "/mobile",
   "/app/command",
+  "/app/account",
   ...pages.map((id) => `/app/${id}`),
 ]) {
   const response = await fetch(base + path);
@@ -74,7 +75,7 @@ for (const path of ["/app/not-a-page", "/api/v1/frontend/snapshot"])
   assert.equal((await fetch(base + path)).status, 404, path);
 console.log(
   JSON.stringify(
-    { base, rootHashVerified: true, legacyRouteCount: pages.length, addedRouteCount: 1, rows },
+    { base, rootHashVerified: true, legacyRouteCount: pages.length, addedRouteCount: 2, rows },
     null,
     2,
   ),

@@ -140,6 +140,8 @@ export interface FrontendSnapshot {
 export interface Identity {
   userId: string;
   displayName: string;
+  email?: string;
+  workspacePages?: string[];
   tenantId: string;
   shopIds: string[];
   permissions: string[];

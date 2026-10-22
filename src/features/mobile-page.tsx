@@ -8,8 +8,9 @@ import {
   ClockCounterClockwise,
   ListChecks,
 } from "@phosphor-icons/react";
-import { AuthGuard, SnapshotView } from "@/components/provider";
-import { Badge, Panel } from "@/components/ui";
+import { AuthGuard, SnapshotView, useWorkspace } from "@/components/provider";
+import { Badge, EmptyState, Panel } from "@/components/ui";
+import { canAccessPage } from "@/lib/access";
 import { TaskList } from "@/components/task-controls";
 import { CommandPanel } from "@/components/command-panel";
 import { BrandLogo } from "@/components/brand-logo";
@@ -21,16 +22,19 @@ import {
 import { Goods, Review } from "./business-page";
 import { scopedEvidence } from "@/lib/reporting";
 const mobileTabs = [
-  ["chat", "AI指挥", ChatCircleDots],
-  ["live", "直播数据", Broadcast],
-  ["tasks", "执行流水", ListChecks],
-  ["report", "直播复盘", ClockCounterClockwise],
+  ["chat", "AI指挥", ChatCircleDots, "command"],
+  ["live", "直播数据", Broadcast, "monitor"],
+  ["tasks", "执行流水", ListChecks, "tasks"],
+  ["report", "直播复盘", ClockCounterClockwise, "reports"],
 ] as const;
 export function MobilePage() {
-  const [tab, setTab] = useState<(typeof mobileTabs)[number][0]>("chat");
+  const { identity } = useWorkspace();
+  const [selectedTab, setTab] = useState<(typeof mobileTabs)[number][0]>("chat");
+  const availableTabs = mobileTabs.filter((item) => canAccessPage(identity, item[3]));
+  const tab = availableTabs.find(([id]) => id === selectedTab)?.[0] ?? availableTabs[0]?.[0];
   return (
     <AuthGuard>
-      <SnapshotView>
+      {!canAccessPage(identity, "command") ? <EmptyState title="APP端尚未授权" description="请在用户中心查看当前账号可使用的工作区。" /> : <SnapshotView>
         {(snapshot) => (
           <div className="mobile-canvas">
             <div className="phone-shell">
@@ -48,14 +52,13 @@ export function MobilePage() {
               </header>
               <main>
                 <div className="phone-summary">
-                  <Badge tone="blue">{snapshot.source} · AI指挥</Badge>
+                  <Badge tone="blue">{snapshot.source === "MOCK" ? "本地预览 · " : ""}AI指挥</Badge>
                   <h1>一个人，指挥整个直播运营。</h1>
                   <p>{snapshot.tenants[0]?.name} · 指令与审批双端共享</p>
                   <ScopeControls snapshot={snapshot} />
                   <CoreMetrics snapshot={snapshot} />
                   <small>
-                    仅本浏览器同源 Mock 演示；localStorage
-                    不支持真实跨设备同步。
+                    {snapshot.source === "MOCK" ? "本地预览仅在同源浏览器中共享数据。" : "与工作台使用同一账号及授权范围。"}
                   </small>
                 </div>
                 <nav
@@ -63,7 +66,7 @@ export function MobilePage() {
                   role="tablist"
                   aria-label="手机指挥标签"
                 >
-                  {mobileTabs.map(([id, name, Icon]) => (
+                  {availableTabs.map(([id, name, Icon]) => (
                     <button
                       key={id}
                       role="tab"
@@ -87,13 +90,13 @@ export function MobilePage() {
                           source="MOBILE_COMMAND"
                         />
                       </Panel>
-                      <Panel title="最近任务与审批状态">
+                      {canAccessPage(identity, "tasks") && <Panel title="最近任务与审批状态">
                         <TaskList
                           snapshot={snapshot}
                           limit={3}
                           review={false}
                         />
-                      </Panel>
+                      </Panel>}
                     </>
                   )}
                   {tab === "live" && (
@@ -135,12 +138,12 @@ export function MobilePage() {
               </main>
               <footer className="phone-footer">
                 自主投放，让每一份增长都有据可依。
-                <small>Mock 交互演示 · 没有真实广告写入或直播推流控制</small>
+                {snapshot.source === "MOCK" && <small>本地功能预览 · 没有真实广告操作</small>}
               </footer>
             </div>
           </div>
         )}
-      </SnapshotView>
+      </SnapshotView>}
     </AuthGuard>
   );
 }

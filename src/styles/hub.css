@@ -1,0 +1,80 @@
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+.command-workspace .workspace-main { background: var(--surface-panel); }
+.command-workspace .page-main { min-height: calc(100dvh - 155px); padding: 28px 40px 45px; }
+.hub-workspace { width: min(100%, 980px); margin: 0 auto; }
+.hub-empty { padding-top: clamp(35px, 9vh, 110px); }
+.hub-welcome { text-align: center; margin-bottom: 58px; }
+.hub-welcome h1 { color: var(--text-primary); font-size: clamp(25px, 2.3vw, 34px); letter-spacing: -.8px; font-weight: 650; margin: 0 0 13px; }
+.hub-welcome > p { color: var(--text-muted); font-size: 13px; margin: 0 0 24px; }
+.hub-categories { display: inline-flex; gap: 4px; padding: 4px; border-radius: 22px; background: #f1f3f6; }
+.hub-categories > button { display: flex; align-items: center; gap: 7px; min-height: 35px; border: none; border-radius: 18px; background: none; padding: 8px 16px; color: var(--text-secondary); font-size: 13px; }
+.hub-categories > button[aria-selected="true"] { background: var(--surface-panel); color: var(--text-primary); box-shadow: 0 1px 5px #18305b0e; font-weight: 600; }
+.hub-prompts { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
+.hub-prompts button, .hub-suggestions button { display: flex; align-items: center; gap: 12px; min-height: 36px; border: 1px solid #e7eaf0; color: var(--text-secondary); background: #fafbfc; border-radius: 20px; padding: 8px 13px; font-size: 12px; text-align: left; }
+.hub-prompts button:hover, .hub-suggestions button:hover { border-color: var(--brand-focus); color: var(--brand-primary); background: var(--brand-subtle); }
+.hub-composer { background: #f4f5f7; border-radius: 18px; }
+.hub-composer .command-panel { display: flex; flex-direction: column; }
+.hub-composer .desk-command > form { order: 2; border-radius: 18px; border: 1px solid #e2e6ec; padding: 20px 20px 14px; box-shadow: 0 5px 22px #142b4e05; background: var(--surface-panel); }
+.hub-composer .desk-command > form:focus-within { border-color: var(--brand-focus); box-shadow: 0 0 0 2px var(--brand-tint); }
+.hub-composer .desk-command > form > label { font-size: 0; }
+.hub-composer .desk-command .task-form textarea { margin-top: 0; min-height: 122px; height: 122px; max-height: 300px; font-size: 15px; color: var(--text-primary); }
+.hub-composer .desk-command .task-form textarea::placeholder { color: #929daa; font-size: 14px; }
+.hub-composer .command-compose-footer { margin-top: 9px; }
+.hub-composer .command-compose-footer > span { font-size: 11px; color: var(--text-muted); }
+.hub-composer .desk-command .command-compose-footer .button { border-radius: 10px; min-height: 36px; }
+.hub-composer .command-hint { font-size: 10px; color: var(--text-muted); }
+.hub-composer .command-panel > .command-guide, .hub-composer .command-result, .hub-composer .created-job, .hub-composer .command-panel > .live-summary { margin: 0 0 24px; background: var(--surface-panel); padding: 20px; border: 1px solid var(--border-subtle); border-radius: 12px; }
+.hub-composer .command-panel > .feedback { padding: 12px 18px; margin: 0; }
+.hub-composer-context { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 10px 17px 12px; }
+.hub-composer-context > span { color: var(--text-muted); font-size: 10px; }
+.hub-project-picker { display: flex; align-items: center; gap: 7px; margin: 0; color: var(--text-secondary); }
+.hub-project-picker > select { width: auto; max-width: 220px; border: none; padding: 2px 22px 2px 0; background: transparent; color: var(--text-secondary); font-size: 11px; min-height: 24px; }
+.hub-suggestions { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; margin-top: 35px; }
+.hub-suggestions button { background: var(--surface-panel); font-size: 12px; box-shadow: 0 2px 4px #18305b04; }
+.hub-thread-header { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 10px 0 22px; border-bottom: 1px solid var(--border-subtle); margin-bottom: 24px; }
+.hub-thread-header h1 { font-size: 20px; line-height: 1.6; margin: 0; font-weight: 600; color: var(--text-primary); overflow-wrap: anywhere; }
+.hub-thread-header > a { flex: none; display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-secondary); }
+.hub-project-name { display: inline-flex; align-items: center; gap: 6px; color: var(--text-muted); font-size: 11px; margin-bottom: 8px; }
+.hub-messages { padding: 8px 0; }
+.hub-message { display: flex; flex-direction: column; gap: 8px; padding: 12px 0 24px; }
+.hub-message-author { font-size: 11px; font-weight: 600; color: var(--text-muted); }
+.hub-message > div { font-size: 14px; line-height: 1.9; max-width: 90%; color: var(--text-primary); }
+.hub-message p { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.hub-message.message-user { align-items: flex-end; }
+.hub-message.message-user > div { padding: 12px 17px; background: var(--brand-tint); border-radius: 15px 15px 3px 15px; }
+.hub-message-job { display: inline-flex; gap: 10px; align-items: center; font-size: 12px; color: var(--brand-primary); border: 1px solid var(--brand-border); border-radius: 8px; margin-top: 14px; padding: 8px 12px; }
+.hub-message-job > span { color: var(--text-muted); font-size: 10px; }
+.hub-active .hub-composer { margin-top: 26px; }
+.hub-task-detail { border: 1px solid var(--border-subtle); border-radius: 13px; padding: 24px; }
+.hub-task-project { padding-bottom: 18px; margin-bottom: 18px; border-bottom: 1px solid var(--border-subtle); }
+.hub-project-records { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; padding: 4px 0 15px; }
+.hub-project-records h2 { font-size: 14px; font-weight: 600; margin-bottom: 18px; }
+.hub-project-records h2 > span { color: var(--text-muted); font-size: 12px; margin-left: 7px; font-weight: 400; }
+.hub-project-records > div > a { display: flex; align-items: center; gap: 9px; padding: 12px 0; font-size: 12px; color: var(--text-secondary); }
+.hub-project-records > div > a > span { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.hub-project-records small { flex: none; font-size: 10px; color: var(--text-muted); }
+.hub-empty-note { font-size: 12px; color: var(--text-muted); line-height: 1.9; }
+.hub-add-task { display: flex; gap: 8px; margin-top: 20px; }
+.hub-add-task select { min-width: 0; font-size: 11px; padding: 7px; background: var(--surface-muted); }
+.hub-add-task button { flex: none; background: var(--brand-tint); border: 1px solid var(--brand-border); color: var(--brand-primary); border-radius: 7px; padding: 6px 10px; font-size: 11px; }
+.sidebar-history { min-height: 120px; flex: 1; overflow-y: auto; scrollbar-width: thin; margin-top: 18px; padding-top: 4px; }
+.history-section-title { display: flex; align-items: center; justify-content: space-between; margin: 12px 8px 7px; color: var(--text-muted); font-size: 10px; }
+.history-section-title > button, .history-section-title > a { display: grid; place-items: center; width: 24px; height: 24px; padding: 0; color: var(--text-muted); background: none; border: none; border-radius: 5px; }
+.history-section-title > button:hover, .history-section-title > a:hover { color: var(--brand-primary); background: var(--brand-tint); }
+.history-project, .history-record { display: flex; align-items: center; gap: 8px; padding: 9px 8px; border-radius: 7px; font-size: 11px; color: var(--text-secondary); }
+.history-project > svg, .history-record > svg { flex: none; }
+.history-project > span, .history-record > span { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.history-project:hover, .history-record:hover, .history-project.selected, .history-record.selected { background: var(--brand-tint); color: var(--brand-primary); }
+.history-empty { margin: 8px; font-size: 10px; color: var(--text-muted); line-height: 1.8; }
+.new-project-form { padding: 8px; }
+.new-project-form > input { padding: 8px; font-size: 11px; }
+.new-project-form > div { display: flex; justify-content: flex-end; gap: 8px; margin-top: 7px; }
+.new-project-form button { border: 0; border-radius: 5px; color: var(--brand-primary); background: var(--brand-tint); padding: 5px 9px; font-size: 10px; }
+.history-error { color: var(--state-danger); padding: 8px; font-size: 10px; }
+.history-error p { margin: 0 0 6px; }
+.history-error button { color: var(--brand-primary); border: 0; background: none; padding: 0; font-size: 10px; }
+.history-compact { display: flex; flex-direction: column; align-items: center; gap: 10px; border-top: 1px solid var(--border-subtle); padding-top: 15px; }
+.history-compact > button { display: grid; place-items: center; min-height: 44px; width: 100%; background: none; border: 0; border-radius: 8px; color: var(--text-secondary); }
+.history-compact > button:hover { background: var(--brand-tint); color: var(--brand-primary); }
+@media (max-width: 1000px) { .command-workspace .page-main { padding: 25px; } .hub-welcome { margin-bottom: 38px; } .hub-project-records { grid-template-columns: 1fr; gap: 22px; } }
+@media (max-width: 760px) { .command-workspace .page-main { padding: 22px 16px 30px; } .hub-empty { padding-top: 45px; } .hub-welcome h1 { font-size: 25px; } .hub-welcome > p { max-width: 240px; margin: 0 auto 22px; font-size: 12px; line-height: 1.8; } .hub-categories > button { font-size: 11px; padding: 8px 10px; min-height: 40px; } .hub-prompts { gap: 7px; } .hub-prompts button { max-width: 100%; font-size: 10px; padding: 7px 10px; min-height: 40px; } .hub-composer .desk-command > form { padding: 16px 14px 12px; } .hub-composer .desk-command .task-form textarea { font-size: 14px; min-height: 116px; } .hub-composer .command-compose-footer > span { font-size: 9px; } .hub-composer .command-compose-footer i { display: none; } .hub-composer .command-hint { font-size: 9px; line-height: 1.8; } .hub-composer-context { padding: 10px 13px; } .hub-composer-context > span { display: none; } .hub-suggestions { margin-top: 26px; } .hub-suggestions button { font-size: 11px; min-height: 42px; } .hub-thread-header h1 { font-size: 16px; } .hub-thread-header > a { font-size: 10px; } .hub-message > div { font-size: 13px; max-width: 96%; } .hub-task-detail { padding: 16px; } .sidebar-history { min-height: 140px; } .history-section-title > button, .history-section-title > a { width: 30px; height: 30px; } .history-project, .history-record { min-height: 40px; } }

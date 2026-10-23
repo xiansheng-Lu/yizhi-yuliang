@@ -11,13 +11,13 @@ export default async function BusinessRoute({
 }) {
   const { pageId } = await params;
   if (!isPageId(pageId)) notFound();
-  if (pageId === "budgets" || pageId === "scripts" || pageId === "experiments") {
+  if (pageId === "analytics" || pageId === "budgets" || pageId === "scripts" || pageId === "experiments") {
     const query = new URLSearchParams();
     for (const [key, value] of Object.entries(await searchParams)) {
       if (Array.isArray(value)) value.forEach(item => query.append(key, item));
       else if (value !== undefined) query.set(key, value);
     }
-    redirect(pageId === "budgets" ? legacyBudgetTarget(query) : legacyContentTarget(pageId, query)!);
+    redirect(pageId === "analytics" ? `/app/reports${query.size ? `?${query}` : ""}` : pageId === "budgets" ? legacyBudgetTarget(query) : legacyContentTarget(pageId, query)!);
   }
   return <WorkspaceEntry pageId={pageId} />;
 }

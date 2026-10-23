@@ -1,0 +1,164 @@
+{
+  "base": "http://127.0.0.1:3000",
+  "rootHashVerified": true,
+  "legacyRouteCount": 19,
+  "addedRouteCount": 2,
+  "rows": [
+    {
+      "path": "/",
+      "status": 200
+    },
+    {
+      "path": "/login",
+      "status": 200
+    },
+    {
+      "path": "/mobile",
+      "status": 200
+    },
+    {
+      "path": "/app/command",
+      "status": 200
+    },
+    {
+      "path": "/app/account",
+      "status": 200
+    },
+    {
+      "path": "/app/overview",
+      "status": 200
+    },
+    {
+      "path": "/app/goals",
+      "status": 200
+    },
+    {
+      "path": "/app/monitor",
+      "status": 200
+    },
+    {
+      "path": "/app/tasks",
+      "status": 200
+    },
+    {
+      "path": "/app/planning",
+      "status": 200
+    },
+    {
+      "path": "/app/videos",
+      "status": 200
+    },
+    {
+      "path": "/app/graphics",
+      "status": 200
+    },
+    {
+      "path": "/app/editing",
+      "status": 200
+    },
+    {
+      "path": "/app/assets",
+      "status": 200
+    },
+    {
+      "path": "/app/plans",
+      "status": 200
+    },
+    {
+      "path": "/app/decisions",
+      "status": 200
+    },
+    {
+      "path": "/app/executions",
+      "status": 200
+    },
+    {
+      "path": "/app/products",
+      "status": 200
+    },
+    {
+      "path": "/app/budgets",
+      "status": 200
+    },
+    {
+      "path": "/app/analytics",
+      "status": 200
+    },
+    {
+      "path": "/app/reports",
+      "status": 200
+    },
+    {
+      "path": "/app/agents",
+      "status": 200
+    },
+    {
+      "path": "/app/connections",
+      "status": 200
+    },
+    {
+      "path": "/app/settings",
+      "status": 200
+    },
+    {
+      "path": "/app/analytics",
+      "status": 307,
+      "destination": "/app/reports"
+    },
+    {
+      "path": "/app/analytics?result=existing-analysis&shop=shop-tea&ref=one&ref=two",
+      "status": 307,
+      "destination": "/app/reports?result=existing-analysis&shop=shop-tea&ref=one&ref=two"
+    },
+    {
+      "path": "/login.html?next=campaigns",
+      "status": 307,
+      "destination": "/login?next=campaigns"
+    },
+    {
+      "path": "/mobile.html",
+      "status": 307,
+      "destination": "/mobile"
+    },
+    {
+      "path": "/app.html",
+      "status": 307,
+      "destination": "/legacy"
+    },
+    {
+      "path": "/app/campaigns",
+      "status": 307,
+      "destination": "/app/plans"
+    },
+    {
+      "path": "/app",
+      "status": 307,
+      "destination": "/app/command"
+    },
+    {
+      "path": "/app/scripts",
+      "status": 307,
+      "destination": "/app/planning"
+    },
+    {
+      "path": "/app/scripts?document=existing-script&shop_id=shop-tea&ref=one&ref=two",
+      "status": 307,
+      "destination": "/app/planning?document=existing-script&shop_id=shop-tea&ref=one&ref=two"
+    },
+    {
+      "path": "/app/experiments",
+      "status": 307,
+      "destination": "/app/assets"
+    },
+    {
+      "path": "/app/experiments?shop_id=shop-tea",
+      "status": 307,
+      "destination": "/app/assets?shop_id=shop-tea"
+    },
+    {
+      "path": "/app/budgets?platform=adq&accountId=test-account&product=adq&budgetId=test-budget",
+      "status": 307,
+      "destination": "/app/decisions?platform=adq&accountId=test-account&product=adq&budgetId=test-budget&section=allocation"
+    }
+  ]
+}

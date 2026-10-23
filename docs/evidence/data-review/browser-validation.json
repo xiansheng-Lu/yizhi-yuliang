@@ -1,0 +1,41 @@
+{
+  "date": "2026-10-23",
+  "canonicalPath": "/app/reports",
+  "singleNavigation": true,
+  "templates": [
+    {
+      "period": "日报",
+      "path": "/app/reports"
+    },
+    {
+      "period": "周报",
+      "path": "/app/reports"
+    },
+    {
+      "period": "月报",
+      "path": "/app/reports"
+    }
+  ],
+  "states": [
+    {
+      "scenario": "partial",
+      "status": "部分数据"
+    },
+    {
+      "scenario": "empty",
+      "status": "暂无数据"
+    },
+    {
+      "scenario": "failure",
+      "retry": "succeeded"
+    }
+  ],
+  "unsavedStepRecovery": true,
+  "standaloneReaderNoSidebar": true,
+  "htmlDownload": true,
+  "mobile": {
+    "viewport": 390,
+    "scrollWidth": 390
+  },
+  "pageErrors": []
+}

@@ -10,8 +10,8 @@ import { ApiClient } from "../src/services/api-client";
 test("six customer navigation entries exclude administration and preserve legacy routes", () => {
   assert.deepEqual(navigationGroups.map((group) => group.name), ["AI驭量中枢", "经营概况", "直播运营", "投放管理", "内容中心", "数据复盘"]);
   const ids = navigationGroups.flatMap((group) => group.pages.map(([id]) => id));
-  assert.equal(ids.length, 15);
-  assert.equal(new Set(ids).size, 15);
+  assert.equal(ids.length, 14);
+  assert.equal(new Set(ids).size, 14);
   for (const [id] of pages) assert.ok(isPageId(id), id);
   for (const id of ["agents", "connections", "settings", "tasks"]) assert.ok(!ids.some((value) => value === id));
   assert.ok(customerPageIds.includes("tasks"));
@@ -70,4 +70,15 @@ test("approved logo exception leaves every other homepage byte and original CSS/
   assert.equal(sha(normalized), "5841a01138fa82ab6d9b018409f7fe23c81053f8a916c07290e6a2c1ddd92c88");
   assert.equal(sha(readFileSync("public/assets/styles.css")), "6281438a8b2c363c4a9fe5486727f3f996fa4fc7de95f351ea792e083263a5ed");
   assert.equal(sha(readFileSync("public/assets/site.js")), "c03c34b14868d84acaac3038b62a45f532c3e47d0d29862a677cbf4d664f230e");
+});
+
+test("data review has one direct navigation entry and retains legacy analysis grants/deep links", () => {
+  assert.deepEqual(navigationGroups.find(group => group.name === "数据复盘")?.pages, [["reports", "数据复盘"]]);
+  assert.equal(pageName("reports"), "数据复盘");
+  assert.equal(loginTarget("/app/analytics?result=existing-result&next=https://untrusted.example"), "/app/reports?result=existing-result");
+  assert.equal(loginTarget("#/analytics"), "/app/reports");
+  assert.equal(loginTarget("/app/reports?draft=existing-draft"), "/app/reports?draft=existing-draft");
+  const actor: Identity = { userId: "reviewer", tenantId: "tenant", displayName: "成员", shopIds: [], permissions: [], mode: "API", workspacePages: ["analytics"] };
+  assert.equal(canAccessPage(actor, "reports"), true);
+  assert.equal(canAccessPage({ ...actor, workspacePages: [] }, "reports"), false);
 });

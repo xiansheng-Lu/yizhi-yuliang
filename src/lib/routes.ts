@@ -34,7 +34,7 @@ export const workspaces = [
     name: "经营与系统中心",
     pages: [
       ["analytics", "经营分析"],
-      ["reports", "完整复盘"],
+      ["reports", "数据复盘"],
       ["agents", "AI岗位管理"],
       ["connections", "平台连接"],
       ["settings", "企业和权限设置"],
@@ -66,6 +66,12 @@ export function loginTarget(raw: string | null): string {
   // Explicit /app/overview and legacy hash deep links still open the overview.
   if (raw === "overview") return "/app/command";
   const value = raw?.replace(/^\/app\//, "").replace(/^#\/?/, "");
+  if (value && /^(analytics|reports)(\?|$)/.test(value)) {
+    const query = new URLSearchParams(value.split("?").slice(1).join("?"));
+    const allowed = new Set(["result", "task", "draft", "preview", "published", "view", "shop", "platform", "start", "end", "dimensions", "delivery"]);
+    for (const key of [...query.keys()]) if (!allowed.has(key)) query.delete(key);
+    return `/app/reports${query.size ? `?${query}` : ""}`;
+  }
   if (value === "campaigns") return "/app/plans";
   if (value === "budgets") return "/app/decisions?section=allocation";
   const contentTarget = legacyContentTarget(value ?? "");
@@ -80,12 +86,13 @@ export const navigationGroups: { name: string; pages: readonly (readonly [PageId
   { name: "直播运营", pages: [["monitor", "AI直播作战室"], ["products", "商品与货盘"]] },
   { name: "投放管理", pages: [["goals", "经营目标"], ["plans", "计划中心"], ["decisions", "投放优化"], ["executions", "执行记录"]] },
   { name: "内容中心", pages: [["planning", "内容策划"], ["videos", "视频创作"], ["graphics", "平面创作"], ["editing", "智能剪辑"], ["assets", "素材库"]] },
-  { name: "数据复盘", pages: [["analytics", "经营分析"], ["reports", "完整复盘"]] },
+  { name: "数据复盘", pages: [["reports", "数据复盘"]] },
 ];
 
 export const customerPageIds: readonly PageId[] = [
   ...navigationGroups.flatMap((group) => group.pages.map(([id]) => id)),
   "tasks",
+  "analytics", // Legacy grants and deep links remain valid for the unified workbench.
   "budgets", // Legacy grant remains valid for the budget panels.
   "scripts", // Existing script grants open the unified planning workspace.
   "experiments", // Accept legacy identity grants without exposing the removed entry.

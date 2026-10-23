@@ -30,6 +30,7 @@ export function WorkspaceShell({ pageId, children }: { pageId: PageId; children:
   const isMock = service?.mode === "mock";
   const command = pageId === "command";
   const delivery = isDeliveryPage(pageId);
+  const analysis = pageId === "analytics" || pageId === "reports";
   const content = navigationGroups.find(group => group.name === "内容中心")?.pages.some(([id]) => id === pageId);
   const query = useSearchParams();
   const navHref = (id: PageId) => delivery && isDeliveryPage(id) ? deliveryHref(id, parseScope(new URLSearchParams(query.toString()), { shopId: snapshot?.scope.shop_id, start: snapshot?.scope.date }),advertisingNavigationParams(new URLSearchParams(query.toString()))) : `/app/${id}`;
@@ -101,7 +102,7 @@ export function WorkspaceShell({ pageId, children }: { pageId: PageId; children:
             <span className="topbar-breadcrumb">{currentGroup && currentGroup.pages.length > 1 && <>{currentGroup.name}<i>/</i></>}<b>{pageName(pageId)}</b></span>
           </div>
           <div className="row topbar-actions">
-            {!delivery && <button className="context-switch" aria-expanded={contextOpen} aria-controls="global-context" onClick={() => {setContextOpen(!contextOpen); setSearching(false);}}>
+            {!delivery && !analysis && <button className="context-switch" aria-expanded={contextOpen} aria-controls="global-context" onClick={() => {setContextOpen(!contextOpen); setSearching(false);}}>
               <House size={14} />{currentShop?.name ?? "全部授权店铺"}<CaretDown size={11} />
             </button>}
             <button className="icon-button" aria-label="搜索工作区" aria-expanded={searching} aria-controls="workspace-search" onClick={() => {setSearching(!searching); setContextOpen(false);}}><MagnifyingGlass size={18} /></button>
@@ -129,7 +130,7 @@ export function WorkspaceShell({ pageId, children }: { pageId: PageId; children:
           <span>本地功能预览，数据与审批均为测试数据。</span>
         </div>}
         <main id="workspace-content" className="page-main">
-          {!command && !content && <div className="page-heading"><div><div className="eyebrow">YULIANG / OPERATIONS</div><h1>{pageName(pageId)}</h1><p>{delivery ? "统一经营范围，按平台能力管理投放、决策与执行核验。" : pageId === "account" ? "管理个人资料，查看已授权的店铺与工作区。" : pageId === "overview" ? "统一统计口径，查看经营指标与任务进展。" : "让经营目标、内容、投放与结果在同一条工作流中连接。"}</p></div>{!delivery && canAccessPage(identity, "command") && <Link href="/app/command" className="button secondary"><Lightning size={16} />AI 帮我处理</Link>}</div>}
+          {!command && !content && !analysis && <div className="page-heading"><div><div className="eyebrow">YULIANG / OPERATIONS</div><h1>{pageName(pageId)}</h1><p>{delivery ? "统一经营范围，按平台能力管理投放、决策与执行核验。" : pageId === "account" ? "管理个人资料，查看已授权的店铺与工作区。" : pageId === "overview" ? "统一统计口径，查看经营指标与任务进展。" : "让经营目标、内容、投放与结果在同一条工作流中连接。"}</p></div>{!delivery && canAccessPage(identity, "command") && <Link href="/app/command" className="button secondary"><Lightning size={16} />AI 帮我处理</Link>}</div>}
           {children}
         </main>
         <footer className="workspace-footer">自主投放，让每一份增长都有据可依。<span>易致·驭量 · {isMock ? "本地功能预览" : "运营工作空间"}</span></footer>

@@ -54,6 +54,8 @@ for (const [file, sha] of Object.entries(baseline.files))
     file,
   );
 for (const [path, expected] of [
+  ["/app/analytics", "/app/reports"],
+  ["/app/analytics?result=existing-analysis&shop=shop-tea&ref=one&ref=two", "/app/reports?result=existing-analysis&shop=shop-tea&ref=one&ref=two"],
   ["/login.html?next=campaigns", "/login?next=campaigns"],
   ["/mobile.html", "/mobile"],
   ["/app.html", "/legacy"],

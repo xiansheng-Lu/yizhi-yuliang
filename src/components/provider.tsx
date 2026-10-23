@@ -118,7 +118,7 @@ export function AuthGuard({ children, requireSnapshot = true, loading }: { child
     router = useRouter();
   useEffect(() => {
     if (ready && !identity && (data.status !== "error" || data.error.code === "API_NOT_CONFIGURED"))
-      router.replace(`/login?next=${encodeURIComponent(pathname)}`);
+      router.replace(`/login?next=${encodeURIComponent(pathname + (pathname === "/app/reports" || pathname === "/app/analytics" ? window.location.search : ""))}`);
   }, [ready, identity, data, pathname, router]);
   if (data.status === "error" && (!identity || requireSnapshot))
     return (

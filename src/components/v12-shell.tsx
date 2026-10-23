@@ -46,7 +46,7 @@ export function WorkspaceShell({ pageId, children }: { pageId: PageId; children:
   }, [setCollapsed]);
 
   return (
-    <div className={`workspace-frame v12-workspace ${command ? "command-workspace" : ""} ${collapsed ? "sidebar-collapsed" : ""} ${content ? "content-workspace" : ""}`} onKeyDown={(event) => { if (event.key === "Escape") { setMenu(false); setSearching(false); setContextOpen(false); } }}>
+    <div className={`workspace-frame v12-workspace ${command ? "command-workspace" : ""} ${pageId === "overview" ? "overview-workspace" : ""} ${collapsed ? "sidebar-collapsed" : ""} ${content ? "content-workspace" : ""}`} onKeyDown={(event) => { if (event.key === "Escape") { setMenu(false); setSearching(false); setContextOpen(false); } }}>
       <a className="skip-content" href="#workspace-content">跳到主要内容</a>
       {menu && <button className="sidebar-scrim" aria-label="关闭导航遮罩" onClick={() => setMenu(false)} />}
       <aside className={`sidebar ${menu ? "open" : ""}`} aria-label="工作区侧栏">

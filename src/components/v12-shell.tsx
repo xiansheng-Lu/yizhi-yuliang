@@ -3,6 +3,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { deliveryHref, isDeliveryPage, parseScope } from "@/lib/delivery";
+import { advertisingNavigationParams } from "@/lib/advertising";
 import {
   ArrowClockwise, ArrowSquareOut, Broadcast, ChartLineUp, ChatCircleDots,
   DeviceMobile, List, UserCircle, X, CaretDown,
@@ -30,7 +31,7 @@ export function WorkspaceShell({ pageId, children }: { pageId: PageId; children:
   const command = pageId === "command";
   const delivery = isDeliveryPage(pageId);
   const query = useSearchParams();
-  const navHref = (id: PageId) => delivery && isDeliveryPage(id) ? deliveryHref(id, parseScope(new URLSearchParams(query.toString()), { shopId: snapshot?.scope.shop_id, start: snapshot?.scope.date })) : `/app/${id}`;
+  const navHref = (id: PageId) => delivery && isDeliveryPage(id) ? deliveryHref(id, parseScope(new URLSearchParams(query.toString()), { shopId: snapshot?.scope.shop_id, start: snapshot?.scope.date }),advertisingNavigationParams(new URLSearchParams(query.toString()))) : `/app/${id}`;
   const currentGroup = navigationGroups.find((group) => group.pages.some(([id]) => id === pageId));
   const allPages = navigationGroups.flatMap((group) => group.pages).filter(([id]) => canAccessPage(identity, id));
   const matchingPages = allPages.filter(([, name]) => name.includes(search.trim()));

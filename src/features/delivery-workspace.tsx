@@ -10,12 +10,12 @@ import {
 } from "@phosphor-icons/react";
 import {
   availabilityNames,
+  deliveryHref,
   isDeliveryPage,
   platforms,
   scopeKey,
   time,
   type DeliveryPage,
-  type PlatformScope,
 } from "@/lib/delivery";
 import { DeliveryProvider, useDelivery } from "./delivery/context";
 import { Goals } from "./delivery/goals";
@@ -24,6 +24,13 @@ import { Decisions } from "./delivery/decisions";
 import { Budgets } from "./delivery/budgets";
 import { Executions } from "./delivery/executions";
 import { Status } from "./delivery/ui";
+import {
+  AdvertisingWizard,
+  selectedAdvertisingProduct,
+} from "./advertising/wizard";
+import { ProductScopeSelector } from "./advertising/product-selector";
+import { isAdvertisingProduct } from "@/lib/advertising";
+import { PlatformWorkspace, PlatformDataPanel } from "./platform-workspace";
 import "@/styles/delivery.css";
 export { isDeliveryPage };
 export function DeliveryWorkspace({ pageId }: { pageId: DeliveryPage }) {
@@ -40,6 +47,31 @@ function DeliveryContent({ pageId }: { pageId: DeliveryPage }) {
     const timer = setInterval(() => setClock(Date.now()), 30_000);
     return () => clearInterval(timer);
   }, []);
+  if (d.query.get("view") === "create")
+    return (
+      <div className="delivery-workspace">
+        <AdvertisingWizard
+          key={selectedAdvertisingProduct(d.query, d.scope.platform)}
+          product={selectedAdvertisingProduct(d.query, d.scope.platform)}
+        />
+      </div>
+    );
+  const shopProduct = d.query.get("product") === "shop";
+  const productLine = d.query.get("product");
+  if (
+    productLine === "wxshop" ||
+    (isAdvertisingProduct(productLine) &&
+      !["adq", "beans"].includes(productLine))
+  )
+    return (
+      <div className="delivery-workspace">
+        <PlatformWorkspace
+          key={`${pageId}:${productLine}`}
+          pageId={pageId}
+          initialProduct={productLine}
+        />
+      </div>
+    );
   const selected = d.data.accounts.find(
     (a) =>
       a.id === d.scope.accountId &&
@@ -67,20 +99,20 @@ function DeliveryContent({ pageId }: { pageId: DeliveryPage }) {
     <div className="delivery-workspace" aria-label="多平台投放管理">
       <section className="dw-context" aria-label="投放管理统一平台工具栏">
         <div className="dw-context-fields">
-          <label>
-            投放平台
-            <select
-              aria-label="投放平台"
-              value={d.scope.platform}
-              onChange={(e) =>
-                d.changeScope({ platform: e.target.value as PlatformScope })
-              }
-            >
-              <option value="all">全平台 · 经营管理</option>
-              <option value="adq">腾讯广告 ADQ</option>
-              <option value="beans">视频号微信豆加热</option>
-            </select>
-          </label>
+          <ProductScopeSelector
+            value={d.scope.platform}
+            onChange={(product) =>
+              product === "all" || product === "adq" || product === "beans"
+                ? d.changeScope({ platform: product })
+                : d.navigate(
+                    deliveryHref(
+                      pageId,
+                      { ...d.scope, platform: "all", accountId: "all" },
+                      { product },
+                    ),
+                  )
+            }
+          />
           <label>
             经营店铺
             <select
@@ -100,6 +132,7 @@ function DeliveryContent({ pageId }: { pageId: DeliveryPage }) {
             投放账户
             <select
               aria-label="投放账户"
+              disabled={shopProduct}
               value={selected?.id ?? "all"}
               onChange={(e) => d.changeScope({ accountId: e.target.value })}
             >
@@ -150,18 +183,22 @@ function DeliveryContent({ pageId }: { pageId: DeliveryPage }) {
         <div className="dw-context-status">
           <span>
             <Plug size={13} />
-            {selected
-              ? availabilityNames[selected.authorization]
-              : "选择具体账户查看授权"}
+            {shopProduct
+              ? "小店版账户与接口待接入"
+              : selected
+                ? availabilityNames[selected.authorization]
+                : "选择具体账户查看授权"}
           </span>
           <span>
             <Clock size={13} />
             最近同步 {time(d.data.sync.syncedAt)}
           </span>
           <span>
-            {d.scope.platform === "all"
-              ? "全平台"
-              : platforms[d.scope.platform].name}{" "}
+            {shopProduct
+              ? "腾讯营销（小店版）"
+              : d.scope.platform === "all"
+                ? "全平台"
+                : platforms[d.scope.platform].name}{" "}
             · {source}
           </span>
           <Status
@@ -173,21 +210,23 @@ function DeliveryContent({ pageId }: { pageId: DeliveryPage }) {
                   : "neutral"
             }
           >
-            {d.loading
-              ? "加载中"
-              : d.error
-                ? "同步失败"
-                : stale
-                  ? "数据已过期"
-                  : d.data.sync.state === "NOT_INTEGRATED"
-                    ? "新增接口待接入"
-                    : d.data.sync.state === "FORBIDDEN"
-                      ? "无权限"
-                      : d.data.sync.state === "UNAUTHORIZED"
-                        ? "未授权"
-                        : d.data.sync.state === "EMPTY"
-                          ? "暂无数据"
-                          : "已同步"}
+            {shopProduct
+              ? "待接入"
+              : d.loading
+                ? "加载中"
+                : d.error
+                  ? "同步失败"
+                  : stale
+                    ? "数据已过期"
+                    : d.data.sync.state === "NOT_INTEGRATED"
+                      ? "新增接口待接入"
+                      : d.data.sync.state === "FORBIDDEN"
+                        ? "无权限"
+                        : d.data.sync.state === "UNAUTHORIZED"
+                          ? "未授权"
+                          : d.data.sync.state === "EMPTY"
+                            ? "暂无数据"
+                            : "已同步"}
           </Status>
         </div>
       </section>
@@ -195,7 +234,11 @@ function DeliveryContent({ pageId }: { pageId: DeliveryPage }) {
         className={`dw-source-notice ${d.data.source === "MOCK" ? "demo" : ""}`}
       >
         <Info size={15} />
-        <span>{d.data.sync.message}</span>
+        <span>
+          {shopProduct
+            ? "腾讯营销（小店版）为独立待接入产品，可查看配置工作区与保存本地方案，当前没有正式提交能力。"
+            : d.data.sync.message}
+        </span>
       </div>
       <p className="dw-statistic-time">
         统计范围 {statistics}
@@ -228,6 +271,23 @@ function DeliveryContent({ pageId }: { pageId: DeliveryPage }) {
           <Executions />
         )}
       </div>
+      <div className="dw-actions">
+        <button
+          className="button secondary"
+          onClick={() =>
+            d.navigate(
+              deliveryHref(
+                pageId,
+                { ...d.scope, platform: "all", accountId: "all" },
+                { product: "wxshop" },
+              ),
+            )
+          }
+        >
+          微信小店经营数据中心
+        </button>
+      </div>
+      <PlatformDataPanel pageId={pageId} />
     </div>
   );
 }

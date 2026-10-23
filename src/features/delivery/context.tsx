@@ -32,6 +32,7 @@ import {
 import type { Identity } from "@/lib/domain";
 import { Modal } from "./ui";
 import { useDeliverySession } from "./session";
+import { advertisingNavigationParams } from "@/lib/advertising";
 
 interface DeliveryContextValue {
   data: DeliveryData;
@@ -319,7 +320,7 @@ export function DeliveryProvider({ children }: { children: ReactNode }) {
         query: new URLSearchParams(search.toString()),
         refresh,
         changeScope,
-        href: (page, ids) => deliveryHref(page, scope, ids),
+        href: (page, ids) => deliveryHref(page, scope, {...advertisingNavigationParams(new URLSearchParams(search.toString())),...ids}),
         navigate,
         guard,
         dirty,

@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>腾讯营销开放平台 Marketing API 3.0 · 接口全景看板</title>
+<style>
+  :root{
+    --bg:#fafaf8; --surface:#ffffff; --ink:#151a20; --ink-2:#4d5763; --ink-3:#7c8794;
+    --line:#e4e7ea; --line-2:#eef0f2; --accent:#2a5d8f; --accent-soft:#eaf1f7;
+    --radius:10px; --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink); font-family:var(--sans);
+    font-size:15px; line-height:1.6; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1180px; margin:0 auto; padding:0 28px}
+  /* masthead */
+  .masthead{border-bottom:1px solid var(--line); background:linear-gradient(180deg,#fff 0%,#fafaf8 100%)}
+  .masthead .wrap{padding-top:44px; padding-bottom:34px}
+  .eyebrow{
+    margin:0 0 12px; font-size:12px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--accent); font-weight:600
+  }
+  h1{margin:0; font-size:40px; line-height:1.15; letter-spacing:-.02em; font-weight:650}
+  .lede{margin:14px 0 0; max-width:62ch; color:var(--ink-2); font-size:16px}
+  .meta{margin-top:18px; display:flex; flex-wrap:wrap; gap:8px 20px; font-size:13px; color:var(--ink-3)}
+  .meta a{color:var(--accent); text-decoration:none; border-bottom:1px solid rgba(42,93,143,.3)}
+  .meta a:hover{border-bottom-color:var(--accent)}
+  /* kpi */
+  .kpis{display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--line);
+        border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; margin:32px 0}
+  .kpi{background:var(--surface); padding:20px 22px}
+  .kpi .k-label{font-size:12px; letter-spacing:.06em; color:var(--ink-3); text-transform:uppercase}
+  .kpi .k-value{
+    font-size:34px; font-weight:640; letter-spacing:-.02em; line-height:1.1; margin-top:8px;
+    font-variant-numeric:tabular-nums
+  }
+  .kpi .k-value small{font-size:14px; font-weight:500; color:var(--ink-3); margin-left:4px; letter-spacing:0}
+  .kpi .k-sub{font-size:12.5px; color:var(--ink-2); margin-top:6px}
+  /* panels */
+  section.panel{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+    margin:0 0 24px; overflow:hidden
+  }
+  .panel-head{
+    display:flex; align-items:baseline; justify-content:space-between; gap:16px; flex-wrap:wrap;
+    padding:18px 22px; border-bottom:1px solid var(--line-2)
+  }
+  .panel-head h2{margin:0; font-size:16px; font-weight:640; letter-spacing:-.01em}
+  .hint{font-size:12.5px; color:var(--ink-3)}
+  .panel-body{padding:22px}
+  /* donut */
+  .chart-grid{display:grid; grid-template-columns:392px 1fr; gap:26px; align-items:center}
+  .donut-wrap{position:relative; width:392px; height:392px; max-width:100%}
+  #donut{display:block; width:100%; height:100%}
+  #donut path{
+    cursor:pointer;
+    transform-box:view-box;
+    transform-origin:196px 196px;
+    transform:translate(var(--tx,0px),var(--ty,0px)) scale(var(--sc,1));
+    transition:transform .26s cubic-bezier(.22,.75,.28,1), opacity .2s ease,
+               filter .26s ease, stroke-width .2s ease
+  }
+  #donut path.fade{opacity:.42}
+  #donut path.dim{opacity:.18}
+  #donut path.active{--sc:1.03}
+  #donut path.hot{
+    --sc:1.075;
+    filter:drop-shadow(0 9px 18px rgba(18,28,38,.28));
+    stroke-width:2.6
+  }
+  #donut path:focus{outline:none}
+  #donut path:focus-visible{stroke:#151a20; stroke-width:2.6}
+  .legend button.link{background:#f2f6fa}
+  .legend button.link .vl{color:var(--accent)}
+  .donut-center{transition:opacity .16s ease}
+  .donut-center{
+    position:absolute; inset:0; display:flex; flex-direction:column; align-items:center;
+    justify-content:center; pointer-events:none; text-align:center; padding:0 74px
+  }
+  .donut-center .dc-num{font-size:38px; font-weight:650; letter-spacing:-.03em; font-variant-numeric:tabular-nums; line-height:1.05}
+  .donut-center .dc-label{font-size:12.5px; color:var(--ink-3); margin-top:6px; line-height:1.35}
+  .tip{
+    position:absolute; z-index:5; pointer-events:none; background:#151a20; color:#fff;
+    padding:7px 10px; border-radius:6px; font-size:12.5px; line-height:1.45; white-space:nowrap;
+    transform:translate(-50%,-135%); box-shadow:0 8px 22px rgba(15,20,25,.22)
+  }
+  .tip b{font-weight:600}
+  .legend{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:1fr 1fr; gap:2px 18px}
+  .legend button{
+    all:unset; box-sizing:border-box; display:grid; grid-template-columns:10px 1fr auto; gap:9px;
+    align-items:center; width:100%; padding:7px 8px; border-radius:6px; cursor:pointer;
+    font-size:13.5px; color:var(--ink-2)
+  }
+  .legend button:hover{background:#f5f7f9}
+  .legend button[aria-pressed="true"]{background:var(--accent-soft); color:var(--ink)}
+  .legend .sw{width:10px; height:10px; border-radius:2.5px}
+  .legend .nm{overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .legend .vl{font-variant-numeric:tabular-nums; font-size:12.5px; color:var(--ink-3)}
+  .legend button[aria-pressed="true"] .vl{color:var(--accent); font-weight:600}
+  /* bars */
+  .bars{display:grid; gap:14px}
+  .bar-row{display:grid; grid-template-columns:170px 1fr 96px; gap:14px; align-items:center}
+  .bar-name{font-size:13.5px; color:var(--ink-2); font-family:var(--mono)}
+  .bar-track{height:14px; background:#f2f4f6; border-radius:3px; overflow:hidden}
+  .bar-fill{height:100%; border-radius:3px; background:var(--accent); transition:width .45s cubic-bezier(.2,.7,.3,1)}
+  .bar-val{font-size:12.5px; color:var(--ink-3); font-variant-numeric:tabular-nums; text-align:right}
+  /* toolbar */
+  .toolbar{display:flex; flex-wrap:wrap; gap:10px 14px; align-items:center; padding:16px 22px;
+           border-bottom:1px solid var(--line-2); background:#fcfcfb}
+  .search{position:relative; flex:1 1 260px; min-width:200px}
+  .search input{
+    width:100%; padding:8px 12px 8px 32px; border:1px solid var(--line); border-radius:7px;
+    font-family:var(--sans); font-size:13.5px; color:var(--ink); background:#fff; outline:none
+  }
+  .search input:focus{border-color:var(--accent); box-shadow:0 0 0 3px rgba(42,93,143,.12)}
+  .search svg{position:absolute; left:10px; top:50%; transform:translateY(-50%); color:var(--ink-3)}
+  .chips{display:flex; flex-wrap:wrap; gap:6px}
+  .chip{
+    all:unset; cursor:pointer; padding:5px 10px; border:1px solid var(--line); border-radius:999px;
+    font-size:12.5px; color:var(--ink-2); font-family:var(--mono); background:#fff
+  }
+  .chip[aria-pressed="true"]{background:var(--accent); border-color:var(--accent); color:#fff}
+  .chip:hover{border-color:#c6ced6}
+  .chip[aria-pressed="true"]:hover{border-color:var(--accent)}
+  .reset{
+    all:unset; cursor:pointer; font-size:12.5px; color:var(--accent); padding:5px 4px;
+    border-bottom:1px solid transparent
+  }
+  .reset:hover{border-bottom-color:var(--accent)}
+  .view-state{font-size:12.5px; color:var(--ink-3); font-variant-numeric:tabular-nums; margin-left:auto}
+  /* list */
+  #list{padding:6px 0 4px}
+  .grp{border-top:1px solid var(--line-2)}
+  .grp:first-child{border-top:0}
+  .grp-head{
+    display:flex; align-items:center; gap:10px; padding:16px 22px 10px; cursor:pointer;
+    user-select:none
+  }
+  .grp-head .gdot{width:9px; height:9px; border-radius:2px; flex:none}
+  .grp-head h3{margin:0; font-size:14.5px; font-weight:640; letter-spacing:-.01em}
+  .grp-head .gcount{font-size:12.5px; color:var(--ink-3); font-variant-numeric:tabular-nums}
+  .grp-head .gcaret{margin-left:auto; color:var(--ink-3); transition:transform .2s ease}
+  .grp[data-open="false"] .grp-head .gcaret{transform:rotate(-90deg)}
+  .grp[data-open="false"] .grp-body{display:none}
+  .mod{padding:0 22px 6px}
+  .mod-head{
+    display:flex; align-items:baseline; gap:8px; padding:12px 0 8px;
+    font-size:12.5px; color:var(--ink-2)
+  }
+  .mod-head .mname{font-weight:600; color:var(--ink); letter-spacing:.01em}
+  .mod-head .mnum{font-variant-numeric:tabular-nums; color:var(--ink-3)}
+  .row{
+    display:grid; grid-template-columns:34px minmax(230px,300px) 1fr auto; gap:14px;
+    align-items:start; padding:9px 0; border-top:1px solid #f4f6f7
+  }
+  .row .i{font-family:var(--mono); font-size:11.5px; color:#a8b1ba; text-align:right; padding-top:3px;
+          font-variant-numeric:tabular-nums}
+  .row code{
+    font-family:var(--mono); font-size:12.5px; color:var(--accent); word-break:break-all;
+    background:var(--accent-soft); padding:2px 6px; border-radius:4px; display:inline-block; line-height:1.5
+  }
+  .row .desc{font-size:13.5px; color:var(--ink-2); padding-top:1px}
+  .row .sc{display:flex; flex-wrap:wrap; gap:5px; justify-content:flex-end; max-width:250px}
+  .row .sc span{
+    font-family:var(--mono); font-size:11px; color:#5b6773; background:#f1f4f6;
+    border-radius:3px; padding:1.5px 6px; white-space:nowrap
+  }
+  .empty{padding:56px 22px; text-align:center; color:var(--ink-3); font-size:14px}
+  /* notes */
+  .notes{padding:26px 0 60px; color:var(--ink-2); font-size:13.5px}
+  .notes h2{font-size:14px; letter-spacing:.04em; text-transform:uppercase; color:var(--ink-3);
+            margin:0 0 12px; font-weight:600}
+  .notes ol{margin:0; padding-left:20px; display:grid; gap:6px}
+  .notes code{font-family:var(--mono); font-size:12.5px; background:#f1f4f6; padding:1px 5px; border-radius:3px}
+  @media (max-width:980px){
+    .chart-grid{grid-template-columns:1fr; justify-items:center}
+    .legend{grid-template-columns:1fr; width:100%}
+    .kpis{grid-template-columns:1fr 1fr}
+    h1{font-size:31px}
+  }
+  @media (max-width:700px){
+    .wrap{padding:0 16px}
+    .row{grid-template-columns:1fr; gap:6px; padding:11px 0}
+    .row .i{display:none}
+    .row .sc{justify-content:flex-start; max-width:none}
+    .bar-row{grid-template-columns:1fr; gap:6px}
+    .bar-val{text-align:left}
+    .donut-wrap{width:320px; height:320px}
+    .kpi .k-value{font-size:27px}
+    .view-state{margin-left:0; width:100%}
+  }
+</style>
+</head>
+<body>
+<header class="masthead">
+  <div class="wrap">
+    <p class="eyebrow">Tencent Marketing API 3.0 · Interface Atlas</p>
+    <h1>腾讯营销开放平台<br>全量接口全景看板</h1>
+    <p class="lede">把官方接口清单里的 367 个接口按功能域重新归拢成 13 组，可交互筛选、检索、逐层展开；下半部分保留每个接口的请求路径、说明与所属权限。</p>
+    <div class="meta">
+      <span>数据来源：<a href="https://developers.e.qq.com/v3.0/docs/apilist" target="_blank" rel="noopener">腾讯营销开放平台 · 新投放接口清单</a></span>
+      <span>路径前缀：<code>https://api.e.qq.com/v3.0/</code></span>
+      <span>整理日期：2026-10-22</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="kpis">
+    <div class="kpi"><div class="k-label">接口总数</div><div class="k-value" id="kpi-api">367</div><div class="k-sub">官方接口清单 1:1 收录</div></div>
+    <div class="kpi"><div class="k-label">原始模块</div><div class="k-value" id="kpi-mod">97</div><div class="k-sub">官方清单中的模块列</div></div>
+    <div class="kpi"><div class="k-label">功能域</div><div class="k-value" id="kpi-grp">13</div><div class="k-sub">按业务阶段重新归并</div></div>
+    <div class="kpi"><div class="k-label">权限范围</div><div class="k-value" id="kpi-scope">5</div><div class="k-sub">OAuth scope 种类</div></div>
+  </div>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2>功能域接口分布</h2>
+      <span class="hint">点击扇区或图例筛选下方清单，再次点击取消</span>
+    </div>
+    <div class="panel-body">
+      <div class="chart-grid">
+        <div class="donut-wrap">
+          <svg id="donut" viewBox="0 0 392 392" role="img" aria-label="13 个功能域的接口数量占比环形图"></svg>
+          <div class="donut-center">
+            <div class="dc-num" id="dc-num">367</div>
+            <div class="dc-label" id="dc-label">全部接口</div>
+          </div>
+          <div class="tip" id="tip" hidden></div>
+        </div>
+        <ul class="legend" id="legend"></ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2>权限（scope）覆盖度</h2>
+      <span class="hint">同一接口可声明多个 scope，故合计大于接口总数</span>
+    </div>
+    <div class="panel-body"><div class="bars" id="bars"></div></div>
+  </section>
+
+  <section class="panel">
+    <div class="toolbar">
+      <div class="search">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.6-3.6"></path></svg>
+        <input id="q" type="search" placeholder="搜索接口名、模块或说明，例如 adgroups / 预算 / 人群" autocomplete="off">
+      </div>
+      <div class="chips" id="chips"></div>
+      <button class="reset" id="reset" type="button">清除筛选</button>
+      <span class="view-state" id="viewState"></span>
+    </div>
+    <div id="list"></div>
+  </section>
+
+  <section class="notes">
+    <h2>口径与说明</h2>
+    <ol>
+      <li>模块、接口名、说明、所属权限均取自官方接口清单原文；一级功能域与二级模块的分组为本文档整理归纳，官方原文为平铺表格。</li>
+      <li>接口路径统一为 <code>/v3.0/</code> 前缀；OAuth 三个接口实际指向 <code>https://developers.e.qq.com/oauth/</code>，表中按官方清单保留相对路径。</li>
+      <li>环形图占比按接口数量计算，合计 367；权限覆盖度统计出现次数，多 scope 接口会重复计数。</li>
+      <li>本页为单文件离线看板，无外部脚本与请求，数据内嵌在文件里，可直接分发或归档。</li>
+    </ol>
+  </section>
+</main>
+
+<script>
+const DATA = {"domains":[{"name":"授权认证","count":3,"moduleCount":1,"modules":["OAuth 授权"],"color":"#2a5d8f"},{"name":"订阅服务","count":3,"moduleCount":1,"modules":["订阅任务账户管理"],"color":"#3d7ea6"},{"name":"账号管理","count":37,"moduleCount":4,"modules":["客户账号","服务商账号","资质","资金账户"],"color":"#4f9bb8"},{"name":"组织管理","count":10,"moduleCount":2,"modules":["组织账号关系","服务商业务单元管理"],"color":"#57a89a"},{"name":"展示投放管理","count":24,"moduleCount":5,"modules":["营销单元","定向模板","创意","创意组件","批量操作"],"color":"#6fae7a"},{"name":"搜索投放升级版","count":14,"moduleCount":4,"modules":["搜索投放","搜索创意","关键词","否定词"],"color":"#a3b45c"},{"name":"营销资产","count":134,"moduleCount":26,"modules":["推广内容资产","图片","视频","音频","品牌形象","朋友圈头像昵称跳转页","应用分包","落地页","短剧售卖策略","视频号","视频号授权","视频号投放专用账号","微信小店","公众号","微信原生页","微信小游戏相关","Android 渠道包","优量汇流量包","弹幕","本地门店","直播间组件","动态商品图片","动态商品视频","商品库","营销链路","资产授权"],"color":"#cdb44a"},{"name":"数据洞察","count":27,"moduleCount":5,"modules":["投放数据洞察","创意资产洞察","线索管理","汽车视频号厂店平台","rta 实验数据查询"],"color":"#d99a4e"},{"name":"创意工具","count":27,"moduleCount":12,"modules":["文案助手","图片处理","通配符","自动生成创意","素材标签","词包","动态商品图片模板","动态商品视频模板","动态内容素材","素材异步任务(警示语)","创意增强 MAX","创意建议"],"color":"#cf7a52"},{"name":"投放辅助工具","count":53,"moduleCount":22,"modules":["预估能力","联合预算工具","官方落地页获客助手","游戏特征信息","转化归因","投放能力","创意形式","创意组件元数据","投放预览","创意预览","创意标签","定向标签","获取场景定向标签","获取营销表达组合","异步任务","3.0 切换工具","视频号精选评论管理","搜索推广工具","rta 策略管理","操作日志","客户投放偏好","资产相似度"],"color":"#c05f5f"},{"name":"人群管理","count":10,"moduleCount":5,"modules":["客户人群","客户人群数据文件","人群授权","客户人群数预估","标签人群"],"color":"#a85a7d"},{"name":"数据上报","count":5,"moduleCount":2,"modules":["用户行为数据源","用户行为数据"],"color":"#8a5d97"},{"name":"审核工具","count":20,"moduleCount":8,"modules":["审核结果","元素申诉复审","组件元素催审","素材风险检测","元素预审异步任务","saas 小程序预审异步任务","创意送审","违规处罚"],"color":"#6c6597"}],"records":[{"g":0,"m":"OAuth 授权","n":"oauth/authorize","d":"获取 Authorization Code","s":["ads_management","account_management","ads_insights","audience_management","user_actions"],"p":"`oauth/authorize`"},{"g":0,"m":"OAuth 授权","n":"oauth/token","d":"获取 Token","s":["ads_management","account_management","ads_insights","audience_management","user_actions"],"p":"`oauth/token`"},{"g":0,"m":"OAuth 授权","n":"oauth/refresh_token","d":"刷新 Refresh Token","s":["ads_management","account_management","ads_insights","audience_management","user_actions"],"p":"`oauth/refresh_token`"},{"g":1,"m":"订阅任务账户管理","n":"subscription_task_account/add","d":"创建订阅账户","s":["ads_management"],"p":"`subscription_task_account/add`"},{"g":1,"m":"订阅任务账户管理","n":"subscription_task_account/delete","d":"删除订阅账户","s":["ads_management"],"p":"`subscription_task_account/delete`"},{"g":1,"m":"订阅任务账户管理","n":"subscription_task_account/get","d":"查询订阅账户","s":["ads_management"],"p":"`subscription_task_account/get`"},{"g":2,"m":"客户账号","n":"advertiser/add","d":"添加服务商子客","s":["account_management"],"p":"`advertiser/add`"},{"g":2,"m":"客户账号","n":"advertiser/update","d":"更新客户信息","s":["account_management"],"p":"`advertiser/update`"},{"g":2,"m":"客户账号","n":"advertiser/get","d":"查询客户信息","s":["account_management","ads_management","ads_insights","audience_management","user_actions"],"p":"`advertiser/get`"},{"g":2,"m":"客户账号","n":"advertiser_daily_budget/update","d":"更新竞价账户日预算","s":["account_management"],"p":"`advertiser_daily_budget/update`"},{"g":2,"m":"客户账号","n":"advertiser_daily_budget/get","d":"获取竞价账户日预算","s":["account_management"],"p":"`advertiser_daily_budget/get`"},{"g":2,"m":"客户账号","n":"user_organization_authentication/get","d":"查询用户组织认证","s":["account_management"],"p":"`user_organization_authentication/get`"},{"g":2,"m":"服务商账号","n":"agency/get","d":"查询服务商信息","s":["account_management"],"p":"`agency/get`"},{"g":2,"m":"资质","n":"qualification_images/add","d":"上传资质图片","s":["account_management"],"p":"`qualification_images/add`"},{"g":2,"m":"资质","n":"qualification_images/get","d":"获取资质图片信息","s":["account_management"],"p":"`qualification_images/get`"},{"g":2,"m":"资质","n":"qualification_structure/get","d":"获取客户资质结构","s":["account_management"],"p":"`qualification_structure/get`"},{"g":2,"m":"资质","n":"qualifications/add","d":"创建客户资质","s":["account_management"],"p":"`qualifications/add`"},{"g":2,"m":"资质","n":"qualifications/update","d":"更新客户资质","s":["account_management"],"p":"`qualifications/update`"},{"g":2,"m":"资质","n":"qualifications/delete","d":"删除客户资质","s":["account_management"],"p":"`qualifications/delete`"},{"g":2,"m":"资质","n":"qualifications/get","d":"获取客户资质","s":["account_management"],"p":"`qualifications/get`"},{"g":2,"m":"资金账户","n":"funds/get","d":"获取资金账户信息","s":["account_management"],"p":"`funds/get`"},{"g":2,"m":"资金账户","n":"wallet/get","d":"获取钱包信息","s":["account_management"],"p":"`wallet/get`"},{"g":2,"m":"资金账户","n":"daily_balance_report/get","d":"获取资金账户日结明细（新）","s":["account_management"],"p":"`daily_balance_report/get`"},{"g":2,"m":"资金账户","n":"fund_transfer/add","d":"发起代理商与子客户之间的转账","s":["account_management"],"p":"`fund_transfer/add`"},{"g":2,"m":"资金账户","n":"fund_statements_detailed/get","d":"获取资金账户流水","s":["account_management"],"p":"`fund_statements_detailed/get`"},{"g":2,"m":"资金账户","n":"realtime_cost/get","d":"获取账号实时消耗","s":["account_management"],"p":"`realtime_cost/get`"},{"g":2,"m":"资金账户","n":"agency_realtime_cost/get","d":"获取服务商实时消耗","s":["account_management"],"p":"`agency_realtime_cost/get`"},{"g":2,"m":"资金账户","n":"merge_fund_type_subcustomer_transfer/add","d":"资金合并类型同商务管家子客间转账","s":["account_management"],"p":"`merge_fund_type_subcustomer_transfer/add`"},{"g":2,"m":"资金账户","n":"merge_fund_type_funds/get","d":"获取资金合并类资金账户信息","s":["account_management"],"p":"`merge_fund_type_funds/get`"},{"g":2,"m":"资金账户","n":"merge_fund_type_daily_balance_report/get","d":"获取资金合并类资金账户日结明细","s":["account_management"],"p":"`merge_fund_type_daily_balance_report/get`"},{"g":2,"m":"资金账户","n":"merge_fund_type_fund_statements_detailed/get","d":"获取资金合并类型资金流水","s":["account_management"],"p":"`merge_fund_type_fund_statements_detailed/get`"},{"g":2,"m":"资金账户","n":"subcustomer_transfer/add","d":"同商务管家子客间转账","s":["account_management"],"p":"`subcustomer_transfer/add`"},{"g":2,"m":"资金账户","n":"agency_wallet_list/get","d":"获取代理商创建的共享钱包信息列表","s":["account_management"],"p":"`agency_wallet_list/get`"},{"g":2,"m":"资金账户","n":"wallet_transfer/add","d":"发起代理商与钱包之间转账","s":["account_management"],"p":"`wallet_transfer/add`"},{"g":2,"m":"资金账户","n":"wallet_invoice/get","d":"获取共享钱包流水","s":["account_management"],"p":"`wallet_invoice/get`"},{"g":2,"m":"资金账户","n":"wallet_basic_info/get","d":"钱包视角查询共享钱包基础信息","s":["account_management"],"p":"`wallet_basic_info/get`"},{"g":2,"m":"资金账户","n":"wallet_get_binding_advertiser/get","d":"查询单个共享钱包下的关联账户信息","s":["account_management"],"p":"`wallet_get_binding_advertiser/get`"},{"g":2,"m":"资金账户","n":"wallet_create/add","d":"创建共享钱包","s":["account_management"],"p":"`wallet_create/add`"},{"g":2,"m":"资金账户","n":"wallet_edit/add","d":"编辑共享钱包基础信息","s":["account_management"],"p":"`wallet_edit/add`"},{"g":2,"m":"资金账户","n":"wallet_bind_advertiser/add","d":"共享钱包绑定或解绑账户","s":["account_management"],"p":"`wallet_bind_advertiser/add`"},{"g":2,"m":"资金账户","n":"subsidy_account_bind/add","d":"补贴账号绑定或解绑账户","s":["account_management"],"p":"`subsidy_account_bind/add`"},{"g":2,"m":"资金账户","n":"subsidy_bound_account_list/get","d":"获取补贴账号关联的账号列表","s":["account_management"],"p":"`subsidy_bound_account_list/get`"},{"g":2,"m":"资金账户","n":"account_subsidy/get","d":"获取客户关联的补贴账号","s":["account_management"],"p":"`account_subsidy/get`"},{"g":3,"m":"组织账号关系","n":"organization_account_relation/get","d":"查询组织下账户信息","s":["account_management","ads_management","ads_insights","audience_management","user_actions"],"p":"`organization_account_relation/get`"},{"g":3,"m":"组织账号关系","n":"business_unit/add","d":"创建客户业务单元","s":["account_management"],"p":"`business_unit/add`"},{"g":3,"m":"组织账号关系","n":"business_unit_account/update","d":"更新客户业务单元所属账号","s":["account_management"],"p":"`business_unit_account/update`"},{"g":3,"m":"组织账号关系","n":"business_unit_list/get","d":"查询客户业务单元列表","s":["account_management"],"p":"`business_unit_list/get`"},{"g":3,"m":"组织账号关系","n":"business_unit_account/get","d":"查询账号所属的业务单元","s":["account_management"],"p":"`business_unit_account/get`"},{"g":3,"m":"服务商业务单元管理","n":"agency_business_unit/add","d":"创建服务商业务单元","s":["account_management"],"p":"`agency_business_unit/add`"},{"g":3,"m":"服务商业务单元管理","n":"agency_business_unit/update","d":"修改服务商业务单元","s":["account_management"],"p":"`agency_business_unit/update`"},{"g":3,"m":"服务商业务单元管理","n":"agency_business_unit_list/get","d":"查询服务商业务单元列表","s":["account_management"],"p":"`agency_business_unit_list/get`"},{"g":3,"m":"服务商业务单元管理","n":"agency_business_unit_list_account/get","d":"查询服务商业务单元下的账号列表","s":["account_management"],"p":"`agency_business_unit_list_account/get`"},{"g":3,"m":"服务商业务单元管理","n":"agency_business_unit_list_by_account/get","d":"查询账号所属的服务商业务单元","s":["account_management"],"p":"`agency_business_unit_list_by_account/get`"},{"g":4,"m":"营销单元","n":"adgroups/get","d":"获取营销单元","s":["ads_management","ads_insights"],"p":"`adgroups/get`"},{"g":4,"m":"营销单元","n":"adgroups/add","d":"创建营销单元","s":["ads_management"],"p":"`adgroups/add`"},{"g":4,"m":"营销单元","n":"adgroups/update","d":"更新营销单元","s":["ads_management"],"p":"`adgroups/update`"},{"g":4,"m":"营销单元","n":"adgroups/delete","d":"删除营销单元","s":["ads_management"],"p":"`adgroups/delete`"},{"g":4,"m":"定向模板","n":"targetings/get","d":"查询定向模板","s":["ads_management"],"p":"`targetings/get`"},{"g":4,"m":"创意","n":"dynamic_creatives/get","d":"获取创意","s":["ads_management"],"p":"`dynamic_creatives/get`"},{"g":4,"m":"创意","n":"dynamic_creatives/add","d":"创建创意","s":["ads_management"],"p":"`dynamic_creatives/add`"},{"g":4,"m":"创意","n":"dynamic_creatives/update","d":"更新创意","s":["ads_management"],"p":"`dynamic_creatives/update`"},{"g":4,"m":"创意","n":"dynamic_creatives/delete","d":"删除创意","s":["ads_management"],"p":"`dynamic_creatives/delete`"},{"g":4,"m":"创意组件","n":"components/get","d":"获取创意组件","s":["ads_management","ads_insights"],"p":"`components/get`"},{"g":4,"m":"创意组件","n":"components/add","d":"创建创意组件","s":["ads_management"],"p":"`components/add`"},{"g":4,"m":"创意组件","n":"components/delete","d":"删除创意组件","s":["ads_management"],"p":"`components/delete`"},{"g":4,"m":"创意组件","n":"component_sharing/update","d":"修改组件共享","s":["ads_management"],"p":"`component_sharing/update`"},{"g":4,"m":"创意组件","n":"component_sharing/get","d":"查询组件共享","s":["ads_management"],"p":"`component_sharing/get`"},{"g":4,"m":"创意组件","n":"component_detail/get","d":"查询创意组件详情","s":["ads_management"],"p":"`component_detail/get`"},{"g":4,"m":"批量操作","n":"batch_requests/add","d":"批量操作","s":["ads_management"],"p":"`batch_requests/add`"},{"g":4,"m":"批量操作","n":"adgroups/update_daily_budget","d":"批量修改营销单元日预算","s":["ads_management"],"p":"`adgroups/update_daily_budget`"},{"g":4,"m":"批量操作","n":"adgroups/update_configured_status","d":"批量修改营销单元开启/暂停状态","s":["ads_management"],"p":"`adgroups/update_configured_status`"},{"g":4,"m":"批量操作","n":"adgroups/update_bid_amount","d":"批量修改营销单元出价","s":["ads_management"],"p":"`adgroups/update_bid_amount`"},{"g":4,"m":"批量操作","n":"adgroups/update_datetime","d":"批量修改营销单元投放起止时间","s":["ads_management"],"p":"`adgroups/update_datetime`"},{"g":4,"m":"批量操作","n":"advertiser/update_daily_budget","d":"批量修改账户日预算","s":["ads_management"],"p":"`advertiser/update_daily_budget`"},{"g":4,"m":"批量操作","n":"batch_async_requests/add","d":"创建批量异步请求任务","s":["ads_management"],"p":"`batch_async_requests/add`"},{"g":4,"m":"批量操作","n":"batch_async_requests/get","d":"获取批量异步请求任务列表","s":["ads_management"],"p":"`batch_async_requests/get`"},{"g":4,"m":"批量操作","n":"batch_async_request_specification/get","d":"获取批量异步请求任务详情","s":["ads_management"],"p":"`batch_async_request_specification/get`"},{"g":5,"m":"搜索投放","n":"search_adgroups/add","d":"创建营销单元","s":["ads_management"],"p":"`search_adgroups/add`"},{"g":5,"m":"搜索投放","n":"search_adgroups/update","d":"更新营销单元","s":["ads_management"],"p":"`search_adgroups/update`"},{"g":5,"m":"搜索创意","n":"search_dynamic_creatives/add","d":"创建创意","s":["ads_management"],"p":"`search_dynamic_creatives/add`"},{"g":5,"m":"搜索创意","n":"search_dynamic_creatives/update","d":"更新创意","s":["ads_management"],"p":"`search_dynamic_creatives/update`"},{"g":5,"m":"关键词","n":"bidword/add","d":"创建关键词","s":["ads_management"],"p":"`bidword/add`"},{"g":5,"m":"关键词","n":"bidword/update","d":"更新关键词","s":["ads_management"],"p":"`bidword/update`"},{"g":5,"m":"关键词","n":"bidword/delete","d":"删除关键词","s":["ads_management"],"p":"`bidword/delete`"},{"g":5,"m":"关键词","n":"bidword/get","d":"查询关键词","s":["ads_management","ads_insights"],"p":"`bidword/get`"},{"g":5,"m":"否定词","n":"adgroup_negativewords/add","d":"新增否定词","s":["ads_management"],"p":"`adgroup_negativewords/add`"},{"g":5,"m":"否定词","n":"adgroup_negativewords/update","d":"更新否定词","s":["ads_management"],"p":"`adgroup_negativewords/update`"},{"g":5,"m":"否定词","n":"adgroup_negativewords/get","d":"查询否定词","s":["ads_management"],"p":"`adgroup_negativewords/get`"},{"g":5,"m":"否定词","n":"negativewords/add","d":"新增否定词","s":["ads_management"],"p":"`negativewords/add`"},{"g":5,"m":"否定词","n":"negativewords/update","d":"更新否定词","s":["ads_management"],"p":"`negativewords/update`"},{"g":5,"m":"否定词","n":"negativewords/get","d":"查询否定词","s":["ads_management"],"p":"`negativewords/get`"},{"g":6,"m":"推广内容资产","n":"marketing_target_assets/add","d":"创建推广内容资产","s":["ads_management","ads_insights"],"p":"`marketing_target_assets/add`"},{"g":6,"m":"推广内容资产","n":"marketing_target_assets/update","d":"更新推广内容资产","s":["ads_management","ads_insights"],"p":"`marketing_target_assets/update`"},{"g":6,"m":"推广内容资产","n":"marketing_target_assets/delete","d":"删除推广内容资产","s":["ads_management","ads_insights"],"p":"`marketing_target_assets/delete`"},{"g":6,"m":"推广内容资产","n":"marketing_target_asset_detail/get","d":"获取推广内容资产详情","s":["ads_management","ads_insights"],"p":"`marketing_target_asset_detail/get`"},{"g":6,"m":"推广内容资产","n":"marketing_target_assets/get","d":"获取可投放推广内容资产列表","s":["ads_management","ads_insights"],"p":"`marketing_target_assets/get`"},{"g":6,"m":"推广内容资产","n":"marketing_target_types/get","d":"获取可投放推广内容资产类型名称","s":["ads_management","ads_insights"],"p":"`marketing_target_types/get`"},{"g":6,"m":"推广内容资产","n":"marketing_target_asset_categories/get","d":"获取可用的推广内容资产类目","s":["ads_management","ads_insights"],"p":"`marketing_target_asset_categories/get`"},{"g":6,"m":"推广内容资产","n":"marketing_target_asset_properties/get","d":"获取可用的推广内容资产属性","s":["ads_management","ads_insights"],"p":"`marketing_target_asset_properties/get`"},{"g":6,"m":"推广内容资产","n":"marketing_target_asset_property_values/get","d":"获取可用的推广内容资产属性值","s":["ads_management","ads_insights"],"p":"`marketing_target_asset_property_values/get`"},{"g":6,"m":"图片","n":"images/get","d":"获取图片","s":["ads_management","account_management"],"p":"`images/get`"},{"g":6,"m":"图片","n":"images/add","d":"创建图片","s":["ads_management","account_management"],"p":"`images/add`"},{"g":6,"m":"图片","n":"images/update","d":"更新图片","s":["ads_management","account_management"],"p":"`images/update`"},{"g":6,"m":"图片","n":"images/delete","d":"删除图片","s":["ads_management","account_management"],"p":"`images/delete`"},{"g":6,"m":"视频","n":"videos/get","d":"获取视频","s":["ads_management"],"p":"`videos/get`"},{"g":6,"m":"视频","n":"videos/add","d":"创建视频","s":["ads_management"],"p":"`videos/add`"},{"g":6,"m":"视频","n":"videos/update","d":"更新视频","s":["ads_management"],"p":"`videos/update`"},{"g":6,"m":"视频","n":"videos/delete","d":"删除视频","s":["ads_management"],"p":"`videos/delete`"},{"g":6,"m":"音频","n":"muse_audios/get","d":"获取妙思版权音频列表","s":["ads_management"],"p":"`muse_audios/get`"},{"g":6,"m":"品牌形象","n":"brand/add","d":"创建品牌形象","s":["ads_management"],"p":"`brand/add`"},{"g":6,"m":"品牌形象","n":"brand/get","d":"获取品牌形象列表","s":["ads_management"],"p":"`brand/get`"},{"g":6,"m":"朋友圈头像昵称跳转页","n":"profiles/add","d":"创建朋友圈头像昵称跳转页","s":["ads_management"],"p":"`profiles/add`"},{"g":6,"m":"朋友圈头像昵称跳转页","n":"profiles/delete","d":"删除朋友圈头像昵称跳转页","s":["ads_management"],"p":"`profiles/delete`"},{"g":6,"m":"朋友圈头像昵称跳转页","n":"profiles/get","d":"获取朋友圈头像昵称跳转页","s":["ads_management"],"p":"`profiles/get`"},{"g":6,"m":"应用分包","n":"extend_package/add","d":"创建应用分包","s":["ads_management"],"p":"`extend_package/add`"},{"g":6,"m":"应用分包","n":"extend_package/update","d":"更新应用分包","s":["ads_management"],"p":"`extend_package/update`"},{"g":6,"m":"应用分包","n":"extend_package/get","d":"获取应用分包","s":["ads_management"],"p":"`extend_package/get`"},{"g":6,"m":"落地页","n":"pages/get","d":"获取落地页列表","s":["ads_management"],"p":"`pages/get`"},{"g":6,"m":"落地页","n":"wechat_pages/get","d":"原生页-获取原生页列表","s":["ads_management"],"p":"`wechat_pages/get`"},{"g":6,"m":"落地页","n":"wechat_pages/add","d":"原生页-模板创建原生页","s":["ads_management"],"p":"`wechat_pages/add`"},{"g":6,"m":"落地页","n":"wechat_pages/delete","d":"原生页-删除原生页","s":["ads_management"],"p":"`wechat_pages/delete`"},{"g":6,"m":"落地页","n":"wechat_pages_custom/add","d":"原生页-组件创建原生页","s":["ads_management"],"p":"`wechat_pages_custom/add`"},{"g":6,"m":"落地页","n":"xijing_template_list/get","d":"蹊径-获取模板列表","s":["ads_management"],"p":"`xijing_template_list/get`"},{"g":6,"m":"落地页","n":"xijing_template/get","d":"蹊径-获取落地页指定模板","s":["ads_management"],"p":"`xijing_template/get`"},{"g":6,"m":"落地页","n":"xijing_complex_template/get","d":"蹊径-获取落地页互动模板配置","s":["ads_management"],"p":"`xijing_complex_template/get`"},{"g":6,"m":"落地页","n":"xijing_page_list/get","d":"蹊径-查询落地页列表","s":["ads_management"],"p":"`xijing_page_list/get`"},{"g":6,"m":"落地页","n":"xijing_page/add","d":"蹊径-基于模板创建落地页","s":["ads_management"],"p":"`xijing_page/add`"},{"g":6,"m":"落地页","n":"xijing_page_by_components/add","d":"蹊径-基于组件创建落地页","s":["ads_management"],"p":"`xijing_page_by_components/add`"},{"g":6,"m":"落地页","n":"xijing_page_interactive/add","d":"蹊径-创建互动落地页","s":["ads_management"],"p":"`xijing_page_interactive/add`"},{"g":6,"m":"落地页","n":"xijing_page/update","d":"蹊径-落地页送审","s":["ads_management"],"p":"`xijing_page/update`"},{"g":6,"m":"落地页","n":"xijing_page/delete","d":"蹊径-删除落地页","s":["ads_management"],"p":"`xijing_page/delete`"},{"g":6,"m":"落地页","n":"official_landing_page_component/add","d":"落地页-基于组件创建官方落地页","s":["ads_management"],"p":"`official_landing_page_component/add`"},{"g":6,"m":"落地页","n":"official_landing_page_detail/get","d":"落地页-获取官方落地页详情","s":["ads_management"],"p":"`official_landing_page_detail/get`"},{"g":6,"m":"落地页","n":"official_landing_page_list/get","d":"落地页-获取官方落地页列表","s":["ads_management"],"p":"`official_landing_page_list/get`"},{"g":6,"m":"落地页","n":"official_landing_page_submit/update","d":"落地页-送审官方落地页","s":["ads_management"],"p":"`official_landing_page_submit/update`"},{"g":6,"m":"落地页","n":"official_landing_page/delete","d":"落地页-删除官方落地页","s":["ads_management"],"p":"`official_landing_page/delete`"},{"g":6,"m":"短剧售卖策略","n":"landing_page_sell_strategy/get","d":"短剧售卖策略-查询售卖策略列表","s":["ads_management"],"p":"`landing_page_sell_strategy/get`"},{"g":6,"m":"短剧售卖策略","n":"landing_page_sell_strategy/add","d":"短剧售卖策略-创建售卖策略","s":["ads_management"],"p":"`landing_page_sell_strategy/add`"},{"g":6,"m":"视频号","n":"wechat_channels_accounts/get","d":"获取可投视频号列表","s":["ads_management"],"p":"`wechat_channels_accounts/get`"},{"g":6,"m":"视频号","n":"channels_userpageobjects/get","d":"获取视频号动态列表","s":["ads_management"],"p":"`channels_userpageobjects/get`"},{"g":6,"m":"视频号","n":"channels_finderobject/get","d":"获取视频号动态详情","s":["ads_management"],"p":"`channels_finderobject/get`"},{"g":6,"m":"视频号","n":"channels_livenoticeinfo/get","d":"获取视频号直播预约记录列表","s":["ads_management"],"p":"`channels_livenoticeinfo/get`"},{"g":6,"m":"视频号授权","n":"wechat_channels_authorization/add","d":"新增视频号授权","s":["ads_management"],"p":"`wechat_channels_authorization/add`"},{"g":6,"m":"视频号授权","n":"wechat_channels_authorization/update","d":"更新视频号授权","s":["ads_management"],"p":"`wechat_channels_authorization/update`"},{"g":6,"m":"视频号授权","n":"wechat_channels_authorization/get","d":"拉取授权视频号列表","s":["ads_management"],"p":"`wechat_channels_authorization/get`"},{"g":6,"m":"视频号授权","n":"wechat_channels_authorization/delete","d":"删除视频号授权","s":["ads_management"],"p":"`wechat_channels_authorization/delete`"},{"g":6,"m":"视频号投放专用账号","n":"wechat_channels_ad_account_wechat_binding/add","d":"绑定微信","s":["ads_management"],"p":"`wechat_channels_ad_account_wechat_binding/add`"},{"g":6,"m":"视频号投放专用账号","n":"wechat_channels_ad_account_wechat_binding/get","d":"查询微信绑定状态","s":["ads_management"],"p":"`wechat_channels_ad_account_wechat_binding/get`"},{"g":6,"m":"视频号投放专用账号","n":"wechat_channels_ad_account_validation/get","d":"校验开户数据","s":["ads_management"],"p":"`wechat_channels_ad_account_validation/get`"},{"g":6,"m":"视频号投放专用账号","n":"wechat_channels_ad_account/add","d":"新增投放专用视频号账号","s":["ads_management"],"p":"`wechat_channels_ad_account/add`"},{"g":6,"m":"视频号投放专用账号","n":"wechat_channels_ad_account/update","d":"更新投放专用视频号账号","s":["ads_management"],"p":"`wechat_channels_ad_account/update`"},{"g":6,"m":"视频号投放专用账号","n":"wechat_channels_ad_account/get","d":"拉取投放专用视频号账号列表","s":["ads_management"],"p":"`wechat_channels_ad_account/get`"},{"g":6,"m":"视频号投放专用账号","n":"wechat_channels_ad_account/delete","d":"删除投放专用视频号账号","s":["ads_management"],"p":"`wechat_channels_ad_account/delete`"},{"g":6,"m":"视频号投放专用账号","n":"wechat_channels_ad_account_certification_file/add","d":"上传资质文件","s":["ads_management"],"p":"`wechat_channels_ad_account_certification_file/add`"},{"g":6,"m":"微信小店","n":"wechat_shop/get","d":"查询微信小店信息","s":["ads_management"],"p":"`wechat_shop/get`"},{"g":6,"m":"微信小店","n":"wechat_shop_authorization_validation/get","d":"微信小店授权校验","s":["ads_management"],"p":"`wechat_shop_authorization_validation/get`"},{"g":6,"m":"微信小店","n":"wechat_shop_authorization/get","d":"查询微信小店授权列表信息","s":["ads_management"],"p":"`wechat_shop_authorization/get`"},{"g":6,"m":"微信小店","n":"wechat_shop_authorization/add","d":"发起微信小店授权","s":["ads_management"],"p":"`wechat_shop_authorization/add`"},{"g":6,"m":"微信小店","n":"wechat_shop_authorization_status/update","d":"修改微信小店授权状态","s":["ads_management"],"p":"`wechat_shop_authorization_status/update`"},{"g":6,"m":"微信小店","n":"wechat_shop_activity/get","d":"获取微信小店活动详情","s":["ads_management"],"p":"`wechat_shop_activity/get`"},{"g":6,"m":"微信小店","n":"wechat_shop_activity_list/get","d":"获取微信小店活动列表","s":["ads_management"],"p":"`wechat_shop_activity_list/get`"},{"g":6,"m":"公众号","n":"wechat_official_accounts/get","d":"获取可投公众号列表","s":["ads_management"],"p":"`wechat_official_accounts/get`"},{"g":6,"m":"微信原生页","n":"wechat_pages_csgrouplist/get","d":"获取企业微信组件客服组","s":["ads_management"],"p":"`wechat_pages_csgrouplist/get`"},{"g":6,"m":"微信原生页","n":"wechat_pages_csgrouplist/add","d":"增加企业微信组件客服组","s":["ads_management"],"p":"`wechat_pages_csgrouplist/add`"},{"g":6,"m":"微信原生页","n":"wechat_pages_csgrouplist/update","d":"更新企业微信组件客服组","s":["ads_management"],"p":"`wechat_pages_csgrouplist/update`"},{"g":6,"m":"微信原生页","n":"wechat_pages_csgroup_user/get","d":"获取企业微信组件客服列表","s":["ads_management"],"p":"`wechat_pages_csgroup_user/get`"},{"g":6,"m":"微信原生页","n":"wechat_pages_csgroup_status/update","d":"更新企业微信客服状态","s":["ads_management"],"p":"`wechat_pages_csgroup_status/update`"},{"g":6,"m":"微信原生页","n":"wechat_pages_grantinfo/get","d":"获取原生页授权方信息","s":["ads_management"],"p":"`wechat_pages_grantinfo/get`"},{"g":6,"m":"微信小游戏相关","n":"get_wx_game_app_gift_pack/get","d":"获取微信小游戏礼包信息","s":["ads_management"],"p":"`get_wx_game_app_gift_pack/get`"},{"g":6,"m":"微信小游戏相关","n":"wx_game_playable_page/get","d":"获取微信小游戏试玩页","s":["ads_management"],"p":"`wx_game_playable_page/get`"},{"g":6,"m":"Android 渠道包","n":"android_channel/get","d":"获取 Android 渠道包","s":["ads_management"],"p":"`android_channel/get`"},{"g":6,"m":"优量汇流量包","n":"union_position_packages/get","d":"获取优量汇流量包","s":["ads_management"],"p":"`union_position_packages/get`"},{"g":6,"m":"优量汇流量包","n":"union_position_packages/add","d":"创建优量汇流量包","s":["ads_management"],"p":"`union_position_packages/add`"},{"g":6,"m":"优量汇流量包","n":"union_position_packages/update","d":"更新优量汇流量包","s":["ads_management"],"p":"`union_position_packages/update`"},{"g":6,"m":"优量汇流量包","n":"union_position_packages/delete","d":"删除优量汇流量包","s":["ads_management"],"p":"`union_position_packages/delete`"},{"g":6,"m":"弹幕","n":"barrage/add","d":"添加弹幕","s":["ads_management"],"p":"`barrage/add`"},{"g":6,"m":"弹幕","n":"barrage/get","d":"获取弹幕","s":["ads_management"],"p":"`barrage/get`"},{"g":6,"m":"弹幕","n":"barrage_recommend/get","d":"获取推荐弹幕","s":["ads_management"],"p":"`barrage_recommend/get`"},{"g":6,"m":"本地门店","n":"local_stores/add","d":"批量录入门店","s":["ads_management"],"p":"`local_stores/add`"},{"g":6,"m":"本地门店","n":"local_stores/update","d":"批量编辑门店","s":["ads_management"],"p":"`local_stores/update`"},{"g":6,"m":"本地门店","n":"local_stores/delete","d":"批量删除门店信息","s":["ads_management"],"p":"`local_stores/delete`"},{"g":6,"m":"本地门店","n":"local_stores/get","d":"查询门店信息","s":["ads_management"],"p":"`local_stores/get`"},{"g":6,"m":"本地门店","n":"local_stores_address_parsing_result/get","d":"解析门店地址","s":["ads_management"],"p":"`local_stores_address_parsing_result/get`"},{"g":6,"m":"本地门店","n":"local_stores_search_info/get","d":"搜索门店","s":["ads_management"],"p":"`local_stores_search_info/get`"},{"g":6,"m":"本地门店","n":"local_stores_wxpay_merchants/get","d":"查询微信支付商户号","s":["ads_management"],"p":"`local_stores_wxpay_merchants/get`"},{"g":6,"m":"本地门店","n":"local_stores_categories/get","d":"查询门店类目","s":["ads_management"],"p":"`local_stores_categories/get`"},{"g":6,"m":"本地门店","n":"local_store_packages/add","d":"创建门店包","s":["ads_management"],"p":"`local_store_packages/add`"},{"g":6,"m":"本地门店","n":"local_store_packages/get","d":"获取门店包","s":["ads_management"],"p":"`local_store_packages/get`"},{"g":6,"m":"本地门店","n":"local_store_packages/update","d":"更新门店包","s":["ads_management"],"p":"`local_store_packages/update`"},{"g":6,"m":"本地门店","n":"local_store_packages/delete","d":"删除门店包","s":["ads_management"],"p":"`local_store_packages/delete`"},{"g":6,"m":"直播间组件","n":"live_room_components/add","d":"创建直播间组件","s":["ads_management"],"p":"`live_room_components/add`"},{"g":6,"m":"直播间组件","n":"live_room_components/update","d":"更新直播间组件","s":["ads_management"],"p":"`live_room_components/update`"},{"g":6,"m":"直播间组件","n":"live_room_components/get","d":"查询直播间组件","s":["ads_management"],"p":"`live_room_components/get`"},{"g":6,"m":"直播间组件","n":"live_room_components/delete","d":"删除直播间组件","s":["ads_management"],"p":"`live_room_components/delete`"},{"g":6,"m":"直播间组件","n":"live_room_component_status/update","d":"更新直播间组件状态","s":["ads_management"],"p":"`live_room_component_status/update`"},{"g":6,"m":"动态商品图片","n":"dynamic_ad_images/add","d":"根据 DPA 模板生成图片","s":["ads_management"],"p":"`dynamic_ad_images/add`"},{"g":6,"m":"动态商品图片","n":"dynamic_ad_images/get","d":"获取 DPA 模板生成的图片","s":["ads_management"],"p":"`dynamic_ad_images/get`"},{"g":6,"m":"动态商品视频","n":"dynamic_ad_video/add","d":"根据 DPA 模板生成视频","s":["ads_management"],"p":"`dynamic_ad_video/add`"},{"g":6,"m":"动态商品视频","n":"dynamic_ad_video/get","d":"获取 DPA 模板生成的视频","s":["ads_management"],"p":"`dynamic_ad_video/get`"},{"g":6,"m":"商品库","n":"product_catalogs/add","d":"创建商品库","s":["ads_management"],"p":"`product_catalogs/add`"},{"g":6,"m":"商品库","n":"product_catalogs/get","d":"获取商品库","s":["ads_management"],"p":"`product_catalogs/get`"},{"g":6,"m":"商品库","n":"product_items/add","d":"添加商品","s":["ads_management"],"p":"`product_items/add`"},{"g":6,"m":"商品库","n":"product_items/update","d":"更新商品信息","s":["ads_management"],"p":"`product_items/update`"},{"g":6,"m":"商品库","n":"product_items/delete","d":"删除商品信息","s":["ads_management"],"p":"`product_items/delete`"},{"g":6,"m":"商品库","n":"product_items/batch_update","d":"批量更新商品信息","s":["ads_management"],"p":"`product_items/batch_update`"},{"g":6,"m":"商品库","n":"product_series/add","d":"创建商品系列","s":["ads_management"],"p":"`product_series/add`"},{"g":6,"m":"商品库","n":"product_items/get","d":"获取商品","s":["ads_management"],"p":"`product_items/get`"},{"g":6,"m":"商品库","n":"product_items_detail/get","d":"获取商品详情","s":["ads_management"],"p":"`product_items_detail/get`"},{"g":6,"m":"商品库","n":"product_items_verticals/get","d":"获取行业列表","s":["ads_management"],"p":"`product_items_verticals/get`"},{"g":6,"m":"商品库","n":"products_system_status/get","d":"获取审核失败的商品","s":["ads_management"],"p":"`products_system_status/get`"},{"g":6,"m":"商品库","n":"product_categories_list/get","d":"获取商品类目","s":["ads_management"],"p":"`product_categories_list/get`"},{"g":6,"m":"商品库","n":"product_series/get","d":"获取商品系列","s":["ads_management"],"p":"`product_series/get`"},{"g":6,"m":"商品库","n":"categories/get","d":"获取腾讯系商品类目","s":["ads_management"],"p":"`categories/get`"},{"g":6,"m":"商品库","n":"categories_attribute/get","d":"获取商品属性","s":["ads_management"],"p":"`categories_attribute/get`"},{"g":6,"m":"商品库","n":"wechat_store_catalogs/get","d":"获取微信小店商品库","s":["ads_management"],"p":"`wechat_store_catalogs/get`"},{"g":6,"m":"商品库","n":"wechat_store_product_items/get","d":"获取微信小店商品","s":["ads_management"],"p":"`wechat_store_product_items/get`"},{"g":6,"m":"营销链路","n":"conversion_links/get","d":"获取可用营销链路模板","s":["ads_management","ads_insights"],"p":"`conversion_links/get`"},{"g":6,"m":"营销链路","n":"conversion_link_assets/add","d":"新建营销链路","s":["ads_management","ads_insights"],"p":"`conversion_link_assets/add`"},{"g":6,"m":"营销链路","n":"conversion_link_assets/get","d":"获取营销链路列表","s":["ads_management","ads_insights"],"p":"`conversion_link_assets/get`"},{"g":6,"m":"营销链路","n":"conversion_link_assets/update","d":"更新营销链路","s":["ads_management","ads_insights"],"p":"`conversion_link_assets/update`"},{"g":6,"m":"营销链路","n":"conversion_link_asset_available/get","d":"获取可投放营销链路列表","s":["ads_management"],"p":"`conversion_link_asset_available/get`"},{"g":6,"m":"资产授权","n":"asset_permissions/add","d":"资产权限授予","s":["ads_management"],"p":"`asset_permissions/add`"},{"g":6,"m":"资产授权","n":"asset_permissions/delete","d":"资产权限回收","s":["ads_management"],"p":"`asset_permissions/delete`"},{"g":6,"m":"资产授权","n":"asset_pre_permissions/get","d":"获取待确认接收授权列表接口","s":["ads_management"],"p":"`asset_pre_permissions/get`"},{"g":6,"m":"资产授权","n":"asset_pre_permissions/update","d":"资产预授权确认","s":["ads_management"],"p":"`asset_pre_permissions/update`"},{"g":7,"m":"投放数据洞察","n":"daily_reports/get","d":"获取日报表","s":["ads_insights"],"p":"`daily_reports/get`"},{"g":7,"m":"投放数据洞察","n":"hourly_reports/get","d":"获取小时报表","s":["ads_insights"],"p":"`hourly_reports/get`"},{"g":7,"m":"投放数据洞察","n":"targeting_tag_reports/get","d":"获取定向标签报表","s":["ads_insights"],"p":"`targeting_tag_reports/get`"},{"g":7,"m":"投放数据洞察","n":"ad_union_reports/get","d":"获取联盟广告位报表","s":["ads_insights"],"p":"`ad_union_reports/get`"},{"g":7,"m":"投放数据洞察","n":"async_reports/add","d":"创建异步报表任务","s":["ads_insights"],"p":"`async_reports/add`"},{"g":7,"m":"投放数据洞察","n":"async_reports/get","d":"获取异步报表任务","s":["ads_insights"],"p":"`async_reports/get`"},{"g":7,"m":"投放数据洞察","n":"async_report_files/get","d":"获取文件接口","s":["ads_insights"],"p":"`async_report_files/get`"},{"g":7,"m":"创意资产洞察","n":"dc_component_summary_info/get","d":"获取创意资产总结","s":["ads_insights"],"p":"`dc_component_summary_info/get`"},{"g":7,"m":"线索管理","n":"leads_list/get","d":"获取线索列表","s":["ads_management","ads_insights","account_management","audience_management","user_actions"],"p":"`leads_list/get`"},{"g":7,"m":"线索管理","n":"leads/add","d":"新增线索","s":["ads_management","ads_insights","account_management","audience_management","user_actions"],"p":"`leads/add`"},{"g":7,"m":"线索管理","n":"leads_status/update","d":"更新线索状态","s":["ads_management","ads_insights","account_management","audience_management","user_actions"],"p":"`leads_status/update`"},{"g":7,"m":"线索管理","n":"leads/update","d":"更新线索信息","s":["ads_management","ads_insights","account_management","audience_management","user_actions"],"p":"`leads/update`"},{"g":7,"m":"线索管理","n":"leads_claim/update","d":"更新线索归因信息","s":["ads_management","ads_insights","account_management","audience_management","user_actions"],"p":"`leads_claim/update`"},{"g":7,"m":"线索管理","n":"leads_action_type_report/add","d":"新增线索行为上报","s":["ads_management","ads_insights","account_management","audience_management","user_actions"],"p":"`leads_action_type_report/add`"},{"g":7,"m":"线索管理","n":"leads_invalid_pay/get","d":"获取线索无效赔付","s":["ads_management","ads_insights","account_management","audience_management","user_actions"],"p":"`leads_invalid_pay/get`"},{"g":7,"m":"线索管理","n":"leads_call_virtual_number/get","d":"获取中间号","s":["ads_management","ads_insights","account_management","audience_management","user_actions"],"p":"`leads_call_virtual_number/get`"},{"g":7,"m":"线索管理","n":"leads_call_record/get","d":"获取通话结果","s":["ads_management","ads_insights","account_management","audience_management","user_actions"],"p":"`leads_call_record/get`"},{"g":7,"m":"线索管理","n":"leads_call_records/get","d":"获取一个账号下的全部通话结果","s":["ads_management","ads_insights","account_management","audience_management","user_actions"],"p":"`leads_call_records/get`"},{"g":7,"m":"线索管理","n":"leads_voip_call_token/get","d":"获取网络电话 token","s":["ads_management","ads_insights","account_management","audience_management","user_actions"],"p":"`leads_voip_call_token/get`"},{"g":7,"m":"线索管理","n":"leads_voip_call/add","d":"网络电话呼叫","s":["ads_management","ads_insights","account_management","audience_management","user_actions"],"p":"`leads_voip_call/add`"},{"g":7,"m":"汽车视频号厂店平台","n":"video_channel_live_data/get","d":"视频号直播数据拉取","s":["ads_management","ads_insights","account_management","audience_management","user_actions"],"p":"`video_channel_live_data/get`"},{"g":7,"m":"汽车视频号厂店平台","n":"video_channel_leads_data/get","d":"视频号线索数据拉取","s":["ads_management","ads_insights","account_management","audience_management","user_actions"],"p":"`video_channel_leads_data/get`"},{"g":7,"m":"汽车视频号厂店平台","n":"video_channel_fans_data/get","d":"视频号粉丝数据拉取","s":["ads_management","ads_insights","account_management","audience_management","user_actions"],"p":"`video_channel_fans_data/get`"},{"g":7,"m":"汽车视频号厂店平台","n":"video_channel_dealer_data/get","d":"视频号经销商聚合数据拉取","s":["ads_management","ads_insights","account_management","audience_management","user_actions"],"p":"`video_channel_dealer_data/get`"},{"g":7,"m":"rta 实验数据查询","n":"rtaexp/get","d":"获取 rta 实验信息","s":["ads_management"],"p":"`rtaexp/get`"},{"g":7,"m":"rta 实验数据查询","n":"rtaexp_dsp_tag_data/get","d":"获取 rta 的 dsp_tag 数据","s":["ads_management"],"p":"`rtaexp_dsp_tag_data/get`"},{"g":7,"m":"rta 实验数据查询","n":"rtaexp_data_roi/get","d":"获取 rta 实验数据","s":["ads_management"],"p":"`rtaexp_data_roi/get`"},{"g":8,"m":"文案助手","n":"creativetools_text/get","d":"获取创意文案","s":["ads_management"],"p":"`creativetools_text/get`"},{"g":8,"m":"图片处理","n":"image_processing/add","d":"进行图片处理","s":["ads_management"],"p":"`image_processing/add`"},{"g":8,"m":"通配符","n":"wildcards/get","d":"获取落地页通配符","s":["ads_management"],"p":"`wildcards/get`"},{"g":8,"m":"自动生成创意","n":"programmed_commponent_preview/add","d":"组件化衍生预览创建","s":["ads_management"],"p":"`programmed_commponent_preview/add`"},{"g":8,"m":"自动生成创意","n":"programmed_commponent_preview/update","d":"组件化衍生预览更新","s":["ads_management"],"p":"`programmed_commponent_preview/update`"},{"g":8,"m":"自动生成创意","n":"programmed_commponent_preview/delete","d":"组件化衍生预览删除","s":["ads_management"],"p":"`programmed_commponent_preview/delete`"},{"g":8,"m":"自动生成创意","n":"programmed_commponent_preview/get","d":"组件化衍生预览查询","s":["ads_management"],"p":"`programmed_commponent_preview/get`"},{"g":8,"m":"自动生成创意","n":"programmed_commponent_preview_template/update","d":"组件化衍生模版替换","s":["ads_management"],"p":"`programmed_commponent_preview_template/update`"},{"g":8,"m":"自动生成创意","n":"programmed_commponent_result/get","d":"组件化衍生成品查询","s":["ads_management"],"p":"`programmed_commponent_result/get`"},{"g":8,"m":"自动生成创意","n":"programmed_template/get","d":"获取模板列表","s":["ads_management"],"p":"`programmed_template/get`"},{"g":8,"m":"自动生成创意","n":"programmed/get","d":"获取模板预览(待废弃)","s":["ads_management"],"p":"`programmed/get`"},{"g":8,"m":"自动生成创意","n":"programmed_material_mappings/get","d":"获取衍生素材的原素材关系(待废弃)","s":["ads_management"],"p":"`programmed_material_mappings/get`"},{"g":8,"m":"素材标签","n":"material_labels/add","d":"创建素材标签","s":["ads_management"],"p":"`material_labels/add`"},{"g":8,"m":"素材标签","n":"material_labels/delete","d":"删除素材标签","s":["ads_management"],"p":"`material_labels/delete`"},{"g":8,"m":"素材标签","n":"material_labels/update","d":"更新素材标签","s":["ads_management"],"p":"`material_labels/update`"},{"g":8,"m":"素材标签","n":"material_labels/get","d":"获取素材标签列表","s":["ads_management"],"p":"`material_labels/get`"},{"g":8,"m":"素材标签","n":"material_labels/bind","d":"绑定标签素材关联关系","s":["ads_management"],"p":"`material_labels/bind`"},{"g":8,"m":"词包","n":"ad_param/get","d":"获取词包","s":["ads_management","ads_insights"],"p":"`ad_param/get`"},{"g":8,"m":"动态商品图片模板","n":"dynamic_ad_image_templates/get","d":"获取动态商品图片模板","s":["ads_management"],"p":"`dynamic_ad_image_templates/get`"},{"g":8,"m":"动态商品视频模板","n":"dynamic_ad_video_templates/get","d":"获取动态商品视频模板","s":["ads_management"],"p":"`dynamic_ad_video_templates/get`"},{"g":8,"m":"动态内容素材","n":"material_dcatag/add","d":"创建动态内容素材标签绑定","s":["ads_management"],"p":"`material_dcatag/add`"},{"g":8,"m":"动态内容素材","n":"material_dcatag/get","d":"获取动态内容素材标签绑定","s":["ads_management"],"p":"`material_dcatag/get`"},{"g":8,"m":"动态内容素材","n":"material_dcaset/add","d":"创建动态内容素材集合绑定","s":["ads_management"],"p":"`material_dcaset/add`"},{"g":8,"m":"素材异步任务(警示语)","n":"material_async_tasks/add","d":"添加异步任务(警示语)","s":["ads_management"],"p":"`material_async_tasks/add`"},{"g":8,"m":"素材异步任务(警示语)","n":"material_async_tasks/get","d":"获取异步任务(警示语)","s":["ads_management"],"p":"`material_async_tasks/get`"},{"g":8,"m":"创意增强 MAX","n":"muse_derive_switch_settings/get","d":"查询生成偏好设置","s":["ads_management"],"p":"`muse_derive_switch_settings/get`"},{"g":8,"m":"创意建议","n":"creative_recommend/get","d":"获取创意建议","s":["ads_management"],"p":"`creative_recommend/get`"},{"g":9,"m":"预估能力","n":"estimation/get","d":"获取预估覆盖人数","s":["ads_management"],"p":"`estimation/get`"},{"g":9,"m":"预估能力","n":"bid_simulation/get","d":"获取出价模拟信息","s":["ads_management"],"p":"`bid_simulation/get`"},{"g":9,"m":"联合预算工具","n":"joint_budget_rules/get","d":"获取联合预算","s":["ads_management"],"p":"`joint_budget_rules/get`"},{"g":9,"m":"联合预算工具","n":"joint_budget_rules/add","d":"创建联合预算","s":["ads_management"],"p":"`joint_budget_rules/add`"},{"g":9,"m":"联合预算工具","n":"joint_budget_rules/update","d":"更新联合预算","s":["ads_management"],"p":"`joint_budget_rules/update`"},{"g":9,"m":"官方落地页获客助手","n":"wecom_customer_acquisition_link/get","d":"查询获客链接列表","s":["ads_management"],"p":"`wecom_customer_acquisition_link/get`"},{"g":9,"m":"官方落地页获客助手","n":"wecom_customer_acquisition_link/add","d":"创建获客链接","s":["ads_management"],"p":"`wecom_customer_acquisition_link/add`"},{"g":9,"m":"官方落地页获客助手","n":"wecom_customer_acquisition_link/update","d":"更新获客链接","s":["ads_management"],"p":"`wecom_customer_acquisition_link/update`"},{"g":9,"m":"官方落地页获客助手","n":"wecom_department_user/get","d":"查询部门用户列表","s":["ads_management"],"p":"`wecom_department_user/get`"},{"g":9,"m":"游戏特征信息","n":"game_feature_tags/get","d":"获取游戏特征标签","s":["ads_management"],"p":"`game_feature_tags/get`"},{"g":9,"m":"游戏特征信息","n":"game_feature/add","d":"添加游戏 App 特征","s":["ads_management"],"p":"`game_feature/add`"},{"g":9,"m":"游戏特征信息","n":"game_feature/get","d":"获取游戏 App 特征","s":["ads_management"],"p":"`game_feature/get`"},{"g":9,"m":"游戏特征信息","n":"game_feature_v6/add","d":"添加游戏 App 特征 V6 版本","s":["ads_management"],"p":"`game_feature_v6/add`"},{"g":9,"m":"游戏特征信息","n":"game_feature_v6/get","d":"获取游戏 App 特征 V6 版本","s":["ads_management"],"p":"`game_feature_v6/get`"},{"g":9,"m":"转化归因","n":"conversions/add","d":"新增转化归因","s":["ads_management","ads_insights"],"p":"`conversions/add`"},{"g":9,"m":"转化归因","n":"conversions/get","d":"获取转化归因","s":["ads_management","ads_insights"],"p":"`conversions/get`"},{"g":9,"m":"投放能力","n":"optimization_goal_permissions/get","d":"查询优化目标权限","s":["ads_management"],"p":"`optimization_goal_permissions/get`"},{"g":9,"m":"创意形式","n":"creative_template/get","d":"创意形式详情信息查询","s":["ads_management","ads_insights"],"p":"`creative_template/get`"},{"g":9,"m":"创意形式","n":"creative_template_list/get","d":"获取创意形式列表","s":["ads_management","ads_insights"],"p":"`creative_template_list/get`"},{"g":9,"m":"创意形式","n":"component_depends/get","d":"获取创意形式详情中组件选项依赖关系","s":["ads_management","ads_insights"],"p":"`component_depends/get`"},{"g":9,"m":"创意组件元数据","n":"components_metadata/get","d":"创意组件元数据查询","s":["ads_management"],"p":"`components_metadata/get`"},{"g":9,"m":"投放预览","n":"adcreative_previews/get","d":"获取广告预览记录","s":["ads_management"],"p":"`adcreative_previews/get`"},{"g":9,"m":"投放预览","n":"adcreative_previews_qrcode/get","d":"获取广告预览二维码","s":["ads_management"],"p":"`adcreative_previews_qrcode/get`"},{"g":9,"m":"投放预览","n":"online_preview_qrcode/get","d":"获取微信流量广告预览二维码","s":["ads_management"],"p":"`online_preview_qrcode/get`"},{"g":9,"m":"创意预览","n":"creative_template_previews/get","d":"获取广告创意预览","s":["ads_management"],"p":"`creative_template_previews/get`"},{"g":9,"m":"创意标签","n":"ad_label/get","d":"获取创意标签","s":["ads_management"],"p":"`ad_label/get`"},{"g":9,"m":"定向标签","n":"targeting_tags/get","d":"获取定向标签","s":["ads_management"],"p":"`targeting_tags/get`"},{"g":9,"m":"定向标签","n":"targeting_tags_uv/get","d":"获取行为/兴趣/意向标签覆盖人群数","s":["ads_management"],"p":"`targeting_tags_uv/get`"},{"g":9,"m":"获取场景定向标签","n":"scene_spec_tags/get","d":"获取场景定向标签","s":["ads_management"],"p":"`scene_spec_tags/get`"},{"g":9,"m":"获取营销表达组合","n":"marketing_rules/get","d":"获取营销表达组合","s":["ads_management"],"p":"`marketing_rules/get`"},{"g":9,"m":"异步任务","n":"async_tasks/add","d":"创建异步任务","s":["ads_management"],"p":"`async_tasks/add`"},{"g":9,"m":"异步任务","n":"async_tasks/get","d":"获取异步任务","s":["ads_management"],"p":"`async_tasks/get`"},{"g":9,"m":"3.0 切换工具","n":"account_version/get","d":"获取广告主 3.0 投放状态版本","s":["ads_management"],"p":"`account_version/get`"},{"g":9,"m":"视频号精选评论管理","n":"finder_ad_object_list/get","d":"拉取广告视频动态列表","s":["ads_management"],"p":"`finder_ad_object_list/get`"},{"g":9,"m":"视频号精选评论管理","n":"comment_list/get","d":"拉取广告视频动态评论","s":["ads_management"],"p":"`comment_list/get`"},{"g":9,"m":"视频号精选评论管理","n":"object_comment_flag/update","d":"设置开启、关闭精选评论","s":["ads_management"],"p":"`object_comment_flag/update`"},{"g":9,"m":"视频号精选评论管理","n":"channels_comment/add","d":"视频号动态新增评论","s":["ads_management"],"p":"`channels_comment/add`"},{"g":9,"m":"视频号精选评论管理","n":"channels_comment/delete","d":"视频号动态删除评论","s":["ads_management"],"p":"`channels_comment/delete`"},{"g":9,"m":"搜索推广工具","n":"keyword_recommend/get","d":"查询关键词推荐结果","s":["ads_management"],"p":"`keyword_recommend/get`"},{"g":9,"m":"搜索推广工具","n":"bidword_flow/get","d":"查询关键词流量","s":["ads_management"],"p":"`bidword_flow/get`"},{"g":9,"m":"搜索推广工具","n":"business_point/get","d":"查询行业业务点","s":["ads_management"],"p":"`business_point/get`"},{"g":9,"m":"rta 策略管理","n":"rta_info/get","d":"获取 rta 信息","s":["ads_management"],"p":"`rta_info/get`"},{"g":9,"m":"rta 策略管理","n":"rtatarget/get","d":"获取 rta 策略信息","s":["ads_management"],"p":"`rtatarget/get`"},{"g":9,"m":"rta 策略管理","n":"rtatarget/add","d":"创建 rta 策略信息","s":["ads_management"],"p":"`rtatarget/add`"},{"g":9,"m":"rta 策略管理","n":"rtatarget/delete","d":"删除 rta 策略信息","s":["ads_management"],"p":"`rtatarget/delete`"},{"g":9,"m":"rta 策略管理","n":"rtatarget_bind/get","d":"获取 rta 策略绑定信息","s":["ads_management"],"p":"`rtatarget_bind/get`"},{"g":9,"m":"rta 策略管理","n":"rtatarget_bind/add","d":"创建 rta 策略绑定信息","s":["ads_management"],"p":"`rtatarget_bind/add`"},{"g":9,"m":"rta 策略管理","n":"rtatarget_bind/delete","d":"删除 rta 策略绑定信息","s":["ads_management"],"p":"`rtatarget_bind/delete`"},{"g":9,"m":"操作日志","n":"operation_log_list/get","d":"获取操作日志","s":["ads_management"],"p":"`operation_log_list/get`"},{"g":9,"m":"客户投放偏好","n":"advertiser_config/add","d":"设置客户投放偏好","s":["ads_management"],"p":"`advertiser_config/add`"},{"g":9,"m":"客户投放偏好","n":"advertiser_config/get","d":"获取客户投放偏好","s":["ads_management"],"p":"`advertiser_config/get`"},{"g":9,"m":"资产相似度","n":"asset_similarity_detail/get","d":"获取创意资产相似度检测详情","s":["ads_management"],"p":"`asset_similarity_detail/get`"},{"g":9,"m":"资产相似度","n":"asset_similarity_detail/update","d":"更新创意资产相似度状态","s":["ads_management"],"p":"`asset_similarity_detail/update`"},{"g":10,"m":"客户人群","n":"custom_audiences/add","d":"创建客户人群","s":["audience_management","ads_management","user_actions"],"p":"`custom_audiences/add`"},{"g":10,"m":"客户人群","n":"custom_audiences/get","d":"获取客户人群","s":["audience_management","ads_management","user_actions"],"p":"`custom_audiences/get`"},{"g":10,"m":"客户人群","n":"custom_audiences/update","d":"更新客户人群","s":["audience_management","ads_management","user_actions"],"p":"`custom_audiences/update`"},{"g":10,"m":"客户人群","n":"custom_audiences/delete","d":"删除客户人群","s":["audience_management","ads_management","user_actions"],"p":"`custom_audiences/delete`"},{"g":10,"m":"客户人群数据文件","n":"custom_audience_files/add","d":"上传客户人群数据文件","s":["audience_management","ads_management","user_actions"],"p":"`custom_audience_files/add`"},{"g":10,"m":"客户人群数据文件","n":"custom_audience_files/get","d":"获取客户人群数据文件","s":["audience_management","ads_management","user_actions"],"p":"`custom_audience_files/get`"},{"g":10,"m":"人群授权","n":"audience_grant_relations/add","d":"添加人群授权","s":["audience_management","ads_management","user_actions"],"p":"`audience_grant_relations/add`"},{"g":10,"m":"人群授权","n":"audience_grant_relations/get","d":"获取人群授权信息","s":["audience_management","ads_management","user_actions"],"p":"`audience_grant_relations/get`"},{"g":10,"m":"客户人群数预估","n":"custom_audience_estimations/get","d":"人群覆盖数预估","s":["audience_management","ads_management","user_actions"],"p":"`custom_audience_estimations/get`"},{"g":10,"m":"标签人群","n":"labels/get","d":"标签广场标签获取","s":["audience_management","ads_management","user_actions"],"p":"`labels/get`"},{"g":11,"m":"用户行为数据源","n":"user_action_sets/add","d":"创建用户行为数据源","s":["ads_management","audience_management","user_actions"],"p":"`user_action_sets/add`"},{"g":11,"m":"用户行为数据源","n":"user_action_sets/get","d":"获取用户行为数据源","s":["ads_management","audience_management","user_actions"],"p":"`user_action_sets/get`"},{"g":11,"m":"用户行为数据源","n":"user_action_set_reports/get","d":"获取用户行为数据源报表","s":["ads_management","audience_management","user_actions"],"p":"`user_action_set_reports/get`"},{"g":11,"m":"用户行为数据源","n":"data_source_dispatch/get","d":"获取数据源分发关系","s":["ads_management","audience_management","user_actions"],"p":"`data_source_dispatch/get`"},{"g":11,"m":"用户行为数据","n":"user_actions/add","d":"上传用户行为数据","s":["ads_management","audience_management","user_actions"],"p":"`user_actions/add`"},{"g":12,"m":"审核结果","n":"dynamic_creative_review_results/get","d":"获取创意审核结果","s":["ads_management"],"p":"`dynamic_creative_review_results/get`"},{"g":12,"m":"审核结果","n":"component_review_results/get","d":"获取组件审核结果","s":["ads_management"],"p":"`component_review_results/get`"},{"g":12,"m":"元素申诉复审","n":"element_appeal_review/get","d":"获取元素申诉复审结果","s":["ads_management"],"p":"`element_appeal_review/get`"},{"g":12,"m":"元素申诉复审","n":"element_appeal_review/add","d":"发起元素申诉复审","s":["ads_management"],"p":"`element_appeal_review/add`"},{"g":12,"m":"元素申诉复审","n":"element_appeal_quota/get","d":"获取元素申诉复审配额","s":["ads_management"],"p":"`element_appeal_quota/get`"},{"g":12,"m":"组件元素催审","n":"component_element_urge_review/get","d":"获取创意组件元素催审状态","s":["ads_management"],"p":"`component_element_urge_review/get`"},{"g":12,"m":"组件元素催审","n":"component_element_urge_review/add","d":"组件元素催审","s":["ads_management"],"p":"`component_element_urge_review/add`"},{"g":12,"m":"素材风险检测","n":"review_element_prereview_results/get","d":"获取元素预审结果","s":["ads_management"],"p":"`review_element_prereview_results/get`"},{"g":12,"m":"元素预审异步任务","n":"pre_review_task/add","d":"异步预审任务提交","s":["ads_management"],"p":"`pre_review_task/add`"},{"g":12,"m":"元素预审异步任务","n":"pre_review_task/get","d":"异步预审结果获取","s":["ads_management"],"p":"`pre_review_task/get`"},{"g":12,"m":"saas 小程序预审异步任务","n":"saas_miniprogram_prereview/add","d":"saas 小程序预审任务提交","s":["ads_management"],"p":"`saas_miniprogram_prereview/add`"},{"g":12,"m":"saas 小程序预审异步任务","n":"saas_miniprogram_prereview/get","d":"saas 小程序预审结果获取","s":["ads_management"],"p":"`saas_miniprogram_prereview/get`"},{"g":12,"m":"创意送审","n":"creative_review/add","d":"创意送审","s":["ads_management"],"p":"`creative_review/add`"},{"g":12,"m":"违规处罚","n":"punishment_config/get","d":"获取处罚系统配置","s":["ads_management"],"p":"`punishment_config/get`"},{"g":12,"m":"违规处罚","n":"punishment_query/get","d":"获取违规处罚列表","s":["ads_management"],"p":"`punishment_query/get`"},{"g":12,"m":"违规处罚","n":"punish_metrics/get","d":"获取素材计量治理指标","s":["ads_management"],"p":"`punish_metrics/get`"},{"g":12,"m":"违规处罚","n":"punish_uid_metrics/get","d":"获取素材计量治理账户指标","s":["ads_management"],"p":"`punish_uid_metrics/get`"},{"g":12,"m":"违规处罚","n":"punish_detail/get","d":"获取素材计量治理明细","s":["ads_management"],"p":"`punish_detail/get`"},{"g":12,"m":"违规处罚","n":"illegal_complaint/get","d":"获取违规申诉列表","s":["ads_management"],"p":"`illegal_complaint/get`"},{"g":12,"m":"违规处罚","n":"illegal_complaint/add","d":"创建违规申诉","s":["ads_management"],"p":"`illegal_complaint/add`"}],"scopes":[{"name":"ads_management","count":314},{"name":"account_management","count":70},{"name":"ads_insights","count":51},{"name":"audience_management","count":36},{"name":"user_actions","count":36}]};
+
+const $ = (s) => document.querySelector(s);
+const domainCount = DATA.domains.length;
+const totalApi = DATA.records.length;
+const state = { group: null, scopes: new Set(), q: '' };
+
+/* ---------- KPI ---------- */
+$('#kpi-api').textContent = totalApi;
+$('#kpi-mod').textContent = DATA.domains.reduce((a, d) => a + d.moduleCount, 0);
+$('#kpi-grp').textContent = domainCount;
+$('#kpi-scope').textContent = DATA.scopes.length;
+
+/* ---------- donut ---------- */
+const CX = 196, CY = 196, R1 = 168, R0 = 104;
+const svg = $('#donut');
+const tip = $('#tip');
+const wrapEl = document.querySelector('.donut-wrap');
+
+function arcPath(a0, a1) {
+  const pt = (r, a) => [CX + r * Math.cos(a), CY + r * Math.sin(a)];
+  const large = (a1 - a0) > Math.PI ? 1 : 0;
+  const [x0, y0] = pt(R1, a0), [x1, y1] = pt(R1, a1);
+  const [x2, y2] = pt(R0, a1), [x3, y3] = pt(R0, a0);
+  return 'M' + x0 + ' ' + y0 + 'A' + R1 + ' ' + R1 + ' 0 ' + large + ' 1 ' + x1 + ' ' + y1 +
+         'L' + x2 + ' ' + y2 + 'A' + R0 + ' ' + R0 + ' 0 ' + large + ' 0 ' + x3 + ' ' + y3 + 'Z';
+}
+
+const GAP = 0.012;
+let acc = -Math.PI / 2;
+const slices = [];
+DATA.domains.forEach((d, i) => {
+  const sweep = (d.count / totalApi) * Math.PI * 2;
+  const a0 = acc + GAP / 2, a1 = acc + sweep - GAP / 2;
+  acc += sweep;
+  const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  p.setAttribute('d', arcPath(a0, a1));
+  p.setAttribute('fill', d.color);
+  p.setAttribute('stroke', '#fff');
+  p.setAttribute('stroke-width', '1.4');
+  p.setAttribute('tabindex', '0');
+  p.setAttribute('role', 'button');
+  p.setAttribute('aria-label', d.name + '，' + d.count + ' 个接口');
+  const mid = (a0 + a1) / 2;
+  p.style.setProperty('--tx', (Math.cos(mid) * 15).toFixed(2) + 'px');
+  p.style.setProperty('--ty', (Math.sin(mid) * 15).toFixed(2) + 'px');
+  p.addEventListener('mousemove', (e) => {
+    const r = wrapEl.getBoundingClientRect();
+    tip.hidden = false;
+    tip.innerHTML = '<b>' + d.name + '</b> · ' + d.count + ' 个接口 · ' +
+      (d.count / totalApi * 100).toFixed(1) + '%';
+    tip.style.left = (e.clientX - r.left) + 'px';
+    tip.style.top = (e.clientY - r.top) + 'px';
+  });
+  p.addEventListener('mouseenter', () => {
+    p.classList.add('hot');
+    slices.forEach((q, k) => { if (k !== i) q.classList.add('fade'); });
+    if (legendBtns[i]) legendBtns[i].classList.add('link');
+    showCenter(i);
+  });
+  p.addEventListener('mouseleave', () => { tip.hidden = true; clearHot(); });
+  p.addEventListener('blur', clearHot);
+  p.addEventListener('click', () => selectGroup(state.group === i ? null : i));
+  p.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectGroup(state.group === i ? null : i); }
+  });
+  svg.appendChild(p);
+  slices.push(p);
+});
+
+/* ---------- legend ---------- */
+const legend = $('#legend');
+const legendBtns = DATA.domains.map((d, i) => {
+  const li = document.createElement('li');
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.setAttribute('aria-pressed', 'false');
+  b.innerHTML = '<span class="sw" style="background:' + d.color + '"></span>' +
+    '<span class="nm">' + d.name + '</span>' +
+    '<span class="vl">' + d.count + ' · ' + (d.count / totalApi * 100).toFixed(1) + '%</span>';
+  b.addEventListener('click', () => selectGroup(state.group === i ? null : i));
+  b.addEventListener('mouseenter', () => {
+    slices[i].classList.add('hot');
+    slices.forEach((q, k) => { if (k !== i) q.classList.add('fade'); });
+    b.classList.add('link');
+    showCenter(i);
+  });
+  b.addEventListener('mouseleave', clearHot);
+  li.appendChild(b);
+  legend.appendChild(li);
+  return b;
+});
+
+/* ---------- hover 联动 ---------- */
+function showCenter(i) {
+  const d = DATA.domains[i];
+  $('#dc-num').textContent = d.count;
+  $('#dc-label').textContent = d.name + ' · ' + d.moduleCount + ' 个模块 · ' +
+    (d.count / totalApi * 100).toFixed(1) + '%';
+}
+function restoreCenter() {
+  if (state.group === null) {
+    $('#dc-num').textContent = totalApi;
+    $('#dc-label').textContent = '全部接口 · ' + domainCount + ' 个功能域';
+  } else {
+    showCenter(state.group);
+  }
+}
+function clearHot() {
+  slices.forEach((p) => p.classList.remove('hot', 'fade'));
+  legendBtns.forEach((b) => b.classList.remove('link'));
+  restoreCenter();
+}
+
+/* ---------- scope bars ---------- */
+const maxScope = Math.max.apply(null, DATA.scopes.map((s) => s.count));
+$('#bars').innerHTML = DATA.scopes.map((s) =>
+  '<div class="bar-row"><span class="bar-name">' + s.name + '</span>' +
+  '<span class="bar-track"><span class="bar-fill" style="width:' +
+  (s.count / maxScope * 100).toFixed(1) + '%"></span></span>' +
+  '<span class="bar-val">' + s.count + ' 次 · ' + (s.count / totalApi * 100).toFixed(0) + '%</span></div>'
+).join('');
+
+/* ---------- scope chips ---------- */
+const chipBox = $('#chips');
+DATA.scopes.forEach((s) => {
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'chip';
+  b.textContent = s.name;
+  b.setAttribute('aria-pressed', 'false');
+  b.addEventListener('click', () => {
+    if (state.scopes.has(s.name)) state.scopes.delete(s.name); else state.scopes.add(s.name);
+    b.setAttribute('aria-pressed', state.scopes.has(s.name) ? 'true' : 'false');
+    renderList();
+  });
+  chipBox.appendChild(b);
+});
+
+/* ---------- list ---------- */
+function match(r) {
+  if (state.group !== null && r.g !== state.group) return false;
+  if (state.scopes.size && !r.s.some((x) => state.scopes.has(x))) return false;
+  if (state.q) {
+    const q = state.q;
+    if (!(r.n.toLowerCase().includes(q) || r.d.toLowerCase().includes(q) || r.m.toLowerCase().includes(q))) return false;
+  }
+  return true;
+}
+
+function renderList() {
+  const host = $('#list');
+  const openSet = new Set();
+  host.querySelectorAll('.grp').forEach((g) => {
+    if (g.dataset.open === 'true') openSet.add(g.dataset.gi);
+  });
+  const first = host.querySelector('.grp') === null;
+
+  let html = '', shown = 0, grpShown = 0;
+  DATA.domains.forEach((d, gi) => {
+    const rows = DATA.records.filter((r) => r.g === gi && match(r));
+    if (!rows.length) return;
+    grpShown++;
+    shown += rows.length;
+    const isOpen = first ? true : (openSet.size ? openSet.has(String(gi)) : false);
+    html += '<div class="grp" data-gi="' + gi + '" data-open="' + (isOpen ? 'true' : 'false') + '">' +
+      '<div class="grp-head" data-toggle="' + gi + '">' +
+      '<span class="gdot" style="background:' + d.color + '"></span>' +
+      '<h3>' + d.name + '</h3>' +
+      '<span class="gcount">' + rows.length + ' / ' + d.count + ' 个接口</span>' +
+      '<svg class="gcaret" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>' +
+      '</div><div class="grp-body">';
+
+    const byMod = [];
+    rows.forEach((r) => {
+      let m = byMod.find((x) => x.name === r.m);
+      if (!m) { m = { name: r.m, rows: [] }; byMod.push(m); }
+      m.rows.push(r);
+    });
+    byMod.forEach((m) => {
+      html += '<div class="mod"><div class="mod-head"><span class="mname">' + m.name +
+        '</span><span class="mnum">' + m.rows.length + ' 个接口</span></div>';
+      m.rows.forEach((r, i) => {
+        html += '<div class="row"><span class="i">' + String(i + 1).padStart(2, '0') + '</span>' +
+          '<span><code>/v3.0/' + r.n + '</code></span>' +
+          '<span class="desc">' + r.d + '</span>' +
+          '<span class="sc">' + r.s.map((s) => '<span>' + s + '</span>').join('') + '</span></div>';
+      });
+      html += '</div>';
+    });
+    html += '</div></div>';
+  });
+
+  host.innerHTML = html || '<div class="empty">没有匹配的接口，试试更短的关键词或清除筛选。</div>';
+
+  host.querySelectorAll('[data-toggle]').forEach((h) => {
+    h.addEventListener('click', () => {
+      const g = h.parentElement;
+      g.dataset.open = g.dataset.open === 'true' ? 'false' : 'true';
+    });
+  });
+
+  $('#viewState').textContent = '当前显示 ' + shown + ' / ' + totalApi + ' 个接口 · ' + grpShown + ' 个功能域';
+}
+
+/* ---------- selection ---------- */
+function selectGroup(i) {
+  state.group = i;
+  slices.forEach((p, k) => {
+    p.classList.toggle('dim', i !== null && k !== i);
+    p.classList.toggle('active', i === k);
+  });
+  legendBtns.forEach((b, k) => b.setAttribute('aria-pressed', k === i ? 'true' : 'false'));
+  if (i === null) {
+    $('#dc-num').textContent = totalApi;
+    $('#dc-label').textContent = '全部接口 · ' + domainCount + ' 个功能域';
+  } else {
+    const d = DATA.domains[i];
+    $('#dc-num').textContent = d.count;
+    $('#dc-label').textContent = d.name + ' · ' + d.moduleCount + ' 个模块 · ' +
+      (d.count / totalApi * 100).toFixed(1) + '%';
+  }
+  renderList();
+  const el = document.querySelector('#list');
+  if (i !== null && el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+/* ---------- search + reset ---------- */
+let tid = null;
+$('#q').addEventListener('input', (e) => {
+  const v = e.target.value.trim().toLowerCase();
+  clearTimeout(tid);
+  tid = setTimeout(() => { state.q = v; renderList(); }, 140);
+});
+$('#donut').addEventListener('mouseleave', clearHot);
+$('#legend').addEventListener('mouseleave', clearHot);
+$('#reset').addEventListener('click', () => {
+  state.q = ''; state.scopes.clear(); clearHot();
+  $('#q').value = '';
+  chipBox.querySelectorAll('.chip').forEach((c) => c.setAttribute('aria-pressed', 'false'));
+  selectGroup(null);
+});
+
+/* ---------- init ---------- */
+$('#dc-label').textContent = '全部接口 · ' + domainCount + ' 个功能域';
+renderList();
+</script>
+</body>
+</html>

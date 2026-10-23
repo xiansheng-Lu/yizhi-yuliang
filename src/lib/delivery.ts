@@ -1,4 +1,5 @@
 import type { Identity } from "./domain";
+import { isAdvertisingProduct } from "./advertising";
 
 export const deliveryPages = [
   "goals",
@@ -466,7 +467,8 @@ export function parseScope(
     validDate(query.get("end")) && query.get("end")! >= start
       ? query.get("end")!
       : start;
-  const platform = isPlatform(query.get("platform"))
+  const product=query.get("product");
+  const platform = isPlatform(product) ? product : (product==="wxshop"||isAdvertisingProduct(product)) ? "all" : isPlatform(query.get("platform"))
     ? (query.get("platform") as Platform)
     : "all";
   return {

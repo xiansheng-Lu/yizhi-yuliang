@@ -50,11 +50,11 @@ export class ApiClient implements FrontendService {
           headers: {
             Accept: "application/json",
             ...(method === "GET" ? {} : { "X-Yuliang-Client": "web" }),
-            ...(body === undefined
+            ...(body === undefined || body instanceof FormData
               ? {}
               : { "Content-Type": "application/json" }),
           },
-          ...(body === undefined ? {} : { body: JSON.stringify(body) }),
+          ...(body === undefined ? {} : { body: body instanceof FormData ? body : JSON.stringify(body) }),
           signal: signal ? AbortSignal.any([signal, AbortSignal.timeout(15000)]) : AbortSignal.timeout(15000),
         },
       );

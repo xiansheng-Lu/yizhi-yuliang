@@ -69,10 +69,7 @@
 }
 .dw-context-fields {
   display: grid;
-  grid-template-columns: minmax(170px, 1.3fr) minmax(130px, 1fr) minmax(
-      155px,
-      1.2fr
-    ) minmax(125px, 0.8fr) minmax(125px, 0.8fr) auto;
+  grid-template-columns: minmax(135px, 1fr) minmax(140px, 1.1fr) minmax(125px, 1fr) minmax(140px, 1.1fr) minmax(125px, .8fr) minmax(125px, .8fr) auto;
   gap: 12px;
   align-items: end;
 }
@@ -1311,10 +1308,7 @@
 }
 @media (max-width: 1450px) {
   .dw-context-fields {
-    grid-template-columns: minmax(170px, 1.2fr) minmax(135px, 1fr) minmax(
-        180px,
-        1.3fr
-      );
+    grid-template-columns: repeat(4,minmax(130px,1fr));
   }
   .dw-context-fields > label:nth-last-of-type(-n + 2) {
     max-width: none;

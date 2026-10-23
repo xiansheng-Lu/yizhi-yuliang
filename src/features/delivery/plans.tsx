@@ -1,11 +1,10 @@
 "use client";
-import { useState, type FormEvent } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import {
   ArrowLeft,
   ArrowRight,
   CaretRight,
-  CheckCircle,
   Columns,
   MagnifyingGlass,
   Plus,
@@ -31,7 +30,6 @@ import {
 import type { CommandJob } from "@/lib/command-job";
 import { displayTime } from "@/lib/command-job";
 import type {
-  CreatePlanRequest,
   PlanChangeRequest,
   RiskPreview,
 } from "@/services/delivery-service";
@@ -65,8 +63,7 @@ export function Plans() {
   });
   const key = scopeKey(d.scope),
     selected = selection.key === key ? selection.ids : [];
-  const [create, setCreate] = useState(false),
-    [columns, setColumns] = useState(false),
+  const [columns, setColumns] = useState(false),
     [batch, setBatch] = useState(false);
   const [operation, setOperation] = useState<Plan | null>(null);
   const goal = d.query.get("goalId");
@@ -169,7 +166,17 @@ export function Plans() {
             : `${platforms[d.scope.platform].name} · ${platforms[d.scope.platform].object}与原始ID独立保留`
         }
         action={
-          <button className="button primary" onClick={() => setCreate(true)}>
+          <button
+            className="button primary"
+            onClick={() =>
+              d.navigate(
+                d.href("plans", {
+                  view: "create",
+                  product: d.scope.platform === "beans" ? "beans" : "adq",
+                }),
+              )
+            }
+          >
             <Plus size={16} />
             {d.scope.platform === "beans" ? "配置加热方案" : "新建投放"}
           </button>
@@ -515,7 +522,6 @@ export function Plans() {
           </button>
         </div>
       </Section>
-      {create && <CreatePlan close={() => setCreate(false)} />}
       {operation && (
         <Operation
           key={operation.id}
@@ -851,410 +857,6 @@ function PlanDetail({
         <Operation key={operation.id} plan={operation} close={closeOperation} />
       )}
     </>
-  );
-}
-
-interface CreationDraft {
-  kind: "CREATE";
-  scope: string;
-  name: string;
-  objective: string;
-  targetType: "PRODUCT" | "VIDEO" | "LIVE";
-  targetId: string;
-  amount: string;
-  bid: string;
-  start: string;
-  end: string;
-}
-function CreatePlan({ close }: { close: () => void }) {
-  const d = useDelivery();
-  const { data: workspaceData } = useWorkspace();
-  const account = d.data.accounts.find(
-    (a) =>
-      a.id === d.scope.accountId &&
-      a.platform === d.scope.platform &&
-      (d.scope.shopId === "all" || a.shopId === d.scope.shopId),
-  );
-  const cap = d.data.capabilities.find((c) => c.accountId === account?.id);
-  const initial = d.draft as CreationDraft | null;
-  const [form, setForm] = useState<CreationDraft>(
-    initial?.kind === "CREATE" && initial.scope === scopeKey(d.scope)
-      ? initial
-      : {
-          kind: "CREATE",
-          scope: scopeKey(d.scope),
-          name: "",
-          objective: "",
-          targetType: "LIVE",
-          targetId: "",
-          amount: "",
-          bid: "",
-          start: `${d.scope.start}T09:00`,
-          end: `${d.scope.end}T23:00`,
-        },
-  );
-  const [step, setStep] = useState(0),
-    [result, setResult] = useState<string | null>(null),
-    [error, setError] = useState("");
-  const set = (patch: Partial<CreationDraft>) => {
-    const next = { ...form, ...patch };
-    setForm(next);
-    d.markDirty(true);
-    d.saveDraft(next);
-  };
-  if (!account || d.scope.platform === "all")
-    return (
-      <Modal title="先选择投放渠道与账户" close={close}>
-        <p>
-          统一工作台不提供跨平台通用广告创建。选择实际关联的账户后进入对应流程。
-        </p>
-        {d.data.accounts
-          .filter(
-            (a) => d.scope.shopId === "all" || a.shopId === d.scope.shopId,
-          )
-          .map((a) => (
-            <button
-              key={a.id}
-              className="dw-account-choice"
-              onClick={() => {
-                d.changeScope({
-                  platform: a.platform,
-                  accountId: a.id,
-                  shopId: a.shopId,
-                });
-                close();
-              }}
-            >
-              <span>
-                <b>{platforms[a.platform].name}</b>
-                <small>
-                  {a.name} · {a.id}
-                </small>
-              </span>
-              <ArrowRight size={17} />
-            </button>
-          ))}
-        {!d.data.accounts.length && (
-          <Missing
-            title="暂无实际关联的广告账户"
-            detail="请由后端提供店铺和已授权账户关系，不会创建虚构账户。"
-          />
-        )}
-      </Modal>
-    );
-  const adapter = platforms[account.platform],
-    rule = actionAvailability(d.data, d.identity, account.id, "create");
-  const snapshot = workspaceData.status === "ready" ? workspaceData.data : null;
-  const live =
-      snapshot?.liveSessions.filter((x) => x.shopId === account.shopId) ?? [],
-    products =
-      snapshot?.products.filter((x) => x.shopId === account.shopId) ?? [];
-  const nativeAmount =
-    Number(form.amount) * (account.platform === "adq" ? 100 : 1);
-  const valid =
-    !!form.name.trim() &&
-    !!form.objective.trim() &&
-    !!form.targetId &&
-    Number.isSafeInteger(nativeAmount) &&
-    nativeAmount > 0 &&
-    Number.isFinite(Date.parse(form.start)) &&
-    Date.parse(form.end) > Date.parse(form.start) &&
-    (!cap ||
-      (nativeAmount >= cap.schema.minAmount &&
-        nativeAmount <= cap.schema.maxAmount &&
-        cap.schema.objectives.includes(form.objective) &&
-        cap.schema.targets.includes(form.targetType) &&
-        (!cap.schema.bidEditable ||
-          account.platform !== "adq" ||
-          Number(form.bid) > 0)));
-  async function submit(event: FormEvent) {
-    event.preventDefault();
-    if (!valid) {
-      setError("请检查名称、目标、投放对象、额度和起止时间。");
-      return;
-    }
-    const input: CreatePlanRequest = {
-      accountId: account!.id,
-      platform: account!.platform,
-      shopId: account!.shopId,
-      name: form.name,
-      objective: form.objective,
-      target: { type: form.targetType, id: form.targetId },
-      amount: nativeAmount,
-      ...(account!.platform === "adq" && cap?.schema.bidEditable
-        ? { bidMinor: Math.round(Number(form.bid) * 100) }
-        : {}),
-      start: new Date(`${form.start}:00+08:00`).toISOString(),
-      end: new Date(`${form.end}:00+08:00`).toISOString(),
-      idempotencyKey: crypto.randomUUID(),
-      capabilityVersion: cap?.version ?? 0,
-    };
-    await d.mutate(
-      account!.id,
-      "create",
-      () => d.api.create(input),
-      (value) => setResult(`${value.state} · ${value.resourceId}`),
-    );
-  }
-  function download() {
-    const blob = new Blob(
-      [
-        JSON.stringify(
-          {
-            status: "LOCAL_MANUAL_PROPOSAL",
-            disclaimer: "仅人工操作方案，未提交平台",
-            accountId: account!.id,
-            platform: account!.platform,
-            currency: account!.currency,
-            form,
-          },
-          null,
-          2,
-        ),
-      ],
-      { type: "application/json" },
-    );
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `加热方案-${form.start.replaceAll(":", "-")}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-    d.markDirty(false);
-    d.feedback("已导出人工加热方案，尚未向平台创建订单。");
-  }
-  return (
-    <Modal wide title={adapter.createName} close={() => d.guard(close)}>
-      <div className="dw-steps">
-        {adapter.steps.map((name, i) => (
-          <button
-            key={name}
-            aria-current={step === i ? "step" : undefined}
-            onClick={() => setStep(i)}
-          >
-            <span>{i + 1}</span>
-            {name}
-          </button>
-        ))}
-      </div>
-      <form className="dw-form" onSubmit={submit}>
-        {step === 0 && (
-          <>
-            <div className="dw-notice">
-              {account.name} · {adapter.name} · {account.id}
-            </div>
-            <label>
-              方案名称
-              <input
-                required
-                value={form.name}
-                onChange={(e) => set({ name: e.target.value })}
-                maxLength={80}
-              />
-            </label>
-            <label>
-              {account.platform === "beans" ? "加热目标" : "推广目标"}
-              {cap?.schema.objectives.length ? (
-                <select
-                  required
-                  value={form.objective}
-                  onChange={(e) => set({ objective: e.target.value })}
-                >
-                  <option value="">选择账户已支持的目标</option>
-                  {cap.schema.objectives.map((x) => (
-                    <option key={x}>{x}</option>
-                  ))}
-                </select>
-              ) : (
-                <input
-                  value={form.objective}
-                  onChange={(e) => set({ objective: e.target.value })}
-                  placeholder="待后端确认的目标描述，仅供方案配置"
-                />
-              )}
-            </label>
-            <Gate capability={rule} />
-          </>
-        )}
-        {step === 1 && (
-          <>
-            <label>
-              投放内容类型
-              <select
-                value={form.targetType}
-                onChange={(e) =>
-                  set({
-                    targetType: e.target.value as CreationDraft["targetType"],
-                    targetId: "",
-                  })
-                }
-              >
-                {(
-                  cap?.schema.targets ??
-                  (account.platform === "beans"
-                    ? ["VIDEO", "LIVE"]
-                    : ["PRODUCT", "VIDEO", "LIVE"])
-                ).map((t) => (
-                  <option key={t} value={t}>
-                    {t === "PRODUCT"
-                      ? "商品"
-                      : t === "VIDEO"
-                        ? "短视频"
-                        : "直播场次"}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              关联业务对象ID
-              <input
-                value={form.targetId}
-                onChange={(e) => set({ targetId: e.target.value })}
-                list="delivery-objects"
-                placeholder="选择实际对象，或填写待核验的平台内容ID"
-              />
-              <datalist id="delivery-objects">
-                {(form.targetType === "LIVE"
-                  ? live
-                  : form.targetType === "PRODUCT"
-                    ? products
-                    : []
-                ).map((x) => (
-                  <option value={x.id} key={x.id}>
-                    {x.name}
-                  </option>
-                ))}
-              </datalist>
-            </label>
-            <p className="dw-muted">
-              对象所有权、内容状态和账户可投范围由后端校验；手工填写的ID不会被视为已授权。
-            </p>
-          </>
-        )}
-        {step === 2 && (
-          <>
-            <div className="dw-form-grid">
-              <label>
-                {account.platform === "beans"
-                  ? "加热额度（微信豆）"
-                  : "日预算（元）"}
-                <input
-                  type="number"
-                  min={account.platform === "beans" ? "1" : "0.01"}
-                  step={account.platform === "beans" ? "1" : "0.01"}
-                  value={form.amount}
-                  onChange={(e) => set({ amount: e.target.value })}
-                />
-              </label>
-              {account.platform === "adq" && cap?.schema.bidEditable && (
-                <label>
-                  出价（元）
-                  <input
-                    type="number"
-                    step="0.01"
-                    min="0.01"
-                    value={form.bid}
-                    onChange={(e) => set({ bid: e.target.value })}
-                  />
-                </label>
-              )}
-              <label>
-                开始时间（北京时间）
-                <input
-                  type="datetime-local"
-                  value={form.start}
-                  onChange={(e) => set({ start: e.target.value })}
-                />
-              </label>
-              <label>
-                结束时间（北京时间）
-                <input
-                  type="datetime-local"
-                  value={form.end}
-                  onChange={(e) => set({ end: e.target.value })}
-                />
-              </label>
-            </div>
-            <p className="dw-notice">
-              {account.platform === "beans"
-                ? "微信豆独立计量，不按固定比例折算人民币。"
-                : cap
-                  ? `当前账户可用额度区间：${amount(cap.schema.minAmount)} 至 ${amount(cap.schema.maxAmount)}`
-                  : "账户参数约束尚未返回，此配置仅为待校验草稿。"}
-            </p>
-          </>
-        )}
-        {step === 3 && (
-          <>
-            <h3>配置预览与提交确认</h3>
-            <Json
-              value={{
-                ...form,
-                currency: account.currency,
-                accountId: account.id,
-                capabilityVersion: cap?.version ?? null,
-              }}
-            />
-            <Gate capability={rule} />
-            <p className="dw-notice">
-              预算上调和新增消耗进入后端审批与风控。收到请求回执后仍需等待平台结果核验。
-            </p>
-            {account.platform === "beans" && rule.status !== "AUTHORIZED" && (
-              <div className="dw-manual">
-                <h3>人工加热操作指引</h3>
-                <ol>
-                  <li>在已授权的视频号后台选择上述短视频或直播对象。</li>
-                  <li>核对内容ID、加热目标、微信豆额度及排期。</li>
-                  <li>由授权人员完成操作，并将平台订单ID交由后端同步核验。</li>
-                </ol>
-                <button
-                  type="button"
-                  className="button secondary"
-                  disabled={!valid}
-                  onClick={download}
-                >
-                  导出人工加热方案
-                </button>
-              </div>
-            )}
-            <button
-              className="button primary"
-              disabled={
-                !valid || rule.status !== "AUTHORIZED" || d.busy || d.uncertain
-              }
-            >
-              {d.busy ? "提交中…" : "确认并提交审批"}
-            </button>
-            {result && (
-              <p role="status">
-                <CheckCircle size={17} />
-                后端申请状态：{result}
-              </p>
-            )}
-          </>
-        )}
-        {error && <p role="alert">{error}</p>}
-        <div className="dw-wizard-nav">
-          <button
-            type="button"
-            className="button secondary"
-            disabled={step === 0}
-            onClick={() => setStep(step - 1)}
-          >
-            上一步
-          </button>
-          {step < 3 && (
-            <button
-              type="button"
-              className="button primary"
-              onClick={() => setStep(step + 1)}
-            >
-              下一步 <ArrowRight size={14} />
-            </button>
-          )}
-        </div>
-      </form>
-    </Modal>
   );
 }
 

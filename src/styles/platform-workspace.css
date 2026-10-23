@@ -1,0 +1,450 @@
+.platform-workspace {
+  color: var(--text-primary);
+  font-size: 12px;
+  min-width: 0;
+}
+.platform-workspace * {
+  box-sizing: border-box;
+}
+.platform-workspace button,
+.platform-workspace input,
+.platform-workspace select {
+  font: inherit;
+}
+.platform-workspace input,
+.platform-workspace select {
+  border: 1px solid var(--brand-border);
+  border-radius: 6px;
+  background: var(--surface-panel);
+  color: var(--text-primary);
+  padding: 8px;
+  min-height: 34px;
+  min-width: 0;
+}
+.platform-workspace input[type="checkbox"] {
+  min-height: 0;
+  width: 14px;
+  height: 14px;
+  accent-color: var(--brand-primary);
+}
+.platform-workspace button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.platform-workspace :focus-visible {
+  outline: 3px solid var(--brand-focus);
+  outline-offset: 2px;
+}
+.platform-workspace .button {
+  font-size: 11px;
+  min-height: 34px;
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  padding: 8px 12px;
+}
+.platform-workspace .dw-link {
+  font-size: 11px;
+  display: inline-flex;
+  gap: 5px;
+  align-items: center;
+  border: 0;
+  background: none;
+  color: var(--brand-primary);
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+}
+.platform-data-panel {
+  margin-top: 22px;
+  border: 1px solid var(--brand-border);
+  border-radius: 10px;
+  background: var(--surface-panel);
+  overflow: hidden;
+}
+.pi-panel-toggle {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 8px;
+  border: 0;
+  background: var(--surface-panel);
+  padding: 17px 20px;
+  color: var(--text-primary);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.pi-panel-toggle > span {
+  margin-left: auto;
+  color: var(--text-secondary);
+  font-size: 11px;
+}
+.platform-data-panel .platform-workspace {
+  padding: 20px;
+  border-top: 1px solid var(--brand-border);
+}
+.pi-heading {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+.pi-heading > div > span {
+  color: var(--brand-primary);
+  font-size: 10px;
+  letter-spacing: 0.8px;
+}
+.pi-heading h2 {
+  font-size: 20px;
+  margin: 7px 0;
+}
+.pi-heading p {
+  color: var(--text-secondary);
+  font-size: 11px;
+  line-height: 1.7;
+  margin: 0;
+}
+.pi-controls {
+  display: flex;
+  align-items: end;
+  flex-wrap: wrap;
+  gap: 10px;
+  border: 1px solid var(--brand-border);
+  background: var(--surface-panel);
+  padding: 16px;
+  border-radius: 9px;
+}
+.pi-controls label {
+  display: grid;
+  gap: 6px;
+  color: var(--text-secondary);
+  font-size: 10px;
+  flex: 1;
+  min-width: 135px;
+}
+.pi-controls select {
+  max-width: 240px;
+}
+.pi-controls input[type="date"] {
+  max-width: 160px;
+}
+.pi-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 14px 0;
+}
+.pi-actions > span {
+  color: var(--text-secondary);
+  font-size: 11px;
+}
+.pi-notice {
+  margin: 12px 0;
+  padding: 13px 15px;
+  border-left: 2px solid var(--brand-border);
+  background: var(--brand-subtle);
+  color: var(--text-secondary);
+  font-size: 11px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+.pi-notice p {
+  margin: 6px 0;
+}
+.pi-notice .button {
+  margin: 8px;
+}
+.pi-tabs {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin: 20px 0 0;
+  border-bottom: 1px solid var(--brand-border);
+}
+.pi-tabs button {
+  font-size: 11px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  padding: 11px 13px;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+.pi-tabs button[aria-selected="true"] {
+  color: var(--brand-primary);
+  border-bottom-color: var(--brand-primary);
+  font-weight: 600;
+}
+.pi-resource {
+  background: var(--surface-panel);
+  border: 1px solid var(--brand-border);
+  border-top: 0;
+  border-radius: 0 0 9px 9px;
+  padding: 18px;
+}
+.pi-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.pi-title h3 {
+  margin: 0;
+  font-size: 14px;
+}
+.pi-title > span,
+.pi-title small {
+  color: var(--text-secondary);
+  font-size: 10px;
+}
+.pi-title form {
+  display: flex;
+  gap: 6px;
+}
+.pi-title form input {
+  max-width: 220px;
+}
+.pi-empty {
+  padding: 32px 16px;
+  text-align: center;
+  color: var(--text-secondary);
+  background: var(--surface-muted);
+  font-size: 12px;
+  line-height: 1.8;
+  border-radius: 7px;
+}
+.pi-empty > small {
+  display: block;
+  margin-top: 8px;
+  font-size: 10px;
+}
+.pi-resource table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+.pi-resource th {
+  text-align: left;
+  color: var(--text-secondary);
+  background: var(--surface-muted);
+  padding: 10px;
+  white-space: nowrap;
+}
+.pi-resource td {
+  padding: 13px 10px;
+  vertical-align: top;
+  border-bottom: 1px solid var(--brand-border);
+  line-height: 1.8;
+  min-width: 110px;
+}
+.pi-resource td:first-child {
+  min-width: 160px;
+}
+.pi-resource td small {
+  display: block;
+  color: var(--text-secondary);
+  font-size: 10px;
+  overflow-wrap: anywhere;
+}
+.pi-resource td:last-child {
+  display: grid;
+  gap: 8px;
+  min-width: 90px;
+}
+.pi-catalog {
+  background: var(--surface-panel);
+  border: 1px solid var(--brand-border);
+  border-radius: 9px;
+  padding: 20px;
+  margin-top: 22px;
+}
+.pi-filter {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 15px;
+}
+.pi-filter label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+.pi-filter label:first-child {
+  flex: 1;
+  min-width: 180px;
+  border: 1px solid var(--brand-border);
+  border-radius: 6px;
+  padding-left: 9px;
+}
+.pi-filter label:first-child input {
+  border: 0;
+  width: 100%;
+}
+.pi-filter select {
+  max-width: 180px;
+}
+.pi-catalog-rows {
+  display: grid;
+  gap: 10px;
+}
+.pi-catalog-rows article {
+  padding: 14px;
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-muted);
+  border-radius: 7px;
+}
+.pi-catalog-rows .pi-title {
+  margin-bottom: 9px;
+}
+.pi-catalog code {
+  font-family: ui-monospace, monospace;
+  color: var(--text-secondary);
+  font-size: 10px;
+  word-break: break-all;
+}
+.pi-stages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 10px;
+}
+.pi-stages > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 9px;
+  line-height: 1.5;
+  border: 1px solid var(--border-subtle);
+  padding: 3px 5px;
+  border-radius: 4px;
+}
+.pi-stages .verified {
+  background: #eaf6ef;
+  color: #24704a;
+  border-color: #c4e2d1;
+}
+.pi-stages .pending {
+  background: var(--surface-panel);
+  color: var(--text-muted);
+}
+.pi-pagination {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 16px;
+  color: var(--text-secondary);
+  font-size: 11px;
+}
+.pi-pagination > span {
+  margin-right: auto;
+}
+.pi-facts {
+  display: grid;
+  gap: 12px;
+}
+.pi-facts > div {
+  display: grid;
+  grid-template-columns: 100px minmax(0, 1fr);
+  gap: 15px;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.pi-facts dt {
+  color: var(--text-secondary);
+}
+.pi-facts dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.pi-edit-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 18px 0;
+}
+.pi-edit-fields label {
+  display: grid;
+  gap: 7px;
+}
+.pi-change-diff {
+  display: grid;
+  gap: 7px;
+  background: var(--surface-muted);
+  border: 1px solid var(--brand-border);
+  border-radius: 7px;
+  padding: 15px;
+  margin-top: 15px;
+}
+.pi-change-diff > div {
+  display: grid;
+  grid-template-columns: 90px 1fr 20px 1fr;
+  gap: 8px;
+  line-height: 1.8;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.pi-ack {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 15px 0;
+  font-size: 12px;
+}
+.aw-product-pickers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.aw-product-pickers label {
+  display: grid;
+  gap: 6px;
+  color: var(--text-secondary);
+  font-size: 11px;
+}
+@media (max-width: 1100px) {
+  .pi-title {
+    align-items: start;
+    flex-wrap: wrap;
+  }
+  .pi-controls label {
+    min-width: 140px;
+  }
+  .pi-heading {
+    flex-wrap: wrap;
+  }
+}
+@media (max-width: 760px) {
+  .pi-edit-fields,
+  .aw-product-pickers {
+    grid-template-columns: 1fr;
+  }
+  .pi-catalog,
+  .pi-resource,
+  .platform-data-panel .platform-workspace {
+    padding: 13px;
+  }
+  .pi-title form {
+    width: 100%;
+  }
+  .pi-controls {
+    padding: 12px;
+  }
+  .pi-title > small {
+    max-width: 100%;
+  }
+  .pi-change-diff > div {
+    grid-template-columns: 70px 1fr 15px 1fr;
+  }
+  .pi-heading h2 {
+    font-size: 18px;
+  }
+}

@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>小红书开放平台 聚光 Marketing API · 接口全景看板</title>
+<style>
+  :root{
+    --bg:#faf9f8; --surface:#fff; --ink:#1a1614; --ink-2:#4f4842; --ink-3:#867c74;
+    --line:#e8e3de; --line-2:#f1ece8; --accent:#b4322f; --accent-soft:#fbeceb;
+    --radius:10px; --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:var(--bg); color:var(--ink); font-family:var(--sans); font-size:15px; line-height:1.6; -webkit-font-smoothing:antialiased}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 28px}
+  .masthead{border-bottom:1px solid var(--line); background:linear-gradient(180deg,#fff 0%,#faf9f8 100%)}
+  .masthead .wrap{padding-top:44px; padding-bottom:34px}
+  .eyebrow{margin:0 0 12px; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); font-weight:600}
+  h1{margin:0; font-size:40px; line-height:1.15; letter-spacing:-.02em; font-weight:650}
+  .lede{margin:14px 0 0; max-width:64ch; color:var(--ink-2); font-size:16px}
+  .meta{margin-top:18px; display:flex; flex-wrap:wrap; gap:8px 20px; font-size:13px; color:var(--ink-3)}
+  .meta a{color:var(--accent); text-decoration:none; border-bottom:1px solid rgba(180,50,47,.3)}
+  .meta a:hover{border-bottom-color:var(--accent)}
+  .kpis{display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--line);
+        border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; margin:32px 0}
+  .kpi{background:var(--surface); padding:20px 22px}
+  .kpi .k-label{font-size:12px; letter-spacing:.06em; color:var(--ink-3); text-transform:uppercase}
+  .kpi .k-value{font-size:34px; font-weight:640; letter-spacing:-.02em; line-height:1.1; margin-top:8px; font-variant-numeric:tabular-nums}
+  .kpi .k-sub{font-size:12.5px; color:var(--ink-2); margin-top:6px}
+  section.panel{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); margin:0 0 24px; overflow:hidden}
+  .panel-head{display:flex; align-items:baseline; justify-content:space-between; gap:16px; flex-wrap:wrap;
+    padding:18px 22px; border-bottom:1px solid var(--line-2)}
+  .panel-head h2{margin:0; font-size:16px; font-weight:640; letter-spacing:-.01em}
+  .hint{font-size:12.5px; color:var(--ink-3)}
+  .panel-body{padding:22px}
+  .chart-grid{display:grid; grid-template-columns:392px 1fr; gap:26px; align-items:center}
+  .donut-wrap{position:relative; width:392px; height:392px; max-width:100%}
+  #donut{display:block; width:100%; height:100%}
+  #donut path{cursor:pointer; transform-box:view-box; transform-origin:196px 196px;
+    transform:translate(var(--tx,0px),var(--ty,0px)) scale(var(--sc,1));
+    transition:transform .26s cubic-bezier(.22,.75,.28,1), opacity .2s ease, filter .26s ease, stroke-width .2s ease}
+  #donut path.fade{opacity:.42}
+  #donut path.dim{opacity:.18}
+  #donut path.active{--sc:1.03}
+  #donut path.hot{--sc:1.075; filter:drop-shadow(0 9px 18px rgba(30,18,14,.28)); stroke-width:2.6}
+  #donut path:focus{outline:none}
+  #donut path:focus-visible{stroke:#1a1614; stroke-width:2.6}
+  .donut-center{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center;
+    justify-content:center; pointer-events:none; text-align:center; padding:0 74px; transition:opacity .16s ease}
+  .donut-center .dc-num{font-size:38px; font-weight:650; letter-spacing:-.03em; font-variant-numeric:tabular-nums; line-height:1.05}
+  .donut-center .dc-label{font-size:12.5px; color:var(--ink-3); margin-top:6px; line-height:1.35}
+  .tip{position:absolute; z-index:5; pointer-events:none; background:#1a1614; color:#fff; padding:7px 10px;
+    border-radius:6px; font-size:12.5px; line-height:1.45; white-space:nowrap;
+    transform:translate(-50%,-135%); box-shadow:0 8px 22px rgba(15,10,8,.22)}
+  .legend{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:1fr; gap:2px}
+  .legend button{all:unset; box-sizing:border-box; display:grid; grid-template-columns:10px 1fr auto auto;
+    gap:9px; align-items:center; width:100%; padding:7px 8px; border-radius:6px; cursor:pointer; font-size:13.5px; color:var(--ink-2)}
+  .legend button:hover{background:#f7f3f0}
+  .legend button[aria-pressed="true"]{background:var(--accent-soft); color:var(--ink)}
+  .legend button.link{background:#f7f3f0}
+  .legend .sw{width:10px; height:10px; border-radius:2.5px}
+  .legend .nm{overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .legend .vl{font-variant-numeric:tabular-nums; font-size:12.5px; color:var(--ink-3)}
+  .legend .vk{font-variant-numeric:tabular-nums; font-size:11.5px; color:#a0958d}
+  .bars{display:grid; gap:14px}
+  .bar-row{display:grid; grid-template-columns:150px 1fr 150px; gap:14px; align-items:center}
+  .bar-name{font-size:13.5px; color:var(--ink-2)}
+  .bar-track{height:14px; background:#f4efeb; border-radius:3px; overflow:hidden}
+  .bar-fill{height:100%; border-radius:3px; transition:width .45s cubic-bezier(.2,.7,.3,1)}
+  .bar-val{font-size:12.5px; color:var(--ink-3); font-variant-numeric:tabular-nums; text-align:right}
+  .toolbar{display:flex; flex-wrap:wrap; gap:10px 14px; align-items:center; padding:16px 22px;
+    border-bottom:1px solid var(--line-2); background:#fcfbf9}
+  .search{position:relative; flex:1 1 260px; min-width:200px}
+  .search input{width:100%; padding:8px 12px 8px 32px; border:1px solid var(--line); border-radius:7px;
+    font-family:var(--sans); font-size:13.5px; color:var(--ink); background:#fff; outline:none}
+  .search input:focus{border-color:var(--accent); box-shadow:0 0 0 3px rgba(180,50,47,.12)}
+  .search svg{position:absolute; left:10px; top:50%; transform:translateY(-50%); color:var(--ink-3)}
+  .chips{display:flex; flex-wrap:wrap; gap:6px}
+  .chip{all:unset; cursor:pointer; padding:5px 10px; border:1px solid var(--line); border-radius:999px;
+    font-size:12.5px; color:var(--ink-2); background:#fff}
+  .chip[aria-pressed="true"]{background:var(--accent); border-color:var(--accent); color:#fff}
+  .chip:hover{border-color:#d6cec8}
+  .reset{all:unset; cursor:pointer; font-size:12.5px; color:var(--accent); padding:5px 4px; border-bottom:1px solid transparent}
+  .reset:hover{border-bottom-color:var(--accent)}
+  .view-state{font-size:12.5px; color:var(--ink-3); font-variant-numeric:tabular-nums; margin-left:auto}
+  #list{padding:6px 0 4px}
+  .grp{border-top:1px solid var(--line-2)}
+  .grp:first-child{border-top:0}
+  .grp-head{display:flex; align-items:center; gap:10px; padding:16px 22px 10px; cursor:pointer; user-select:none}
+  .grp-head .gdot{width:9px; height:9px; border-radius:2px; flex:none}
+  .grp-head h3{margin:0; font-size:14.5px; font-weight:640; letter-spacing:-.01em}
+  .grp-head .gcount{font-size:12.5px; color:var(--ink-3); font-variant-numeric:tabular-nums}
+  .grp-head .gcaret{margin-left:auto; color:var(--ink-3); transition:transform .2s ease}
+  .grp[data-open="false"] .grp-head .gcaret{transform:rotate(-90deg)}
+  .grp[data-open="false"] .grp-body{display:none}
+  .mod{padding:0 22px 6px}
+  .mod-head{display:flex; align-items:baseline; gap:8px; padding:12px 0 8px; font-size:12.5px; color:var(--ink-2)}
+  .mod-head .mname{font-weight:600; color:var(--ink)}
+  .mod-head .mnum{font-variant-numeric:tabular-nums; color:var(--ink-3)}
+  .row{display:grid; grid-template-columns:34px minmax(180px,240px) 1fr auto; gap:14px; align-items:start;
+    padding:9px 0; border-top:1px solid #f6f2ef}
+  .row .i{font-family:var(--mono); font-size:11.5px; color:#b3a9a2; text-align:right; padding-top:3px}
+  .row .nm{font-size:13.5px; color:var(--ink); padding-top:1px}
+  .row code{font-family:var(--mono); font-size:12.5px; color:var(--accent); word-break:break-all;
+    background:var(--accent-soft); padding:2px 6px; border-radius:4px; display:inline-block; line-height:1.5}
+  .row .na{font-size:12.5px; color:#a39a93}
+  .row .badge{font-family:var(--mono); font-size:11px; border-radius:3px; padding:1.5px 6px; white-space:nowrap}
+  .row .b-ok{color:#2f6b4f; background:#eaf3ee}
+  .row .b-na{color:#8a7f77; background:#f4efeb}
+  .notes{padding:26px 0 60px; color:var(--ink-2); font-size:13.5px}
+  .notes h2{font-size:14px; letter-spacing:.04em; text-transform:uppercase; color:var(--ink-3); margin:0 0 12px; font-weight:600}
+  .notes ol{margin:0; padding-left:20px; display:grid; gap:6px}
+  .notes code{font-family:var(--mono); font-size:12.5px; background:#f4efeb; padding:1px 5px; border-radius:3px}
+  .empty{padding:56px 22px; text-align:center; color:var(--ink-3); font-size:14px}
+  @media (max-width:980px){
+    .chart-grid{grid-template-columns:1fr; justify-items:center}
+    .kpis{grid-template-columns:1fr 1fr}
+    h1{font-size:31px}
+  }
+  @media (max-width:700px){
+    .wrap{padding:0 16px}
+    .row{grid-template-columns:1fr; gap:6px; padding:11px 0}
+    .row .i{display:none}
+    .bar-row{grid-template-columns:1fr; gap:6px}
+    .bar-val{text-align:left}
+    .donut-wrap{width:320px; height:320px}
+    .kpi .k-value{font-size:27px}
+    .view-state{margin-left:0; width:100%}
+  }
+</style>
+</head>
+<body>
+<header class="masthead">
+  <div class="wrap">
+    <p class="eyebrow">Xiaohongshu Business Open Platform · Jingguang MAPI</p>
+    <h1>小红书开放平台<br>聚光 Marketing API 接口全景</h1>
+    <p class="lede">把官方文档中心的接口目录按功能域重新归拢成 6 组，可交互筛选、检索、逐层展开；已核验的请求路径直接标注，未公开的条目如实标明待核验。</p>
+    <div class="meta">
+      <span>数据来源：<a href="https://ad-market.xiaohongshu.com/docs-center?bizType=943" target="_blank" rel="noopener">小红书开放平台 · 文档中心</a></span>
+      <span>请求域名：<code>https://adapi.xiaohongshu.com/api/open</code></span>
+      <span>整理日期：2026-10-23</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="kpis">
+    <div class="kpi"><div class="k-label">接口总数</div><div class="k-value" id="kpi-api">0</div><div class="k-sub">官方目录全量收录</div></div>
+    <div class="kpi"><div class="k-label">功能域</div><div class="k-value" id="kpi-dom">0</div><div class="k-sub">聚光 MAPI 六大板块</div></div>
+    <div class="kpi"><div class="k-label">二级模块</div><div class="k-value" id="kpi-mod">0</div><div class="k-sub">官方目录分组</div></div>
+    <div class="kpi"><div class="k-label">已核验路径</div><div class="k-value" id="kpi-ver">0</div><div class="k-sub">其余待登录查看详情</div></div>
+  </div>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2>功能域接口分布</h2>
+      <span class="hint">悬停扇区可凸出放大预览，点击可筛选下方清单</span>
+    </div>
+    <div class="panel-body">
+      <div class="chart-grid">
+        <div class="donut-wrap">
+          <svg id="donut" viewBox="0 0 392 392" role="img" aria-label="6 个功能域的接口数量占比环形图"></svg>
+          <div class="donut-center">
+            <div class="dc-num" id="dc-num">0</div>
+            <div class="dc-label" id="dc-label">全部接口</div>
+          </div>
+          <div class="tip" id="tip" hidden></div>
+        </div>
+        <ul class="legend" id="legend"></ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2>各功能域路径核验率</h2>
+      <span class="hint">绿色为已核验请求路径的接口数，底色为接口总数</span>
+    </div>
+    <div class="panel-body"><div class="bars" id="bars"></div></div>
+  </section>
+
+  <section class="panel">
+    <div class="toolbar">
+      <div class="search">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.6-3.6"></path></svg>
+        <input id="q" type="search" placeholder="搜索接口名或模块，例如 报表 / 定向 / 素材" autocomplete="off">
+      </div>
+      <div class="chips" id="chips"></div>
+      <button class="reset" id="reset" type="button">清除筛选</button>
+      <span class="view-state" id="viewState"></span>
+    </div>
+    <div id="list"></div>
+  </section>
+
+  <section class="notes">
+    <h2>口径与说明</h2>
+    <ol>
+      <li>接口名、模块归属与分组层级来自官方文档中心左侧导航目录：Oauth2.0 授权 / 账户服务 / 投放管理 / 数据报表 / 素材管理 / 工具。</li>
+      <li>请求路径仅收录官方公开可核验的部分（更新日志公开示例与官方 MAPI 接口定义）；未公开条目标注为「待核验」，不做推测填充。</li>
+      <li>业务接口统一使用 <code>POST</code>，请求头需携带 <code>Access-Token</code>；OAuth 接口走 <code>https://ad-market.xiaohongshu.com/api/open/oauth2/</code>。</li>
+      <li>文档中心接口详情由前端签名（<code>X-Sign</code> / <code>X-S-Common</code>）保护，无法批量抓取，故本看板以官方公开目录为准。</li>
+    </ol>
+  </section>
+</main>
+
+<script>
+const DATA = {"doms":[{"name":"Oauth2.0 授权","modules":["token管理"],"count":2,"color":"#b4322f","verified":2},{"name":"账户服务","modules":["账户服务"],"count":9,"color":"#d1603d","verified":6},{"name":"投放管理","modules":["新创编","推广计划","推广单元","推广创意","广告组","简单投"],"count":18,"color":"#dc9a4a","verified":9},{"name":"数据报表","modules":["离线报表","实时报表"],"count":24,"color":"#b3a53f","verified":10},{"name":"素材管理","modules":["素材管理"],"count":31,"color":"#6f9a6a","verified":8},{"name":"工具","modules":["工具"],"count":9,"color":"#4f7f9b","verified":8}],"records":[{"g":0,"m":"token管理","n":"获取 token","p":"/oauth2/access_token","ok":1},{"g":0,"m":"token管理","n":"刷新token","p":"/oauth2/refresh_token","ok":1},{"g":1,"m":"账户服务","n":"代理商主子账号余额查询","p":"","ok":0},{"g":1,"m":"账户服务","n":"获取代理商子账号列表","p":"/jg/account/sub/page","ok":1},{"g":1,"m":"账户服务","n":"转账接口","p":"/finance/agent/transfer","ok":1},{"g":1,"m":"账户服务","n":"查询转账结果接口","p":"/finance/transfer/result/query","ok":1},{"g":1,"m":"账户服务","n":"资金流水查询","p":"/finance/transaction/record/query","ok":1},{"g":1,"m":"账户服务","n":"修改账户日预算","p":"/jg/account/budget/update","ok":1},{"g":1,"m":"账户服务","n":"获取计划流水接口","p":"/jg/history/list","ok":1},{"g":1,"m":"账户服务","n":"获取账户日预算余额接口","p":"","ok":0},{"g":1,"m":"账户服务","n":"获取账户流水接口","p":"","ok":0},{"g":2,"m":"新创编","n":"新创编API","p":"","ok":0},{"g":2,"m":"新创编","n":"新创编编辑接口","p":"","ok":0},{"g":2,"m":"推广计划","n":"编辑计划","p":"/jg/campaign/update","ok":1},{"g":2,"m":"推广计划","n":"修改计划状态","p":"/jg/campaign/status/update","ok":1},{"g":2,"m":"推广计划","n":"查询计划","p":"/jg/campaign/list","ok":1},{"g":2,"m":"推广单元","n":"修改单元关键词","p":"","ok":0},{"g":2,"m":"推广单元","n":"修改单元出价","p":"","ok":0},{"g":2,"m":"推广单元","n":"编辑单元","p":"/jg/unit/update","ok":1},{"g":2,"m":"推广单元","n":"修改单元状态","p":"/jg/unit/update/status","ok":1},{"g":2,"m":"推广单元","n":"获取单元列表接口","p":"/jg/unit/list","ok":1},{"g":2,"m":"推广创意","n":"编辑创意","p":"/jg/creativity/update","ok":1},{"g":2,"m":"推广创意","n":"修改创意状态","p":"/jg/creativity/status/update","ok":1},{"g":2,"m":"推广创意","n":"创意查询","p":"/jg/creativity/search","ok":1},{"g":2,"m":"广告组","n":"创建广告组","p":"","ok":0},{"g":2,"m":"广告组","n":"删除广告组","p":"","ok":0},{"g":2,"m":"广告组","n":"更新广告组","p":"","ok":0},{"g":2,"m":"广告组","n":"查询广告组列表","p":"","ok":0},{"g":2,"m":"简单投","n":"新建简单投","p":"","ok":0},{"g":3,"m":"离线报表","n":"标准投关键词层级离线报表数据","p":"/jg/data/report/offline/keyword","ok":1},{"g":3,"m":"离线报表","n":"账户层级离线报表","p":"/jg/data/report/offline/account","ok":1},{"g":3,"m":"离线报表","n":"标准投单元层级离线报表","p":"/jg/data/report/offline/unit","ok":1},{"g":3,"m":"离线报表","n":"标准投计划层级离线报表","p":"/jg/data/report/offline/campaign","ok":1},{"g":3,"m":"离线报表","n":"创意层级离线报表数据","p":"/jg/data/report/offline/creativity","ok":1},{"g":3,"m":"离线报表","n":"简单投标的报表","p":"","ok":0},{"g":3,"m":"离线报表","n":"人群包报表 V2","p":"","ok":0},{"g":3,"m":"离线报表","n":"简单投笔记报表","p":"","ok":0},{"g":3,"m":"离线报表","n":"简单投计划报表","p":"","ok":0},{"g":3,"m":"离线报表","n":"人群包报表","p":"","ok":0},{"g":3,"m":"离线报表","n":"SPU层级离线报表数据","p":"","ok":0},{"g":3,"m":"离线报表","n":"笔记层级离线报表数据","p":"","ok":0},{"g":3,"m":"实时报表","n":"标准投单元层级实时数据","p":"/jg/data/report/realtime/unit","ok":1},{"g":3,"m":"实时报表","n":"聚光广告投放报表指标字典","p":"","ok":0},{"g":3,"m":"实时报表","n":"标准投计划层级实时数据","p":"/jg/data/report/realtime/campaign","ok":1},{"g":3,"m":"实时报表","n":"标准投创意层级实时数据","p":"/jg/data/report/realtime/creativity","ok":1},{"g":3,"m":"实时报表","n":"账户层级实时数据","p":"/jg/data/report/realtime/account","ok":1},{"g":3,"m":"实时报表","n":"AI 智能笔记详情接口","p":"","ok":0},{"g":3,"m":"实时报表","n":"简单投关键词层级实时数据","p":"/jg/data/report/realtime/keyword","ok":1},{"g":3,"m":"实时报表","n":"简单投笔记层级实时数据","p":"","ok":0},{"g":3,"m":"实时报表","n":"简单投计划层级实时数据","p":"","ok":0},{"g":3,"m":"实时报表","n":"简单投标的层级实时数据","p":"","ok":0},{"g":3,"m":"实时报表","n":"广告组层级实时数据","p":"","ok":0},{"g":3,"m":"实时报表","n":"定向层级实时数据","p":"","ok":0},{"g":4,"m":"素材管理","n":"剧集创建","p":"","ok":0},{"g":4,"m":"素材管理","n":"可投剧集列表","p":"","ok":0},{"g":4,"m":"素材管理","n":"剧集修改","p":"","ok":0},{"g":4,"m":"素材管理","n":"批量查询简单投标的ID","p":"","ok":0},{"g":4,"m":"素材管理","n":"获取行业商品列表","p":"","ok":0},{"g":4,"m":"素材管理","n":"创意标题和图片信息","p":"","ok":0},{"g":4,"m":"素材管理","n":"获取移动应用列表","p":"","ok":0},{"g":4,"m":"素材管理","n":"获取微信小程序/小游戏列表","p":"","ok":0},{"g":4,"m":"素材管理","n":"获取红书小程序列表","p":"","ok":0},{"g":4,"m":"素材管理","n":"获取广告素材评论","p":"","ok":0},{"g":4,"m":"素材管理","n":"删除广告素材评论","p":"","ok":0},{"g":4,"m":"素材管理","n":"发布广告素材","p":"","ok":0},{"g":4,"m":"素材管理","n":"发布广告素材【同步】","p":"","ok":0},{"g":4,"m":"素材管理","n":"删除定向包","p":"","ok":0},{"g":4,"m":"素材管理","n":"更新定向包","p":"","ok":0},{"g":4,"m":"素材管理","n":"创建定向包","p":"","ok":0},{"g":4,"m":"素材管理","n":"获取定向包列表","p":"","ok":0},{"g":4,"m":"素材管理","n":"获取笔记ID","p":"","ok":0},{"g":4,"m":"素材管理","n":"删除笔记","p":"","ok":0},{"g":4,"m":"素材管理","n":"查询否定词列表","p":"","ok":0},{"g":4,"m":"素材管理","n":"批量删除否定词","p":"","ok":0},{"g":4,"m":"素材管理","n":"批量添加否定词","p":"","ok":0},{"g":4,"m":"素材管理","n":"获取直达链接","p":"/jg/direct-link/list","ok":1},{"g":4,"m":"素材管理","n":"删除直达链接","p":"/jg/direct-link/delete","ok":1},{"g":4,"m":"素材管理","n":"编辑直达链接","p":"","ok":0},{"g":4,"m":"素材管理","n":"创建直达链接","p":"/jg/direct-link/create","ok":1},{"g":4,"m":"素材管理","n":"资产事件获取","p":"/jg/data/event/asset/info","ok":1},{"g":4,"m":"素材管理","n":"获取资质列表","p":"/jg/data/qual/info","ok":1},{"g":4,"m":"素材管理","n":"门店信息列表","p":"/jg/data/poi/list","ok":1},{"g":4,"m":"素材管理","n":"获取笔记列表","p":"/jg/note/list","ok":1},{"g":4,"m":"素材管理","n":"落地页表单查询","p":"/jg/landing_page/list_landing_page","ok":1},{"g":5,"m":"工具","n":"历史操作记录","p":"","ok":0},{"g":5,"m":"工具","n":"定向推词-以词推词","p":"/jg/keyword/common/recommend","ok":1},{"g":5,"m":"工具","n":"行业类目属性","p":"/jg/keyword/industry/taxonomy/attribute","ok":1},{"g":5,"m":"工具","n":"行业类目","p":"/jg/keyword/industry/taxonomy","ok":1},{"g":5,"m":"工具","n":"词包推荐","p":"/jg/keyword/word/bag/list","ok":1},{"g":5,"m":"工具","n":"人群预估","p":"/jg/crowd/estimate","ok":1},{"g":5,"m":"工具","n":"获取关键词匹配词库信息","p":"/jg/target/keyword/match","ok":1},{"g":5,"m":"工具","n":"获取推荐关键词信息","p":"/jg/target/keyword/recommend","ok":1},{"g":5,"m":"工具","n":"获取定向信息","p":"/jg/target/get_available_target_info","ok":1}],"total":93,"verified":43,"modules":12};
+const $ = (s) => document.querySelector(s);
+const doms = DATA.doms, recs = DATA.records, total = DATA.total;
+const state = { group: null, only: false, q: '' };
+
+$('#kpi-api').textContent = total;
+$('#kpi-dom').textContent = doms.length;
+$('#kpi-mod').textContent = DATA.modules;
+$('#kpi-ver').textContent = DATA.verified;
+
+/* donut */
+const CX = 196, CY = 196, R1 = 168, R0 = 104, GAP = 0.014;
+const svg = $('#donut'), tip = $('#tip'), wrapEl = document.querySelector('.donut-wrap');
+function arc(a0, a1) {
+  const pt = (r, a) => [CX + r * Math.cos(a), CY + r * Math.sin(a)];
+  const large = (a1 - a0) > Math.PI ? 1 : 0;
+  const [x0, y0] = pt(R1, a0), [x1, y1] = pt(R1, a1);
+  const [x2, y2] = pt(R0, a1), [x3, y3] = pt(R0, a0);
+  return 'M' + x0 + ' ' + y0 + 'A' + R1 + ' ' + R1 + ' 0 ' + large + ' 1 ' + x1 + ' ' + y1 +
+    'L' + x2 + ' ' + y2 + 'A' + R0 + ' ' + R0 + ' 0 ' + large + ' 0 ' + x3 + ' ' + y3 + 'Z';
+}
+let acc = -Math.PI / 2;
+const slices = [];
+doms.forEach((d, i) => {
+  const sweep = (d.count / total) * Math.PI * 2;
+  const a0 = acc + GAP / 2, a1 = acc + sweep - GAP / 2;
+  acc += sweep;
+  const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  p.setAttribute('d', arc(a0, a1));
+  p.setAttribute('fill', d.color);
+  p.setAttribute('stroke', '#fff');
+  p.setAttribute('stroke-width', '1.4');
+  p.setAttribute('tabindex', '0');
+  p.setAttribute('role', 'button');
+  p.setAttribute('aria-label', d.name + '，' + d.count + ' 个接口');
+  const mid = (a0 + a1) / 2;
+  p.style.setProperty('--tx', (Math.cos(mid) * 15).toFixed(2) + 'px');
+  p.style.setProperty('--ty', (Math.sin(mid) * 15).toFixed(2) + 'px');
+  p.addEventListener('mousemove', (e) => {
+    const r = wrapEl.getBoundingClientRect();
+    tip.hidden = false;
+    tip.innerHTML = '<b>' + d.name + '</b> · ' + d.count + ' 个接口 · ' + (d.count / total * 100).toFixed(1) + '%';
+    tip.style.left = (e.clientX - r.left) + 'px';
+    tip.style.top = (e.clientY - r.top) + 'px';
+  });
+  p.addEventListener('mouseenter', () => {
+    p.classList.add('hot');
+    slices.forEach((q, k) => { if (k !== i) q.classList.add('fade'); });
+    if (legendBtns[i]) legendBtns[i].classList.add('link');
+    showCenter(i);
+  });
+  p.addEventListener('mouseleave', () => { tip.hidden = true; clearHot(); });
+  p.addEventListener('blur', clearHot);
+  p.addEventListener('click', () => selectGroup(state.group === i ? null : i));
+  p.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectGroup(state.group === i ? null : i); }
+  });
+  svg.appendChild(p);
+  slices.push(p);
+});
+
+/* legend */
+const legend = $('#legend');
+const legendBtns = doms.map((d, i) => {
+  const li = document.createElement('li');
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.setAttribute('aria-pressed', 'false');
+  b.innerHTML = '<span class="sw" style="background:' + d.color + '"></span>' +
+    '<span class="nm">' + d.name + '</span>' +
+    '<span class="vl">' + d.count + ' 个</span>' +
+    '<span class="vk">核验 ' + d.verified + '</span>';
+  b.addEventListener('click', () => selectGroup(state.group === i ? null : i));
+  b.addEventListener('mouseenter', () => {
+    slices[i].classList.add('hot');
+    slices.forEach((q, k) => { if (k !== i) q.classList.add('fade'); });
+    b.classList.add('link');
+    showCenter(i);
+  });
+  b.addEventListener('mouseleave', clearHot);
+  li.appendChild(b);
+  legend.appendChild(li);
+  return b;
+});
+
+function showCenter(i) {
+  const d = doms[i];
+  $('#dc-num').textContent = d.count;
+  $('#dc-label').textContent = d.name + ' · ' + d.modules.length + ' 个模块 · ' +
+    (d.count / total * 100).toFixed(1) + '%';
+}
+function restoreCenter() {
+  if (state.group === null) {
+    $('#dc-num').textContent = total;
+    $('#dc-label').textContent = '全部接口 · ' + doms.length + ' 个功能域';
+  } else showCenter(state.group);
+}
+function clearHot() {
+  slices.forEach((p) => p.classList.remove('hot', 'fade'));
+  legendBtns.forEach((b) => b.classList.remove('link'));
+  restoreCenter();
+}
+$('#donut').addEventListener('mouseleave', clearHot);
+$('#legend').addEventListener('mouseleave', clearHot);
+
+/* bars: verification rate */
+const bars = $('#bars');
+bars.innerHTML = doms.map((d) => {
+  const pct = d.count ? (d.verified / d.count * 100) : 0;
+  return '<div class="bar-row"><span class="bar-name">' + d.name + '</span>' +
+    '<span class="bar-track"><span class="bar-fill" style="width:' + pct.toFixed(1) +
+    '%;background:' + d.color + '"></span></span>' +
+    '<span class="bar-val">' + d.verified + ' / ' + d.count + '（' + pct.toFixed(0) + '%）</span></div>';
+}).join('');
+
+/* chips */
+const chipBox = $('#chips');
+const chipAll = document.createElement('button');
+chipAll.type = 'button';
+chipAll.className = 'chip';
+chipAll.textContent = '仅看已核验路径';
+chipAll.setAttribute('aria-pressed', 'false');
+chipAll.addEventListener('click', () => {
+  state.only = !state.only;
+  chipAll.setAttribute('aria-pressed', state.only ? 'true' : 'false');
+  renderList();
+});
+chipBox.appendChild(chipAll);
+
+function match(r) {
+  if (state.group !== null && r.g !== state.group) return false;
+  if (state.only && !r.ok) return false;
+  if (state.q) {
+    const q = state.q;
+    if (!(r.n.toLowerCase().includes(q) || r.m.toLowerCase().includes(q) || r.p.toLowerCase().includes(q))) return false;
+  }
+  return true;
+}
+
+function renderList() {
+  const host = $('#list');
+  const openSet = new Set();
+  host.querySelectorAll('.grp').forEach((g) => { if (g.dataset.open === 'true') openSet.add(g.dataset.gi); });
+  const first = host.querySelector('.grp') === null;
+  let html = '', shown = 0, gshown = 0;
+
+  doms.forEach((d, gi) => {
+    const rows = recs.filter((r) => r.g === gi && match(r));
+    if (!rows.length) return;
+    gshown++;
+    shown += rows.length;
+    const isOpen = first ? true : (openSet.size ? openSet.has(String(gi)) : false);
+    html += '<div class="grp" data-gi="' + gi + '" data-open="' + (isOpen ? 'true' : 'false') + '">' +
+      '<div class="grp-head" data-toggle="1"><span class="gdot" style="background:' + d.color + '"></span>' +
+      '<h3>' + d.name + '</h3><span class="gcount">' + rows.length + ' / ' + d.count + ' 个接口</span>' +
+      '<svg class="gcaret" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>' +
+      '</div><div class="grp-body">';
+    const mods = [];
+    rows.forEach((r) => {
+      let m = mods.find((x) => x.name === r.m);
+      if (!m) { m = { name: r.m, rows: [] }; mods.push(m); }
+      m.rows.push(r);
+    });
+    mods.forEach((m) => {
+      html += '<div class="mod"><div class="mod-head"><span class="mname">' + m.name +
+        '</span><span class="mnum">' + m.rows.length + ' 个接口</span></div>';
+      m.rows.forEach((r, i) => {
+        html += '<div class="row"><span class="i">' + String(i + 1).padStart(2, '0') + '</span>' +
+          '<span class="nm">' + r.n + '</span>' +
+          '<span>' + (r.p ? '<code>/api/open' + r.p + '</code>' : '<span class="na">路径待核验（需登录查看详情页）</span>') + '</span>' +
+          '<span class="badge ' + (r.ok ? 'b-ok">已核验' : 'b-na">待核验') + '</span></div>';
+      });
+      html += '</div>';
+    });
+    html += '</div></div>';
+  });
+
+  host.innerHTML = html || '<div class="empty">没有匹配的接口，试试更短的关键词或清除筛选。</div>';
+  host.querySelectorAll('[data-toggle]').forEach((h) => {
+    h.addEventListener('click', () => {
+      const g = h.parentElement;
+      g.dataset.open = g.dataset.open === 'true' ? 'false' : 'true';
+    });
+  });
+  $('#viewState').textContent = '当前显示 ' + shown + ' / ' + total + ' 个接口 · ' + gshown + ' 个功能域';
+}
+
+function selectGroup(i) {
+  state.group = i;
+  slices.forEach((p, k) => {
+    p.classList.toggle('dim', i !== null && k !== i);
+    p.classList.toggle('active', i === k);
+  });
+  legendBtns.forEach((b, k) => b.setAttribute('aria-pressed', k === i ? 'true' : 'false'));
+  restoreCenter();
+  renderList();
+  if (i !== null) $('#list').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+let tid = null;
+$('#q').addEventListener('input', (e) => {
+  const v = e.target.value.trim().toLowerCase();
+  clearTimeout(tid);
+  tid = setTimeout(() => { state.q = v; renderList(); }, 140);
+});
+$('#reset').addEventListener('click', () => {
+  state.q = ''; state.only = false;
+  $('#q').value = '';
+  chipAll.setAttribute('aria-pressed', 'false');
+  clearHot();
+  selectGroup(null);
+});
+
+restoreCenter();
+renderList();
+</script>
+</body>
+</html>

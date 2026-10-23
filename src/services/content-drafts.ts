@@ -1,5 +1,6 @@
 import type { ContentOwner, ContentState } from "../lib/content-factory";
 import { contentOwnerKey, emptyContent } from "../lib/content-factory";
+import { validateAccountLinks } from "../lib/content-delivery";
 
 let connection: Promise<IDBDatabase> | undefined;
 function database() {
@@ -17,6 +18,7 @@ export async function readContentDraft(owner: ContentOwner): Promise<ContentStat
 }
 /** Revision and file writes share one transaction, including quota failures. */
 export async function saveContentDraft(owner: ContentOwner, state: ContentState, files = new Map<string, Blob>()): Promise<ContentState> {
+  validateAccountLinks(state, owner);
   const db = await database(), key = contentOwnerKey(owner);
   return new Promise((resolve, reject) => {
     const tx = db.transaction(["drafts", "files"], "readwrite"), drafts = tx.objectStore("drafts");

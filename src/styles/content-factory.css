@@ -465,3 +465,65 @@
 .cf-factory > .cf-feedback { top: 60px; bottom: auto; left: auto; right: 16px; max-width: 420px; }
 @media (max-width: 900px) { .cf-factory[data-mobile-pane=assets] .cf-editing-assets { display: block; flex: 1; } .cf-factory[data-mobile-pane=assets] .cf-editing-studio .cf-edit-preview, .cf-factory[data-mobile-pane=assets] .cf-editing-studio .cf-timeline, .cf-factory[data-mobile-pane=assets] .cf-editing-studio .cf-properties { display: none; } .cf-factory > .cf-feedback { top: 95px; right: 8px; max-width: calc(100% - 16px); } }
 .cf-platform-overlay { position: absolute; inset: 60px 16px 16px; z-index: 40; overflow: auto; border: 1px solid var(--brand-border); border-radius: 12px; background: white; box-shadow: var(--shadow-popover); } .cf-platform-overlay > header { position: sticky; top: 0; z-index: 2; display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; background: white; border-bottom: 1px solid var(--border-subtle); } .cf-platform-overlay > header h2 { font-size: 14px; } .cf-platform-overlay > .platform-workspace { padding: 20px; }
+
+/* Content handoff stays outside the canvas and uses the workspace's blue palette. */
+.cf-delivery-trigger { color: var(--brand-primary); white-space: nowrap; }
+.cf-delivery-dialog { width: min(940px, calc(100vw - 40px)); max-width: none; max-height: calc(100dvh - 48px); padding: 0; border: 1px solid var(--border-subtle); border-radius: 16px; background: var(--surface-panel); color: var(--text-primary); box-shadow: 0 24px 100px #15244733; overflow: auto; }
+.cf-delivery-dialog::backdrop { background: #12213d66; backdrop-filter: blur(3px); }
+.cf-delivery-header { display: flex; align-items: center; gap: 12px; padding: 20px 24px; border-bottom: 1px solid var(--border-subtle); }
+.cf-delivery-icon { display: grid; place-items: center; width: 44px; height: 44px; color: var(--brand-primary); background: var(--brand-tint); border-radius: 12px; }
+.cf-delivery-header small { font-size: 10px; }
+.cf-delivery-header h2 { font-size: 19px; margin-top: 3px; }
+.cf-delivery-header > button { margin-left: auto; }
+.cf-delivery-body { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); }
+.cf-delivery-artifact, .cf-delivery-accounts { padding: 22px 24px; min-width: 0; }
+.cf-delivery-artifact { background: var(--brand-tint); border-right: 1px solid var(--border-subtle); }
+.cf-delivery-step { display: flex; align-items: center; gap: 9px; margin-bottom: 18px; }
+.cf-delivery-step > b { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 7px; font-size: 10px; background: var(--brand-tint); color: var(--brand-primary); }
+.cf-delivery-step h3 { font-size: 13px; }
+.cf-delivery-step > span { margin-left: auto; font-size: 10px; color: var(--text-muted); }
+.cf-delivery-dialog .cf-field { margin: 0 0 12px; }
+.cf-delivery-dialog select { width: 100%; }
+.cf-delivery-preview { display: grid; place-items: center; height: 246px; margin: 16px 0; padding: 16px; border: 1px solid var(--border-subtle); border-radius: 12px; background: var(--surface-panel); overflow: auto; }
+.cf-delivery-preview > img, .cf-delivery-preview > video { max-width: 100%; max-height: 212px; object-fit: contain; border-radius: 6px; }
+.cf-delivery-preview .cf-text-preview { max-height: 212px; padding: 4px; }
+.cf-delivery-dialog .cf-delivery-caption { color: var(--text-muted); font-size: 10px; line-height: 1.8; margin-top: 12px; }
+.cf-delivery-search { display: flex; gap: 6px; align-items: center; padding: 0 10px; border: 1px solid var(--border-subtle); border-radius: 8px; color: var(--text-muted); }
+.cf-delivery-search > input { width: 100%; border: 0; padding-left: 0; background: transparent; }
+.cf-delivery-list { min-height: 140px; max-height: 210px; overflow: auto; margin: 10px 0 4px; }
+.cf-delivery-account { display: flex; align-items: center; gap: 10px; padding: 12px 10px; margin: 6px 0; border: 1px solid var(--border-subtle); border-radius: 9px; cursor: pointer; }
+.cf-delivery-account:has(input:checked) { border-color: var(--brand-primary); background: var(--brand-tint); }
+.cf-delivery-account > input { accent-color: var(--brand-primary); }
+.cf-account-monogram { display: grid; place-items: center; flex: 0 0 32px; height: 32px; border-radius: 9px; color: var(--brand-primary); background: var(--surface-panel); font-weight: 700; }
+.cf-delivery-account > span:not(.cf-account-monogram) { display: grid; gap: 4px; min-width: 0; overflow-wrap: anywhere; }
+.cf-delivery-account strong { font-size: 12px; }
+.cf-delivery-account small { font-size: 10px; }
+.cf-delivery-account em { margin-left: auto; flex-shrink: 0; font-size: 9px; color: var(--brand-primary); font-style: normal; }
+.cf-delivery-selection { margin-top: 16px; padding-top: 15px; border-top: 1px solid var(--border-subtle); }
+.cf-delivery-selection > strong { font-size: 11px; }
+.cf-delivery-selection > p { margin-top: 8px; font-size: 10px; color: var(--text-muted); }
+.cf-delivery-selection > div { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 8px; padding: 8px 10px; background: var(--brand-tint); border-radius: 8px; }
+.cf-delivery-selection > div > span { display: grid; gap: 3px; overflow-wrap: anywhere; min-width: 0; }
+.cf-delivery-selection b { font-size: 11px; font-weight: 500; }
+.cf-delivery-selection small { font-size: 9px; }
+.cf-delivery-footer { display: flex; align-items: center; gap: 10px; padding: 18px 24px; border-top: 1px solid var(--border-subtle); }
+.cf-delivery-footer > div { flex: 1; min-width: 0; }
+.cf-delivery-footer strong { font-size: 11px; color: var(--brand-primary); }
+.cf-delivery-footer p { color: var(--text-muted); font-size: 10px; line-height: 1.7; margin-top: 4px; }
+.cf-delivery-footer > button { flex-shrink: 0; }
+.cf-delivery-footer .cf-delivery-error { color: #ba352c; }
+.cf-asset-accounts { border-top: 1px solid var(--border-subtle); padding: 14px 18px; }
+.cf-asset-accounts p { margin-top: 7px; line-height: 1.8; color: var(--text-secondary); }
+@media (max-width: 900px) { .cf-workspace-topbar .cf-delivery-trigger > span { display: none; } .cf-workspace-topbar .cf-delivery-trigger { min-width: 30px; } }
+@media (max-width: 650px) {
+  .cf-delivery-dialog { width: calc(100vw - 20px); max-height: calc(100dvh - 20px); border-radius: 12px; }
+  .cf-delivery-header { padding: 14px 16px; }
+  .cf-delivery-body { display: block; }
+  .cf-delivery-artifact, .cf-delivery-accounts { padding: 18px 16px; }
+  .cf-delivery-artifact { border-right: 0; border-bottom: 1px solid var(--border-subtle); }
+  .cf-delivery-preview { height: 160px; padding: 10px; }
+  .cf-delivery-preview > img, .cf-delivery-preview > video { max-height: 138px; }
+  .cf-delivery-footer { flex-wrap: wrap; padding: 16px; }
+  .cf-delivery-footer > div { flex: 1 0 100%; }
+  .cf-delivery-footer > button:last-child { flex: 1; }
+}

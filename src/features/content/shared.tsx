@@ -12,6 +12,7 @@ export interface EditorProps {
   flow: (kind: DocumentKind) => void; archive: (asset?: ContentAsset) => Promise<void>;
   importFiles: (files: FileList | File[] | null) => Promise<ContentAsset[]>;
   file: (id: string) => Promise<Blob | undefined>; notify: (message: string) => void;
+  deliver: (assetId?: string) => void;
 }
 export function Field({ label, children }: { label: string; children: ReactNode }) { return <label className="cf-field"><span>{label}</span>{children}</label>; }
 export function PaneTitle({ title, detail, action }: { title: string; detail?: string; action?: ReactNode }) { return <header className="cf-pane-title"><div><h2>{title}</h2>{detail && <small>{detail}</small>}</div>{action}</header>; }

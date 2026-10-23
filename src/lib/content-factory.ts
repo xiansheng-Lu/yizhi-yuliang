@@ -1,4 +1,6 @@
 import type { Identity, Product } from "./domain";
+import type { AdvertisingProduct } from "./advertising";
+import { validateAccountLinks } from "./content-delivery";
 
 export const contentPages = ["planning", "scripts", "graphics", "videos", "editing", "assets"] as const;
 export type ContentPage = (typeof contentPages)[number];
@@ -24,7 +26,12 @@ export interface ContentDocument {
 }
 export interface ContentAsset {
   id: string; name: string; kind: "image" | "video" | "audio" | "text"; productId: string; documentId: string | null;
-  mime: string; size: number; duration: number; createdAt: string; text?: string;
+  mime: string; size: number; duration: number; createdAt: string; text?: string; accountLinks?: ContentAccountLink[];
+}
+/** Local handoff intent. This is not a platform upload or delivery receipt. */
+export interface ContentAccountLink {
+  accountId: string; accountName: string; nativeId: string; productLine: AdvertisingProduct; businessEntityId: string;
+  tenantId: string; shopId: string; mode: Identity["mode"]; linkedAt: string; linkedBy: string;
 }
 export interface ContentState { schema: 1; revision: number; documents: ContentDocument[]; assets: ContentAsset[]; }
 export const emptyContent = (): ContentState => ({ schema: 1, revision: 0, documents: [], assets: [] });
@@ -70,6 +77,7 @@ export function validateContent(state: ContentState, products: Product[]) {
   for (const asset of state.assets) {
     if (typeof asset.name !== "string" || !["image", "video", "audio", "text"].includes(asset.kind) || !Number.isFinite(asset.duration) || asset.duration < 0 || !Number.isFinite(asset.size) || asset.size < 0) throw new Error("素材元数据无效。");
   }
+  validateAccountLinks(state);
   for (const doc of state.documents) {
     if (!contentPages.includes(doc.kind) || doc.kind === ("assets" as string) || typeof doc.title !== "string" || !doc.title.trim() || doc.title.length > 120 || !Number.isSafeInteger(doc.version) || doc.version < 1 || !Number.isFinite(Date.parse(doc.updatedAt)) || !Array.isArray(doc.boards) || !Array.isArray(doc.nodes) || !Array.isArray(doc.edges) || !Array.isArray(doc.clips) || !Array.isArray(doc.scenes) || !doc.brief || !doc.settings || typeof doc.body !== "string" || typeof doc.prompt !== "string" || !Object.values(doc.brief).every(v => typeof v === "string")) throw new Error("作品信息不完整。");
     if (!["9:16", "16:9", "1:1", "4:5"].includes(doc.settings.ratio) || !["720P", "1080P", "4K"].includes(doc.settings.resolution) || !Number.isFinite(doc.settings.duration) || doc.settings.duration < 1 || doc.settings.duration > 600) throw new Error("制作规格或时长无效。");

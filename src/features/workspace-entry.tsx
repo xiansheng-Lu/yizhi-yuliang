@@ -24,7 +24,7 @@ export function WorkspaceEntry({ pageId }: { pageId: PageId }) {
         {!canAccessPage(identity, pageId) ? <EmptyState title="此工作区尚未授权" description="请在用户中心查看当前账号可使用的功能。" /> : pageId === "account" ? <AccountCenter key={identity?.userId} /> : isDeliveryPage(pageId) ? <DeliveryWorkspace key={`${identity?.mode}:${identity?.tenantId}:${identity?.userId}`} pageId={pageId} /> : pageId === "products" ? <ProductsPage /> : <SnapshotView loading={pageId === "monitor" ? <LiveRoomSkeleton /> : undefined} retainOnError={pageId === "monitor"}>
           {(snapshot) => pageId === "monitor" ? <DeliveryLiveBridge snapshot={snapshot}><LiveRoomPage key={`${identity?.userId}:${snapshot.source}:${scopeKey(snapshot.scope)}`} snapshot={snapshot} /></DeliveryLiveBridge> : isContentPage(pageId) && identity ? <ContentFactory key={`${identity.mode}:${identity.tenantId}:${identity.userId}:${snapshot.scope.shop_id}`} pageId={pageId} snapshot={snapshot} identity={identity} /> : <BusinessPage pageId={pageId} snapshot={snapshot} />}
         </SnapshotView>}
-        {canAccessPage(identity,pageId)&&["overview","monitor","products","planning","scripts","videos","graphics","editing","assets","experiments","analytics","reports"].includes(pageId)&&<PlatformDataPanel pageId={pageId}/>}
+        {canAccessPage(identity,pageId)&&!isContentPage(pageId)&&["overview","monitor","products","planning","scripts","videos","graphics","editing","assets","experiments","analytics","reports"].includes(pageId)&&<PlatformDataPanel pageId={pageId}/>}
       </WorkspaceShell>
     </AuthGuard>
   );

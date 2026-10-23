@@ -9,7 +9,8 @@ export const uid = () => crypto.randomUUID();
 export interface ContentOwner { mode: Identity["mode"]; tenantId: string; userId: string; shopId: string; }
 export function contentOwnerKey(owner: ContentOwner) { return JSON.stringify(["content-v1", owner.mode, owner.tenantId, owner.userId, owner.shopId]); }
 export interface GraphicLayer { id: string; type: "text" | "image"; text: string; assetId: string; x: number; y: number; width: number; height: number; fontSize: number; color: string; visible: boolean; locked: boolean; }
-export interface Artboard { id: string; name: string; width: number; height: number; background: string; layers: GraphicLayer[]; }
+export interface Artboard { id: string; name: string; width: number; height: number; background: string; layers: GraphicLayer[]; x?: number; y?: number; }
+export interface CreativeMessage { id: string; text: string; createdAt: string; context: string; assetIds?: string[]; }
 export interface Scene { id: string; title: string; narration: string; visual: string; duration: number; }
 export interface VideoNode { id: string; type: "reference" | "direction" | "generate" | "result"; x: number; y: number; text: string; assetId: string; }
 export interface VideoEdge { id: string; sourceNodeId: string; targetNodeId: string; }
@@ -19,7 +20,7 @@ export interface ContentDocument {
   version: number; updatedAt: string; status: "draft" | "review";
   brief: { audience: string; objective: string; sellingPoints: string; channel: string; requirements: string; };
   body: string; scenes: Scene[]; boards: Artboard[]; nodes: VideoNode[]; edges: VideoEdge[]; clips: Clip[];
-  settings: { ratio: string; duration: number; resolution: string; skill: string; }; prompt: string;
+  settings: { ratio: string; duration: number; resolution: string; skill: string; }; prompt: string; messages?: CreativeMessage[];
 }
 export interface ContentAsset {
   id: string; name: string; kind: "image" | "video" | "audio" | "text"; productId: string; documentId: string | null;
@@ -72,6 +73,7 @@ export function validateContent(state: ContentState, products: Product[]) {
   for (const doc of state.documents) {
     if (!contentPages.includes(doc.kind) || doc.kind === ("assets" as string) || typeof doc.title !== "string" || !doc.title.trim() || doc.title.length > 120 || !Number.isSafeInteger(doc.version) || doc.version < 1 || !Number.isFinite(Date.parse(doc.updatedAt)) || !Array.isArray(doc.boards) || !Array.isArray(doc.nodes) || !Array.isArray(doc.edges) || !Array.isArray(doc.clips) || !Array.isArray(doc.scenes) || !doc.brief || !doc.settings || typeof doc.body !== "string" || typeof doc.prompt !== "string" || !Object.values(doc.brief).every(v => typeof v === "string")) throw new Error("作品信息不完整。");
     if (!["9:16", "16:9", "1:1", "4:5"].includes(doc.settings.ratio) || !["720P", "1080P", "4K"].includes(doc.settings.resolution) || !Number.isFinite(doc.settings.duration) || doc.settings.duration < 1 || doc.settings.duration > 600) throw new Error("制作规格或时长无效。");
+    if (doc.messages && (!Array.isArray(doc.messages) || doc.messages.some(m => !m || typeof m.id !== "string" || typeof m.text !== "string" || typeof m.context !== "string" || (m.assetIds && (!Array.isArray(m.assetIds) || m.assetIds.some(id => !assets.has(id)))) || !Number.isFinite(Date.parse(m.createdAt))))) throw new Error("创作对话记录无效。");
     const nodeIds = new Set(doc.nodes.map(n => n.id));
     if (nodeIds.size !== doc.nodes.length || doc.nodes.some(n => !["reference", "direction", "generate", "result"].includes(n.type) || ![n.x, n.y].every(Number.isFinite) || typeof n.text !== "string" || (n.assetId && !assets.has(n.assetId))) || doc.edges.some(e => !nodeIds.has(e.sourceNodeId) || !nodeIds.has(e.targetNodeId))) throw new Error("视频节点或连线引用无效。");
     for (const scene of doc.scenes) if (![scene.title, scene.narration, scene.visual].every(v => typeof v === "string") || !Number.isFinite(scene.duration) || scene.duration < .1 || scene.duration > 600) throw new Error("镜头信息需完整，时长需要在 0.1–600 秒之间。");

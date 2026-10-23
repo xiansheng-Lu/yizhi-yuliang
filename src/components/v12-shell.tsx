@@ -30,6 +30,7 @@ export function WorkspaceShell({ pageId, children }: { pageId: PageId; children:
   const isMock = service?.mode === "mock";
   const command = pageId === "command";
   const delivery = isDeliveryPage(pageId);
+  const content = navigationGroups.find(group => group.name === "内容工厂")?.pages.some(([id]) => id === pageId);
   const query = useSearchParams();
   const navHref = (id: PageId) => delivery && isDeliveryPage(id) ? deliveryHref(id, parseScope(new URLSearchParams(query.toString()), { shopId: snapshot?.scope.shop_id, start: snapshot?.scope.date }),advertisingNavigationParams(new URLSearchParams(query.toString()))) : `/app/${id}`;
   const currentGroup = navigationGroups.find((group) => group.pages.some(([id]) => id === pageId));
@@ -44,7 +45,7 @@ export function WorkspaceShell({ pageId, children }: { pageId: PageId; children:
   }, [setCollapsed]);
 
   return (
-    <div className={`workspace-frame v12-workspace ${command ? "command-workspace" : ""} ${collapsed ? "sidebar-collapsed" : ""}`} onKeyDown={(event) => { if (event.key === "Escape") { setMenu(false); setSearching(false); setContextOpen(false); } }}>
+    <div className={`workspace-frame v12-workspace ${command ? "command-workspace" : ""} ${collapsed ? "sidebar-collapsed" : ""} ${content ? "content-workspace" : ""}`} onKeyDown={(event) => { if (event.key === "Escape") { setMenu(false); setSearching(false); setContextOpen(false); } }}>
       <a className="skip-content" href="#workspace-content">跳到主要内容</a>
       {menu && <button className="sidebar-scrim" aria-label="关闭导航遮罩" onClick={() => setMenu(false)} />}
       <aside className={`sidebar ${menu ? "open" : ""}`} aria-label="工作区侧栏">
@@ -128,7 +129,7 @@ export function WorkspaceShell({ pageId, children }: { pageId: PageId; children:
           <span>本地功能预览，数据与审批均为测试数据。</span>
         </div>}
         <main id="workspace-content" className="page-main">
-          {!command && <div className="page-heading"><div><div className="eyebrow">YULIANG / OPERATIONS</div><h1>{pageName(pageId)}</h1><p>{delivery ? "统一经营范围，按平台能力管理投放、决策与执行核验。" : pageId === "account" ? "管理个人资料，查看已授权的店铺与工作区。" : pageId === "overview" ? "统一统计口径，查看经营指标与任务进展。" : "让经营目标、内容、投放与结果在同一条工作流中连接。"}</p></div>{!delivery && canAccessPage(identity, "command") && <Link href="/app/command" className="button secondary"><Lightning size={16} />AI 帮我处理</Link>}</div>}
+          {!command && !content && <div className="page-heading"><div><div className="eyebrow">YULIANG / OPERATIONS</div><h1>{pageName(pageId)}</h1><p>{delivery ? "统一经营范围，按平台能力管理投放、决策与执行核验。" : pageId === "account" ? "管理个人资料，查看已授权的店铺与工作区。" : pageId === "overview" ? "统一统计口径，查看经营指标与任务进展。" : "让经营目标、内容、投放与结果在同一条工作流中连接。"}</p></div>{!delivery && canAccessPage(identity, "command") && <Link href="/app/command" className="button secondary"><Lightning size={16} />AI 帮我处理</Link>}</div>}
           {children}
         </main>
         <footer className="workspace-footer">自主投放，让每一份增长都有据可依。<span>易致·驭量 · {isMock ? "本地功能预览" : "运营工作空间"}</span></footer>

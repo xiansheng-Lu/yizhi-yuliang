@@ -3,8 +3,27 @@ import assert from "node:assert/strict";
 import { authorizedProducts, contentOwnerKey, createDocument, emptyContent, flowDocument, splitClip, timelineDuration, validateContent, type Clip, type ContentAsset } from "../src/lib/content-factory";
 import { calculateCoverSourceRect, clampZoom, wouldCreateCycle } from "../src/lib/nexora-canvas";
 import { createMockSnapshot } from "../src/services/mock-data";
+import { canvasScale, fitCanvas, zoomCanvas } from "../src/lib/canvas-viewport";
 
 const products = createMockSnapshot().products;
+test("free canvas zoom preserves the world position under the cursor and fits negative coordinates", () => {
+  const view = { x: -120, y: 50, scale: .5 }, point = { x: 300, y: 200 };
+  const next = zoomCanvas(view, 2, point);
+  assert.equal((point.x - view.x) / view.scale, (point.x - next.x) / next.scale);
+  assert.equal((point.y - view.y) / view.scale, (point.y - next.y) / next.scale);
+  const bounds = { x: -800, y: -400, width: 2000, height: 1500 }, fit = fitCanvas(bounds, 900, 700);
+  assert.ok(bounds.x * fit.scale + fit.x >= 47);
+  assert.ok((bounds.x + bounds.width) * fit.scale + fit.x <= 853);
+  assert.ok(bounds.y * fit.scale + fit.y >= 47);
+  assert.equal(canvasScale(0), .05); assert.equal(canvasScale(100), 4);
+});
+test("creative conversation persists with its document and remains compatible with older drafts", () => {
+  const state = emptyContent(), doc = createDocument("graphics"); state.documents.push(doc);
+  assert.doesNotThrow(() => validateContent(state, products));
+  doc.messages = [{ id: "message", text: "突出秋日氛围", context: "当前画板", createdAt: new Date().toISOString() }];
+  assert.doesNotThrow(() => validateContent(JSON.parse(JSON.stringify(state)), products));
+  doc.messages[0].createdAt = "bad"; assert.throws(() => validateContent(state, products));
+});
 test("content drafts isolate mode, tenant, user, and shop without delimiter collisions", () => {
   const owner = { mode: "MOCK" as const, tenantId: "t:a", userId: "u", shopId: "s" };
   const keys = [owner, { ...owner, mode: "API" as const }, { ...owner, tenantId: "t", userId: "a:u" }, { ...owner, userId: "u2" }, { ...owner, shopId: "s2" }].map(contentOwnerKey);

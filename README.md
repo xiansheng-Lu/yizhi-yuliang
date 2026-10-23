@@ -79,4 +79,4 @@ Mock 对话、项目与任务归类使用按企业和用户隔离的 `yuliang:hi
 - `docs/frontend/acceptance/G1-B1验收记录.md`：实际运行、10 类核心场景、截图、日志、修改范围和未完成事项。
 - `docs/shared/contracts/API契约需求初稿.md`、`docs/frontend/acceptance/G1-A验收记录.md`：保留的 G1-A 历史记录。
 
-仓库：https://github.com/xiansheng-Lu/yizhi-yuliang 。按最新项目约定，检查通过后整合并推送至 main；不部署，不强推，不覆盖其他人的提交，不提交密钥、依赖、运行时及构建产物。
+仓库：https://github.com/xiansheng-Lu/yizhi-yuliang 。按最新项目约定，新需求在本地分支开发，检查通过后合并并推送至 main；不部署，不强推，不覆盖其他人的提交，不提交密钥、依赖、运行时及构建产物。

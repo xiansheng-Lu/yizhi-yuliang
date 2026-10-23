@@ -18,24 +18,15 @@
 
 命名规则：`<类型>/<端>-<简述>`，端用 `frontend` 或 `backend`，简述用英文小写短横线连接，不加日期后缀。
 
-### 什么改动可以直接推 main
+### 开发流程：本地分支开发，完成即合并
 
-前端满足以下全部条件时，完成自测后可直接提交并推送 `main`：
+前后端所有新需求、功能改动和缺陷修复都按同一套流程走：
 
-- 只改 `src/`、`public/` 下的前端文件
-- 不涉及接口契约、不新增依赖、不改构建配置
-- 不碰共享文件（见第 3 节）
-- 本机 lint、类型检查、构建通过
+1. 从最新的 `main` 在本地新建分支
+2. 在分支上开发和提交，分支只保留在本地，不推送到远程
+3. 完成后把分支合并回 `main`，再推送 `main`
 
-以下情况即使是前端改动也必须走分支 + PR：
-
-- 跨模块重构、目录结构调整
-- 新增页面体系或新业务域
-- 修改接口契约、`package.json`、构建与 lint 配置
-- 多人同时在改同一目录
-- 一次改动超过约 300 行
-
-后端改动一律走分支 + PR，不直接推 `main`。
+只有纯文档修正、依赖锁文件同步这类不改变代码行为的小改动，才允许直接提交到 `main`。
 
 ## 2. 目录归属
 
@@ -79,59 +70,53 @@ docs(backend): document deployment topology
 
 ## 4. 日常工作流
 
-### 4.1 前端直推 main
+前后端共用一套流程，只是改动目录不同。以新增一个前端需求为例：
+
+### 4.1 建分支开发
 
 ```powershell
 git checkout main
 git pull --ff-only origin main
-# 动手改代码
-git add src/具体文件路径
-git commit -m "fix(frontend): correct budget slider overflow on mobile"
-git push origin main
-```
+git checkout -b feat/frontend-live-room
 
-推送被拒说明远程已有新提交，先拉取再推：
-
-```powershell
-git pull --rebase origin main
-git push origin main
-```
-
-### 4.2 后端分支 + PR
-
-```powershell
-git checkout main
-git pull --ff-only origin main
-git checkout -b feat/backend-report-queue
-
-# 开发过程中，每天至少同步一次主干
+# 开发过程中每天至少同步一次主干
 git fetch origin
 git rebase origin/main
 
-# 提交并推送
-git add backend/具体文件路径
-git commit -m "feat(backend): add report generation queue"
-git push -u origin feat/backend-report-queue
+# 提交（只加自己改的文件）
+git add src/具体文件路径
+git commit -m "feat(frontend): add live room entry"
 ```
 
-然后在 GitHub 上开 PR 合并进 `main`，合并方式选 Squash 或 Merge commit，打开 PR 时写清：改了什么、影响范围、怎么自测、是否涉及共享文件。合并完成后删除远程分支：
+分支只留在本地，不执行 `git push`。
+
+### 4.2 合并回 main 并推送
 
 ```powershell
-git push origin --delete feat/backend-report-queue
+# 合并前再同步一次，避免 main 已前进
+git checkout main
+git pull --ff-only origin main
+git merge --no-ff feat/frontend-live-room
+git push origin main
+
+# 确认合并结果后删除本地分支
+git branch -d feat/frontend-live-room
 ```
+
+合并冲突在 `main` 上解决完后，必须跑一遍检查再提交合并结果。
 
 ### 4.3 每日节奏
 
 - 每天开工前先 `git pull --ff-only origin main`
 - 开发中的分支每天至少 rebase 一次 `origin/main`
-- 功能做完当天合并，不积压，避免出现多个并行分支最后一次性合并
+- 功能做完当天合并进 `main` 并推送，不积压，避免多个并行分支最后一次性合并
 
 ## 5. 冲突处理
 
 - 谁改动谁解决冲突，不把冲突丢给对方
 - 解决冲突逐行看，禁止"全部接受当前分支"或"全部接受对方分支"
 - 冲突涉及对方负责的目录时，先沟通再动手，必要时一起看
-- 自己分支 rebase 后需要推送，用 `git push --force-with-lease`；`main` 上永远禁止强推
+- 分支只保留在本地，rebase 后不需要强推；`main` 上永远禁止 `git push --force`
 
 ## 6. 回滚与发布
 
@@ -159,5 +144,6 @@ git revert <坏提交的commit>
 - 只 `git add` 了自己本次改动的具体文件，没有用 `git add .`
 - 提交信息符合第 3 节格式
 - 没有把共享文件的其他改动夹带进来
+- 新需求在独立分支上完成，已合并进 `main` 并删除本地分支
 - 前端改动已跑过 lint、类型检查、构建；后端改动已完成对应自测
 - 推送后确认远程状态（`git status -sb` 显示已同步）

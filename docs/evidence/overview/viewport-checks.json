@@ -1,0 +1,42 @@
+[
+  {
+    "cards": 8,
+    "clippedMetrics": [],
+    "coreFontSize": "36px",
+    "height": 1080,
+    "horizontalOverflow": false,
+    "kpiColumns": "325.552px 325.552px 325.562px",
+    "scrollWidth": 1265,
+    "width": 1280
+  },
+  {
+    "cards": 8,
+    "clippedMetrics": [],
+    "coreFontSize": "36px",
+    "height": 1080,
+    "horizontalOverflow": false,
+    "kpiColumns": "219.573px 219.573px 219.583px 149.312px 149.312px 149.312px",
+    "scrollWidth": 1425,
+    "width": 1440
+  },
+  {
+    "cards": 8,
+    "clippedMetrics": [],
+    "coreFontSize": "36px",
+    "height": 1080,
+    "horizontalOverflow": false,
+    "kpiColumns": "251.615px 251.625px 251.625px 171.104px 171.104px 171.104px",
+    "scrollWidth": 1585,
+    "width": 1600
+  },
+  {
+    "cards": 8,
+    "clippedMetrics": [],
+    "coreFontSize": "38px",
+    "height": 1080,
+    "horizontalOverflow": false,
+    "kpiColumns": "315px 315px 315px 214.198px 214.198px 214.208px",
+    "scrollWidth": 1905,
+    "width": 1920
+  }
+]

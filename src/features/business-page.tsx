@@ -27,6 +27,7 @@ import { CoreMetrics } from "@/components/operating-context";
 import { scopedPlans, scopedEvidence } from "@/lib/reporting";
 import { ControlWorkspace } from "./control-workspace";
 import { CommandDesk } from "./command-desk";
+import { OverviewPage } from "./overview-page";
 
 export { CoreMetrics } from "@/components/operating-context";
 export function PlanTable({ snapshot }: { snapshot: FrontendSnapshot }) {
@@ -279,7 +280,8 @@ export function BusinessPage({
 }) {
   const { service } = useWorkspace();
   if (pageId === "command") return <CommandDesk snapshot={snapshot} />;
-  if (["overview", "goals", "monitor", "tasks"].includes(pageId))
+  if (pageId === "overview") return <OverviewPage snapshot={snapshot} />;
+  if (["goals", "monitor", "tasks"].includes(pageId))
     return (
       <ControlWorkspace
         pageId={pageId}

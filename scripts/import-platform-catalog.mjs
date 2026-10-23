@@ -33,7 +33,7 @@ const sources = [
 ];
 const normalized = JSON.parse(
   readFileSync(
-    resolve(root, "docs/platform-api-reference/四平台开放API_规范化目录.json"),
+    resolve(root, "docs/shared/reference/platform-api-reference/四平台开放API_规范化目录.json"),
     "utf8",
   ),
 );
@@ -46,7 +46,7 @@ const catalogue = {
 };
 for (const source of sources) {
   const html = readFileSync(
-    resolve(root, "docs/platform-api-reference", source.file),
+    resolve(root, "docs/shared/reference/platform-api-reference", source.file),
     "utf8",
   ).replace(/\r\n/g,"\n");
   const match = html.match(

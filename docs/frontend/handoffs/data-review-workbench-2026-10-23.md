@@ -1,4 +1,4 @@
-# 数据复盘工作台 · 前端交接与验收
+﻿# 数据复盘工作台 · 前端交接与验收
 
 ## 入口及工作流
 
@@ -97,6 +97,6 @@ AnalysisResult必须返回：原始query、店铺/平台名、数据更新时间
 - 部分数据、无数据、失败原因与重新分析；发布幂等、草稿版本冲突、原始数据及发布快照隔离。
 - 1440px PC与390px手机验证，没有页面整体水平溢出；浏览器未捕获页面运行错误。
 
-运行命令：`npm test`、`npm run typecheck`、`npm run lint`、`npm run test:routes`、`npm run build`。构建使用忽略目录 `.runtime/analysis-build`，未停止现有开发服务，未部署。具体结果及截图见 `docs/evidence/data-review/`。
+运行命令：`npm test`、`npm run typecheck`、`npm run lint`、`npm run test:routes`、`npm run build`。构建使用忽略目录 `.runtime/analysis-build`，未停止现有开发服务，未部署。具体结果及截图见 `docs/frontend/evidence/data-review/`。
 
 最终主分支隔离验证：177 项测试全部通过；共享工作区含其他待交付模块时共186项测试也已通过。TypeScript与ESLint通过，生产构建通过。

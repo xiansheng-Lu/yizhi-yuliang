@@ -1,4 +1,4 @@
-# 易致·驭量 V8.0 投放管理前端交付记录
+﻿# 易致·驭量 V8.0 投放管理前端交付记录
 
 日期：2026-10-22，Asia/Shanghai。
 
@@ -107,7 +107,7 @@ ADQ使用Campaign、计划/广告组/广告层级、CNY分、预算与受支持�
 
 新增测试覆盖：正式渠道过滤、租户/账户/来源隔离、CNY/豆独立、日期不复用实际数、ROI口径、能力/权限/过期门禁、撤权清缓存、非法日期、ID链接、筛选排序、A→B→C并发乱序与卸载取消、API范围/来源错误、404沿用真实快照、429退避、模型错误、受理不算生效、嵌套脱敏、Mock拒绝正式写入、连续日目标差额。
 
-证据保存在 `docs/evidence/delivery/`，均来自明确演示模式：plans-1440/1280、beans-1440、goals-1440、goal-preview-disabled、budgets-1280、decisions-1280、executions-1280。
+证据保存在 `docs/frontend/evidence/delivery/`，均来自明确演示模式：plans-1440/1280、beans-1440、goals-1440、goal-preview-disabled、budgets-1280、decisions-1280、executions-1280。
 
 ## 11. 尚未完成及原因
 

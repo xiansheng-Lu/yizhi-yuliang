@@ -1,4 +1,4 @@
-# 商品与货盘前端交接 · 2026-10-22
+﻿# 商品与货盘前端交接 · 2026-10-22
 
 本次仅改前端，后端负责人陆文龙。保留 `/app/products`、左侧导航、现有权限和审批规则，未新增 Route Handler、数据库或商品写入接口。
 
@@ -120,8 +120,8 @@ interface ProductLineup {
 - `src/services/products-demo.ts`：独立演示夹具。
 - `src/features/workspace-entry.tsx`：商品页入口与加载状态。
 - `tests/products.test.ts`：范围隔离、缺失 / 零值、授权、归因、草稿及排期测试。
-- 本交接文档和 `docs/evidence/products/` 验收截图 / 记录。
+- 本交接文档和 `docs/frontend/evidence/products/` 验收截图 / 记录。
 
 ## 验证
 
-测试与最终构建结果记录在 `docs/evidence/products/validation.json`。共享目录中的其他模块未提交修改不属于本次交付；发布从最新 main 独立整合，避免把它们一同提交。
+测试与最终构建结果记录在 `docs/frontend/evidence/products/validation.json`。共享目录中的其他模块未提交修改不属于本次交付；发布从最新 main 独立整合，避免把它们一同提交。

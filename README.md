@@ -62,11 +62,12 @@ NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:<后端端口>
 
 Mock 对话、项目与任务归类使用按企业和用户隔离的 `yuliang:history:v1:*` 本地存储；刷新和同源标签页可以恢复。API 模式通过独立后端保存会话、对话和项目，不使用本地存储降级。前端没有接入大模型，预览模式只提供明确标注的运营规则解析。
 
-变更后重启开发服务；NEXT_PUBLIC 变量在构建时注入，生产模式须重新构建。API 地址和接口需后端确认。客户端失败会显示错误，不回退 Mock；正式会话、服务端权限、CSRF 和数据协议尚未完成联调，不能上线使用。腾讯云邮件推送只由后端调用；SecretId、SecretKey、验证码校验及 Cookie 签发不得放进浏览器。当前账号接口见 `docs/v12/API契约补充清单-R1.md` 和更新后的 `docs/api-handoff-2026-10-22/openapi.json`。
+变更后重启开发服务；NEXT_PUBLIC 变量在构建时注入，生产模式须重新构建。API 地址和接口需后端确认。客户端失败会显示错误，不回退 Mock；正式会话、服务端权限、CSRF 和数据协议尚未完成联调，不能上线使用。腾讯云邮件推送只由后端调用；SecretId、SecretKey、验证码校验及 Cookie 签发不得放进浏览器。当前账号接口见 `docs/archive/v12/API契约补充清单-R1.md` 和更新后的 `docs/shared/contracts/api-handoff-2026-10-22/openapi.json`。
 
 ## 目录与交接
 
-- [后端技术架构与实施设计 V1.1（Python）](docs/backend/后端技术架构与实施设计V1.0.md)：内部服务商与运营优先，采用 FastAPI、SQLAlchemy/Alembic、Celery/RabbitMQ、多模型适配；当前为设计文档，尚未创建后端工程。
+- 文档目录索引见 [docs/README.md](docs/README.md)：前端、后端、跨端共享与归档四类分开存放。
+- [后端技术架构与实施设计 V1.1（Python）](docs/backend/architecture/后端技术架构与实施设计V1.0.md)：内部服务商与运营优先，采用 FastAPI、SQLAlchemy/Alembic、Celery/RabbitMQ、多模型适配；当前为设计文档，尚未创建后端工程。
 - `public/`：官网原 CSS/JS 冻结；Logo 替换已授权，原始及获批版本哈希均保留。
 - `src/app/(frontend)/`：前端路由、加载和错误边界；没有业务 Route Handler。
 - `src/features/`：页面骨架与手机 UI。
@@ -74,8 +75,8 @@ Mock 对话、项目与任务归类使用按企业和用户隔离的 `yuliang:hi
 - `src/lib/domain.ts`：两端统一业务实体、金额口径。
 - `src/lib/command-job.ts`：统一任务、动作、状态、值类型与差额格式化；`reporting.ts`：共享统计范围。
 - `src/services/`：Service 契约、Mock 身份/数据、待接 API Client。
-- `docs/command_job前后端契约V1.0.md`：本阶段给陆文龙确认的任务、接口、风控和核验草案。
-- `docs/G1-B1验收记录.md`：实际运行、10 类核心场景、截图、日志、修改范围和未完成事项。
-- `docs/API契约需求初稿.md`、`docs/G1-A验收记录.md`：保留的 G1-A 历史记录。
+- `docs/shared/contracts/command_job前后端契约V1.0.md`：本阶段给陆文龙确认的任务、接口、风控和核验草案。
+- `docs/frontend/acceptance/G1-B1验收记录.md`：实际运行、10 类核心场景、截图、日志、修改范围和未完成事项。
+- `docs/shared/contracts/API契约需求初稿.md`、`docs/frontend/acceptance/G1-A验收记录.md`：保留的 G1-A 历史记录。
 
 仓库：https://github.com/xiansheng-Lu/yizhi-yuliang 。按最新项目约定，检查通过后整合并推送至 main；不部署，不强推，不覆盖其他人的提交，不提交密钥、依赖、运行时及构建产物。

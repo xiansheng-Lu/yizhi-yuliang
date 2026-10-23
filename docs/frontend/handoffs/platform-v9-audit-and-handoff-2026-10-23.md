@@ -80,8 +80,8 @@ V8.1进行中的完整配置向导已纳入V9.0。团队同日提交的NEXORA内
 - `src/features/platform-workspace.tsx`
 - `src/styles/advertising.css`、`src/styles/platform-workspace.css`
 - `tests/advertising.test.ts`、`tests/platform-workspace.test.ts`
-- 本文、API契约、`docs/evidence/delivery-v9/`操作证据
-- `docs/platform-api-reference/`六份用户提供的原始资料，未改内容
+- 本文、API契约、`docs/frontend/evidence/delivery-v9/`操作证据
+- `docs/shared/reference/platform-api-reference/`六份用户提供的原始资料，未改内容
 
 修改：
 

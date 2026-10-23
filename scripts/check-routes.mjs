@@ -44,7 +44,7 @@ for (const path of [
     );
   rows.push({ path, status: response.status });
 }
-const baseline = JSON.parse(readFileSync("docs/homepage-baseline.json"));
+const baseline = JSON.parse(readFileSync("docs/shared/baselines/homepage-baseline.json"));
 for (const [file, sha] of Object.entries(baseline.files))
   assert.equal(
     createHash("sha256")

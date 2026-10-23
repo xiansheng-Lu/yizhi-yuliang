@@ -41,9 +41,11 @@
 
 | 归属 | 目录或文件 | 修改人 |
 |---|---|---|
-| 前端 | `src/`、`public/` | 前端 |
+| 前端 | `src/`、`public/`、`docs/frontend/` | 前端 |
 | 后端 | `backend/`、`docs/backend/` | 后端 |
-| 共享 | `package.json`、`package-lock.json`、`.env.example`、`.gitignore`、`README.md`、`AGENTS.md`、`docs/` 根目录、`scripts/`、`tests/` | 改动前先沟通，一次只一人动 |
+| 共享 | `package.json`、`package-lock.json`、`.env.example`、`.gitignore`、`README.md`、`AGENTS.md`、`docs/README.md`、`docs/git-workflow.md`、`docs/shared/`、`docs/archive/`、`scripts/`、`tests/` | 改动前先沟通，一次只一人动 |
+
+文档目录的具体分层见 `docs/README.md`：纯前端内容放 `docs/frontend/`，纯后端内容放 `docs/backend/`，两端共读的契约、平台资料与规划放 `docs/shared/`，已结束版本的历史交付物放 `docs/archive/`。
 
 共享文件的冲突几乎无法靠 git 自动合并，必须靠"预约"避免：动手前在群里说一句要改哪个文件、改什么，改完立刻提交推送，不加塞其他改动。
 

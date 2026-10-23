@@ -30,7 +30,7 @@ export function WorkspaceShell({ pageId, children }: { pageId: PageId; children:
   const isMock = service?.mode === "mock";
   const command = pageId === "command";
   const delivery = isDeliveryPage(pageId);
-  const content = navigationGroups.find(group => group.name === "内容工厂")?.pages.some(([id]) => id === pageId);
+  const content = navigationGroups.find(group => group.name === "内容中心")?.pages.some(([id]) => id === pageId);
   const query = useSearchParams();
   const navHref = (id: PageId) => delivery && isDeliveryPage(id) ? deliveryHref(id, parseScope(new URLSearchParams(query.toString()), { shopId: snapshot?.scope.shop_id, start: snapshot?.scope.date }),advertisingNavigationParams(new URLSearchParams(query.toString()))) : `/app/${id}`;
   const currentGroup = navigationGroups.find((group) => group.pages.some(([id]) => id === pageId));

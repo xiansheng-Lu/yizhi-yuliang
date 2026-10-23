@@ -2,13 +2,16 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { createHash } from "node:crypto";
-import { customerPageIds, isPageId, loginTarget, navigationGroups, pageName, pages } from "../src/lib/routes";
+import { customerPageIds, isPageId, legacyContentTarget, loginTarget, navigationGroups, pageName, pages } from "../src/lib/routes";
+import { canAccessPage } from "../src/lib/access";
+import type { Identity } from "../src/lib/domain";
+import { ApiClient } from "../src/services/api-client";
 
 test("six customer navigation entries exclude administration and preserve legacy routes", () => {
-  assert.deepEqual(navigationGroups.map((group) => group.name), ["AI驭量中枢", "经营概况", "直播运营", "投放管理", "内容工厂", "数据复盘"]);
+  assert.deepEqual(navigationGroups.map((group) => group.name), ["AI驭量中枢", "经营概况", "直播运营", "投放管理", "内容中心", "数据复盘"]);
   const ids = navigationGroups.flatMap((group) => group.pages.map(([id]) => id));
-  assert.equal(ids.length, 17);
-  assert.equal(new Set(ids).size, 17);
+  assert.equal(ids.length, 15);
+  assert.equal(new Set(ids).size, 15);
   for (const [id] of pages) assert.ok(isPageId(id), id);
   for (const id of ["agents", "connections", "settings", "tasks"]) assert.ok(!ids.some((value) => value === id));
   assert.ok(customerPageIds.includes("tasks"));
@@ -17,6 +20,34 @@ test("six customer navigation entries exclude administration and preserve legacy
   assert.ok(!isPageId("unknown"));
   assert.equal(pageName("overview"), "经营概况");
   assert.equal(pageName("command"), "AI驭量中枢");
+});
+
+test("content center exposes five workspaces and redirects removed entries with document context", () => {
+  assert.deepEqual(navigationGroups.find(group => group.name === "内容中心")?.pages, [
+    ["planning", "内容策划"], ["videos", "视频创作"], ["graphics", "平面创作"], ["editing", "智能剪辑"], ["assets", "素材库"],
+  ]);
+  for (const [id, name] of navigationGroups.find(group => group.name === "内容中心")!.pages) assert.equal(pageName(id), name);
+  const query = new URLSearchParams({ document: "已有脚本", shop_id: "shop-tea" });
+  assert.equal(legacyContentTarget("scripts", query), `/app/planning?${query}`);
+  assert.equal(legacyContentTarget("experiments", query), `/app/assets?${query}`);
+  assert.equal(legacyContentTarget("planning", query), null);
+  for (const target of ["scripts", "/app/scripts", "#/scripts"]) assert.equal(loginTarget(target), "/app/planning");
+  for (const target of ["experiments", "/app/experiments", "#/experiments"]) assert.equal(loginTarget(target), "/app/assets");
+});
+
+test("existing script grants open planning without granting other content workspaces", () => {
+  assert.ok(customerPageIds.includes("scripts"));
+  assert.ok(customerPageIds.includes("experiments"));
+  const actor: Identity = { userId: "member", tenantId: "tenant", displayName: "成员", shopIds: ["shop"], permissions: [], mode: "API", workspacePages: ["scripts"] };
+  assert.equal(canAccessPage(actor, "planning"), true);
+  for (const page of ["assets", "videos", "graphics", "experiments"] as const) assert.equal(canAccessPage(actor, page), false);
+  assert.equal(canAccessPage({ ...actor, workspacePages: [] }, "planning"), false);
+});
+
+test("sessions issued before the content navigation change still accept legacy content grants", async () => {
+  const identity: Identity = { userId: "member", tenantId: "tenant", displayName: "成员", email: "member@example.com", shopIds: ["shop"], permissions: [], mode: "API", workspacePages: ["planning", "scripts", "experiments", "assets"] };
+  const client = new ApiClient("https://backend.example", (async () => Response.json({ data: identity, requestId: "test-content-session", schemaVersion: "command-job-v1.0" })) as typeof fetch);
+  assert.deepEqual(await client.getIdentity(), identity);
 });
 
 test("V12 default and frozen homepage CTA open command while explicit overview deep links survive", () => {

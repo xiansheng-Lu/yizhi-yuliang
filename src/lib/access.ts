@@ -12,6 +12,7 @@ export function hasWorkspaceGrant(identity: Identity | null, pageId: PageId) {
 }
 
 export function canAccessPage(identity: Identity | null, pageId: PageId) {
+  if (pageId === "planning") return hasWorkspaceGrant(identity, "planning") || hasWorkspaceGrant(identity, "scripts");
   // The unified shell is reachable through either original grant; each panel
   // continues to check its own grant and all writes retain backend permissions.
   return pageId === "decisions"

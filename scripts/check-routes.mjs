@@ -8,12 +8,10 @@ const pages = [
   "monitor",
   "tasks",
   "planning",
-  "scripts",
   "videos",
   "graphics",
   "editing",
   "assets",
-  "experiments",
   "plans",
   "decisions",
   "executions",
@@ -61,6 +59,10 @@ for (const [path, expected] of [
   ["/app.html", "/legacy"],
   ["/app/campaigns", "/app/plans"],
   ["/app", "/app/command"],
+  ["/app/scripts", "/app/planning"],
+  ["/app/scripts?document=existing-script&shop_id=shop-tea&ref=one&ref=two", "/app/planning?document=existing-script&shop_id=shop-tea&ref=one&ref=two"],
+  ["/app/experiments", "/app/assets"],
+  ["/app/experiments?shop_id=shop-tea", "/app/assets?shop_id=shop-tea"],
   ["/app/budgets?platform=adq&accountId=test-account&product=adq&budgetId=test-budget", "/app/decisions?platform=adq&accountId=test-account&product=adq&budgetId=test-budget&section=allocation"],
 ]) {
   const response = await fetch(base + path, { redirect: "manual" });

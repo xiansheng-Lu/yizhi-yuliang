@@ -1,5 +1,5 @@
 import { notFound, redirect } from "next/navigation";
-import { isPageId } from "@/lib/routes";
+import { isPageId, legacyContentTarget } from "@/lib/routes";
 import { legacyBudgetTarget } from "@/lib/optimization";
 import { WorkspaceEntry } from "@/features/workspace-entry";
 export default async function BusinessRoute({
@@ -11,13 +11,13 @@ export default async function BusinessRoute({
 }) {
   const { pageId } = await params;
   if (!isPageId(pageId)) notFound();
-  if (pageId === "budgets") {
+  if (pageId === "budgets" || pageId === "scripts" || pageId === "experiments") {
     const query = new URLSearchParams();
     for (const [key, value] of Object.entries(await searchParams)) {
       if (Array.isArray(value)) value.forEach(item => query.append(key, item));
       else if (value !== undefined) query.set(key, value);
     }
-    redirect(legacyBudgetTarget(query));
+    redirect(pageId === "budgets" ? legacyBudgetTarget(query) : legacyContentTarget(pageId, query)!);
   }
   return <WorkspaceEntry pageId={pageId} />;
 }

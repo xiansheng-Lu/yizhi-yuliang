@@ -5,8 +5,12 @@ import { validateAccountLinks } from "./content-delivery";
 export const contentPages = ["planning", "scripts", "graphics", "videos", "editing", "assets"] as const;
 export type ContentPage = (typeof contentPages)[number];
 export type DocumentKind = Exclude<ContentPage, "assets">;
-export const contentNames: Record<ContentPage, string> = { planning: "内容策划", scripts: "脚本工厂", graphics: "图片图文", videos: "视频工厂", editing: "智能剪辑", assets: "素材资产库" };
+export const contentNames: Record<ContentPage, string> = { planning: "内容策划", scripts: "内容策划", graphics: "平面创作", videos: "视频创作", editing: "智能剪辑", assets: "素材库" };
 export function isContentPage(page: string): page is ContentPage { return contentPages.includes(page as ContentPage); }
+/** Script documents retain their IDs and references in the unified planning workspace. */
+export function contentDocumentMatchesPage(doc: Pick<ContentDocument, "kind">, page: ContentPage) {
+  return doc.kind === page || (page === "planning" && doc.kind === "scripts");
+}
 export const uid = () => crypto.randomUUID();
 export interface ContentOwner { mode: Identity["mode"]; tenantId: string; userId: string; shopId: string; }
 export function contentOwnerKey(owner: ContentOwner) { return JSON.stringify(["content-v1", owner.mode, owner.tenantId, owner.userId, owner.shopId]); }

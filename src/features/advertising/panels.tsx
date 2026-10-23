@@ -592,9 +592,9 @@ export function CreativeSelector({ draft: d, cap, api, patch }: PanelProps) {
         />
       )}
       <div className="aw-note">
-        复用内容工厂的素材资产与授权关系。
+        复用内容中心的素材与授权关系。
         <Link className="dw-link" href="/app/assets">
-          打开素材资产库
+          打开素材库
         </Link>
         。作品型加热使用所选视频；直播按当前素材方式选择允许的内容。
       </div>
@@ -607,7 +607,7 @@ export function CreativeSelector({ draft: d, cap, api, patch }: PanelProps) {
         selected={d.creative.assets}
         onChange={(assets) => patch({ creative: { ...d.creative, assets } })}
       />
-      <Field label="上传至内容工厂素材库" cap={f("creative")}>
+      <Field label="上传至内容中心素材库" cap={f("creative")}>
         <label className="aw-upload">
           <UploadSimple size={18} />
           {uploading ? "正在上传…" : "选择当前版位允许的素材"}

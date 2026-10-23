@@ -1,11 +1,36 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { authorizedProducts, contentOwnerKey, createDocument, emptyContent, flowDocument, splitClip, timelineDuration, validateContent, type Clip, type ContentAsset } from "../src/lib/content-factory";
+import { authorizedProducts, contentDocumentMatchesPage, contentNames, contentOwnerKey, createDocument, emptyContent, flowDocument, splitClip, timelineDuration, validateContent, type Clip, type ContentAsset } from "../src/lib/content-factory";
 import { calculateCoverSourceRect, clampZoom, wouldCreateCycle } from "../src/lib/nexora-canvas";
 import { createMockSnapshot } from "../src/services/mock-data";
 import { canvasScale, fitCanvas, zoomCanvas } from "../src/lib/canvas-viewport";
 
 const products = createMockSnapshot().products;
+test("planning opens legacy script drafts without changing saved IDs, versions, or asset references", () => {
+  const planning = createDocument("planning"), script = flowDocument(planning, "scripts"), graphic = createDocument("graphics");
+  script.version = 3; script.body = "已有脚本正文";
+  script.scenes.push({ id: "shot", title: "开场", narration: "已有口播", visual: "商品特写", duration: 5 });
+  const state = emptyContent(); state.documents.push(planning, script, graphic);
+  state.assets.push({ id: "manuscript", name: "已有文稿", kind: "text", documentId: script.id, productId: "", text: script.body, mime: "text/plain", size: 18, duration: 0, createdAt: new Date().toISOString() });
+  const restored = JSON.parse(JSON.stringify(state));
+  assert.doesNotThrow(() => validateContent(restored, products));
+  assert.deepEqual(restored.documents.filter((doc: typeof planning) => contentDocumentMatchesPage(doc, "planning")), [planning, script]);
+  assert.equal(restored.documents.find((doc: typeof script) => doc.id === script.id && contentDocumentMatchesPage(doc, "planning")).version, 3);
+  assert.equal(restored.assets[0].documentId, script.id);
+  assert.equal(contentDocumentMatchesPage(script, "videos"), false);
+  assert.deepEqual(restored, state);
+});
+test("planning sends its script and scenes directly to video and graphic creation", () => {
+  const planning = createDocument("planning", products[0].id); planning.body = "开场、商品讲解和行动引导"; planning.brief.sellingPoints = "真实商品卖点";
+  planning.scenes.push({ id: "shot", title: "开场", narration: "脚本口播", visual: "商品特写", duration: 5 });
+  const video = flowDocument(planning, "videos"), graphics = flowDocument(planning, "graphics");
+  assert.equal(video.parentId, planning.id); assert.equal(graphics.parentId, planning.id);
+  assert.equal(video.body, planning.body); assert.equal(video.scenes[0].narration, "脚本口播");
+  assert.match(video.nodes.find(node => node.type === "generate")!.text, /商品特写\n脚本口播/);
+  assert.match(graphics.prompt, /真实商品卖点/); assert.match(graphics.prompt, /开场、商品讲解和行动引导/);
+  video.scenes[0].narration = "改稿"; assert.equal(planning.scenes[0].narration, "脚本口播");
+  assert.equal(contentNames.videos, "视频创作"); assert.equal(contentNames.graphics, "平面创作"); assert.equal(contentNames.assets, "素材库");
+});
 test("free canvas zoom preserves the world position under the cursor and fits negative coordinates", () => {
   const view = { x: -120, y: 50, scale: .5 }, point = { x: 300, y: 200 };
   const next = zoomCanvas(view, 2, point);

@@ -12,12 +12,12 @@ export const workspaces = [
     name: "内容中心",
     pages: [
       ["planning", "内容策划"],
-      ["scripts", "脚本工厂"],
-      ["videos", "视频工厂"],
-      ["graphics", "图片图文"],
+      ["scripts", "内容策划"],
+      ["videos", "视频创作"],
+      ["graphics", "平面创作"],
       ["editing", "智能剪辑"],
-      ["assets", "素材资产库"],
-      ["experiments", "素材测试"],
+      ["assets", "素材库"],
+      ["experiments", "素材库"],
     ],
   },
   {
@@ -54,6 +54,12 @@ export function pageName(id: PageId) {
   if (id === "account") return "用户中心";
   return pages.find(([value]) => value === id)![1];
 }
+export function legacyContentTarget(pageId: string, query = new URLSearchParams()): string | null {
+  const target = pageId === "scripts" ? "planning" : pageId === "experiments" ? "assets" : null;
+  if (!target) return null;
+  const search = query.toString();
+  return `/app/${target}${search ? `?${search}` : ""}`;
+}
 export function loginTarget(raw: string | null): string {
   if (raw === "mobile" || raw === "/mobile") return "/mobile";
   // Frozen homepage uses this bare legacy target for its default workbench CTA.
@@ -62,6 +68,8 @@ export function loginTarget(raw: string | null): string {
   const value = raw?.replace(/^\/app\//, "").replace(/^#\/?/, "");
   if (value === "campaigns") return "/app/plans";
   if (value === "budgets") return "/app/decisions?section=allocation";
+  const contentTarget = legacyContentTarget(value ?? "");
+  if (contentTarget) return contentTarget;
   return value && isPageId(value) ? `/app/${value}` : "/app/command";
 }
 
@@ -71,7 +79,7 @@ export const navigationGroups: { name: string; pages: readonly (readonly [PageId
   { name: "经营概况", pages: [["overview", pageName("overview")]] },
   { name: "直播运营", pages: [["monitor", "AI直播作战室"], ["products", "商品与货盘"]] },
   { name: "投放管理", pages: [["goals", "经营目标"], ["plans", "计划中心"], ["decisions", "投放优化"], ["executions", "执行记录"]] },
-  { name: "内容工厂", pages: [["planning", "内容策划"], ["scripts", "脚本工厂"], ["videos", "视频工厂"], ["graphics", "图片图文"], ["editing", "智能剪辑"], ["assets", "素材资产库"], ["experiments", "素材测试"]] },
+  { name: "内容中心", pages: [["planning", "内容策划"], ["videos", "视频创作"], ["graphics", "平面创作"], ["editing", "智能剪辑"], ["assets", "素材库"]] },
   { name: "数据复盘", pages: [["analytics", "经营分析"], ["reports", "完整复盘"]] },
 ];
 
@@ -79,4 +87,6 @@ export const customerPageIds: readonly PageId[] = [
   ...navigationGroups.flatMap((group) => group.pages.map(([id]) => id)),
   "tasks",
   "budgets", // Legacy grant remains valid for the budget panels.
+  "scripts", // Existing script grants open the unified planning workspace.
+  "experiments", // Accept legacy identity grants without exposing the removed entry.
 ];

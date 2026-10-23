@@ -171,13 +171,8 @@ const contentPages: Partial<
 > = {
   planning: {
     subtitle: "从商品到创意 Brief",
-    steps: ["选择商品与人群", "填写渠道与内容目标", "关联脚本任务"],
+    steps: ["选择商品与人群", "填写渠道与内容目标", "编辑脚本与分镜"],
     note: "创意生成接口由后端提供，本阶段保留任务入口与数据关系。",
-  },
-  scripts: {
-    subtitle: "脚本与讲解版本",
-    steps: ["创意 Brief", "脚本编辑与审核", "关联素材版本"],
-    note: "脚本保存与模型生成待后续阶段，不以固定模板冒充 AI 结果。",
   },
   videos: {
     subtitle: "视频生产任务",
@@ -193,11 +188,6 @@ const contentPages: Partial<
     subtitle: "智能剪辑任务",
     steps: ["选择获权素材", "字幕与剪辑需求", "渲染与结果文件"],
     note: "保留 NEXORA 剪辑接入位置，本阶段不运行剪辑或渲染服务。",
-  },
-  experiments: {
-    subtitle: "素材测试与观察",
-    steps: ["明确实验假设", "统一预算与归因窗口", "观察样本与结果"],
-    note: "缺少真实实验样本时，不生成素材胜负或效果结论。",
   },
   agents: {
     subtitle: "AI 岗位与任务来源",

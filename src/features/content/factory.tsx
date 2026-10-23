@@ -6,7 +6,7 @@ import { ArrowCounterClockwise, ArrowRight, CheckCircle, Copy, DownloadSimple, F
 import { useWorkspace } from "@/components/provider";
 import { canAccessPage } from "@/lib/access";
 import type { FrontendSnapshot, Identity } from "@/lib/domain";
-import { authorizedProducts, contentNames, createDocument, emptyContent, flowDocument, uid, validateContent, type ContentAsset, type ContentDocument, type ContentOwner, type ContentPage, type ContentState, type DocumentKind } from "@/lib/content-factory";
+import { authorizedProducts, contentDocumentMatchesPage, contentNames, createDocument, emptyContent, flowDocument, uid, validateContent, type ContentAsset, type ContentDocument, type ContentOwner, type ContentPage, type ContentState, type DocumentKind } from "@/lib/content-factory";
 import { downloadBlob, inspectContentFile, readContentDraft, readContentFile, saveContentDraft } from "@/services/content-drafts";
 import { AssetPicker, AssetPreview, Field, ImportButton, type EditorProps } from "./shared";
 import { WritingWorkspace } from "./writing";
@@ -33,7 +33,7 @@ function FactorySession({ owner, identity, shopName, snapshot, pageId }: { owner
   const pendingFiles = useRef(new Map<string, Blob>()), undoHistory = useRef<ContentState[]>([]), busyRef = useRef(false), allowNavigation = useRef(false), importOwner = useRef(true);
   const [hasUndo, setHasUndo] = useState(false), [mobilePane, setMobilePane] = useState("workspace"), [platformOpen, setPlatformOpen] = useState(false);
   const [deliveryAssetId, setDeliveryAssetId] = useState<string | null>(null);
-  const doc = state.documents.find(d => d.id === selectedId), documents = state.documents.filter(d => d.kind === pageId && d.title.toLowerCase().includes(query.toLowerCase()));
+  const doc = state.documents.find(d => d.id === selectedId), documents = state.documents.filter(d => contentDocumentMatchesPage(d, pageId) && d.title.toLowerCase().includes(query.toLowerCase()));
   const readFile = useCallback(async (id: string) => pendingFiles.current.get(id) ?? await readContentFile(owner, id), [owner]);
   useEffect(() => {
     importOwner.current = true;
@@ -42,7 +42,7 @@ function FactorySession({ owner, identity, shopName, snapshot, pageId }: { owner
       validateContent(saved, initialProducts);
       validateAccountLinks(saved, owner);
       if (cancelled) return;
-      const desired = new URL(window.location.href).searchParams.get("document"), existing = saved.documents.find(d => d.id === desired && d.kind === pageId) ?? saved.documents.find(d => d.kind === pageId);
+      const desired = new URL(window.location.href).searchParams.get("document"), existing = saved.documents.find(d => d.id === desired && contentDocumentMatchesPage(d, pageId)) ?? saved.documents.find(d => contentDocumentMatchesPage(d, pageId));
       if (pageId !== "assets" && !existing) { const fresh = createDocument(pageId); saved = { ...saved, documents: [...saved.documents, fresh] }; setSelectedId(fresh.id); }
       else setSelectedId(existing?.id ?? "");
       setState(saved); setReady(true);
@@ -110,7 +110,7 @@ function FactorySession({ owner, identity, shopName, snapshot, pageId }: { owner
   }
   function create(kind: DocumentKind) { if (busy) return; const next = createDocument(kind, doc?.productId); replace({ ...state, documents: [...state.documents, next] }); setSelectedId(next.id); setListOpen(false); }
   function duplicate() { if (!doc) return; const next = { ...structuredClone(doc), id: uid(), parentId: doc.id, version: doc.version + 1, status: "draft" as const, updatedAt: new Date().toISOString() }; replace({ ...state, documents: [...state.documents, next] }); setSelectedId(next.id); }
-  function undo() { const previous = undoHistory.current.pop(); if (previous) { setState({ ...previous, revision: state.revision }); if (!previous.documents.some(d => d.id === selectedId)) setSelectedId(previous.documents.find(d => d.kind === pageId)?.id ?? ""); setDirty(true); setMessage("已撤销上一步修改。"); } setHasUndo(undoHistory.current.length > 0); }
+  function undo() { const previous = undoHistory.current.pop(); if (previous) { setState({ ...previous, revision: state.revision }); if (!previous.documents.some(d => d.id === selectedId)) setSelectedId(previous.documents.find(d => contentDocumentMatchesPage(d, pageId))?.id ?? ""); setDirty(true); setMessage("已撤销上一步修改。"); } setHasUndo(undoHistory.current.length > 0); }
   if (loadError) return <div className="cf-shop-prompt" role="alert"><h2>暂时无法打开草稿</h2><p>{loadError}</p><button className="button secondary" onClick={() => window.location.reload()}>重新读取</button><button className="button secondary" onClick={() => { void readContentDraft(owner).then(raw => downloadBlob(new Blob([JSON.stringify(raw)], { type: "application/json" }), "原始草稿备份.json")).catch(e => setLoadError((e as Error).message)); }}>下载原始草稿备份</button></div>;
   if (!ready) return <div className="cf-loading" role="status"><span className="loading-ring" />正在打开创作工作区…</div>;
   const editorProps: EditorProps = { doc: doc!, state, owner, products, update, flow: kind => void flow(kind), archive, importFiles, file: readFile, notify: setMessage, deliver };

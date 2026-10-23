@@ -1,4 +1,4 @@
-# 易致·驭量前端技术架构与业务流
+﻿# 易致·驭量前端技术架构与业务流
 
 - 整理日期：2026-10-22 · Asia/Shanghai
 - 代码基线：`5d4b568065e432ed59b7a13cceec516dd763859e`
@@ -592,33 +592,33 @@ advanceMockJob / expireMockJob 在 API 模式抛出 FORBIDDEN。AUTOPILOT 不能
 
 | 依据 | 本地文件与起始行 | 固定提交源码 |
 | --- | --- | --- |
-| 依赖与版本 | [`package.json:19`](../package.json) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/package.json#L19) |
-| 官网隔离与旧路径兼容 | [`next.config.ts:3`](../next.config.ts) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/next.config.ts#L3) |
-| 四工作区、21 路由、next 白名单 | [`src/lib/routes.ts:1`](../src/lib/routes.ts) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/lib/routes.ts#L1) |
-| 服务端 pageId 校验 | [`src/app/(frontend)/app/[pageId]/page.tsx:4`](../src/app/%28frontend%29/app/%5BpageId%5D/page.tsx) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/app/%28frontend%29/app/%5BpageId%5D/page.tsx#L4) |
-| 业务 Provider 与 CSS 入口 | [`src/app/(frontend)/layout.tsx:5`](../src/app/%28frontend%29/layout.tsx) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/app/%28frontend%29/layout.tsx#L5) |
-| 共享状态、读取、守卫与错误边界 | [`src/components/provider.tsx:30`](../src/components/provider.tsx) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/components/provider.tsx#L30) |
-| PC 工作台导航与框架 | [`src/components/workspace-shell.tsx:21`](../src/components/workspace-shell.tsx) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/components/workspace-shell.tsx#L21) |
-| 页面能力、骨架与复盘 | [`src/features/business-page.tsx:282`](../src/features/business-page.tsx) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/features/business-page.tsx#L282) |
-| 经营目标与核心四页 | [`src/features/control-workspace.tsx:17`](../src/features/control-workspace.tsx) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/features/control-workspace.tsx#L17) |
-| 手机四标签与 review=false | [`src/features/mobile-page.tsx:23`](../src/features/mobile-page.tsx) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/features/mobile-page.tsx#L23) |
-| 指令、消歧与任务创建 | [`src/components/command-panel.tsx:13`](../src/components/command-panel.tsx) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/components/command-panel.tsx#L13) |
-| 任务详情、审批与执行按钮 | [`src/components/task-controls.tsx:52`](../src/components/task-controls.tsx) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/components/task-controls.tsx#L52) |
-| 统计范围、KPI 与直播观察 | [`src/components/operating-context.tsx:14`](../src/components/operating-context.tsx) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/components/operating-context.tsx#L14) |
-| 领域实体与金额 / ROI 汇总 | [`src/lib/domain.ts:2`](../src/lib/domain.ts) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/lib/domain.ts#L2) |
-| 任务、状态、动作、值类型 | [`src/lib/command-job.ts:3`](../src/lib/command-job.ts) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/lib/command-job.ts#L3) |
-| 范围筛选与证据过滤 | [`src/lib/reporting.ts:3`](../src/lib/reporting.ts) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/lib/reporting.ts#L3) |
-| Service 接口与统一错误 | [`src/services/contracts.ts:43`](../src/services/contracts.ts) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/services/contracts.ts#L43) |
-| Mock / API 适配器工厂 | [`src/services/index.ts:4`](../src/services/index.ts) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/services/index.ts#L4) |
-| 存储、任务状态机、版本与幂等 | [`src/services/mock-adapter.ts:40`](../src/services/mock-adapter.ts) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/services/mock-adapter.ts#L40) |
-| Mock 规则解析与风险检查 | [`src/services/mock-command.ts:144`](../src/services/mock-command.ts) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/services/mock-command.ts#L144) |
-| 演示身份与权限 | [`src/services/mock-identity.ts:9`](../src/services/mock-identity.ts) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/services/mock-identity.ts#L9) |
-| 只读迁移，不继承旧审批 | [`src/services/mock-migration.ts:11`](../src/services/mock-migration.ts) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/services/mock-migration.ts#L11) |
-| 初始演示数据与默认规则 | [`src/services/mock-data.ts:3`](../src/services/mock-data.ts) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/services/mock-data.ts#L3) |
-| HTTP 客户端与 API 结果约束 | [`src/services/api-client.ts:20`](../src/services/api-client.ts) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/services/api-client.ts#L20) |
-| 现有任务与边界测试 | [`tests/frontend.test.ts:48`](../tests/frontend.test.ts) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/tests/frontend.test.ts#L48) |
-| 固定运行时与检查命令 | [`scripts/run.mjs:7`](../scripts/run.mjs) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/scripts/run.mjs#L7) |
-| 既有 11 个接口与 Schema | [`docs/api-handoff-2026-10-22/openapi.json:34`](../docs/api-handoff-2026-10-22/openapi.json) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/docs/api-handoff-2026-10-22/openapi.json#L34) |
+| 依赖与版本 | [`package.json:19`](../../../package.json) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/package.json#L19) |
+| 官网隔离与旧路径兼容 | [`next.config.ts:3`](../../../next.config.ts) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/next.config.ts#L3) |
+| 四工作区、21 路由、next 白名单 | [`src/lib/routes.ts:1`](../../../src/lib/routes.ts) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/lib/routes.ts#L1) |
+| 服务端 pageId 校验 | [`src/app/(frontend)/app/[pageId]/page.tsx:4`](../../../src/app/%28frontend%29/app/%5BpageId%5D/page.tsx) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/app/%28frontend%29/app/%5BpageId%5D/page.tsx#L4) |
+| 业务 Provider 与 CSS 入口 | [`src/app/(frontend)/layout.tsx:5`](../../../src/app/%28frontend%29/layout.tsx) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/app/%28frontend%29/layout.tsx#L5) |
+| 共享状态、读取、守卫与错误边界 | [`src/components/provider.tsx:30`](../../../src/components/provider.tsx) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/components/provider.tsx#L30) |
+| PC 工作台导航与框架 | [`src/components/workspace-shell.tsx:21`](../../../src/components/workspace-shell.tsx) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/components/workspace-shell.tsx#L21) |
+| 页面能力、骨架与复盘 | [`src/features/business-page.tsx:282`](../../../src/features/business-page.tsx) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/features/business-page.tsx#L282) |
+| 经营目标与核心四页 | [`src/features/control-workspace.tsx:17`](../../../src/features/control-workspace.tsx) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/features/control-workspace.tsx#L17) |
+| 手机四标签与 review=false | [`src/features/mobile-page.tsx:23`](../../../src/features/mobile-page.tsx) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/features/mobile-page.tsx#L23) |
+| 指令、消歧与任务创建 | [`src/components/command-panel.tsx:13`](../../../src/components/command-panel.tsx) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/components/command-panel.tsx#L13) |
+| 任务详情、审批与执行按钮 | [`src/components/task-controls.tsx:52`](../../../src/components/task-controls.tsx) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/components/task-controls.tsx#L52) |
+| 统计范围、KPI 与直播观察 | [`src/components/operating-context.tsx:14`](../../../src/components/operating-context.tsx) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/components/operating-context.tsx#L14) |
+| 领域实体与金额 / ROI 汇总 | [`src/lib/domain.ts:2`](../../../src/lib/domain.ts) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/lib/domain.ts#L2) |
+| 任务、状态、动作、值类型 | [`src/lib/command-job.ts:3`](../../../src/lib/command-job.ts) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/lib/command-job.ts#L3) |
+| 范围筛选与证据过滤 | [`src/lib/reporting.ts:3`](../../../src/lib/reporting.ts) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/lib/reporting.ts#L3) |
+| Service 接口与统一错误 | [`src/services/contracts.ts:43`](../../../src/services/contracts.ts) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/services/contracts.ts#L43) |
+| Mock / API 适配器工厂 | [`src/services/index.ts:4`](../../../src/services/index.ts) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/services/index.ts#L4) |
+| 存储、任务状态机、版本与幂等 | [`src/services/mock-adapter.ts:40`](../../../src/services/mock-adapter.ts) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/services/mock-adapter.ts#L40) |
+| Mock 规则解析与风险检查 | [`src/services/mock-command.ts:144`](../../../src/services/mock-command.ts) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/services/mock-command.ts#L144) |
+| 演示身份与权限 | [`src/services/mock-identity.ts:9`](../../../src/services/mock-identity.ts) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/services/mock-identity.ts#L9) |
+| 只读迁移，不继承旧审批 | [`src/services/mock-migration.ts:11`](../../../src/services/mock-migration.ts) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/services/mock-migration.ts#L11) |
+| 初始演示数据与默认规则 | [`src/services/mock-data.ts:3`](../../../src/services/mock-data.ts) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/services/mock-data.ts#L3) |
+| HTTP 客户端与 API 结果约束 | [`src/services/api-client.ts:20`](../../../src/services/api-client.ts) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/src/services/api-client.ts#L20) |
+| 现有任务与边界测试 | [`tests/frontend.test.ts:48`](../../../tests/frontend.test.ts) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/tests/frontend.test.ts#L48) |
+| 固定运行时与检查命令 | [`scripts/run.mjs:7`](../../../scripts/run.mjs) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/scripts/run.mjs#L7) |
+| 既有 11 个接口与 Schema | [`docs/shared/contracts/api-handoff-2026-10-22/openapi.json:34`](../../shared/contracts/api-handoff-2026-10-22/openapi.json) | [查看](https://github.com/xiansheng-Lu/yizhi-yuliang/blob/5d4b568065e432ed59b7a13cceec516dd763859e/docs/api-handoff-2026-10-22/openapi.json#L34) |
 
 > **阅读顺序：**产品与运营可按 01 → 03 → 04 → 05 阅读；前端接手可按 02 → 06 → 代码入口阅读；后端联调可按 05 → 07 → 08 → API 对接包阅读。
 

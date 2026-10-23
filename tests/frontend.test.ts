@@ -98,7 +98,7 @@ test("login allowlist restores valid targets and rejects external or malformed U
 });
 test("homepage files match the approved branding SHA256 baseline", () => {
   const baseline = JSON.parse(
-    readFileSync("docs/homepage-baseline.json", "utf8"),
+    readFileSync("docs/shared/baselines/homepage-baseline.json", "utf8"),
   );
   for (const [name, expected] of Object.entries(baseline.files))
     assert.equal(

@@ -1,4 +1,4 @@
-{
+﻿{
   "generatedDate": "2026-10-22",
   "timezone": "Asia/Shanghai",
   "baselineCommit": "5d4b568065e432ed59b7a13cceec516dd763859e",
@@ -400,7 +400,7 @@
     },
     {
       "id": "src-api-package",
-      "file": "docs/api-handoff-2026-10-22/openapi.json",
+      "file": "docs/shared/contracts/api-handoff-2026-10-22/openapi.json",
       "label": "既有 11 个接口与 Schema",
       "line": 34,
       "sha256": "cbdde3af39ef624102e4774b7507abb052c0515b4d4aa48eaa5f7ec2af57e337",

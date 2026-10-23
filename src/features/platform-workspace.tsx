@@ -43,7 +43,7 @@ import {
 import { ProductScopeSelector } from "./advertising/product-selector";
 import { Modal, Status } from "./delivery/ui";
 import { money } from "@/lib/domain";
-import { todayShanghai } from "@/lib/delivery";
+import { todayShanghai, validDate } from "@/lib/delivery";
 import "@/styles/platform-workspace.css";
 
 export function VerificationStages({
@@ -90,7 +90,7 @@ export function PlatformDataPanel({ pageId }: { pageId: string }) {
         onClick={() => setOpen(!open)}
       >
         <ShieldCheck size={17} />
-        {commerce ? "经营数据、平台报表与接口能力" : "平台素材授权、规格与审核"}
+        {commerce ? "经营数据、平台报表与接口能力" : pageId === "decisions" || pageId === "budgets" ? "平台数据与接口能力" : "平台素材授权、规格与审核"}
         <span>{open ? "收起" : "展开数据工作区"}</span>
       </button>
       {open && (
@@ -295,10 +295,12 @@ export function PlatformWorkspace({
   pageId,
   initialProduct,
   embedded = false,
+  resourceTypes,
 }: {
   pageId: string;
   initialProduct: ProductLine;
   embedded?: boolean;
+  resourceTypes?: readonly PlatformResource[];
 }) {
   const workspace = useWorkspace(),
     identity = workspace.identity!,
@@ -342,7 +344,7 @@ export function PlatformWorkspace({
     product: ProductLine;
     value: PlatformResource;
   }>({ product, value: resourcesForPage(pageId, product)[0] });
-  const resources =
+  const pageResources =
     embedded &&
     product !== "wxshop" &&
     [
@@ -356,6 +358,7 @@ export function PlatformWorkspace({
     ].includes(pageId)
       ? (["creatives", "audit", "reports"] as PlatformResource[])
       : resourcesForPage(pageId, product);
+  const resources = resourceTypes ? pageResources.filter(resource => resourceTypes.includes(resource)) : pageResources;
   const resource =
     resourceSelection.product === product &&
     resources.includes(resourceSelection.value)
@@ -502,6 +505,16 @@ export function PlatformWorkspace({
       router.replace(`${pathname}?${q}`);
     }
   }
+  function changeDates(patch: Partial<typeof dates>) {
+    const next = { ...dates, ...patch };
+    setDates(next);
+    if (!embedded && validDate(next.start) && validDate(next.end) && next.end >= next.start) {
+      const query = new URLSearchParams(searchParams.toString());
+      query.set("start", next.start);
+      query.set("end", next.end);
+      router.replace(`${pathname}?${query}`);
+    }
+  }
   const accounts =
     context?.accounts.filter(
       (a) => !current.entity || a.businessEntityId === current.entity,
@@ -641,7 +654,7 @@ export function PlatformWorkspace({
             value={dates.start}
             max={dates.end}
             onInput={(e) =>
-              setDates({ ...dates, start: e.currentTarget.value })
+              changeDates({ start: e.currentTarget.value })
             }
           />
         </label>
@@ -652,7 +665,7 @@ export function PlatformWorkspace({
             type="date"
             value={dates.end}
             min={dates.start}
-            onInput={(e) => setDates({ ...dates, end: e.currentTarget.value })}
+            onInput={(e) => changeDates({ end: e.currentTarget.value })}
           />
         </label>
         <button
@@ -715,7 +728,7 @@ export function PlatformWorkspace({
           {error && block && ` ${block}`}
         </div>
       )}
-      <div className="pi-tabs" role="tablist" aria-label="产品线业务资源">
+      {resources.length > 1 && <div className="pi-tabs" role="tablist" aria-label="产品线业务资源">
         {resources.map((r) => (
           <button
             key={r}
@@ -733,7 +746,7 @@ export function PlatformWorkspace({
             {resourceNames[r]}
           </button>
         ))}
-      </div>
+      </div>}
       <div className="pi-resource">
         {parent && (
           <div className="pi-notice">

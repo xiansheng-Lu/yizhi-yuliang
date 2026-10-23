@@ -20,8 +20,8 @@ import {
 import { DeliveryProvider, useDelivery } from "./delivery/context";
 import { Goals } from "./delivery/goals";
 import { Plans } from "./delivery/plans";
-import { Decisions } from "./delivery/decisions";
-import { Budgets } from "./delivery/budgets";
+import { OptimizationWorkspace } from "./delivery/optimization";
+import { isOptimizationSection } from "@/lib/optimization";
 import { Executions } from "./delivery/executions";
 import { Status } from "./delivery/ui";
 import {
@@ -58,6 +58,7 @@ function DeliveryContent({ pageId }: { pageId: DeliveryPage }) {
     );
   const shopProduct = d.query.get("product") === "shop";
   const productLine = d.query.get("product");
+  const optimization = pageId === "decisions" || pageId === "budgets";
   if (
     productLine === "wxshop" ||
     (isAdvertisingProduct(productLine) &&
@@ -65,11 +66,11 @@ function DeliveryContent({ pageId }: { pageId: DeliveryPage }) {
   )
     return (
       <div className="delivery-workspace">
-        <PlatformWorkspace
+        {optimization && isAdvertisingProduct(productLine) ? <OptimizationWorkspace product={productLine}/> : <PlatformWorkspace
           key={`${pageId}:${productLine}`}
           pageId={pageId}
           initialProduct={productLine}
-        />
+        />}
       </div>
     );
   const selected = d.data.accounts.find(
@@ -108,7 +109,7 @@ function DeliveryContent({ pageId }: { pageId: DeliveryPage }) {
                     deliveryHref(
                       pageId,
                       { ...d.scope, platform: "all", accountId: "all" },
-                      { product },
+                      { product, ...(optimization && isOptimizationSection(d.query.get("section")) ? { section: d.query.get("section") } : {}) },
                     ),
                   )
             }
@@ -263,10 +264,8 @@ function DeliveryContent({ pageId }: { pageId: DeliveryPage }) {
           <Plans />
         ) : pageId === "goals" ? (
           <Goals />
-        ) : pageId === "decisions" ? (
-          <Decisions />
-        ) : pageId === "budgets" ? (
-          <Budgets />
+        ) : optimization ? (
+          <OptimizationWorkspace />
         ) : (
           <Executions />
         )}
@@ -287,7 +286,7 @@ function DeliveryContent({ pageId }: { pageId: DeliveryPage }) {
           微信小店经营数据中心
         </button>
       </div>
-      <PlatformDataPanel pageId={pageId} />
+      {!optimization && <PlatformDataPanel pageId={pageId} />}
     </div>
   );
 }

@@ -24,10 +24,10 @@ export const workspaces = [
     name: "投放中心",
     pages: [
       ["plans", "计划中心"],
-      ["decisions", "AI投放决策"],
+      ["decisions", "投放优化"],
       ["executions", "执行记录"],
       ["products", "商品与货盘"],
-      ["budgets", "预算调度"],
+      ["budgets", "投放优化"],
     ],
   },
   {
@@ -61,6 +61,7 @@ export function loginTarget(raw: string | null): string {
   if (raw === "overview") return "/app/command";
   const value = raw?.replace(/^\/app\//, "").replace(/^#\/?/, "");
   if (value === "campaigns") return "/app/plans";
+  if (value === "budgets") return "/app/decisions?section=allocation";
   return value && isPageId(value) ? `/app/${value}` : "/app/command";
 }
 
@@ -69,7 +70,7 @@ export const navigationGroups: { name: string; pages: readonly (readonly [PageId
   { name: "AI驭量中枢", pages: [["command", pageName("command")]] },
   { name: "经营概况", pages: [["overview", pageName("overview")]] },
   { name: "直播运营", pages: [["monitor", "AI直播作战室"], ["products", "商品与货盘"]] },
-  { name: "投放管理", pages: [["goals", "经营目标"], ["plans", "计划中心"], ["decisions", "AI投放决策"], ["budgets", "预算调度"], ["executions", "执行记录"]] },
+  { name: "投放管理", pages: [["goals", "经营目标"], ["plans", "计划中心"], ["decisions", "投放优化"], ["executions", "执行记录"]] },
   { name: "内容工厂", pages: [["planning", "内容策划"], ["scripts", "脚本工厂"], ["videos", "视频工厂"], ["graphics", "图片图文"], ["editing", "智能剪辑"], ["assets", "素材资产库"], ["experiments", "素材测试"]] },
   { name: "数据复盘", pages: [["analytics", "经营分析"], ["reports", "完整复盘"]] },
 ];
@@ -77,4 +78,5 @@ export const navigationGroups: { name: string; pages: readonly (readonly [PageId
 export const customerPageIds: readonly PageId[] = [
   ...navigationGroups.flatMap((group) => group.pages.map(([id]) => id)),
   "tasks",
+  "budgets", // Legacy grant remains valid for the budget panels.
 ];

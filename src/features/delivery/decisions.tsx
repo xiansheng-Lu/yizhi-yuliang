@@ -35,8 +35,7 @@ export function Decisions() {
   const [status, setStatus] = useState("all"),
     [type, setType] = useState("all"),
     [risk, setRisk] = useState("all");
-  const [review, setReview] = useState<AIDecision | null>(null),
-    [rules, setRules] = useState(false);
+  const [review, setReview] = useState<AIDecision | null>(null);
   const planId = d.query.get("planId"),
     decisionId = d.query.get("decisionId");
   const decisions = d.data.decisions.filter(
@@ -98,10 +97,6 @@ export function Decisions() {
           </span>
         </div>
         <div className="dw-actions">
-          <button className="button secondary" onClick={() => setRules(true)}>
-            <Gear size={15} />
-            策略规则
-          </button>
           <AnalyzeButton
             kind={planId ? "PLAN" : "DECISION"}
             ids={ids}
@@ -284,12 +279,13 @@ export function Decisions() {
                   disabled={!["OPEN", "DEFERRED"].includes(selected.status)}
                   onClick={() => setReview(selected)}
                 >
-                  审批 / 修改建议
+                  处理建议
                 </button>
                 {selected.proposedAction === "CHANGE_DAILY_BUDGET" && (
                   <Link
                     className="button secondary"
                     href={d.href("budgets", {
+                      section: "rules",
                       decisionId: selected.id,
                       planId: selected.planId,
                     })}
@@ -341,9 +337,21 @@ export function Decisions() {
         </Section>
       </div>
       {review && <Review decision={review} close={() => setReview(null)} />}
-      {rules && <Rules close={() => setRules(false)} />}
     </>
   );
+}
+export function DecisionPolicyPanel() {
+  const d = useDelivery();
+  const [rules, setRules] = useState(false);
+  const cap = d.data.capabilities.find(c => c.accountId === d.scope.accountId);
+  return <Section title="账户策略与自动化规则" detail="账户策略由后端确认，配置变更沿用原有预览和审批流程。">
+    <div className="dw-page-tools">
+      <div className="dw-mode"><ShieldCheck size={16}/><b>{modeNames[cap?.automationMode ?? "OBSERVE"]}</b><span>{cap ? "由账户后端策略声明" : "默认只观察，策略接口待接入"}</span></div>
+      <button className="button secondary" onClick={() => setRules(true)}><Gear size={15}/>配置策略规则</button>
+    </div>
+    <p className="dw-muted">核对预算上限、调整频率、观察周期和审批阈值。自动化模式的变更需要账户能力与成员权限校验。</p>
+    {rules && <Rules close={() => setRules(false)}/>}
+  </Section>;
 }
 function Review({
   decision: x,

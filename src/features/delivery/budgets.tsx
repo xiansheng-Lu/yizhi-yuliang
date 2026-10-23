@@ -26,10 +26,10 @@ import {
 import { AnalyzeButton } from "./shared";
 import { ApprovalReview } from "./approval";
 
-export function Budgets() {
+export function Budgets({ section = "allocation" }: { section?: "allocation" | "funds" | "rules" }) {
   const d = useDelivery();
-  const [tab, setTab] = useState("预算分配"),
-    [edit, setEdit] = useState<BudgetAllocation | null>(null),
+  const tab = section === "allocation" ? "预算分配" : section === "funds" ? "账户资金" : "风险控制";
+  const [edit, setEdit] = useState<BudgetAllocation | null>(null),
     [create, setCreate] = useState(false);
   const [approval, setApproval] = useState<BudgetAllocation | null>(null);
   const rows = d.data.budgets.filter(
@@ -42,15 +42,15 @@ export function Budgets() {
         : [platforms[d.scope.platform].currency];
   return (
     <>
-      <div className="dw-page-tools">
+      {section === "allocation" && <div className="dw-page-tools">
         <p className="dw-muted">经营额度、账户余额和平台计划预算分别管理。</p>
         <AnalyzeButton
           kind="BUDGET"
           ids={rows.map((x) => x.id)}
           label="AI生成预算建议"
         />
-      </div>
-      {units.map((unit) => {
+      </div>}
+      {section === "allocation" && units.map((unit) => {
         const current = roots.filter((b) => b.currency === unit),
           complete =
             current.length > 0 && current.every((b) => b.spent !== null),
@@ -101,19 +101,7 @@ export function Budgets() {
           </div>
         );
       })}
-      <div className="dw-tabs" role="tablist" aria-label="预算工作区">
-        {["预算分配", "账户资金", "AI预算优化", "风险控制"].map((name) => (
-          <button
-            key={name}
-            role="tab"
-            aria-selected={tab === name}
-            onClick={() => setTab(name)}
-          >
-            {name}
-          </button>
-        ))}
-      </div>
-      <div role="tabpanel">
+      <div>
         {tab === "预算分配" && (
           <div className="dw-budget-grid">
             <Section
@@ -225,7 +213,7 @@ export function Budgets() {
                 <p>服务端校验可用额度、单次调整上限、审批阈值和并发版本。</p>
                 <button
                   className="button secondary"
-                  onClick={() => setTab("风险控制")}
+                  onClick={() => d.navigate(d.href("decisions", { section: "rules", planId: d.query.get("planId") }))}
                 >
                   查看预算边界
                 </button>
@@ -280,33 +268,8 @@ export function Budgets() {
             {!d.data.accounts.length && <Missing title="暂无已关联账户" />}
           </Section>
         )}
-        {tab === "AI预算优化" && (
-          <Section
-            title="有数据依据的预算建议"
-            detail="低效消耗、分配偏差和剩余预算分析由实际诊断提供"
-          >
-            {d.data.decisions
-              .filter((x) => ["EFFICIENCY", "PACING"].includes(x.type))
-              .map((x) => (
-                <Link
-                  key={x.id}
-                  className="dw-list-row"
-                  href={d.href("decisions", { decisionId: x.id })}
-                >
-                  <span>
-                    <b>{x.title}</b>
-                    <small>{x.recommendation}</small>
-                  </span>
-                  <ArrowRight size={15} />
-                </Link>
-              ))}
-            {!d.data.decisions.some((x) =>
-              ["EFFICIENCY", "PACING"].includes(x.type),
-            ) && <Missing title="暂无可追溯的AI预算建议" />}
-          </Section>
-        )}
         {tab === "风险控制" && (
-          <Section title="预算安全边界与执行冲突">
+          <Section title="预算安全边界">
             <div className="dw-risk-grid">
               {d.data.boundaries.map((b) => (
                 <article key={b.accountId}>
@@ -337,23 +300,6 @@ export function Budgets() {
                 detail="企业现有风控规则继续由原服务维护，不将企业CNY规则直接套用到微信豆。"
               />
             )}
-            <h3>执行中的预算任务</h3>
-            {d.data.executions
-              .filter((t) =>
-                ["PENDING", "EXECUTING", "VERIFYING", "UNKNOWN"].includes(
-                  t.status,
-                ),
-              )
-              .map((t) => (
-                <Link
-                  className="dw-list-row"
-                  key={t.id}
-                  href={d.href("executions", { taskId: t.id })}
-                >
-                  {t.action} · {t.id}
-                  <Status>{t.status}</Status>
-                </Link>
-              ))}
           </Section>
         )}
       </div>

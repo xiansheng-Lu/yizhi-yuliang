@@ -61,6 +61,7 @@ for (const [path, expected] of [
   ["/app.html", "/legacy"],
   ["/app/campaigns", "/app/plans"],
   ["/app", "/app/command"],
+  ["/app/budgets?platform=adq&accountId=test-account&product=adq&budgetId=test-budget", "/app/decisions?platform=adq&accountId=test-account&product=adq&budgetId=test-budget&section=allocation"],
 ]) {
   const response = await fetch(base + path, { redirect: "manual" });
   assert.equal(response.status, 307);

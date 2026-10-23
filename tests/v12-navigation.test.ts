@@ -7,8 +7,8 @@ import { customerPageIds, isPageId, loginTarget, navigationGroups, pageName, pag
 test("six customer navigation entries exclude administration and preserve legacy routes", () => {
   assert.deepEqual(navigationGroups.map((group) => group.name), ["AI驭量中枢", "经营概况", "直播运营", "投放管理", "内容工厂", "数据复盘"]);
   const ids = navigationGroups.flatMap((group) => group.pages.map(([id]) => id));
-  assert.equal(ids.length, 18);
-  assert.equal(new Set(ids).size, 18);
+  assert.equal(ids.length, 17);
+  assert.equal(new Set(ids).size, 17);
   for (const [id] of pages) assert.ok(isPageId(id), id);
   for (const id of ["agents", "connections", "settings", "tasks"]) assert.ok(!ids.some((value) => value === id));
   assert.ok(customerPageIds.includes("tasks"));

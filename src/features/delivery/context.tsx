@@ -33,6 +33,7 @@ import type { Identity } from "@/lib/domain";
 import { Modal } from "./ui";
 import { useDeliverySession } from "./session";
 import { advertisingNavigationParams } from "@/lib/advertising";
+import { isOptimizationSection } from "@/lib/optimization";
 
 interface DeliveryContextValue {
   data: DeliveryData;
@@ -246,7 +247,8 @@ export function DeliveryProvider({ children }: { children: ReactNode }) {
     )
       next.accountId = "all";
     if (patch.shopId !== undefined) delete next.liveSessionId;
-    navigate(deliveryHref(pathname.split("/").pop()!, next));
+    const section = search.get("section");
+    navigate(deliveryHref(pathname.split("/").pop()!, next, isOptimizationSection(section) ? { section } : {}));
   };
   async function mutate<T>(
     accountId: string,

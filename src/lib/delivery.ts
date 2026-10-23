@@ -1,5 +1,6 @@
 import type { Identity } from "./domain";
 import { isAdvertisingProduct } from "./advertising";
+import { legacyBudgetTarget } from "./optimization";
 
 export const deliveryPages = [
   "goals",
@@ -528,7 +529,7 @@ export function deliveryHref(
   Object.entries(ids).forEach(([key, value]) => {
     if (value) q.set(key, value);
   });
-  return `/app/${page}?${q}`;
+  return page === "budgets" ? legacyBudgetTarget(q) : `/app/${page}?${q}`;
 }
 export function actionAvailability(
   data: DeliveryData,

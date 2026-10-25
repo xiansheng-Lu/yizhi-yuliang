@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>前端架构与业务流 · 易致·驭量</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230d1520'/%3E%3Cpath d='M7 24V8h4v6h10V8h4v16h-4v-6H11v6z' fill='%23ffb547'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme: light dark;
+  --font-body:'IBM Plex Sans','Microsoft YaHei','PingFang SC','Noto Sans SC',sans-serif;
+  --font-mono:'IBM Plex Mono','Microsoft YaHei',ui-monospace,monospace;
+  --t-display:2.4rem; --t-h2:1.5rem; --t-h3:1.125rem; --t-body:1rem; --t-small:.875rem; --t-label:.75rem;
+  --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:24px; --s-6:32px; --s-7:48px; --s-8:64px; --s-9:96px;
+  --r-1:3px; --r-2:6px;
+  --bg:#0d1520; --surface:#132031; --surface-2:#17273b; --border:#22324a; --border-bright:#5b6f8c;
+  --text:#e3ecf5; --text-dim:#93a7bc;
+  --accent:#ffb547; --accent-ink:#0d1520; --accent-soft:rgba(255,181,71,.12);
+  --ok:#6fd3a0; --warn:#e8d36a; --risk:#ff7b6b; --info:#7cc0f0;
+  --shadow:0 12px 28px rgba(0,0,0,.45);
+}
+@media (prefers-color-scheme: light){
+  :root{
+    --bg:#f2f6fa; --surface:#ffffff; --surface-2:#e9f0f7; --border:#d3dee9; --border-bright:#7c8ea3;
+    --text:#0f1a26; --text-dim:#51637a;
+    --accent:#a34700; --accent-ink:#ffffff; --accent-soft:rgba(163,71,0,.10);
+    --ok:#1c7443; --warn:#776300; --risk:#b0341e; --info:#145f99;
+    --shadow:0 10px 24px rgba(15,26,38,.10);
+  }
+}
+*{box-sizing:border-box}
+html{font-size:17px;background:var(--bg);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:var(--t-body);line-height:1.6;text-rendering:optimizeLegibility}
+::selection{background:var(--accent);color:var(--accent-ink)}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+p{margin:0 0 var(--s-4)}
+code{font-family:var(--font-mono);font-size:.92em;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-1);padding:1px 5px;overflow-wrap:anywhere}
+b,strong{font-weight:600;color:var(--text)}
+
+.topbar{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 92%,transparent);border-bottom:1px solid var(--border);backdrop-filter:blur(8px)}
+.topbar-in{max-width:64rem;margin:0 auto;padding:var(--s-2) var(--s-5);display:flex;align-items:center;gap:var(--s-5);overflow-x:auto}
+.brand{font:600 var(--t-label) var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--accent);white-space:nowrap}
+.toc{display:flex;gap:var(--s-4);overflow-x:auto}
+.toc a{font:500 var(--t-label) var(--font-mono);color:var(--text-dim);text-decoration:none;white-space:nowrap;padding:var(--s-1) 0}
+.toc a:hover{color:var(--text)}
+.wrap{max-width:64rem;margin:0 auto;padding:0 var(--s-5) var(--s-8)}
+header.hero{padding:var(--s-8) 0 var(--s-6)}
+.eyebrow{margin:0 0 var(--s-3);font:500 var(--t-label) var(--font-mono);letter-spacing:.16em;text-transform:uppercase;color:var(--accent)}
+h1{margin:0 0 var(--s-4);font-size:clamp(2rem,5vw,var(--t-display));line-height:1.18;letter-spacing:-.015em;max-width:22ch;font-weight:600}
+.lead{margin:0;font-size:1.06rem;line-height:1.65;color:var(--text-dim);max-width:62ch}
+.lead b{color:var(--text)}
+.meta{margin:var(--s-5) 0 0;font:500 var(--t-label) var(--font-mono);color:var(--text-dim);letter-spacing:.02em}
+section{padding-top:var(--s-8);scroll-margin-top:3.4rem}
+.sec-head{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--s-2);margin-bottom:var(--s-3);border-bottom:1px solid var(--border);padding-bottom:var(--s-3)}
+.sec-no{font:500 var(--t-label) var(--font-mono);letter-spacing:.14em;color:var(--accent)}
+h2{margin:0;font-size:var(--t-h2);line-height:1.3;letter-spacing:-.01em;font-weight:600;max-width:44ch}
+h3{margin:var(--s-7) 0 var(--s-3);font-size:var(--t-h3);line-height:1.35;font-weight:600}
+.deck{margin:0 0 var(--s-5);color:var(--text-dim);max-width:68ch}
+figure{margin:var(--s-5) 0 var(--s-6)}
+.frame{position:relative;border:1px solid var(--border);border-radius:var(--r-2);background-color:var(--surface);background-image:linear-gradient(color-mix(in srgb,var(--border) 46%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--border) 46%,transparent) 1px,transparent 1px);background-size:24px 24px;overflow-x:auto;box-shadow:var(--shadow);scrollbar-width:thin}
+.frame svg{display:block;width:100%;min-width:720px;height:auto}
+figcaption{margin-top:var(--s-3);font-size:var(--t-small);line-height:1.55;color:var(--text-dim);max-width:70ch}
+figcaption b{font:600 var(--t-label) var(--font-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-right:var(--s-2)}
+
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--s-3);list-style:none;margin:var(--s-5) 0 0;padding:0}
+.kpis li{border:1px solid var(--border);border-radius:var(--r-2);background:var(--surface);padding:var(--s-4)}
+.kpis .k{display:block;font:500 var(--t-label) var(--font-mono);letter-spacing:.06em;color:var(--text-dim);margin-bottom:var(--s-1)}
+.kpis .v{display:flex;align-items:baseline;gap:var(--s-2);font:600 1.7rem/1.1 var(--font-mono);font-variant-numeric:tabular-nums}
+.kpis .v small{font:500 var(--t-label) var(--font-mono);color:var(--text-dim)}
+.kpis svg{display:block;width:100%;height:44px;margin-top:var(--s-2);overflow:visible}
+
+.table-scroll{overflow-x:auto;border:1px solid var(--border);border-radius:var(--r-2);background:var(--surface);margin:var(--s-4) 0 var(--s-6)}
+table{border-collapse:collapse;width:100%;min-width:660px;font-size:var(--t-small);line-height:1.5}
+th{text-align:left;vertical-align:bottom;background:var(--surface-2);color:var(--text-dim);font:600 var(--t-label) var(--font-mono);letter-spacing:.06em;padding:var(--s-3) var(--s-4);border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:var(--s-3) var(--s-4);border-bottom:1px solid var(--border);vertical-align:top;color:var(--text-dim)}
+td:first-child{color:var(--text);font-weight:500}
+tr:last-child td{border-bottom:0}
+td code{background:transparent;border:0;padding:0;color:var(--text)}
+.tag{display:inline-block;font:500 var(--t-label) var(--font-mono);padding:1px 6px;border-radius:99px;border:1px solid var(--border-bright);color:var(--text-dim);white-space:nowrap}
+.tag.live{border-color:var(--ok);color:var(--ok)}
+.tag.wait{border-color:var(--warn);color:var(--warn)}
+.tag.end{border-color:var(--border-bright);color:var(--text-dim)}
+
+.callout{border-left:2px solid var(--accent);background:var(--accent-soft);padding:var(--s-4) var(--s-5);border-radius:0 var(--r-2) var(--r-2) 0;margin:var(--s-5) 0}
+.callout p{margin:0;color:var(--text)}
+.callout .tag{margin-right:var(--s-2)}
+
+ul.plain{margin:var(--s-3) 0 var(--s-5);padding-left:1.1rem;color:var(--text-dim)}
+ul.plain li{margin:var(--s-2) 0}
+ul.plain li b{color:var(--text)}
+
+.split{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s-5);margin:var(--s-4) 0 var(--s-6)}
+.split h3{margin-top:0}
+.sources{columns:2;column-gap:var(--s-6);font:500 var(--t-label)/1.9 var(--font-mono);color:var(--text-dim);margin:var(--s-4) 0 0;padding:0;list-style:none}
+.sources li{break-inside:avoid}
+footer{border-top:1px solid var(--border);padding:var(--s-6) 0 var(--s-8);color:var(--text-dim);font:500 var(--t-label) var(--font-mono)}
+
+/* 图形 */
+.ve-n .sh{fill:var(--surface-2);stroke:var(--border-bright);stroke-width:1.2}
+.ve-n .sh.soft{fill:color-mix(in srgb,var(--surface-2) 60%,transparent);stroke-dasharray:4 4}
+.ve-n .t{font:600 16px var(--font-body);fill:var(--text)}
+.ve-n .s{font:500 12.5px var(--font-mono);fill:var(--text-dim)}
+.ve-n.st-ok .sh{stroke:var(--ok)} .ve-n.st-ok .s{fill:var(--ok)}
+.ve-n.st-risk .sh{stroke:var(--risk)} .ve-n.st-risk .s{fill:var(--risk)}
+.ve-n.st-warn .sh{stroke:var(--warn)} .ve-n.st-warn .s{fill:var(--warn)}
+.ve-n.st-dim .sh{stroke:var(--border-bright);stroke-dasharray:4 4} .ve-n.st-dim .t{fill:var(--text-dim)}
+.ve-band .sh{fill:color-mix(in srgb,var(--surface-2) 55%,transparent);stroke:var(--border);stroke-width:1.2}
+.ve-band .bt{font:600 15px var(--font-body);fill:var(--text)}
+.ve-band .bs{font:500 12.5px var(--font-mono);fill:var(--text-dim)}
+.ve-e{stroke:var(--border-bright);stroke-width:1.4;fill:none;marker-end:url(#ve-arrow)}
+.ve-e.ref{stroke:var(--accent);stroke-width:1.8;marker-end:url(#ve-arrow-accent)}
+.ve-e.dash{stroke-dasharray:5 5}
+.ve-el{font:500 12.5px var(--font-mono);fill:var(--text-dim);paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round}
+.ve-el.hot{fill:var(--accent)}
+.ve-note{font:500 12.5px var(--font-mono);fill:var(--text-dim)}
+.ve-note.hot{fill:var(--accent)}
+.ve-tag{font:600 11px var(--font-mono);letter-spacing:.08em;fill:var(--accent)}
+.ve-dim{stroke:var(--accent);stroke-width:1.2;fill:none}
+.ve-tick{stroke:var(--accent);stroke-width:1.2}
+.ve-bar{fill:var(--accent)}
+.ve-bar-dim{fill:none;stroke:var(--text-dim);stroke-width:1}
+.ve-label{font:500 11.5px var(--font-mono);fill:var(--text-dim)}
+.ve-waffle{fill:var(--surface-2);stroke:var(--border-bright);stroke-width:1}
+.ve-waffle.on{fill:var(--accent);stroke:var(--accent)}
+.ve-ref{color:var(--text);border-bottom:1px dotted var(--border-bright);cursor:help}
+.js-motion .ve-n,.js-motion .ve-band{opacity:0;transform:translateY(6px)}
+.js-motion .ve-n.lit,.js-motion .ve-band.lit{opacity:1;transform:none;transition:opacity .5s ease,transform .5s ease}
+.ve-n.lit .sh,.ve-band.lit .sh{filter:drop-shadow(0 4px 10px rgba(0,0,0,.35))}
+svg.has-lit .ve-n:not(.focus),svg.has-lit .ve-band:not(.focus){opacity:.38;transition:opacity .2s ease}
+svg.has-lit .ve-e:not(.focus){opacity:.25}
+
+@media (max-width:860px){
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .split{grid-template-columns:minmax(0,1fr)}
+  .sources{columns:1}
+}
+@media (max-width:520px){
+  .wrap{padding-left:var(--s-4);padding-right:var(--s-4)}
+  header.hero{padding-top:var(--s-6)}
+  .kpis{grid-template-columns:minmax(0,1fr)}
+  .frame svg{min-width:680px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  .js-motion .ve-n,.js-motion .ve-band{opacity:1;transform:none}
+}
+@media print{
+  .topbar{display:none}
+  body{background:#fff;color:#000}
+  .frame{box-shadow:none;overflow:visible}
+  .frame svg{min-width:0}
+  section{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<nav class="topbar" aria-label="章节导航">
+  <div class="topbar-in">
+    <span class="brand">Blueprint</span>
+    <div class="toc">
+      <a href="#layers">分层</a>
+      <a href="#pages">页面与权限</a>
+      <a href="#state">状态与落盘</a>
+      <a href="#flows">业务流</a>
+      <a href="#machine">任务状态机</a>
+      <a href="#services">服务与接口</a>
+      <a href="#bounds">实现边界</a>
+      <a href="#sources">源码索引</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+<header class="hero">
+  <p class="eyebrow">前端架构 · 2026-10-25 源码基线</p>
+  <h1>一个外壳，四套工作台，一条从指令到核验的任务链</h1>
+  <p class="lead">页面入口在 <code>src/app</code>，真正的分发在 <b class="ve-ref" data-ref="entry" tabindex="0">WorkspaceEntry</b>。前端只有三条数据出口：Mock 适配器、<b class="ve-ref" data-ref="api" tabindex="0">ApiClient</b>、IndexedDB。真实平台闭环仍由独立后端承接。</p>
+  <p class="meta">Next.js 16.2.6 · React 19.2.6 · Node 24.19.0 · 23 个白名单 pageId · 14 个主导航入口</p>
+</header>
+
+<section id="layers">
+  <div class="sec-head">
+    <span class="sec-no">01 / 分层</span>
+    <h2>页面在 App Router，业务在 WorkspaceEntry 之后分叉</h2>
+  </div>
+  <p class="deck">所有请求先穿过同一个外壳：身份、授权、快照、导航。工作台只负责本域界面，数据读写一律落到 <code>lib</code> 与 <code>services</code>。</p>
+
+  <figure>
+    <div class="frame">
+      <svg viewBox="0 0 880 780" role="img" aria-label="前端七层架构图：浏览器入口、App Router、外壳、业务工作台、状态、服务、传输与后端">
+        <defs>
+          <marker id="ve-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--border-bright)"/></marker>
+          <marker id="ve-arrow-accent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--accent)"/></marker>
+        </defs>
+
+        <!-- 浏览器入口 -->
+        <g class="ve-n" data-ref="browser"><rect class="sh" x="20" y="20" width="250" height="56" rx="6"/><text class="t" x="145" y="42" text-anchor="middle">官网 /</text><text class="s" x="145" y="62" text-anchor="middle">public/index.html</text></g>
+        <g class="ve-n"><rect class="sh" x="290" y="20" width="250" height="56" rx="6"/><text class="t" x="415" y="42" text-anchor="middle">登录与手机</text><text class="s" x="415" y="62" text-anchor="middle">/login · /mobile</text></g>
+        <g class="ve-n is-key"><rect class="sh" x="560" y="20" width="300" height="56" rx="6"/><text class="t" x="710" y="42" text-anchor="middle">PC 工作台</text><text class="s" x="710" y="62" text-anchor="middle">/app/[pageId] · 23 个白名单 ID</text></g>
+
+        <path class="ve-e ref" d="M440 76V104"/>
+        <text class="ve-el hot" x="452" y="94">进入</text>
+
+        <!-- App Router -->
+        <g class="ve-band" data-ref="router"><rect class="sh" x="20" y="104" width="840" height="54" rx="6"/><text class="bt" x="36" y="128">Next.js App Router</text><text class="bs" x="844" y="128" text-anchor="end">rewrite · redirect · 白名单 · 动态加载 · error 边界</text><text class="bs" x="36" y="146">服务端只做跳转与裁剪，不保存业务状态</text></g>
+
+        <path class="ve-e ref" d="M440 158V186"/>
+        <text class="ve-el hot" x="452" y="176">渲染</text>
+
+        <!-- 外壳 -->
+        <g class="ve-n" data-ref="entry"><rect class="sh" x="20" y="186" width="260" height="64" rx="6"/><text class="t" x="150" y="208" text-anchor="middle">WorkspaceEntry</text><text class="s" x="150" y="230" text-anchor="middle">身份 + 授权 + 分发</text></g>
+        <path class="ve-e" d="M280 218H300"/><text class="ve-el" x="290" y="208" text-anchor="middle">进入</text>
+        <g class="ve-n"><rect class="sh" x="300" y="186" width="240" height="64" rx="6"/><text class="t" x="420" y="208" text-anchor="middle">AuthGuard</text><text class="s" x="420" y="230" text-anchor="middle">登录态 · 首次快照</text></g>
+        <path class="ve-e" d="M540 218H560"/><text class="ve-el" x="550" y="208" text-anchor="middle">渲染</text>
+        <g class="ve-n"><rect class="sh" x="560" y="186" width="300" height="64" rx="6"/><text class="t" x="710" y="208" text-anchor="middle">V12 Shell</text><text class="s" x="710" y="230" text-anchor="middle">侧栏 · 导航 · 阅读壳</text></g>
+
+        <path class="ve-e ref" d="M440 250V282"/>
+        <text class="ve-el hot" x="452" y="270">按 pageId</text>
+
+        <!-- 业务工作台 -->
+        <g class="ve-band" data-ref="features"><rect class="sh" x="20" y="282" width="840" height="90" rx="6"/><text class="bt" x="36" y="304">业务工作台</text>
+          <g><rect class="ve-band-sh" x="36" y="316" width="190" height="26" rx="3" fill="none" stroke="var(--border-bright)"/><text class="ve-note" x="131" y="333" text-anchor="middle">投放管理</text></g>
+          <g><rect x="246" y="316" width="190" height="26" rx="3" fill="none" stroke="var(--border-bright)"/><text class="ve-note" x="341" y="333" text-anchor="middle">广告创编</text></g>
+          <g><rect x="456" y="316" width="190" height="26" rx="3" fill="none" stroke="var(--border-bright)"/><text class="ve-note" x="551" y="333" text-anchor="middle">内容工厂</text></g>
+          <g><rect x="666" y="316" width="190" height="26" rx="3" fill="none" stroke="var(--border-bright)"/><text class="ve-note" x="761" y="333" text-anchor="middle">数据复盘</text></g>
+          <g><rect x="36" y="350" width="190" height="26" rx="3" fill="none" stroke="var(--border-bright)"/><text class="ve-note" x="131" y="367" text-anchor="middle">直播作战室</text></g>
+          <g><rect x="246" y="350" width="190" height="26" rx="3" fill="none" stroke="var(--border-bright)"/><text class="ve-note" x="341" y="367" text-anchor="middle">商品货盘</text></g>
+          <g><rect x="456" y="350" width="190" height="26" rx="3" fill="none" stroke="var(--border-bright)"/><text class="ve-note" x="551" y="367" text-anchor="middle">经营概况</text></g>
+          <g><rect x="666" y="350" width="190" height="26" rx="3" fill="none" stroke="var(--border-bright)"/><text class="ve-note" x="761" y="367" text-anchor="middle">平台工作区</text></g>
+        </g>
+
+        <path class="ve-e" d="M440 372V400"/>
+        <text class="ve-el" x="452" y="392">读取</text>
+
+        <!-- 状态 -->
+        <g class="ve-n"><rect class="sh" x="20" y="400" width="270" height="60" rx="6"/><text class="t" x="155" y="422" text-anchor="middle">WorkspaceProvider</text><text class="s" x="155" y="444" text-anchor="middle">service · identity · snapshot</text></g>
+        <path class="ve-e" d="M290 430H310"/><text class="ve-el" x="300" y="420" text-anchor="middle">嵌套</text>
+        <g class="ve-n"><rect class="sh" x="310" y="400" width="240" height="60" rx="6"/><text class="t" x="430" y="422" text-anchor="middle">HistoryProvider</text><text class="s" x="430" y="444" text-anchor="middle">项目 / 对话 / 归类</text></g>
+        <path class="ve-e" d="M550 430H570"/><text class="ve-el" x="560" y="420" text-anchor="middle">嵌套</text>
+        <g class="ve-n"><rect class="sh" x="570" y="400" width="290" height="60" rx="6"/><text class="t" x="715" y="422" text-anchor="middle">DeliverySessionProvider</text><text class="s" x="715" y="444" text-anchor="middle">草稿 / 筛选 / 未知键</text></g>
+
+        <path class="ve-e" d="M440 460V488"/>
+        <text class="ve-el" x="452" y="480">调用</text>
+
+        <!-- 服务 -->
+        <g class="ve-band" data-ref="services"><rect class="sh" x="20" y="488" width="840" height="96" rx="6"/><text class="bt" x="36" y="511">lib 纯函数 + services 分域服务</text>
+          <g><rect x="36" y="520" width="250" height="26" rx="3" fill="none" stroke="var(--border-bright)"/><text class="ve-note" x="161" y="537" text-anchor="middle">FrontendService</text></g>
+          <g><rect x="316" y="520" width="250" height="26" rx="3" fill="none" stroke="var(--border-bright)"/><text class="ve-note" x="441" y="537" text-anchor="middle">DeliveryService</text></g>
+          <g><rect x="596" y="520" width="250" height="26" rx="3" fill="none" stroke="var(--border-bright)"/><text class="ve-note" x="721" y="537" text-anchor="middle">AdvertisingService</text></g>
+          <g><rect x="36" y="554" width="250" height="26" rx="3" fill="none" stroke="var(--border-bright)"/><text class="ve-note" x="161" y="571" text-anchor="middle">PlatformService</text></g>
+          <g><rect x="316" y="554" width="250" height="26" rx="3" fill="none" stroke="var(--border-bright)"/><text class="ve-note" x="441" y="571" text-anchor="middle">AnalysisAdapter</text></g>
+          <g><rect x="596" y="554" width="250" height="26" rx="3" fill="none" stroke="var(--border-bright)"/><text class="ve-note" x="721" y="571" text-anchor="middle">content-drafts · IndexedDB</text></g>
+        </g>
+
+        <path class="ve-e" d="M440 584V612"/>
+        <text class="ve-el" x="452" y="604">请求</text>
+
+        <!-- 传输 -->
+        <g class="ve-n" data-ref="api"><rect class="sh" x="20" y="612" width="340" height="56" rx="6"/><text class="t" x="190" y="634" text-anchor="middle">MockAdapter</text><text class="s" x="190" y="654" text-anchor="middle">固定样本 · 本地规则解析</text></g>
+        <g class="ve-n" data-ref="api"><rect class="sh" x="380" y="612" width="460" height="56" rx="6"/><text class="t" x="610" y="634" text-anchor="middle">ApiClient</text><text class="s" x="610" y="654" text-anchor="middle">Cookie · no-store · 15 s · X-Yuliang-Client: web</text></g>
+
+        <path class="ve-e" d="M440 668V696"/>
+        <text class="ve-el" x="452" y="688">API</text>
+
+        <!-- 后端 -->
+        <g class="ve-n"><rect class="sh" x="20" y="696" width="400" height="54" rx="6"/><text class="t" x="220" y="717" text-anchor="middle">独立后端</text><text class="s" x="220" y="737" text-anchor="middle">鉴权 · 存储 · AI · 风控 · 执行器</text></g>
+        <path class="ve-e" d="M420 723H460"/><text class="ve-el" x="440" y="713" text-anchor="middle">读写</text>
+        <g class="ve-n"><rect class="sh" x="460" y="696" width="400" height="54" rx="6"/><text class="t" x="660" y="717" text-anchor="middle">平台开放接口</text><text class="s" x="660" y="737" text-anchor="middle">ADQ · 巨量 · 千川 · 聚光 · 小店</text></g>
+      </svg>
+    </div>
+    <figcaption><b>Fig. 1</b>每个工作台都走同一条链路：入口 → 外壳 → 本域组件 → 服务 → 传输。页面不直接拼接平台接口。</figcaption>
+  </figure>
+
+  <p><code>mode: "mock"</code> 时 <code>WorkspaceProvider</code> 注入固定服务和全量页面白名单；<code>mode: "api"</code> 时必须由后端下发可用页面，否则一律不渲染工作台。这条规则避免了“前端偷偷放行”的权限漏洞。</p>
+</section>
+
+<section id="pages">
+  <div class="sec-head">
+    <span class="sec-no">02 / 页面与权限</span>
+    <h2>14 个入口，23 个白名单 ID，旧地址都有归一处</h2>
+  </div>
+  <p class="deck">导航只暴露业务入口；历史 ID 仍然保留，通过同一张映射表落到当前工作台。未知 ID 直接 404，不做兜底猜测。</p>
+
+  <ul class="kpis" aria-label="关键规模指标">
+    <li>
+      <span class="k">主导航入口</span>
+      <span class="v"><span data-count="14">14</span><small>个</small></span>
+      <svg viewBox="0 0 220 44" aria-hidden="true">
+        <rect class="ve-bar" x="0" y="8" width="140" height="10" rx="2"/>
+        <rect class="ve-bar-dim" x="0" y="28" width="90" height="10" rx="2"/>
+        <text class="ve-label" x="146" y="17">主导航 14</text>
+        <text class="ve-label" x="96" y="37">侧栏与历史 9</text>
+      </svg>
+    </li>
+    <li>
+      <span class="k">任务状态</span>
+      <span class="v"><span data-count="12">12</span><small>态</small></span>
+      <svg viewBox="0 0 220 44" aria-hidden="true">
+        <g class="ve-waffle on">
+          <rect x="0" y="12" width="12" height="12" rx="2"/><rect x="18" y="12" width="12" height="12" rx="2"/><rect x="36" y="12" width="12" height="12" rx="2"/><rect x="54" y="12" width="12" height="12" rx="2"/><rect x="72" y="12" width="12" height="12" rx="2"/><rect x="90" y="12" width="12" height="12" rx="2"/><rect x="0" y="28" width="12" height="12" rx="2"/><rect x="18" y="28" width="12" height="12" rx="2"/><rect x="36" y="28" width="12" height="12" rx="2"/><rect x="54" y="28" width="12" height="12" rx="2"/><rect x="72" y="28" width="12" height="12" rx="2"/><rect x="90" y="28" width="12" height="12" rx="2"/>
+        </g>
+        <text class="ve-label" x="112" y="27">6 主路径 · 6 终态</text>
+      </svg>
+    </li>
+    <li>
+      <span class="k">平台连接器</span>
+      <span class="v"><span data-count="8">8</span><small>个</small></span>
+      <svg viewBox="0 0 220 44" aria-hidden="true">
+        <g class="ve-waffle on"><rect x="0" y="12" width="14" height="14" rx="2"/><rect x="20" y="12" width="14" height="14" rx="2"/><rect x="40" y="12" width="14" height="14" rx="2"/><rect x="60" y="12" width="14" height="14" rx="2"/><rect x="80" y="12" width="14" height="14" rx="2"/><rect x="100" y="12" width="14" height="14" rx="2"/><rect x="120" y="12" width="14" height="14" rx="2"/><rect x="140" y="12" width="14" height="14" rx="2"/></g>
+        <text class="ve-label" x="164" y="24">ADQ → 小店</text>
+      </svg>
+    </li>
+    <li>
+      <span class="k">轮询区间</span>
+      <span class="v">10<small>–</small>30<small>s</small></span>
+      <svg viewBox="0 0 220 44" aria-hidden="true">
+        <path class="ve-dim" d="M12 26H208"/><path class="ve-tick" d="M12 20V32M77 20V32M208 20V32"/>
+        <text class="ve-label" x="12" y="16">10 任务</text>
+        <text class="ve-label" x="64" y="16">15 直播</text>
+        <text class="ve-label" x="208" y="16" text-anchor="end">30 经营/计划</text>
+      </svg>
+    </li>
+  </ul>
+
+  <figure>
+    <div class="frame">
+      <svg viewBox="0 0 880 420" role="img" aria-label="路由解析图：根路径分流到官网、登录与手机页、app 工作台和 legacy 归一">
+        <path class="ve-e" d="M130 205H180V59H230"/><text class="ve-el" x="183" y="49">rewrite /</text>
+        <path class="ve-e" d="M130 213H180V141H230"/><text class="ve-el" x="183" y="132">redirect</text>
+        <path class="ve-e ref" d="M130 213H230"/><text class="ve-el hot" x="183" y="204">pageId</text>
+        <path class="ve-e" d="M130 221H180V335H230"/><text class="ve-el" x="183" y="326">hash</text>
+
+        <g class="ve-n"><rect class="sh" x="20" y="185" width="110" height="56" rx="6"/><text class="t" x="75" y="207" text-anchor="middle">/</text><text class="s" x="75" y="227" text-anchor="middle">请求入口</text></g>
+
+        <g class="ve-n"><rect class="sh" x="230" y="30" width="270" height="58" rx="6"/><text class="t" x="365" y="51" text-anchor="middle">/index.html</text><text class="s" x="365" y="72" text-anchor="middle">官网静态页</text></g>
+        <g class="ve-n"><rect class="sh" x="230" y="112" width="270" height="58" rx="6"/><text class="t" x="365" y="133" text-anchor="middle">/login · /mobile</text><text class="s" x="365" y="154" text-anchor="middle">旧 .html → redirect</text></g>
+        <g class="ve-n"><rect class="sh" x="230" y="194" width="270" height="58" rx="6"/><text class="t" x="365" y="215" text-anchor="middle">/app/[pageId]</text><text class="s" x="365" y="236" text-anchor="middle">白名单校验；未知 404</text></g>
+        <g class="ve-n"><rect class="sh" x="230" y="306" width="270" height="58" rx="6"/><text class="t" x="365" y="327" text-anchor="middle">/legacy</text><text class="s" x="365" y="348" text-anchor="middle">/app.html#hash</text></g>
+
+        <g class="ve-band"><rect class="sh" x="560" y="30" width="300" height="112" rx="6"/><text class="bt" x="576" y="52">旧 ID 合流</text>
+          <text class="ve-note" x="576" y="76">campaigns → plans</text>
+          <text class="ve-note" x="576" y="94">budgets → decisions?section=allocation</text>
+          <text class="ve-note" x="576" y="112">scripts → planning</text>
+          <text class="ve-note" x="576" y="130">experiments → assets · analytics → reports</text>
+        </g>
+        <g class="ve-band"><rect class="sh" x="560" y="194" width="300" height="100" rx="6"/><text class="bt" x="576" y="216">14 个主导航入口</text>
+          <text class="ve-note" x="576" y="240">中枢 · 概况 · 直播 2 · 投放 4</text>
+          <text class="ve-note" x="576" y="258">内容 5 · 复盘 1</text>
+          <text class="ve-note" x="576" y="276">侧栏：用户中心 · 手机 · 任务直连</text>
+        </g>
+        <g class="ve-band"><rect class="sh" x="560" y="306" width="300" height="58" rx="6"/><text class="bt" x="576" y="327">授权与回跳</text><text class="bs" x="576" y="348">next 缺失/非法 → /app/command</text></g>
+
+        <path class="ve-e" d="M500 223H560"/><text class="ve-el" x="530" y="214" text-anchor="middle">分发</text>
+        <path class="ve-e" d="M500 335H560"/><text class="ve-el" x="530" y="326" text-anchor="middle">归一</text>
+        <path class="ve-e dash" d="M500 141H540V86H560"/><text class="ve-el" x="540" y="132" text-anchor="middle">旧地址</text>
+      </svg>
+    </div>
+    <figcaption><b>Fig. 2</b>旧路由不删除，只在入口处改写。工作台内部只认 pageId，不再判断 URL 长相。</figcaption>
+  </figure>
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>导航入口</th><th>路由</th><th>主实现</th><th>数据来源</th></tr></thead>
+      <tbody>
+        <tr><td>AI 驭量中枢</td><td><code>/app/command</code></td><td>CommandPanel · CommandDesk</td><td>快照 + 对话 + 共享任务</td></tr>
+        <tr><td>经营概况</td><td><code>/app/overview</code></td><td>OverviewPage · overview-adapter</td><td>单日快照</td></tr>
+        <tr><td>直播作战室</td><td><code>/app/monitor</code></td><td>LiveRoomPage · LiveRoomController</td><td>授权场次快照轮询</td></tr>
+        <tr><td>商品与货盘</td><td><code>/app/products</code></td><td>ProductsPage · products-adapter</td><td>快照 + 本地货盘草稿</td></tr>
+        <tr><td>经营目标</td><td><code>/app/goals</code></td><td>delivery/goals</td><td>投放工作区</td></tr>
+        <tr><td>计划中心</td><td><code>/app/plans</code></td><td>delivery/plans · advertising wizard</td><td>投放接口 + 快照适配</td></tr>
+        <tr><td>投放优化</td><td><code>/app/decisions?section=…</code></td><td>delivery/optimization · budgets</td><td>投放接口</td></tr>
+        <tr><td>执行记录</td><td><code>/app/executions</code></td><td>delivery/executions</td><td>投放接口</td></tr>
+        <tr><td>内容策划</td><td><code>/app/planning</code></td><td>content/factory</td><td>IndexedDB</td></tr>
+        <tr><td>视频创作</td><td><code>/app/videos</code></td><td>content/factory</td><td>IndexedDB</td></tr>
+        <tr><td>平面创作</td><td><code>/app/graphics</code></td><td>content/factory</td><td>IndexedDB</td></tr>
+        <tr><td>智能剪辑</td><td><code>/app/editing</code></td><td>content/factory</td><td>IndexedDB</td></tr>
+        <tr><td>素材库</td><td><code>/app/assets</code></td><td>content/factory</td><td>IndexedDB · Blob</td></tr>
+        <tr><td>数据复盘</td><td><code>/app/reports</code></td><td>analysis/workspace</td><td>Mock 或 AnalysisAdapter</td></tr>
+        <tr><td>用户中心</td><td><code>/app/account</code></td><td>AccountCenter</td><td>身份与授权</td></tr>
+        <tr><td>手机页 · 任务</td><td><code>/mobile</code> · <code>/app/tasks</code></td><td>MobilePage · TaskControls</td><td>快照 · 命令任务接口</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>授权不是只看 pageId</h3>
+  <p>页面级、动作级、账户级、能力级四道判断依次生效。投放优化还要按分区再判一次：建议与规则依赖“投放优化”授权，预算与资金依赖“预算资金”授权。</p>
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>判断点</th><th>函数</th><th>不通过时</th></tr></thead>
+      <tbody>
+        <tr><td>页面可见</td><td><code>canAccessPage(pageId)</code></td><td>不渲染工作台，跳用户中心或 404</td></tr>
+        <tr><td>动作可执行</td><td><code>canExecuteAction(action)</code></td><td>按钮置灰，任务不可确认</td></tr>
+        <tr><td>账户可用</td><td><code>hasWorkspaceGrant(kind, accountId)</code></td><td>账户从选择器移除</td></tr>
+        <tr><td>能力有效期</td><td><code>capabilityValidUntil</code></td><td>只读展示，禁止写入</td></tr>
+        <tr><td>优化分区</td><td><code>canAccessOptimizationSection(section)</code></td><td>分区隐藏，URL 区段被丢弃</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="state">
+  <div class="sec-head">
+    <span class="sec-no">03 / 状态与落盘</span>
+    <h2>状态分五层，只有内容和复盘缓冲真正落盘</h2>
+  </div>
+  <p class="deck">身份、服务、快照放在全局；项目与对话放在中间层；投放草稿只活在当前会话。刷新就消失，是刻意的边界。</p>
+
+  <figure>
+    <div class="frame">
+      <svg viewBox="0 0 880 470" role="img" aria-label="状态提供者嵌套图与三类持久化存储的对应关系">
+        <g class="ve-band"><rect class="sh soft" x="20" y="20" width="480" height="430" rx="8"/><text class="bt" x="36" y="44">WorkspaceProvider</text><text class="bs" x="36" y="64">service · identity · snapshot · generation</text></g>
+        <g class="ve-band"><rect class="sh soft" x="44" y="88" width="432" height="342" rx="8"/><text class="bt" x="60" y="112">HistoryProvider</text><text class="bs" x="60" y="132">项目 · 对话 · 任务归类</text></g>
+        <g class="ve-band"><rect class="sh soft" x="68" y="150" width="384" height="254" rx="8"/><text class="bt" x="84" y="174">DeliverySessionProvider</text><text class="bs" x="84" y="194">草稿 · 筛选 · 未知幂等键</text></g>
+
+        <g class="ve-n"><rect class="sh" x="92" y="214" width="336" height="64" rx="6"/><text class="t" x="260" y="236" text-anchor="middle">页内状态</text><text class="s" x="260" y="258" text-anchor="middle">复盘工作流 · FactorySession</text></g>
+        <g class="ve-n"><rect class="sh" x="92" y="300" width="336" height="70" rx="6"/><text class="t" x="260" y="322" text-anchor="middle">owner key</text><text class="s" x="260" y="342" text-anchor="middle">mode : tenant : user [: shop]</text><text class="s" x="260" y="360" text-anchor="middle">身份切换 → 丢弃过期结果</text></g>
+
+        <g class="ve-band"><rect class="sh" x="560" y="30" width="300" height="126" rx="6"/><text class="bt" x="576" y="52">localStorage</text>
+          <text class="ve-note" x="576" y="76">command-jobs:v1</text>
+          <text class="ve-note" x="576" y="94">mock-identity</text>
+          <text class="ve-note" x="576" y="112">history:v1 · advertising:v1</text>
+          <text class="ve-note" x="576" y="130">product-lineup:v1 · analysis:v1</text>
+          <text class="ve-note" x="576" y="148">按 owner key 与业务版本隔离</text>
+        </g>
+        <g class="ve-band"><rect class="sh" x="560" y="180" width="300" height="80" rx="6"/><text class="bt" x="576" y="202">sessionStorage</text>
+          <text class="ve-note" x="576" y="226">review-flow:v1</text>
+          <text class="ve-note" x="576" y="244">analysis-pending：请求 → 任务键</text>
+        </g>
+        <g class="ve-band"><rect class="sh" x="560" y="284" width="300" height="90" rx="6"/><text class="bt" x="576" y="306">IndexedDB</text>
+          <text class="ve-note" x="576" y="330">yuliang-content-v1</text>
+          <text class="ve-note" x="576" y="348">drafts + files，同一事务提交</text>
+          <text class="ve-note" x="576" y="366">revision 冲突检查</text>
+        </g>
+        <g class="ve-band"><rect class="sh" x="560" y="398" width="300" height="52" rx="6"/><text class="bt" x="576" y="420">React 内存 · 刷新即失</text><text class="bs" x="576" y="440">投放草稿 / 幂等键 / 未知结果</text></g>
+
+        <path class="ve-e ref" d="M500 84H560"/><text class="ve-el hot" x="530" y="74" text-anchor="middle">Mock 快照</text>
+        <path class="ve-e" d="M428 246H490V220H560"/><text class="ve-el" x="500" y="210">复盘缓冲</text>
+        <path class="ve-e" d="M428 262H510V330H560"/><text class="ve-el" x="516" y="320">草稿与 Blob</text>
+        <path class="ve-e dash" d="M428 330H540V424H560"/><text class="ve-el" x="540" y="414">仅内存</text>
+      </svg>
+    </div>
+    <figcaption><b>Fig. 3</b>三层提供者各有写入边界：身份与快照进 localStorage，复盘流程进会话存储，内容与文件进 IndexedDB。</figcaption>
+  </figure>
+
+  <div class="callout"><p><span class="tag wait">一致性</span><b>快照读取器</b>按 owner key 与最小间隔去重。并发请求合并成一次；失败按指数退避；旧结果只在监控页保留，并明确标注“并非最新”。</p></div>
+</section>
+
+<section id="flows">
+  <div class="sec-head">
+    <span class="sec-no">04 / 业务流</span>
+    <h2>六条主链路，都从“当前范围”出发</h2>
+  </div>
+  <p class="deck">范围决定一切：平台、店铺、账户、日期。任何一条链路在范围变化后都会重新读取，而不是沿用上一次的结果。</p>
+
+  <h3>4.1 进入：先确认身份，再确认授权</h3>
+  <figure>
+    <div class="frame">
+      <svg viewBox="0 0 880 300" role="img" aria-label="登录与授权流程：读取身份、判断登录、判断授权，未登录进入登录页，未授权进入用户中心">
+        <g class="ve-n"><rect class="sh" x="20" y="110" width="150" height="60" rx="6"/><text class="t" x="95" y="132" text-anchor="middle">访问入口</text><text class="s" x="95" y="152" text-anchor="middle">官网 / 深链</text></g>
+        <g class="ve-n"><rect class="sh" x="200" y="110" width="150" height="60" rx="6"/><text class="t" x="275" y="132" text-anchor="middle">getIdentity</text><text class="s" x="275" y="152" text-anchor="middle">会话 / Mock 身份</text></g>
+        <g class="ve-n"><rect class="sh" x="390" y="96" width="120" height="88" rx="6"/><text class="t" x="450" y="132" text-anchor="middle">已登录？</text><text class="s" x="450" y="154" text-anchor="middle">有身份</text></g>
+        <g class="ve-n"><rect class="sh" x="580" y="96" width="120" height="88" rx="6"/><text class="t" x="640" y="132" text-anchor="middle">已授权？</text><text class="s" x="640" y="154" text-anchor="middle">页面可用</text></g>
+        <g class="ve-n is-key"><rect class="sh" x="730" y="110" width="130" height="60" rx="6"/><text class="t" x="795" y="132" text-anchor="middle">工作台</text><text class="s" x="795" y="152" text-anchor="middle">渲染 pageId</text></g>
+        <g class="ve-n"><rect class="sh" x="300" y="220" width="180" height="54" rx="6"/><text class="t" x="390" y="241" text-anchor="middle">登录页</text><text class="s" x="390" y="261" text-anchor="middle">密码 / 邮箱验证码</text></g>
+        <g class="ve-n"><rect class="sh" x="730" y="215" width="130" height="54" rx="6"/><text class="t" x="795" y="236" text-anchor="middle">用户中心</text><text class="s" x="795" y="256" text-anchor="middle">申请与授权</text></g>
+
+        <path class="ve-e" d="M170 140H200"/><text class="ve-el" x="185" y="130" text-anchor="middle">访问</text>
+        <path class="ve-e" d="M350 140H390"/><text class="ve-el" x="370" y="130" text-anchor="middle">读取</text>
+        <path class="ve-e ref" d="M510 140H580"/><text class="ve-el hot" x="545" y="130" text-anchor="middle">是</text>
+        <path class="ve-e ref" d="M700 140H730"/><text class="ve-el hot" x="715" y="130" text-anchor="middle">是</text>
+        <path class="ve-e" d="M450 184V200H390V220"/><text class="ve-el" x="462" y="198">否</text>
+        <path class="ve-e" d="M640 184V200H795V215"/><text class="ve-el" x="650" y="198">否</text>
+        <path class="ve-e dash" d="M330 220V190H275V170"/><text class="ve-el" x="302" y="184">重新读取</text>
+      </svg>
+    </div>
+    <figcaption><b>Fig. 4</b>登录成功不等于可进工作台。授权列表为空时，只给用户中心，不展示任何业务页面。</figcaption>
+  </figure>
+  <p>会话失效时 <code>ApiClient</code> 收到 <code>401</code>，身份状态被清空；深链的 <code>next</code> 只在同一站内且通过白名单才保留，否则回到 <code>/app/command</code>。</p>
+
+  <h3>4.2 AI 中枢：先解析，再生成带幂等键的任务</h3>
+  <figure>
+    <div class="frame">
+      <svg viewBox="0 0 880 440" role="img" aria-label="AI 中枢流程：用户输入经解析分为查询、动作和无法识别，动作生成任务后绑定对话并确认">
+        <g class="ve-n"><rect class="sh" x="20" y="20" width="200" height="64" rx="6"/><text class="t" x="120" y="42" text-anchor="middle">用户输入</text><text class="s" x="120" y="62" text-anchor="middle">PC / 手机 · 当前范围</text></g>
+        <g class="ve-n"><rect class="sh" x="260" y="20" width="220" height="64" rx="6"/><text class="t" x="370" y="42" text-anchor="middle">sendMessage</text><text class="s" x="370" y="62" text-anchor="middle">消息幂等键</text></g>
+        <g class="ve-n"><rect class="sh" x="520" y="20" width="340" height="64" rx="6"/><text class="t" x="690" y="42" text-anchor="middle">interpretation</text><text class="s" x="690" y="62" text-anchor="middle">QUERY / ACTION / UNRECOGNIZED</text></g>
+        <path class="ve-e" d="M220 52H260"/><text class="ve-el" x="240" y="42" text-anchor="middle">提交</text>
+        <path class="ve-e" d="M480 52H520"/><text class="ve-el" x="500" y="42" text-anchor="middle">解析</text>
+
+        <g class="ve-n"><rect class="sh" x="20" y="140" width="200" height="64" rx="6"/><text class="t" x="120" y="162" text-anchor="middle">查询反馈</text><text class="s" x="120" y="182" text-anchor="middle">只读，不建任务</text></g>
+        <g class="ve-n"><rect class="sh" x="280" y="140" width="320" height="64" rx="6"/><text class="t" x="440" y="162" text-anchor="middle">选择唯一对象 · 核对目标值</text><text class="s" x="440" y="182" text-anchor="middle">多候选必须消歧</text></g>
+        <g class="ve-n"><rect class="sh" x="660" y="140" width="200" height="64" rx="6"/><text class="t" x="760" y="162" text-anchor="middle">提示补充</text><text class="s" x="760" y="182" text-anchor="middle">不落任务</text></g>
+        <path class="ve-e" d="M660 84V112H120V140"/><text class="ve-el" x="360" y="106">QUERY</text>
+        <path class="ve-e ref" d="M660 112H440V140"/><text class="ve-el hot" x="560" y="106">ACTION</text>
+        <path class="ve-e" d="M700 84V140"/><text class="ve-el" x="712" y="112">UNRECOGNIZED</text>
+
+        <g class="ve-n"><rect class="sh" x="280" y="240" width="220" height="64" rx="6"/><text class="t" x="390" y="262" text-anchor="middle">createJob</text><text class="s" x="390" y="282" text-anchor="middle">任务幂等键 → DRAFT / BLOCKED</text></g>
+        <g class="ve-n"><rect class="sh" x="540" y="240" width="160" height="64" rx="6"/><text class="t" x="620" y="262" text-anchor="middle">绑定对话</text><text class="s" x="620" y="282" text-anchor="middle">messageId → jobId</text></g>
+        <g class="ve-n"><rect class="sh" x="730" y="240" width="130" height="64" rx="6"/><text class="t" x="795" y="262" text-anchor="middle">confirmJob</text><text class="s" x="795" y="282" text-anchor="middle">expected_version</text></g>
+        <path class="ve-e" d="M440 204V240"/><text class="ve-el" x="452" y="226">ACTION</text>
+        <path class="ve-e" d="M500 272H540"/><text class="ve-el" x="520" y="262" text-anchor="middle">成功</text>
+        <path class="ve-e" d="M700 272H730"/><text class="ve-el" x="715" y="262" text-anchor="middle">确认</text>
+
+        <g class="ve-n"><rect class="sh" x="540" y="340" width="320" height="64" rx="6"/><text class="t" x="700" y="362" text-anchor="middle">待审批 / 待人工交接</text><text class="s" x="700" y="382" text-anchor="middle">广告动作 / 开播关播</text></g>
+        <g class="ve-n"><rect class="sh" x="20" y="340" width="240" height="64" rx="6"/><text class="t" x="140" y="362" text-anchor="middle">项目 · 对话 · 归类</text><text class="s" x="140" y="382" text-anchor="middle">Mock 与 API 同一契约</text></g>
+        <path class="ve-e" d="M795 304V322H700V340"/><text class="ve-el" x="806" y="320">提交</text>
+        <path class="ve-e dash" d="M620 304V320H140V340"/><text class="ve-el" x="420" y="312">归档</text>
+      </svg>
+    </div>
+    <figcaption><b>Fig. 5</b>自然语言只产生两种结果：一次查询，或一个待确认任务。任务必须带幂等键、唯一对象和预期版本。</figcaption>
+  </figure>
+  <ul class="plain">
+    <li><b>7 类广告动作</b>：调整预算、出价、状态、定向、时段、商品与创意。每类都落到固定的值类型与执行记录。</li>
+    <li><b>幂等</b>：创建任务、发送消息、确认、取消各用一枚键；结果未知时保留原键等待查询，绝不盲目重放。</li>
+    <li><b>时效</b>：草稿类任务 15&nbsp;分钟后过期；同一对象 5&nbsp;分钟内不重复生成。</li>
+  </ul>
+
+  <h3>4.3 投放：配置、预检、审批、回读，缺一不可</h3>
+  <figure>
+    <div class="frame">
+      <svg viewBox="0 0 940 330" role="img" aria-label="投放流程：范围、能力授权、配置草稿、校验预检、提交审批，之后执行回读与优化；失败保留草稿">
+        <text class="ve-note" x="20" y="26">产品线决定字段与资源选择器，不把平台硬套进同一张表单。</text>
+
+        <g class="ve-n"><rect class="sh" x="20" y="70" width="150" height="96" rx="6"/><text class="t" x="95" y="101" text-anchor="middle">范围</text><text class="s" x="95" y="125" text-anchor="middle">平台 / 店铺</text><text class="s" x="95" y="143" text-anchor="middle">账户 / 日期</text></g>
+        <g class="ve-n"><rect class="sh" x="210" y="70" width="150" height="96" rx="6"/><text class="t" x="285" y="101" text-anchor="middle">能力与授权</text><text class="s" x="285" y="125" text-anchor="middle">目录依据</text><text class="s" x="285" y="143" text-anchor="middle">账户能力</text></g>
+        <g class="ve-n"><rect class="sh" x="400" y="70" width="150" height="96" rx="6"/><text class="t" x="475" y="101" text-anchor="middle">配置草稿</text><text class="s" x="475" y="125" text-anchor="middle">目标 / 定向 / 预算</text><text class="s" x="475" y="143" text-anchor="middle">排期 / 创意</text></g>
+        <g class="ve-n"><rect class="sh" x="590" y="70" width="150" height="96" rx="6"/><text class="t" x="665" y="101" text-anchor="middle">校验与预检</text><text class="s" x="665" y="125" text-anchor="middle">完整配置</text><text class="s" x="665" y="143" text-anchor="middle">预检凭据</text></g>
+        <g class="ve-n"><rect class="sh" x="780" y="70" width="150" height="96" rx="6"/><text class="t" x="855" y="101" text-anchor="middle">提交与审批</text><text class="s" x="855" y="125" text-anchor="middle">幂等键</text><text class="s" x="855" y="143" text-anchor="middle">后端任务</text></g>
+
+        <path class="ve-e" d="M170 118H210"/><text class="ve-el" x="190" y="108" text-anchor="middle">选定</text>
+        <path class="ve-e" d="M360 118H400"/><text class="ve-el" x="380" y="108" text-anchor="middle">读取</text>
+        <path class="ve-e" d="M550 118H590"/><text class="ve-el" x="570" y="108" text-anchor="middle">生成</text>
+        <path class="ve-e ref" d="M740 118H780"/><text class="ve-el hot" x="760" y="108" text-anchor="middle">通过</text>
+
+        <g class="ve-n st-ok"><rect class="sh" x="590" y="220" width="150" height="80" rx="6"/><text class="t" x="665" y="250" text-anchor="middle">执行回读</text><text class="s" x="665" y="274" text-anchor="middle">回执 · 核验</text><text class="s" x="665" y="292" text-anchor="middle">MATCHED 才算成功</text></g>
+        <g class="ve-n"><rect class="sh" x="780" y="220" width="150" height="80" rx="6"/><text class="t" x="855" y="250" text-anchor="middle">优化四分区</text><text class="s" x="855" y="274" text-anchor="middle">建议 / 预算</text><text class="s" x="855" y="292" text-anchor="middle">资金 / 规则</text></g>
+        <path class="ve-e" d="M855 166V220"/><text class="ve-el" x="866" y="196">执行</text>
+        <path class="ve-e" d="M740 260H780"/><text class="ve-el" x="760" y="250" text-anchor="middle">依据</text>
+
+        <g class="ve-n st-risk"><rect class="sh" x="400" y="220" width="150" height="80" rx="6"/><text class="t" x="475" y="250" text-anchor="middle">保留草稿</text><text class="s" x="475" y="274" text-anchor="middle">本地方案</text><text class="s" x="475" y="292" text-anchor="middle">人工处理</text></g>
+        <path class="ve-e dash" d="M590 166V200H475V220"/><text class="ve-el" x="500" y="196">能力/预检失败</text>
+        <path class="ve-e dash" d="M475 220V166"/><text class="ve-el" x="487" y="196">保留</text>
+      </svg>
+    </div>
+    <figcaption><b>Fig. 6</b>投放永远不是“点一下直发平台”。预检不过就停在草稿，提交之后还要以回读匹配作为唯一成功标准。</figcaption>
+  </figure>
+  <p>配置由产品目录生成，而不是前端写死字段。<code>ADQ</code> 与微信豆复用投放模型，千川、巨量、DOU+、本地推、聚光、小店版各自拥有独立的资源选择器与字段约束。结果未知时保留幂等键，查询原任务，不重放写入。</p>
+
+  <h3>4.4 内容工厂：能产出 PNG 与工程，上传仍等后端</h3>
+  <figure>
+    <div class="frame">
+      <svg viewBox="0 0 880 460" role="img" aria-label="内容工厂流程：策划派生视频与平面创作，视频绑定成片后进入智能剪辑，平面导出 PNG，统一写入素材库，平台上传待后端">
+        <g class="ve-n"><rect class="sh" x="20" y="20" width="200" height="56" rx="6"/><text class="t" x="120" y="42" text-anchor="middle">店铺与商品</text><text class="s" x="120" y="62" text-anchor="middle">授权范围</text></g>
+        <g class="ve-n"><rect class="sh" x="280" y="20" width="280" height="56" rx="6"/><text class="t" x="420" y="42" text-anchor="middle">策划 / 脚本</text><text class="s" x="420" y="62" text-anchor="middle">简报 · 正文 · 脚本 · 分镜</text></g>
+        <g class="ve-n"><rect class="sh" x="620" y="20" width="240" height="56" rx="6"/><text class="t" x="740" y="42" text-anchor="middle">创作对话</text><text class="s" x="740" y="62" text-anchor="middle">保存要求与选中对象</text></g>
+        <path class="ve-e" d="M220 48H280"/><text class="ve-el" x="250" y="38" text-anchor="middle">带入</text>
+
+        <g class="ve-n"><rect class="sh" x="20" y="130" width="240" height="70" rx="6"/><text class="t" x="140" y="155" text-anchor="middle">视频创作</text><text class="s" x="140" y="177" text-anchor="middle">节点 · 连线 · 制作参数</text></g>
+        <g class="ve-n"><rect class="sh" x="300" y="130" width="240" height="70" rx="6"/><text class="t" x="420" y="155" text-anchor="middle">平面创作</text><text class="s" x="420" y="177" text-anchor="middle">多画板 · 文字/图片图层</text></g>
+        <path class="ve-e" d="M300 76V100H140V130"/><text class="ve-el" x="150" y="112">派生</text>
+        <path class="ve-e" d="M440 76V130"/><text class="ve-el" x="452" y="104">派生</text>
+
+        <g class="ve-n"><rect class="sh" x="20" y="240" width="240" height="56" rx="6"/><text class="t" x="140" y="262" text-anchor="middle">绑定已有成片</text><text class="s" x="140" y="282" text-anchor="middle">视频素材节点</text></g>
+        <g class="ve-n"><rect class="sh" x="300" y="240" width="240" height="56" rx="6"/><text class="t" x="420" y="262" text-anchor="middle">PNG 导出</text><text class="s" x="420" y="282" text-anchor="middle">真实图片文件</text></g>
+        <g class="ve-n"><rect class="sh" x="20" y="340" width="240" height="70" rx="6"/><text class="t" x="140" y="365" text-anchor="middle">智能剪辑</text><text class="s" x="140" y="387" text-anchor="middle">视频/音频/字幕轨 · 分割</text></g>
+        <path class="ve-e" d="M140 200V240"/><text class="ve-el" x="152" y="224">绑定</text>
+        <path class="ve-e" d="M140 296V340"/><text class="ve-el" x="152" y="322">编排</text>
+        <path class="ve-e" d="M420 200V240"/><text class="ve-el" x="432" y="224">导出</text>
+
+        <g class="ve-band"><rect class="sh" x="560" y="120" width="300" height="120" rx="6"/><text class="bt" x="576" y="144">素材库</text>
+          <text class="ve-note" x="576" y="168">IndexedDB yuliang-content-v1</text>
+          <text class="ve-note" x="576" y="186">drafts + files，同一事务</text>
+          <text class="ve-note" x="576" y="204">revision 冲突检查</text>
+          <text class="ve-note" x="576" y="222">预览 · 下载 · 账号关联</text>
+        </g>
+        <g class="ve-n st-dim"><rect class="sh" x="560" y="340" width="300" height="70" rx="6"/><text class="t" x="710" y="365" text-anchor="middle">平台上传 / 审核 / 素材 ID</text><text class="s" x="710" y="387" text-anchor="middle">待后端</text></g>
+
+        <path class="ve-e" d="M540 268H552V228H560"/><text class="ve-el" x="540" y="218">写入</text>
+        <path class="ve-e" d="M260 355H548V204H560"/><text class="ve-el" x="470" y="196">工程 JSON</text>
+        <path class="ve-e dash" d="M700 240V340"/><text class="ve-el" x="712" y="300">关联账户后</text>
+      </svg>
+    </div>
+    <figcaption><b>Fig. 7</b>内容侧本地闭环已经完整：策划、画布、剪辑工程、PNG 与素材库都能落盘。平台上传与审核仍依赖后端。</figcaption>
+  </figure>
+  <p>剪辑工程保存轨道、片段与字幕，不导出整段视频。整条时间线混音与 MP4 渲染被明确标为依赖能力，界面上不提供假按钮。</p>
+
+  <h3>4.5 直播与货盘：四个模块共享一次快照</h3>
+  <figure>
+    <div class="frame">
+      <svg viewBox="0 0 880 350" role="img" aria-label="直播页流程与刷新节奏图：四个模块共享一次快照，隐藏页或未开播时停止轮询；任务十秒、直播十五秒、经营与计划三十秒">
+        <g class="ve-n"><rect class="sh" x="20" y="20" width="220" height="64" rx="6"/><text class="t" x="130" y="42" text-anchor="middle">选择授权场次</text><text class="s" x="130" y="62" text-anchor="middle">店铺 + 直播场次</text></g>
+        <g class="ve-band"><rect class="sh" x="20" y="120" width="220" height="110" rx="6"/><text class="bt" x="36" y="144">同一场次 · 四模块</text>
+          <text class="ve-note" x="36" y="168">直播状态</text><text class="ve-note" x="36" y="188">经营指标</text><text class="ve-note" x="36" y="208">AI 任务</text><text class="ve-note" x="140" y="188">关联计划</text>
+        </g>
+        <g class="ve-n"><rect class="sh" x="280" y="140" width="170" height="70" rx="6"/><text class="t" x="365" y="165" text-anchor="middle">同一快照</text><text class="s" x="365" y="187" text-anchor="middle">并发请求合并</text></g>
+        <g class="ve-n st-warn"><rect class="sh" x="280" y="250" width="170" height="80" rx="6"/><text class="t" x="365" y="275" text-anchor="middle">停止条件</text><text class="s" x="365" y="297" text-anchor="middle">隐藏页 / 未开播</text><text class="s" x="365" y="315" text-anchor="middle">已结束</text></g>
+        <g class="ve-n st-risk"><rect class="sh" x="20" y="260" width="220" height="70" rx="6"/><text class="t" x="130" y="285" text-anchor="middle">失败退避</text><text class="s" x="130" y="307" text-anchor="middle">10 s × 2ⁿ，上限 5 min</text></g>
+
+        <path class="ve-e" d="M130 84V120"/><text class="ve-el" x="142" y="104">确认</text>
+        <path class="ve-e ref" d="M240 175H280"/><text class="ve-el hot" x="260" y="165" text-anchor="middle">共享</text>
+        <path class="ve-e dash" d="M365 250V210"/><text class="ve-el" x="377" y="234">暂停</text>
+        <path class="ve-e dash" d="M240 295H270V210H280"/><text class="ve-el" x="248" y="230">失败后</text>
+
+        <text class="ve-tag" x="480" y="28">刷新节奏 · 秒</text>
+        <text class="ve-label" x="480" y="50">实心 = 刷新目标</text>
+        <text class="ve-label" x="600" y="50">描边 = 源数据新鲜度</text>
+
+        <text class="ve-label" x="480" y="82">AI 任务</text>
+        <rect class="ve-bar" x="548" y="74" width="25" height="10" rx="1"/>
+        <rect class="ve-bar-dim" x="548" y="88" width="75" height="10" rx="1"/>
+        <text class="ve-label" x="580" y="82">10 / 30</text>
+
+        <text class="ve-label" x="480" y="126">直播</text>
+        <rect class="ve-bar" x="548" y="118" width="37.5" height="10" rx="1"/>
+        <rect class="ve-bar-dim" x="548" y="132" width="112.5" height="10" rx="1"/>
+        <text class="ve-label" x="592" y="126">15 / 45</text>
+
+        <text class="ve-label" x="480" y="170">经营</text>
+        <rect class="ve-bar" x="548" y="162" width="75" height="10" rx="1"/>
+        <rect class="ve-bar-dim" x="548" y="176" width="300" height="10" rx="1"/>
+        <text class="ve-label" x="630" y="170">30 / 120</text>
+
+        <text class="ve-label" x="480" y="214">计划</text>
+        <rect class="ve-bar" x="548" y="206" width="75" height="10" rx="1"/>
+        <rect class="ve-bar-dim" x="548" y="220" width="300" height="10" rx="1"/>
+        <text class="ve-label" x="630" y="214">30 / 120</text>
+
+        <path class="ve-dim" d="M548 248H848"/>
+        <path class="ve-tick" d="M548 242V254M623 242V254M698 242V254M773 242V254M848 242V254"/>
+        <text class="ve-label" x="548" y="268" text-anchor="middle">0</text>
+        <text class="ve-label" x="623" y="268" text-anchor="middle">30</text>
+        <text class="ve-label" x="698" y="268" text-anchor="middle">60</text>
+        <text class="ve-label" x="773" y="268" text-anchor="middle">90</text>
+        <text class="ve-label" x="848" y="268" text-anchor="middle">120 s</text>
+        <text class="ve-note" x="480" y="300">API 自动刷新仅在后端最小间隔大于 0 时启用；</text>
+        <text class="ve-note" x="480" y="320">Mock 模式按同一节奏运行，便于核对交互。</text>
+      </svg>
+    </div>
+    <figcaption><b>Fig. 8</b>直播页的四个模块只发一次快照请求。页面隐藏、未开播或已结束，自动轮询立即停下。</figcaption>
+  </figure>
+  <p>货盘的上下架与排序先写本地草稿，再按能力决定能否提交平台。库存、价格、链接的差异在提交前逐项列出，避免把整盘商品一次性推给平台。</p>
+
+  <h3>4.6 数据复盘：分析、草稿、发布是三段不可变流程</h3>
+  <figure>
+    <div class="frame">
+      <svg viewBox="0 0 880 430" role="img" aria-label="数据复盘流程：分析条件生成任务并轮询一秒、一百二十秒后暂停，结果不可变，生成日报周报月报草稿，再保存、预览、导出和发布">
+        <g class="ve-n"><rect class="sh" x="20" y="30" width="190" height="74" rx="6"/><text class="t" x="115" y="58" text-anchor="middle">分析条件</text><text class="s" x="115" y="80" text-anchor="middle">店铺 / 平台 / 周期 / 维度</text></g>
+        <g class="ve-n"><rect class="sh" x="250" y="30" width="170" height="74" rx="6"/><text class="t" x="335" y="58" text-anchor="middle">分析任务</text><text class="s" x="335" y="80" text-anchor="middle">queued → running</text></g>
+        <g class="ve-n"><rect class="sh" x="460" y="30" width="170" height="74" rx="6"/><text class="t" x="545" y="58" text-anchor="middle">分析结果</text><text class="s" x="545" y="80" text-anchor="middle">不可变指标与趋势</text></g>
+        <g class="ve-n"><rect class="sh" x="670" y="30" width="190" height="74" rx="6"/><text class="t" x="765" y="58" text-anchor="middle">报告周期</text><text class="s" x="765" y="80" text-anchor="middle">日报 / 周报 / 月报</text></g>
+        <path class="ve-e" d="M210 67H250"/><text class="ve-el" x="230" y="57" text-anchor="middle">创建</text>
+        <path class="ve-e" d="M420 67H460"/><text class="ve-el" x="440" y="57" text-anchor="middle">完成</text>
+        <path class="ve-e" d="M630 67H670"/><text class="ve-el" x="650" y="57" text-anchor="middle">选周期</text>
+
+        <path class="ve-dim" d="M250 120H420"/>
+        <path class="ve-tick" d="M250 114V126M278 114V126M306 114V126"/>
+        <text class="ve-label" x="250" y="108">每 1 s 轮询</text>
+        <text class="ve-label" x="420" y="108" text-anchor="end">120 s 后暂停</text>
+
+        <g class="ve-n"><rect class="sh" x="670" y="175" width="190" height="74" rx="6"/><text class="t" x="765" y="203" text-anchor="middle">报告草稿</text><text class="s" x="765" y="225" text-anchor="middle">标题/摘要/模块/建议</text></g>
+        <g class="ve-n"><rect class="sh" x="460" y="175" width="170" height="74" rx="6"/><text class="t" x="545" y="203" text-anchor="middle">保存版本</text><text class="s" x="545" y="225" text-anchor="middle">version 递增</text></g>
+        <path class="ve-e" d="M765 104V175"/><text class="ve-el" x="777" y="144">生成</text>
+        <path class="ve-e" d="M670 212H630"/><text class="ve-el" x="650" y="202" text-anchor="middle">保存</text>
+
+        <g class="ve-n"><rect class="sh" x="670" y="290" width="190" height="72" rx="6"/><text class="t" x="765" y="318" text-anchor="middle">阅读预览</text><text class="s" x="765" y="340" text-anchor="middle">客户视角</text></g>
+        <g class="ve-n"><rect class="sh" x="460" y="290" width="170" height="72" rx="6"/><text class="t" x="545" y="318" text-anchor="middle">HTML 导出</text><text class="s" x="545" y="340" text-anchor="middle">独立文件</text></g>
+        <g class="ve-n st-ok"><rect class="sh" x="250" y="290" width="170" height="72" rx="6"/><text class="t" x="335" y="318" text-anchor="middle">发布版本</text><text class="s" x="335" y="340" text-anchor="middle">固定快照</text></g>
+        <path class="ve-e" d="M545 249V290"/><text class="ve-el" x="557" y="272">导出</text>
+        <path class="ve-e" d="M765 249V290"/><text class="ve-el" x="777" y="272">预览</text>
+        <path class="ve-e" d="M460 230H430V270H335V290"/><text class="ve-el" x="436" y="262">固定版本</text>
+
+        <text class="ve-note" x="250" y="394">同一版本重复发布会复用 id:version 幂等键；</text>
+        <text class="ve-note" x="250" y="414">编辑草稿不改写原始分析结果。</text>
+      </svg>
+    </div>
+    <figcaption><b>Fig. 9</b>分析结果是只读事实，草稿是可编辑解释，发布是固定版本的引用。三者互不回写。</figcaption>
+  </figure>
+  <p>维度可选店铺、直播、投流、短视频，一次 1 至 4 项。日报必须 1&nbsp;天、周报必须连续 7&nbsp;天、月报必须完整自然月；周期不匹配时直接拦截，不生成半成品报告。</p>
+</section>
+
+<section id="machine">
+  <div class="sec-head">
+    <span class="sec-no">05 / 任务状态机</span>
+    <h2>十二个状态，成功只认回读匹配</h2>
+  </div>
+  <p class="deck">任务不是“提交成功即成功”。执行器返回受理后还要回读核验；核验不一致就进入失败，而不是标记完成。</p>
+
+  <figure>
+    <div class="frame">
+      <svg viewBox="0 0 880 620" role="img" aria-label="任务状态机：草稿、待审批、已批准、执行中、待核验、已核验构成主路径，旁支为风控阻断、人工交接、驳回、失败、取消与过期">
+        <g class="ve-n"><rect class="sh" x="60" y="30" width="200" height="56" rx="6"/><text class="t" x="160" y="52" text-anchor="middle">草稿</text><text class="s" x="160" y="72" text-anchor="middle">DRAFT</text></g>
+        <g class="ve-n"><rect class="sh" x="60" y="120" width="200" height="56" rx="6"/><text class="t" x="160" y="142" text-anchor="middle">待审批</text><text class="s" x="160" y="162" text-anchor="middle">PENDING_APPROVAL</text></g>
+        <g class="ve-n"><rect class="sh" x="60" y="210" width="200" height="56" rx="6"/><text class="t" x="160" y="232" text-anchor="middle">已批准</text><text class="s" x="160" y="252" text-anchor="middle">APPROVED</text></g>
+        <g class="ve-n"><rect class="sh" x="60" y="300" width="200" height="56" rx="6"/><text class="t" x="160" y="322" text-anchor="middle">执行中</text><text class="s" x="160" y="342" text-anchor="middle">EXECUTING</text></g>
+        <g class="ve-n"><rect class="sh" x="60" y="390" width="200" height="56" rx="6"/><text class="t" x="160" y="412" text-anchor="middle">待核验</text><text class="s" x="160" y="432" text-anchor="middle">VERIFYING</text></g>
+        <g class="ve-n st-ok"><rect class="sh" x="60" y="480" width="200" height="56" rx="6"/><text class="t" x="160" y="502" text-anchor="middle">已核验</text><text class="s" x="160" y="522" text-anchor="middle">SUCCEEDED</text></g>
+
+        <path class="ve-e ref" d="M160 86V120"/><text class="ve-el hot" x="172" y="103">确认广告动作</text>
+        <path class="ve-e" d="M160 176V210"/><text class="ve-el" x="172" y="193">批准</text>
+        <path class="ve-e" d="M160 266V300"/><text class="ve-el" x="172" y="283">执行器开始</text>
+        <path class="ve-e" d="M160 356V390"/><text class="ve-el" x="172" y="373">已受理</text>
+        <path class="ve-e ref" d="M160 446V480"/><text class="ve-el hot" x="172" y="463">回读匹配</text>
+
+        <g class="ve-n st-risk"><rect class="sh" x="480" y="30" width="280" height="56" rx="6"/><text class="t" x="620" y="52" text-anchor="middle">风控阻断</text><text class="s" x="620" y="72" text-anchor="middle">BLOCKED</text></g>
+        <g class="ve-n st-warn"><rect class="sh" x="480" y="120" width="280" height="56" rx="6"/><text class="t" x="620" y="142" text-anchor="middle">人工交接</text><text class="s" x="620" y="162" text-anchor="middle">MANUAL_REQUIRED</text></g>
+        <g class="ve-n"><rect class="sh" x="480" y="210" width="280" height="56" rx="6"/><text class="t" x="620" y="232" text-anchor="middle">已驳回</text><text class="s" x="620" y="252" text-anchor="middle">REJECTED</text></g>
+        <g class="ve-n st-risk"><rect class="sh" x="480" y="390" width="280" height="56" rx="6"/><text class="t" x="620" y="412" text-anchor="middle">失败</text><text class="s" x="620" y="432" text-anchor="middle">FAILED</text></g>
+        <g class="ve-n st-dim"><rect class="sh" x="480" y="480" width="280" height="56" rx="6"/><text class="t" x="620" y="502" text-anchor="middle">已取消</text><text class="s" x="620" y="522" text-anchor="middle">CANCELLED</text></g>
+        <g class="ve-n st-dim"><rect class="sh" x="480" y="550" width="280" height="56" rx="6"/><text class="t" x="620" y="572" text-anchor="middle">已过期</text><text class="s" x="620" y="592" text-anchor="middle">EXPIRED</text></g>
+
+        <path class="ve-e" d="M260 58H480"/><text class="ve-el" x="370" y="48">创建即阻断</text>
+        <path class="ve-e" d="M260 64H300V148H480"/><text class="ve-el" x="390" y="140">开播 / 关播交接</text>
+        <path class="ve-e" d="M260 148H300V238H480"/><text class="ve-el" x="390" y="230">驳回</text>
+        <path class="ve-e" d="M260 328H320V418H480"/><text class="ve-el" x="330" y="410">请求失败</text>
+        <path class="ve-e" d="M260 418H480"/><text class="ve-el" x="370" y="408">回读不一致</text>
+        <path class="ve-e dash" d="M260 58H320V238M320 238L480 508"/><text class="ve-el" x="338" y="476">未执行时取消</text>
+        <path class="ve-e dash" d="M320 238L480 578"/><text class="ve-el" x="400" y="564">超时</text>
+      </svg>
+    </div>
+    <figcaption><b>Fig. 10</b>主路径只有一条。任何旁支终态都必须带原因码；人工交接不代表前端可以控制推流。</figcaption>
+  </figure>
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>动作</th><th>值类型</th><th>作用对象</th><th>确认前检查</th></tr></thead>
+      <tbody>
+        <tr><td>调预算</td><td>金额</td><td>计划 / 账户</td><td>预算上下限、账户余额、日期范围</td></tr>
+        <tr><td>调出价</td><td>金额</td><td>计划 / 广告组</td><td>出价边界、学习期状态</td></tr>
+        <tr><td>调状态</td><td>枚举</td><td>计划 / 广告组 / 创意</td><td>暂停原因、审批状态</td></tr>
+        <tr><td>调定向</td><td>结构化</td><td>广告组</td><td>人群规模、排除包冲突</td></tr>
+        <tr><td>调时段</td><td>时间片</td><td>广告组</td><td>时区、跨日边界</td></tr>
+        <tr><td>调商品</td><td>商品 ID</td><td>创意 / 直播间</td><td>店铺授权、商品在线状态</td></tr>
+        <tr><td>调创意</td><td>素材 ID</td><td>广告组</td><td>素材审核、绑定账户</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="services">
+  <div class="sec-head">
+    <span class="sec-no">06 / 服务与接口</span>
+    <h2>七组服务对应各自的接口命名空间</h2>
+  </div>
+  <p class="deck">页面只依赖服务接口，不依赖具体后端路径。Mock 与 API 两套适配器实现同一组方法签名，切换数据模式不改页面代码。</p>
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>服务</th><th>接口命名空间</th><th>代表能力</th></tr></thead>
+      <tbody>
+        <tr><td>FrontendService</td><td><code>/v1/auth/*</code> · <code>/v1/frontend/*</code> · <code>/v1/workspace/*</code> · <code>/v1/command-jobs/*</code></td><td>登录、身份、工作区、命令任务、对话</td></tr>
+        <tr><td>DeliveryService</td><td><code>/v1/delivery/*</code></td><td>工作区、目标、计划、审批、执行记录</td></tr>
+        <tr><td>AdvertisingService</td><td><code>/v1/delivery/configuration/*</code></td><td>产品目录、配置草稿、预检、提交</td></tr>
+        <tr><td>PlatformService</td><td><code>/v1/delivery/integrations/*</code></td><td>授权账户、能力、场次、货盘</td></tr>
+        <tr><td>AnalysisAdapter</td><td><code>/v1/business-analysis/*</code></td><td>查询、任务、结果、草稿、发布</td></tr>
+        <tr><td>content-drafts</td><td>IndexedDB <code>yuliang-content-v1</code></td><td>作品、素材、文件、revision</td></tr>
+        <tr><td>快照读取</td><td>Workspace snapshot</td><td>概况、直播、任务、计划、货盘</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout"><p><span class="tag live">传输约定</span><b>Cookie 会话</b> + <code>cache: no-store</code> + 15&nbsp;秒超时 + <code>X-Yuliang-Client: web</code>。遇到 <code>401</code> 清身份，<code>409</code> 拉最新版本，<code>429</code> 按 <code>Retry-After</code> 退避。</p></div>
+  <p>接口业务失败返回 <code>202</code> 加业务码，不走 <code>4xx</code>；移动端与电脑端共用一个客户端标识，后端据此区分渠道策略。</p>
+</section>
+
+<section id="bounds">
+  <div class="sec-head">
+    <span class="sec-no">07 / 实现边界</span>
+    <h2>哪些闭环在前端完成，哪些仍等后端</h2>
+  </div>
+  <p class="deck">判断标准很简单：是否需要真实平台写入或真实模型产物。不需要的，前端已闭环；需要的，只展示状态，不伪造结果。</p>
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>业务域</th><th>前端已实现</th><th>依赖后端 / 平台</th><th>状态</th></tr></thead>
+      <tbody>
+        <tr><td>登录与身份</td><td>密码、邮箱验证码、Mock 身份、会话失效处理</td><td>真实账号体系与权限下发</td><td><span class="tag live">契约完整</span></td></tr>
+        <tr><td>工作区与授权</td><td>页面 / 动作 / 账户 / 能力四层判断</td><td>后端返回可用页面与授权账户</td><td><span class="tag live">契约完整</span></td></tr>
+        <tr><td>投放配置</td><td>产品目录、草稿、完整校验、预检交互</td><td>预检签名、平台真实校验</td><td><span class="tag wait">待联调</span></td></tr>
+        <tr><td>投放执行</td><td>任务确认、审批流、执行记录、回读展示</td><td>执行器、风控、平台写接口</td><td><span class="tag wait">待联调</span></td></tr>
+        <tr><td>内容创作</td><td>策划、画布、剪辑工程、PNG、素材库</td><td>平台上传、审核、素材 ID</td><td><span class="tag live">本地闭环</span></td></tr>
+        <tr><td>视频渲染</td><td>轨道编辑、工程 JSON、预览占位</td><td>整条时间线混音、MP4 渲染</td><td><span class="tag end">未接入</span></td></tr>
+        <tr><td>数据复盘</td><td>条件、任务、结果、草稿、预览、HTML 导出</td><td>真实指标计算与发布链接</td><td><span class="tag wait">Mock 可跑</span></td></tr>
+        <tr><td>直播与货盘</td><td>场次、四模块、轮询节奏、本地草稿</td><td>平台实时数据、货盘提交</td><td><span class="tag wait">待联调</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout"><p><span class="tag end">红线</span>前端不伪造平台成功。没有回读匹配，就不展示“已生效”；没有真实模型产物，就不提供“已生成视频”。</p></div>
+</section>
+
+<section id="sources">
+  <div class="sec-head">
+    <span class="sec-no">08 / 源码索引</span>
+    <h2>每个结论都能回到一处源码</h2>
+  </div>
+  <ul class="sources">
+    <li>src/app/[[...pageId]]/page.tsx</li>
+    <li>src/features/workspace-entry.tsx</li>
+    <li>src/components/provider.tsx</li>
+    <li>src/lib/routes.ts · access.ts</li>
+    <li>src/lib/domain.ts · command-job.ts</li>
+    <li>src/lib/advertising.ts · live-room.ts</li>
+    <li>src/lib/business-analysis.ts · analysis-draft.ts</li>
+    <li>src/services/api-client.ts</li>
+    <li>src/services/frontend-service.ts</li>
+    <li>src/services/delivery-service.ts</li>
+    <li>src/services/advertising-service.ts</li>
+    <li>src/services/platform-service.ts</li>
+    <li>src/services/analysis-service.ts</li>
+    <li>src/services/content-drafts.ts</li>
+    <li>src/services/snapshot-reader.ts</li>
+    <li>src/features/delivery/context.tsx</li>
+    <li>src/features/analysis/workspace.tsx</li>
+    <li>src/features/live-room/controller.tsx</li>
+    <li>next.config.ts · scripts/run.mjs</li>
+  </ul>
+  <footer>易致·驭量 · 前端架构与业务流 · 依据 2026-10-25 工作区源码整理</footer>
+</section>
+</div>
+
+<script>
+(() => {
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  document.documentElement.classList.add('js-motion');
+
+  // 入场：节点按顺序浮现
+  if (reduce.matches) {
+    document.documentElement.classList.remove('js-motion');
+  } else {
+    const items = [...document.querySelectorAll('.ve-n, .ve-band')];
+    items.forEach((el, i) => {
+      setTimeout(() => el.classList.add('lit'), Math.min(700, 30 + i * 18));
+    });
+  }
+
+  // 指标数字：仅做一次短计数
+  document.querySelectorAll('[data-count]').forEach((el) => {
+    const target = Number(el.dataset.count || '0');
+    if (reduce.matches || !Number.isFinite(target)) return;
+    const start = performance.now();
+    const tick = (now) => {
+      const p = Math.min(1, (now - start) / 700);
+      el.textContent = String(Math.round(target * p));
+      if (p < 1) requestAnimationFrame(tick);
+    };
+    el.textContent = '0';
+    requestAnimationFrame(tick);
+  });
+
+  // 悬停联动：正文术语与图中节点互相点亮
+  const svgs = [...document.querySelectorAll('.frame svg')];
+  const clear = () => {
+    document.querySelectorAll('.focus').forEach((el) => el.classList.remove('focus'));
+    svgs.forEach((svg) => svg.classList.remove('has-lit'));
+  };
+  const light = (ref) => {
+    clear();
+    const hit = [...document.querySelectorAll(`[data-ref="${ref}"]`)];
+    if (!hit.length) return;
+    hit.forEach((el) => {
+      el.classList.add('focus');
+      el.closest('svg')?.classList.add('has-lit');
+    });
+  };
+  document.querySelectorAll('.ve-ref').forEach((el) => {
+    const ref = el.dataset.ref;
+    el.addEventListener('mouseenter', () => light(ref));
+    el.addEventListener('focus', () => light(ref));
+    el.addEventListener('mouseleave', clear);
+    el.addEventListener('blur', clear);
+  });
+
+  // 页内锚点平滑跳转
+  document.querySelectorAll('.toc a[href^="#"]').forEach((a) => {
+    a.addEventListener('click', (e) => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (!target) return;
+      e.preventDefault();
+      target.scrollIntoView({ behavior: reduce.matches ? 'auto' : 'smooth', block: 'start' });
+      try {
+        history.replaceState(null, '', a.getAttribute('href'));
+      } catch {
+        // file:// 下忽略地址栏写入失败
+      }
+    });
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,231 @@
+{
+  "success": {
+    "schemaVersion": "command-job-v1.0",
+    "requestId": "contract-request-001",
+    "data": {
+      "contractVersion": "delivery-v8.0"
+    }
+  },
+  "logout": {
+    "schemaVersion": "command-job-v1.0",
+    "requestId": "contract-request-002",
+    "data": null
+  },
+  "identity": {
+    "userId": "00000000-0000-4000-8000-000000000001",
+    "displayName": "验收用户",
+    "email": "acceptance@example.invalid",
+    "tenantId": "1",
+    "shopIds": [],
+    "permissions": [
+      "snapshot.read"
+    ],
+    "workspacePages": [
+      "command",
+      "overview"
+    ],
+    "mode": "API"
+  },
+  "emptySnapshot": {
+    "schemaVersion": "command-job-v1.0",
+    "revision": 1,
+    "source": "API",
+    "tenants": [],
+    "shops": [],
+    "adAccounts": [],
+    "liveSessions": [],
+    "plans": [],
+    "products": [],
+    "materials": [],
+    "tasks": [],
+    "riskPolicies": [],
+    "replaySegments": [],
+    "replayReports": [],
+    "connectors": [],
+    "scope": {
+      "shop_id": "all",
+      "live_session_id": "all",
+      "connector_id": "all",
+      "date": "2026-10-26",
+      "timezone": "Asia/Shanghai"
+    }
+  },
+  "approval": {
+    "job_id": "00000000-0000-4000-8000-000000000002",
+    "expected_version": 2,
+    "decision": "APPROVE"
+  },
+  "invalidExamples": [
+    {
+      "case": "wrongOuterVersion",
+      "value": {
+        "schemaVersion": "delivery-v8.0",
+        "requestId": "r",
+        "data": {}
+      }
+    },
+    {
+      "case": "missingRequestId",
+      "value": {
+        "schemaVersion": "command-job-v1.0",
+        "data": {}
+      }
+    },
+    {
+      "case": "wrongPage",
+      "value": "delivery"
+    },
+    {
+      "case": "snapshotItems",
+      "value": {
+        "items": []
+      }
+    },
+    {
+      "case": "lowercaseApproval",
+      "value": "approve"
+    },
+    {
+      "case": "uploadNotResource",
+      "value": {
+        "taskId": "task_1",
+        "state": "PENDING",
+        "resource": null
+      }
+    }
+  ],
+  "job": {
+    "schema_version": "1.0",
+    "job_id": "00000000-0000-4000-8000-000000000002",
+    "source": "PC_MANUAL",
+    "tenant_id": "1",
+    "shop_id": "shop_contract",
+    "account_id": "account_contract",
+    "live_session_id": null,
+    "target_type": "AD_PLAN",
+    "target_id": "plan_contract",
+    "action_type": "CHANGE_DAILY_BUDGET",
+    "old_value": {
+      "kind": "MONEY",
+      "currency": "CNY",
+      "amount_minor": 100000
+    },
+    "new_value": {
+      "kind": "MONEY",
+      "currency": "CNY",
+      "amount_minor": 120000
+    },
+    "intent": "仅契约黄金样例，非真实业务证据",
+    "status": "DRAFT",
+    "created_at": "2026-10-26T00:00:00Z",
+    "updated_at": "2026-10-26T00:00:00Z",
+    "expires_at": "2099-01-01T00:00:00Z",
+    "risk_summary": {
+      "source": "SERVER",
+      "result": "REVIEW_REQUIRED",
+      "level": "HIGH",
+      "checks": [
+        {
+          "code": "CONTRACT_EXAMPLE",
+          "passed": true,
+          "message": "仅契约样例"
+        }
+      ],
+      "policy_version": 1,
+      "checked_at": "2026-10-26T00:00:00Z"
+    },
+    "approval": {
+      "state": "NOT_REQUESTED",
+      "actor_id": null,
+      "decided_at": null,
+      "method": null,
+      "approved_version": null
+    },
+    "execution_receipt": null,
+    "error": null,
+    "version": 1,
+    "idempotency_key": "contract-key-001",
+    "mode": "API",
+    "history": [
+      {
+        "status": "DRAFT",
+        "at": "2026-10-26T00:00:00Z",
+        "detail": "仅契约样例"
+      }
+    ]
+  },
+  "receipt": {
+    "receipt_id": "receipt_contract",
+    "source": "PLATFORM",
+    "platform_receipt_id": "platform_receipt_contract",
+    "accepted": true,
+    "received_at": "2026-10-26T00:00:00Z",
+    "verification": "MATCHED",
+    "observed_value": {
+      "kind": "MONEY",
+      "currency": "CNY",
+      "amount_minor": 120000
+    },
+    "verified_at": "2026-10-26T00:00:00Z"
+  },
+  "v8Request": {
+    "planId": "plan_contract",
+    "accountId": "account_contract",
+    "action": "CHANGE_DAILY_BUDGET",
+    "newValue": 120000,
+    "expectedVersion": 1,
+    "idempotencyKey": "contract-v8-001"
+  },
+  "v8Preview": {
+    "token": "contract-only-validation-token",
+    "expiresAt": "2099-01-01T00:00:00Z",
+    "checks": [
+      {
+        "passed": true,
+        "message": "仅契约样例"
+      }
+    ],
+    "requiresApproval": true,
+    "expectedVersion": 1
+  },
+  "configurationContext": {
+    "product": "adq",
+    "scenario": "ADQ",
+    "businessEntityId": "entity_contract",
+    "accountId": "account_contract",
+    "shopId": "shop_contract",
+    "objectiveId": "objective_contract",
+    "optimizationId": "optimization_contract",
+    "strategyId": "strategy_contract",
+    "targetIds": [],
+    "placementIds": [],
+    "bidModeId": "bid_contract",
+    "orderTypeId": "",
+    "fundTypeId": "",
+    "deliveryModeId": "",
+    "creativeMethodId": ""
+  },
+  "selectedResource": {
+    "id": "asset_contract",
+    "platformId": "platform_asset_contract",
+    "name": "仅协议样例，未上传平台",
+    "sourceMaterialId": "source_contract",
+    "eligible": false
+  },
+  "analysisTask": {
+    "id": "analysis_contract",
+    "query": {
+      "shopId": "shop_contract",
+      "platformId": "wxshop",
+      "startDate": "2026-10-26",
+      "endDate": "2026-10-26",
+      "dimensions": [
+        "shop"
+      ],
+      "timezone": "Asia/Shanghai"
+    },
+    "status": "queued",
+    "progress": 0,
+    "createdAt": "2026-10-26T00:00:00Z"
+  }
+}

@@ -1,0 +1,1508 @@
+{
+  "baseline": "4405ebc",
+  "extraction": "TypeScript AST and type checker; no HTTP/platform execution",
+  "calls": [
+    {
+      "source": "src/services/advertising-service.ts",
+      "line": 142,
+      "class": "AdvertisingService",
+      "method": "catalog",
+      "prefix": "/v1/delivery/configuration/",
+      "path": "`catalog?product=${product}`",
+      "httpMethod": "\"GET\"",
+      "body": "undefined",
+      "requestType": "undefined",
+      "responseType": "ConfigurationCatalog",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/advertising-service.ts",
+      "line": 185,
+      "class": "AdvertisingService",
+      "method": "capabilities",
+      "prefix": "/v1/delivery/configuration/",
+      "path": "`capabilities?${this.contextQuery(context)}`",
+      "httpMethod": "\"GET\"",
+      "body": "undefined",
+      "requestType": "undefined",
+      "responseType": "ConfigurationCapability",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/advertising-service.ts",
+      "line": 291,
+      "class": "AdvertisingService",
+      "method": "lookup",
+      "prefix": "/v1/delivery/configuration/",
+      "path": "`options?${params}`",
+      "httpMethod": "\"GET\"",
+      "body": "undefined",
+      "requestType": "undefined",
+      "responseType": "LookupPage",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/advertising-service.ts",
+      "line": 325,
+      "class": "AdvertisingService",
+      "method": "validate",
+      "prefix": "/v1/delivery/configuration/",
+      "path": "\"validations\"",
+      "httpMethod": "\"POST\"",
+      "body": "{ configuration: draft, capabilityVersion: capability.version }",
+      "requestType": "{ configuration: AdvertisingDraft; capabilityVersion: string; }",
+      "responseType": "ConfigurationValidation",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/advertising-service.ts",
+      "line": 396,
+      "class": "AdvertisingService",
+      "method": "submit",
+      "prefix": "/v1/delivery/configuration/",
+      "path": "\"tasks\"",
+      "httpMethod": "\"POST\"",
+      "body": "{\n      configuration: draft,\n      capabilityVersion: cap.version,\n      validationToken: validation.validationToken,\n      idempotencyKey: ticket.idempotencyKey,\n    }",
+      "requestType": "{ configuration: AdvertisingDraft; capabilityVersion: string; validationToken: string; idempotencyKey: string; }",
+      "responseType": "ConfigurationTask",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/advertising-service.ts",
+      "line": 411,
+      "class": "AdvertisingService",
+      "method": "result",
+      "prefix": "/v1/delivery/configuration/",
+      "path": "`tasks?${query}`",
+      "httpMethod": "\"GET\"",
+      "body": null,
+      "requestType": null,
+      "responseType": "ConfigurationTask",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/advertising-service.ts",
+      "line": 419,
+      "class": "AdvertisingService",
+      "method": "cancel",
+      "prefix": "/v1/delivery/configuration/",
+      "path": "`tasks/${encodeURIComponent(result.taskId)}/cancellations`",
+      "httpMethod": "\"POST\"",
+      "body": "{\n        product: ticket.product, accountId: ticket.accountId,\n        expectedVersion: result.version, originalIdempotencyKey: ticket.idempotencyKey,\n        idempotencyKey: crypto.randomUUID(),\n      }",
+      "requestType": "{ product: \"beans\" | \"adq\" | \"shop\" | \"ocean_marketing\" | \"qianchuan\" | \"dou_plus\" | \"local_push\" | \"juguang\"; accountId: string; expectedVersion: number; originalIdempotencyKey: string; idempotencyKey: `${string}-${string}-${string}-${string}-${string}`; }",
+      "responseType": "ConfigurationTask",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/advertising-service.ts",
+      "line": 464,
+      "class": "AdvertisingService",
+      "method": "estimate",
+      "prefix": "/v1/delivery/configuration/",
+      "path": "\"audience-estimates\"",
+      "httpMethod": "\"POST\"",
+      "body": "{ configuration: draft }",
+      "requestType": "{ configuration: AdvertisingDraft; }",
+      "responseType": "AudienceEstimate",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/advertising-service.ts",
+      "line": 491,
+      "class": "AdvertisingService",
+      "method": "uploadCreative",
+      "prefix": "/v1/delivery/configuration/",
+      "path": "\"materials\"",
+      "httpMethod": "\"POST\"",
+      "body": "body",
+      "requestType": "FormData",
+      "responseType": "{\n      contractVersion: string;\n      source: string;\n      tenantId: string;\n      contextKey: string;\n      resource: SelectedResource;\n    }",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/analysis-service.ts",
+      "line": 131,
+      "class": "ApiAnalysisAdapter",
+      "method": "createTask",
+      "prefix": "/v1/business-analysis",
+      "path": "\"/tasks\"",
+      "httpMethod": "\"POST\"",
+      "body": "{ query, idempotencyKey }",
+      "requestType": "{ query: AnalysisQuery; idempotencyKey: string; }",
+      "responseType": "AnalysisTask",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/analysis-service.ts",
+      "line": 135,
+      "class": "ApiAnalysisAdapter",
+      "method": "getTask",
+      "prefix": "/v1/business-analysis",
+      "path": "`/tasks/${encodeURIComponent(id)}`",
+      "httpMethod": "\"GET\"",
+      "body": "undefined",
+      "requestType": "undefined",
+      "responseType": "AnalysisTask",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/analysis-service.ts",
+      "line": 136,
+      "class": "ApiAnalysisAdapter",
+      "method": "getResult",
+      "prefix": "/v1/business-analysis",
+      "path": "`/results/${encodeURIComponent(id)}`",
+      "httpMethod": "\"GET\"",
+      "body": "undefined",
+      "requestType": "undefined",
+      "responseType": "AnalysisResult",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/analysis-service.ts",
+      "line": 137,
+      "class": "ApiAnalysisAdapter",
+      "method": "listResults",
+      "prefix": "/v1/business-analysis",
+      "path": "\"/results\"",
+      "httpMethod": "\"GET\"",
+      "body": "undefined",
+      "requestType": "undefined",
+      "responseType": "AnalysisResult[]",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/analysis-service.ts",
+      "line": 138,
+      "class": "ApiAnalysisAdapter",
+      "method": "listDrafts",
+      "prefix": "/v1/business-analysis",
+      "path": "\"/drafts\"",
+      "httpMethod": "\"GET\"",
+      "body": "undefined",
+      "requestType": "undefined",
+      "responseType": "ReportDraft[]",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/analysis-service.ts",
+      "line": 139,
+      "class": "ApiAnalysisAdapter",
+      "method": "getDraft",
+      "prefix": "/v1/business-analysis",
+      "path": "`/drafts/${encodeURIComponent(id)}`",
+      "httpMethod": "\"GET\"",
+      "body": "undefined",
+      "requestType": "undefined",
+      "responseType": "ReportDraft",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/analysis-service.ts",
+      "line": 140,
+      "class": "ApiAnalysisAdapter",
+      "method": "saveDraft",
+      "prefix": "/v1/business-analysis",
+      "path": "`/drafts/${encodeURIComponent(draft.id)}`",
+      "httpMethod": "\"PUT\"",
+      "body": "draft",
+      "requestType": "ReportDraft",
+      "responseType": "ReportDraft",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/analysis-service.ts",
+      "line": 141,
+      "class": "ApiAnalysisAdapter",
+      "method": "publishDraft",
+      "prefix": "/v1/business-analysis",
+      "path": "`/drafts/${encodeURIComponent(id)}/publications`",
+      "httpMethod": "\"POST\"",
+      "body": "{ version, idempotencyKey: `${id}:${version}` }",
+      "requestType": "{ version: number; idempotencyKey: string; }",
+      "responseType": "PublishedReport",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/analysis-service.ts",
+      "line": 142,
+      "class": "ApiAnalysisAdapter",
+      "method": "getPublished",
+      "prefix": "/v1/business-analysis",
+      "path": "`/publications/${encodeURIComponent(id)}`",
+      "httpMethod": "\"GET\"",
+      "body": "undefined",
+      "requestType": "undefined",
+      "responseType": "PublishedReport",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/analysis-service.ts",
+      "line": 147,
+      "class": "ApiAnalysisAdapter",
+      "method": "listPublished",
+      "prefix": "/v1/business-analysis",
+      "path": "\"/publications\"",
+      "httpMethod": "\"GET\"",
+      "body": "undefined",
+      "requestType": "undefined",
+      "responseType": "PublishedReport[]",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/api-client.ts",
+      "line": 124,
+      "class": "ApiClient",
+      "method": "getIdentity",
+      "prefix": "",
+      "path": "\"/v1/auth/session\"",
+      "httpMethod": "\"GET\"",
+      "body": null,
+      "requestType": null,
+      "responseType": "Identity | null",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/api-client.ts",
+      "line": 137,
+      "class": "ApiClient",
+      "method": "analysisRequest",
+      "prefix": "",
+      "path": "path",
+      "httpMethod": "method",
+      "body": "body",
+      "requestType": "unknown",
+      "responseType": "T",
+      "forwardingHelper": true
+    },
+    {
+      "source": "src/services/api-client.ts",
+      "line": 141,
+      "class": "ApiClient",
+      "method": "deliveryRequest",
+      "prefix": "",
+      "path": "path",
+      "httpMethod": "method",
+      "body": "body",
+      "requestType": "unknown",
+      "responseType": "T",
+      "forwardingHelper": true
+    },
+    {
+      "source": "src/services/api-client.ts",
+      "line": 149,
+      "class": "ApiClient",
+      "method": "login",
+      "prefix": "",
+      "path": "\"/v1/auth/login\"",
+      "httpMethod": "\"POST\"",
+      "body": "{ ...input, email }",
+      "requestType": "{ email: string; password: string; method?: \"password\"; } | { email: string; code: string; challengeId: string; method: \"email_code\"; }",
+      "responseType": "Identity",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/api-client.ts",
+      "line": 155,
+      "class": "ApiClient",
+      "method": "requestEmailCode",
+      "prefix": "",
+      "path": "\"/v1/auth/email-codes\"",
+      "httpMethod": "\"POST\"",
+      "body": "{ email: validEmail(input.email), purpose: \"LOGIN\" }",
+      "requestType": "{ email: string; purpose: string; }",
+      "responseType": "EmailLoginChallenge",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/api-client.ts",
+      "line": 163,
+      "class": "ApiClient",
+      "method": "updateProfile",
+      "prefix": "",
+      "path": "\"/v1/users/me\"",
+      "httpMethod": "\"PATCH\"",
+      "body": "{ displayName }",
+      "requestType": "{ displayName: string; }",
+      "responseType": "Identity",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/api-client.ts",
+      "line": 168,
+      "class": "ApiClient",
+      "method": "logout",
+      "prefix": "",
+      "path": "\"/v1/auth/logout\"",
+      "httpMethod": "\"POST\"",
+      "body": null,
+      "requestType": null,
+      "responseType": "null",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/api-client.ts",
+      "line": 171,
+      "class": "ApiClient",
+      "method": "getHistory",
+      "prefix": "",
+      "path": "\"/v1/workspace/history\"",
+      "httpMethod": "\"GET\"",
+      "body": null,
+      "requestType": null,
+      "responseType": "HistorySnapshot",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/api-client.ts",
+      "line": 178,
+      "class": "ApiClient",
+      "method": "createProject",
+      "prefix": "",
+      "path": "\"/v1/projects\"",
+      "httpMethod": "\"POST\"",
+      "body": "{ name }",
+      "requestType": "{ name: string; }",
+      "responseType": "WorkProject",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/api-client.ts",
+      "line": 182,
+      "class": "ApiClient",
+      "method": "moveConversation",
+      "prefix": "",
+      "path": "`/v1/conversations/${encodeURIComponent(input.conversationId)}`",
+      "httpMethod": "\"PATCH\"",
+      "body": "{ projectId: input.projectId }",
+      "requestType": "{ projectId: string | null; }",
+      "responseType": "Conversation",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/api-client.ts",
+      "line": 187,
+      "class": "ApiClient",
+      "method": "sendMessage",
+      "prefix": "",
+      "path": "\"/v1/conversation-messages\"",
+      "httpMethod": "\"POST\"",
+      "body": "{ ...input, text: input.text.trim() }",
+      "requestType": "{ text: string; conversationId?: string; projectId?: string | null; source: import(\"D:/codex/yizhi-yuliang/src/lib/command-job\").JobSource; scope: ReportingScope; idempotencyKey: string; }",
+      "responseType": "ConversationTurn",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/api-client.ts",
+      "line": 195,
+      "class": "ApiClient",
+      "method": "attachConversationJob",
+      "prefix": "",
+      "path": "`/v1/conversations/${encodeURIComponent(input.conversationId)}/jobs`",
+      "httpMethod": "\"POST\"",
+      "body": "{ messageId: input.messageId, jobId: input.jobId }",
+      "requestType": "{ messageId: string; jobId: string; }",
+      "responseType": "Conversation",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/api-client.ts",
+      "line": 199,
+      "class": "ApiClient",
+      "method": "assignTaskProject",
+      "prefix": "",
+      "path": "`/v1/command-jobs/${encodeURIComponent(input.jobId)}/project`",
+      "httpMethod": "\"PUT\"",
+      "body": "{ projectId: input.projectId }",
+      "requestType": "{ projectId: string | null; }",
+      "responseType": "null",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/api-client.ts",
+      "line": 202,
+      "class": "ApiClient",
+      "method": "getSnapshot",
+      "prefix": "",
+      "path": "\"/v1/frontend/snapshot\"",
+      "httpMethod": "\"GET\"",
+      "body": "undefined",
+      "requestType": "undefined",
+      "responseType": "FrontendSnapshot",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/api-client.ts",
+      "line": 233,
+      "class": "ApiClient",
+      "method": "interpretCommand",
+      "prefix": "",
+      "path": "\"/v1/command-interpretations\"",
+      "httpMethod": "\"POST\"",
+      "body": "input",
+      "requestType": "{ text: string; scope: ReportingScope; }",
+      "responseType": "CommandInterpretation",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/api-client.ts",
+      "line": 240,
+      "class": "ApiClient",
+      "method": "job",
+      "prefix": "",
+      "path": "path",
+      "httpMethod": "\"POST\"",
+      "body": "input",
+      "requestType": "unknown",
+      "responseType": "CommandJob",
+      "forwardingHelper": true
+    },
+    {
+      "source": "src/services/api-client.ts",
+      "line": 252,
+      "class": "ApiClient",
+      "method": "createJob",
+      "prefix": "",
+      "path": "\"/v1/command-jobs\"",
+      "httpMethod": "\"POST\"",
+      "body": "input",
+      "requestType": "CreateJobRequest",
+      "responseType": "CommandJob",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/api-client.ts",
+      "line": 255,
+      "class": "ApiClient",
+      "method": "confirmJob",
+      "prefix": "",
+      "path": "`/v1/command-jobs/${encodeURIComponent(input.job_id)}/confirm`",
+      "httpMethod": "\"POST\"",
+      "body": "input",
+      "requestType": "JobVersionRequest",
+      "responseType": "CommandJob",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/api-client.ts",
+      "line": 261,
+      "class": "ApiClient",
+      "method": "reviewJob",
+      "prefix": "",
+      "path": "`/v1/command-jobs/${encodeURIComponent(input.job_id)}/approvals`",
+      "httpMethod": "\"POST\"",
+      "body": "input",
+      "requestType": "JobVersionRequest & { decision: \"APPROVE\" | \"REJECT\"; }",
+      "responseType": "CommandJob",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/api-client.ts",
+      "line": 267,
+      "class": "ApiClient",
+      "method": "cancelJob",
+      "prefix": "",
+      "path": "`/v1/command-jobs/${encodeURIComponent(input.job_id)}/cancel`",
+      "httpMethod": "\"POST\"",
+      "body": "input",
+      "requestType": "JobVersionRequest",
+      "responseType": "CommandJob",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/api-client.ts",
+      "line": 284,
+      "class": "ApiClient",
+      "method": "updatePolicy",
+      "prefix": "",
+      "path": "`/v1/risk-policies/${encodeURIComponent(input.id)}`",
+      "httpMethod": "\"PUT\"",
+      "body": "input",
+      "requestType": "RiskPolicy",
+      "responseType": "RiskPolicy",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/api-client.ts",
+      "line": 291,
+      "class": "ApiClient",
+      "method": "setScope",
+      "prefix": "",
+      "path": "\"/v1/frontend/reporting-scope\"",
+      "httpMethod": "\"PUT\"",
+      "body": "input",
+      "requestType": "ReportingScope",
+      "responseType": "null",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/delivery-service.ts",
+      "line": 765,
+      "class": "DeliveryService",
+      "method": "load",
+      "prefix": "/v1/delivery/",
+      "path": "`workspace?${query}`",
+      "httpMethod": "\"GET\"",
+      "body": "undefined",
+      "requestType": "undefined",
+      "responseType": "DeliveryData",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/delivery-service.ts",
+      "line": 793,
+      "class": "DeliveryService",
+      "method": "preview",
+      "prefix": "/v1/delivery/",
+      "path": "\"plan-changes/preview\"",
+      "httpMethod": "\"POST\"",
+      "body": "input",
+      "requestType": "PlanChangeRequest",
+      "responseType": "RiskPreview",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/delivery-service.ts",
+      "line": 828,
+      "class": "DeliveryService",
+      "method": "changePlan",
+      "prefix": "/v1/delivery/",
+      "path": "\"plan-changes\"",
+      "httpMethod": "\"POST\"",
+      "body": "{\n      ...input,\n      previewToken: preview.token,\n      platform: plan.platform,\n    }",
+      "requestType": "{ previewToken: string; platform: \"beans\" | \"adq\"; planId: string; accountId: string; action: \"CHANGE_DAILY_BUDGET\" | \"CHANGE_BID\" | \"PAUSE_AD_PLAN\" | \"RESUME_AD_PLAN\"; newValue: number | boolean; expectedVersion: number | null; decisionId?: string; idempotencyKey: string; }",
+      "responseType": "MutationResult",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/delivery-service.ts",
+      "line": 862,
+      "class": "DeliveryService",
+      "method": "create",
+      "prefix": "/v1/delivery/",
+      "path": "input.platform === \"adq\" ? \"campaigns\" : \"promotion-orders\"",
+      "httpMethod": "\"POST\"",
+      "body": "input",
+      "requestType": "CreatePlanRequest",
+      "responseType": "MutationResult",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/delivery-service.ts",
+      "line": 869,
+      "class": "DeliveryService",
+      "method": "goal",
+      "prefix": "/v1/delivery/",
+      "path": "input.goalId ? `goals/${encodeURIComponent(input.goalId)}` : \"goals\"",
+      "httpMethod": "input.goalId ? \"PATCH\" : \"POST\"",
+      "body": "input",
+      "requestType": "GoalRequest",
+      "responseType": "MutationResult",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/delivery-service.ts",
+      "line": 876,
+      "class": "DeliveryService",
+      "method": "budget",
+      "prefix": "/v1/delivery/",
+      "path": "\"budget-requests\"",
+      "httpMethod": "\"POST\"",
+      "body": "input",
+      "requestType": "BudgetRequest",
+      "responseType": "MutationResult",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/delivery-service.ts",
+      "line": 879,
+      "class": "DeliveryService",
+      "method": "allocate",
+      "prefix": "/v1/delivery/",
+      "path": "\"budget-requests\"",
+      "httpMethod": "\"POST\"",
+      "body": "input",
+      "requestType": "NewBudgetRequest",
+      "responseType": "MutationResult",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/delivery-service.ts",
+      "line": 882,
+      "class": "DeliveryService",
+      "method": "analyze",
+      "prefix": "/v1/delivery/",
+      "path": "\"analyses\"",
+      "httpMethod": "\"POST\"",
+      "body": "input",
+      "requestType": "AnalysisRequest",
+      "responseType": "MutationResult",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/delivery-service.ts",
+      "line": 885,
+      "class": "DeliveryService",
+      "method": "review",
+      "prefix": "/v1/delivery/",
+      "path": "`decisions/${encodeURIComponent(id)}/reviews`",
+      "httpMethod": "\"POST\"",
+      "body": "input",
+      "requestType": "DecisionReviewRequest",
+      "responseType": "MutationResult",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/delivery-service.ts",
+      "line": 892,
+      "class": "DeliveryService",
+      "method": "approval",
+      "prefix": "/v1/delivery/",
+      "path": "`approvals/${encodeURIComponent(id)}/reviews`",
+      "httpMethod": "\"POST\"",
+      "body": "input",
+      "requestType": "ApprovalReviewRequest",
+      "responseType": "MutationResult",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/delivery-service.ts",
+      "line": 899,
+      "class": "DeliveryService",
+      "method": "policy",
+      "prefix": "/v1/delivery/",
+      "path": "\"policies\"",
+      "httpMethod": "\"PUT\"",
+      "body": "input",
+      "requestType": "PolicyRequest",
+      "responseType": "MutationResult",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/delivery-service.ts",
+      "line": 902,
+      "class": "DeliveryService",
+      "method": "verify",
+      "prefix": "/v1/delivery/",
+      "path": "`executions/${encodeURIComponent(id)}/verify`",
+      "httpMethod": "\"POST\"",
+      "body": "{ expectedVersion: version }",
+      "requestType": "{ expectedVersion: number; }",
+      "responseType": "MutationResult",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/delivery-service.ts",
+      "line": 909,
+      "class": "DeliveryService",
+      "method": "retry",
+      "prefix": "/v1/delivery/",
+      "path": "`executions/${encodeURIComponent(id)}/safe-retry`",
+      "httpMethod": "\"POST\"",
+      "body": "{ expectedVersion: version, idempotencyKey }",
+      "requestType": "{ expectedVersion: number; idempotencyKey: string; }",
+      "responseType": "MutationResult",
+      "forwardingHelper": false
+    }
+  ],
+  "exportedTypes": [
+    {
+      "source": "src/lib/advertising.ts",
+      "line": 83,
+      "name": "AdvertisingProduct",
+      "definition": "export type AdvertisingProduct = keyof typeof advertisingProducts;"
+    },
+    {
+      "source": "src/lib/advertising.ts",
+      "line": 84,
+      "name": "AdvertisingScenario",
+      "definition": "export type AdvertisingScenario =\n  | \"ADQ\"\n  | \"VIDEO\"\n  | \"LIVE\"\n  | \"PRODUCT_HOSTING\"\n  | \"SHOP_LIVE\"\n  | \"PROJECT_PROMOTION\"\n  | \"QIANCHUAN\"\n  | \"DOU_PLUS\"\n  | \"LOCAL_PUSH\"\n  | \"XHS_STANDARD\"\n  | \"XHS_SEARCH\"\n  | \"XHS_SIMPLE\";"
+    },
+    {
+      "source": "src/lib/advertising.ts",
+      "line": 133,
+      "name": "FieldState",
+      "definition": "export type FieldState = keyof typeof fieldStateNames;"
+    },
+    {
+      "source": "src/lib/advertising.ts",
+      "line": 178,
+      "name": "FieldId",
+      "definition": "export type FieldId = keyof typeof fieldNames;"
+    },
+    {
+      "source": "src/lib/advertising.ts",
+      "line": 179,
+      "name": "ConfigOption",
+      "definition": "export interface ConfigOption {\n  id: string;\n  name: string;\n  available: boolean;\n  reason?: string;\n}"
+    },
+    {
+      "source": "src/lib/advertising.ts",
+      "line": 185,
+      "name": "FieldCapability",
+      "definition": "export interface FieldCapability {\n  state: FieldState;\n  reason: string;\n  required?: boolean;\n  options?: ConfigOption[];\n  min?: number;\n  max?: number;\n  step?: number;\n  precision?: number;\n  unit?: \"CNY_MINOR\" | \"BEAN\" | \"RATIO\";\n  unitLabel?: string;\n  allowedMin?: number[];\n  allowedMax?: number[];\n  maxSelected?: number;\n  specs?: string[];\n}"
+    },
+    {
+      "source": "src/lib/advertising.ts",
+      "line": 201,
+      "name": "ConfigurationContext",
+      "definition": "export interface ConfigurationContext {\n  product: AdvertisingProduct;\n  scenario: AdvertisingScenario;\n  businessEntityId: string;\n  accountId: string;\n  shopId: string;\n  objectiveId: string;\n  optimizationId: string;\n  strategyId: string;\n  targetIds: string[];\n  placementIds: string[];\n  bidModeId: string;\n  orderTypeId: string;\n  fundTypeId: string;\n  deliveryModeId: string;\n  creativeMethodId: string;\n}"
+    },
+    {
+      "source": "src/lib/advertising.ts",
+      "line": 218,
+      "name": "ConfigurationCapability",
+      "definition": "export interface ConfigurationCapability {\n  contractVersion: \"advertising-v9.0\";\n  source: \"API\";\n  tenantId: string;\n  contextKey: string;\n  version: string;\n  checkedAt: string;\n  expiresAt: string;\n  fields: Partial<Record<FieldId, FieldCapability>>;\n  authorization: \"AUTHORIZED\" | \"UNAUTHORIZED\" | \"FORBIDDEN\" | \"NOT_INTEGRATED\";\n  writeChannel: \"API\" | \"MANUAL\" | \"NONE\";\n  writePermission: string;\n  audienceManagement: \"MANUAL\" | \"PLATFORM_SMART\";\n  estimateSupported: boolean;\n  uploadSupported: boolean;\n  currency: \"CNY\" | \"BEAN\";\n  reason: string;\n  apiVersion: string;\n  verification: {\n    catalogIds: string[];\n    pathVerified: boolean;\n    applicationScopeGranted: boolean;\n    accountAuthorized: boolean;\n    backendIntegrated: boolean;\n    requestSchemaVerified: boolean;\n    executionVerified: boolean;\n    proofId: string;\n    checkedAt: string;\n  };\n}"
+    },
+    {
+      "source": "src/lib/advertising.ts",
+      "line": 248,
+      "name": "ConfigurationAccount",
+      "definition": "export interface ConfigurationAccount {\n  id: string;\n  name: string;\n  businessEntityId: string;\n  shopIds: string[];\n  authorization: ConfigurationCapability[\"authorization\"];\n  writable: boolean;\n}"
+    },
+    {
+      "source": "src/lib/advertising.ts",
+      "line": 256,
+      "name": "ConfigurationCatalog",
+      "definition": "export interface ConfigurationCatalog {\n  contractVersion: \"advertising-v9.0\";\n  source: \"API\";\n  tenantId: string;\n  product: AdvertisingProduct;\n  accounts: ConfigurationAccount[];\n  entities: { id: string; name: string }[];\n  shops: { id: string; name: string; businessEntityId: string }[];\n  reason: string;\n}"
+    },
+    {
+      "source": "src/lib/advertising.ts",
+      "line": 266,
+      "name": "LookupKind",
+      "definition": "export type LookupKind =\n  | \"regions\"\n  | \"businessDistricts\"\n  | \"customLocations\"\n  | \"interests\"\n  | \"behaviors\"\n  | \"intentions\"\n  | \"keywords\"\n  | \"audiences\"\n  | \"targets\"\n  | \"creatives\"\n  | \"platformTemplates\"\n  | \"creators\"\n  | \"groups\"\n  | \"portraitCertificates\";"
+    },
+    {
+      "source": "src/lib/advertising.ts",
+      "line": 281,
+      "name": "SelectedResource",
+      "definition": "export interface SelectedResource {\n  id: string;\n  platformId: string;\n  name: string;\n  kind?: string;\n  category?: string;\n  parentId?: string;\n  status?: string;\n  eligible?: boolean;\n  reason?: string;\n  sourceMaterialId?: string;\n  previewUrl?: string;\n  specs?: string[];\n}"
+    },
+    {
+      "source": "src/lib/advertising.ts",
+      "line": 295,
+      "name": "LookupPage",
+      "definition": "export interface LookupPage {\n  contractVersion: \"advertising-v9.0\";\n  source: \"API\";\n  tenantId: string;\n  contextKey: string;\n  kind: LookupKind;\n  items: SelectedResource[];\n  nextCursor: string | null;\n  reason: string;\n}"
+    },
+    {
+      "source": "src/lib/advertising.ts",
+      "line": 305,
+      "name": "AudienceConfiguration",
+      "definition": "export interface AudienceConfiguration {\n  mode: \"CUSTOM\" | \"SMART\" | \"TEMPLATE\";\n  locationMode: \"ANY\" | \"REGION\" | \"BUSINESS\" | \"CUSTOM\";\n  locations: SelectedResource[];\n  locationTypeId: string;\n  age: { min: string; max: string };\n  gender: \"ALL\" | \"MALE\" | \"FEMALE\";\n  interests: SelectedResource[];\n  behaviors: SelectedResource[];\n  intentions: SelectedResource[];\n  keywords: SelectedResource[];\n  creators: SelectedResource[];\n  groups: SelectedResource[];\n  include: SelectedResource[];\n  exclude: SelectedResource[];\n  behaviorSceneId: string;\n  behaviorWindowId: string;\n  behaviorIntensityId: string;\n  expansion: boolean;\n  hardConstraints: string[];\n  platformTemplate: SelectedResource | null;\n}"
+    },
+    {
+      "source": "src/lib/advertising.ts",
+      "line": 327,
+      "name": "AdvertisingDraft",
+      "definition": "export interface AdvertisingDraft {\n  schemaVersion: \"advertising-draft-v1\";\n  id: string;\n  updatedAt: string;\n  product: AdvertisingProduct;\n  scenario: AdvertisingScenario;\n  businessEntityId: string;\n  accountId: string;\n  shopId: string;\n  name: string;\n  objectiveId: string;\n  targets: SelectedResource[];\n  placementIds: string[];\n  optimizationId: string;\n  strategyId: string;\n  audience: AudienceConfiguration;\n  budget: {\n    typeId: string;\n    amount: string;\n    bidModeId: string;\n    bidValue: string;\n  };\n  schedule: {\n    start: string;\n    end: string;\n    allDay: boolean;\n    slots: { days: number[]; start: string; end: string }[];\n  };\n  creative: {\n    assets: SelectedResource[];\n    title: string;\n    copy: string;\n    portrait: SelectedResource | null;\n  };\n  heating: {\n    durationId: string;\n    orderTypeId: string;\n    fundTypeId: string;\n    deliveryModeId: string;\n    creativeMethodId: string;\n  };\n  productRangeId: string;\n}"
+    },
+    {
+      "source": "src/lib/advertising.ts",
+      "line": 370,
+      "name": "LocalTargetingTemplate",
+      "definition": "export interface LocalTargetingTemplate {\n  id: string;\n  name: string;\n  product: AdvertisingProduct;\n  scenario: AdvertisingScenario;\n  accountId: string;\n  audience: AudienceConfiguration;\n  updatedAt: string;\n}"
+    },
+    {
+      "source": "src/lib/advertising.ts",
+      "line": 379,
+      "name": "SubmissionTicket",
+      "definition": "export interface SubmissionTicket {\n  idempotencyKey: string;\n  draftId: string;\n  product: AdvertisingProduct;\n  accountId: string;\n  contextKey: string;\n  createdAt: string;\n}"
+    },
+    {
+      "source": "src/lib/advertising.ts",
+      "line": 387,
+      "name": "AdvertisingStorage",
+      "definition": "export interface AdvertisingStorage {\n  drafts: AdvertisingDraft[];\n  templates: LocalTargetingTemplate[];\n  tickets: SubmissionTicket[];\n}"
+    },
+    {
+      "source": "src/lib/advertising.ts",
+      "line": 757,
+      "name": "ConfigurationIssue",
+      "definition": "export interface ConfigurationIssue {\n  step: number;\n  field: string;\n  message: string;\n}"
+    },
+    {
+      "source": "src/lib/analysis-draft.ts",
+      "line": 4,
+      "name": "ReviewPeriod",
+      "definition": "export type ReviewPeriod = \"daily\" | \"weekly\" | \"monthly\" | \"custom\";"
+    },
+    {
+      "source": "src/lib/analysis-draft.ts",
+      "line": 25,
+      "name": "ReportModule",
+      "definition": "export interface ReportModule {\n  id: string;\n  title: string;\n  text: string;\n  visible: boolean;\n  showChart: boolean;\n  showMetrics?: boolean;\n  metricIds: string[];\n  sectionId?: string;\n}"
+    },
+    {
+      "source": "src/lib/analysis-draft.ts",
+      "line": 35,
+      "name": "ReportDraft",
+      "definition": "export interface ReportDraft {\n  schemaVersion: \"business-report-v1\";\n  id: string;\n  analysisId: string;\n  title: string;\n  period: ReviewPeriod;\n  query: AnalysisQuery;\n  shopName: string;\n  platformName: string;\n  source: \"MOCK\" | \"API\";\n  updatedAt: string;\n  version: number;\n  metrics: AnalysisMetric[];\n  points: AnalysisPoint[];\n  sections: AnalysisSection[];\n  insights: AnalysisInsight[];\n  coverage: string;\n  attribution: string;\n  modules: ReportModule[];\n}"
+    },
+    {
+      "source": "src/lib/analysis-draft.ts",
+      "line": 55,
+      "name": "PublishedReport",
+      "definition": "export interface PublishedReport { id: string; draftId: string; url: string | null; source: \"MOCK\" | \"API\"; publishedAt: string; snapshot?: ReportDraft; title?: string; period?: ReviewPeriod; query?: AnalysisQuery; analysisId?: string }"
+    },
+    {
+      "source": "src/lib/business-analysis.ts",
+      "line": 6,
+      "name": "AnalysisDimension",
+      "definition": "export type AnalysisDimension = typeof dimensions[number];"
+    },
+    {
+      "source": "src/lib/business-analysis.ts",
+      "line": 10,
+      "name": "MetricStatus",
+      "definition": "export type MetricStatus = \"ready\" | \"empty\" | \"not_integrated\" | \"unsupported\";"
+    },
+    {
+      "source": "src/lib/business-analysis.ts",
+      "line": 14,
+      "name": "AnalysisQuery",
+      "definition": "export interface AnalysisQuery {\n  shopId: string;\n  platformId: ConnectorId | \"all\";\n  startDate: string;\n  endDate: string;\n  dimensions: AnalysisDimension[];\n  timezone: \"Asia/Shanghai\";\n}"
+    },
+    {
+      "source": "src/lib/business-analysis.ts",
+      "line": 22,
+      "name": "AnalysisTask",
+      "definition": "export interface AnalysisTask {\n  id: string;\n  query: AnalysisQuery;\n  status: \"queued\" | \"running\" | \"succeeded\" | \"failed\";\n  progress: number;\n  resultId?: string;\n  error?: string;\n  createdAt: string;\n}"
+    },
+    {
+      "source": "src/lib/business-analysis.ts",
+      "line": 31,
+      "name": "MetricDefinition",
+      "definition": "export interface MetricDefinition {\n  id: string; dimension: AnalysisDimension; name: string;\n  unit: \"minor\" | \"count\" | \"rate\" | \"ratio\" | \"hours\";\n  definition: string;\n  numerator?: string; denominator?: string;\n}"
+    },
+    {
+      "source": "src/lib/business-analysis.ts",
+      "line": 37,
+      "name": "AnalysisMetric",
+      "definition": "export interface AnalysisMetric extends MetricDefinition {\n  value: number | null;\n  previous: number | null;\n  yearAgo: number | null;\n  status: MetricStatus;\n  reason?: string;\n}"
+    },
+    {
+      "source": "src/lib/business-analysis.ts",
+      "line": 44,
+      "name": "AnalysisPoint",
+      "definition": "export interface AnalysisPoint { date: string; values: Record<string, number | null> }"
+    },
+    {
+      "source": "src/lib/business-analysis.ts",
+      "line": 45,
+      "name": "AnalysisRow",
+      "definition": "export interface AnalysisRow {\n  id: string; name: string; date: string; values: Record<string, number | null>;\n  relatedProduct?: string; relatedLive?: string;\n}"
+    },
+    {
+      "source": "src/lib/business-analysis.ts",
+      "line": 49,
+      "name": "AnalysisSection",
+      "definition": "export interface AnalysisSection {\n  id: string;\n  dimension: AnalysisDimension | \"cross\";\n  title: string;\n  topics: string[];\n  metricIds: string[];\n  rows: AnalysisRow[];\n  conclusion: string;\n  advice: string;\n  limitation?: string;\n}"
+    },
+    {
+      "source": "src/lib/business-analysis.ts",
+      "line": 60,
+      "name": "AnalysisInsight",
+      "definition": "export interface AnalysisInsight {\n  id: string;\n  kind: \"conclusion\" | \"anomaly\" | \"opportunity\" | \"recommendation\";\n  title: string;\n  evidence: string;\n  direction: string;\n  action: string;\n  priority: \"P1\" | \"P2\" | \"P3\";\n  verificationMetric: string;\n  metricId: string;\n  date?: string;\n}"
+    },
+    {
+      "source": "src/lib/business-analysis.ts",
+      "line": 72,
+      "name": "AnalysisRules",
+      "definition": "export interface AnalysisRules {\n  declinePercent: number;\n  spendRisePercent: number;\n  roiFloor: number;\n  minSpendMinor: number;\n  minViews: number;\n}"
+    },
+    {
+      "source": "src/lib/business-analysis.ts",
+      "line": 82,
+      "name": "AnalysisResult",
+      "definition": "export interface AnalysisResult {\n  schemaVersion: \"business-analysis-v1\";\n  id: string;\n  taskId: string;\n  source: \"MOCK\" | \"API\";\n  query: AnalysisQuery;\n  shopName: string;\n  platformName: string;\n  createdAt: string;\n  updatedAt: string | null;\n  completeness: \"complete\" | \"partial\" | \"empty\";\n  coverage: string;\n  attribution: string;\n  comparison: { previous: { startDate: string; endDate: string } | null; yearAgo: { startDate: string; endDate: string } | null };\n  metrics: AnalysisMetric[];\n  points: AnalysisPoint[];\n  previousPoints: AnalysisPoint[];\n  yearAgoPoints: AnalysisPoint[];\n  sections: AnalysisSection[];\n  insights: AnalysisInsight[];\n  insightSource: \"rules\" | \"ai\";\n  rules: AnalysisRules;\n}"
+    },
+    {
+      "source": "src/lib/command-job.ts",
+      "line": 12,
+      "name": "CommandAction",
+      "definition": "export type CommandAction = (typeof commandActions)[number];"
+    },
+    {
+      "source": "src/lib/command-job.ts",
+      "line": 13,
+      "name": "JobSource",
+      "definition": "export type JobSource = \"AUTOPILOT\" | \"PC_MANUAL\" | \"MOBILE_COMMAND\";"
+    },
+    {
+      "source": "src/lib/command-job.ts",
+      "line": 14,
+      "name": "JobValue",
+      "definition": "export type JobValue =\n  | { kind: \"MONEY\"; currency: \"CNY\"; amount_minor: number }\n  | { kind: \"RATIO\"; value: number }\n  | { kind: \"BOOLEAN\"; value: boolean }\n  | { kind: \"HANDOFF\"; value: \"START\" | \"END\" };"
+    },
+    {
+      "source": "src/lib/command-job.ts",
+      "line": 33,
+      "name": "JobStatus",
+      "definition": "export type JobStatus = (typeof jobStatuses)[number];"
+    },
+    {
+      "source": "src/lib/command-job.ts",
+      "line": 57,
+      "name": "MockScenario",
+      "definition": "export type MockScenario =\n  \"SUCCESS\" | \"REQUEST_FAILURE\" | \"TIMEOUT\" | \"VERIFY_FAILURE\";"
+    },
+    {
+      "source": "src/lib/command-job.ts",
+      "line": 59,
+      "name": "RiskSummary",
+      "definition": "export interface RiskSummary {\n  source: \"MOCK\" | \"SERVER\";\n  result: \"REVIEW_REQUIRED\" | \"BLOCKED\" | \"MANUAL_ONLY\";\n  level: \"LOW\" | \"MEDIUM\" | \"HIGH\";\n  checks: { code: string; passed: boolean; message: string }[];\n  policy_version: number;\n  checked_at: string;\n}"
+    },
+    {
+      "source": "src/lib/command-job.ts",
+      "line": 67,
+      "name": "JobApproval",
+      "definition": "export interface JobApproval {\n  state: \"NOT_REQUESTED\" | \"PENDING\" | \"APPROVED\" | \"REJECTED\";\n  actor_id: string | null;\n  decided_at: string | null;\n  method: \"MANUAL\" | \"SERVER_POLICY\" | null;\n  approved_version: number | null;\n}"
+    },
+    {
+      "source": "src/lib/command-job.ts",
+      "line": 74,
+      "name": "JobReceipt",
+      "definition": "export interface JobReceipt {\n  receipt_id: string;\n  source: \"MOCK\" | \"PLATFORM\";\n  platform_receipt_id: string | null;\n  accepted: boolean | null;\n  received_at: string | null;\n  verification: \"PENDING\" | \"MATCHED\" | \"MISMATCH\" | \"UNKNOWN\";\n  observed_value: JobValue | null;\n  verified_at: string | null;\n}"
+    },
+    {
+      "source": "src/lib/command-job.ts",
+      "line": 84,
+      "name": "JobError",
+      "definition": "export interface JobError {\n  code: string;\n  message: string;\n  retryable: boolean;\n  at: string;\n}"
+    },
+    {
+      "source": "src/lib/command-job.ts",
+      "line": 90,
+      "name": "CommandJob",
+      "definition": "export interface CommandJob {\n  schema_version: \"1.0\";\n  job_id: string;\n  source: JobSource;\n  tenant_id: string;\n  shop_id: string;\n  account_id: string | null;\n  live_session_id: string | null;\n  target_type: \"AD_PLAN\" | \"LIVE_SESSION\";\n  target_id: string;\n  action_type: CommandAction;\n  old_value: JobValue | null;\n  new_value: JobValue;\n  intent: string;\n  status: JobStatus;\n  created_at: string;\n  updated_at: string;\n  expires_at: string;\n  risk_summary: RiskSummary;\n  approval: JobApproval;\n  execution_receipt: JobReceipt | null;\n  error: JobError | null;\n  version: number;\n  idempotency_key: string;\n  mode: \"MOCK\" | \"API\";\n  history: { status: JobStatus; at: string; detail: string }[];\n  mock_scenario?: MockScenario;\n}"
+    },
+    {
+      "source": "src/lib/command-job.ts",
+      "line": 118,
+      "name": "ReportingScope",
+      "definition": "export interface ReportingScope {\n  shop_id: string | \"all\";\n  live_session_id: string | \"all\";\n  connector_id: string | \"all\";\n  date: string;\n  timezone: \"Asia/Shanghai\";\n}"
+    },
+    {
+      "source": "src/lib/command-job.ts",
+      "line": 125,
+      "name": "CreateJobRequest",
+      "definition": "export interface CreateJobRequest {\n  source: JobSource;\n  shop_id: string;\n  target_type: CommandJob[\"target_type\"];\n  target_id: string;\n  action_type: CommandAction;\n  new_value: JobValue;\n  intent: string;\n  idempotency_key: string;\n}"
+    },
+    {
+      "source": "src/lib/command-job.ts",
+      "line": 135,
+      "name": "JobVersionRequest",
+      "definition": "export interface JobVersionRequest {\n  job_id: string;\n  expected_version: number;\n}"
+    },
+    {
+      "source": "src/lib/command-job.ts",
+      "line": 139,
+      "name": "CommandInterpretation",
+      "definition": "export type CommandInterpretation =\n  | { kind: \"QUERY\"; text: string; live_session_id: string | null }\n  | {\n      kind: \"ACTION\";\n      text: string;\n      action_type: CommandAction;\n      new_value: JobValue;\n      target_type: CommandJob[\"target_type\"];\n      candidate_ids: string[];\n    }\n  | { kind: \"UNRECOGNIZED\"; text: string };"
+    },
+    {
+      "source": "src/lib/delivery.ts",
+      "line": 12,
+      "name": "DeliveryPage",
+      "definition": "export type DeliveryPage = (typeof deliveryPages)[number];"
+    },
+    {
+      "source": "src/lib/delivery.ts",
+      "line": 13,
+      "name": "Platform",
+      "definition": "export type Platform = \"adq\" | \"beans\";"
+    },
+    {
+      "source": "src/lib/delivery.ts",
+      "line": 14,
+      "name": "PlatformScope",
+      "definition": "export type PlatformScope = Platform | \"all\";"
+    },
+    {
+      "source": "src/lib/delivery.ts",
+      "line": 15,
+      "name": "Availability",
+      "definition": "export type Availability =\n  | \"AUTHORIZED\"\n  | \"UNAUTHORIZED\"\n  | \"NOT_INTEGRATED\"\n  | \"NOT_APPLICABLE\"\n  | \"FORBIDDEN\"\n  | \"ERROR\";"
+    },
+    {
+      "source": "src/lib/delivery.ts",
+      "line": 30,
+      "name": "Action",
+      "definition": "export type Action =\n  | \"create\"\n  | \"budget\"\n  | \"bid\"\n  | \"pause\"\n  | \"resume\"\n  | \"review\"\n  | \"analyze\"\n  | \"goal\"\n  | \"allocate\"\n  | \"verify\"\n  | \"retry\"\n  | \"rules\";"
+    },
+    {
+      "source": "src/lib/delivery.ts",
+      "line": 43,
+      "name": "Capability",
+      "definition": "export interface Capability {\n  status: Availability;\n  reason: string;\n  permission: string;\n}"
+    },
+    {
+      "source": "src/lib/delivery.ts",
+      "line": 48,
+      "name": "PlatformCapabilities",
+      "definition": "export interface PlatformCapabilities {\n  platform: Platform;\n  accountId: string;\n  version: number;\n  checkedAt: string;\n  actions: Partial<Record<Action, Capability>>;\n  execution: \"COMMAND_JOB\" | \"DIRECT\" | \"MANUAL\";\n  automationMode: \"OBSERVE\" | \"APPROVAL\" | \"CONTROLLED\";\n  refreshSeconds: number | null;\n  maxAgeSeconds: number;\n  supportedObjects: string[];\n  supportedMetrics: string[];\n  supportedFilters: string[];\n  supportedColumns: string[];\n  schema: {\n    objectives: string[];\n    targets: (\"PRODUCT\" | \"VIDEO\" | \"LIVE\")[];\n    bidEditable: boolean;\n    minAmount: number;\n    maxAmount: number;\n  };\n}"
+    },
+    {
+      "source": "src/lib/delivery.ts",
+      "line": 70,
+      "name": "Shop",
+      "definition": "export interface Shop {\n  id: string;\n  nativeId: string | null;\n  tenantId: string;\n  name: string;\n}"
+    },
+    {
+      "source": "src/lib/delivery.ts",
+      "line": 76,
+      "name": "AdAccount",
+      "definition": "export interface AdAccount {\n  id: string;\n  nativeId: string | null;\n  shopId: string;\n  platform: Platform;\n  name: string;\n  authorization: Availability;\n  currency: \"CNY\" | \"BEAN\";\n}"
+    },
+    {
+      "source": "src/lib/delivery.ts",
+      "line": 85,
+      "name": "DeliveryScope",
+      "definition": "export interface DeliveryScope {\n  platform: PlatformScope;\n  shopId: string;\n  accountId: string;\n  start: string;\n  end: string;\n  liveSessionId?: string;\n}"
+    },
+    {
+      "source": "src/lib/delivery.ts",
+      "line": 93,
+      "name": "PerformanceMetrics",
+      "definition": "export interface PerformanceMetrics {\n  spend: number | null;\n  attributedGmvMinor: number | null;\n  conversions: number | null;\n  roi: number | null;\n  attributionWindow: string | null;\n  statisticDate: string | null;\n  /** Only equal nonempty comparable keys may be aggregated. */\n  comparableKey: string | null;\n}"
+    },
+    {
+      "source": "src/lib/delivery.ts",
+      "line": 103,
+      "name": "LinkedObject",
+      "definition": "export interface LinkedObject {\n  id: string;\n  nativeId: string | null;\n  type: \"PRODUCT\" | \"VIDEO\" | \"LIVE\" | \"MATERIAL\";\n  name: string;\n}"
+    },
+    {
+      "source": "src/lib/delivery.ts",
+      "line": 121,
+      "name": "Campaign",
+      "definition": "export interface Campaign extends DeliveryObject {\n  platform: \"adq\";\n  kind: \"CAMPAIGN\";\n  level: \"CAMPAIGN\" | \"ADGROUP\" | \"AD\";\n  budgetMinor: number;\n  bidMinor: number;\n  targetRoi: number | null;\n  extensions: { objective?: string; startedAt?: string; endedAt?: string };\n}"
+    },
+    {
+      "source": "src/lib/delivery.ts",
+      "line": 130,
+      "name": "PromotionOrder",
+      "definition": "export interface PromotionOrder extends DeliveryObject {\n  platform: \"beans\";\n  kind: \"PROMOTION_ORDER\";\n  contentType: \"VIDEO\" | \"LIVE\";\n  contentId: string;\n  heatingGoal: string;\n  amountBeans: number;\n  progress: number | null;\n  startsAt: string | null;\n  endsAt: string | null;\n  extensions: { views: number | null; interactions: number | null };\n}"
+    },
+    {
+      "source": "src/lib/delivery.ts",
+      "line": 142,
+      "name": "Plan",
+      "definition": "export type Plan = Campaign | PromotionOrder;"
+    },
+    {
+      "source": "src/lib/delivery.ts",
+      "line": 143,
+      "name": "GoalBreakdown",
+      "definition": "export interface GoalBreakdown {\n  id: string;\n  type: \"SHOP\" | \"PLATFORM\" | \"ACCOUNT\" | \"PLAN\" | \"LIVE\";\n  targetId: string;\n  name: string;\n  amountMinor: number;\n}"
+    },
+    {
+      "source": "src/lib/delivery.ts",
+      "line": 150,
+      "name": "TrendPoint",
+      "definition": "export interface TrendPoint {\n  date: string;\n  actualGmvMinor: number | null;\n  targetGmvMinor: number | null;\n  spend: number | null;\n  budget: number | null;\n  roi: number | null;\n  targetRoi: number | null;\n  forecastGmvMinor?: number | null;\n}"
+    },
+    {
+      "source": "src/lib/delivery.ts",
+      "line": 160,
+      "name": "BusinessGoal",
+      "definition": "export interface BusinessGoal {\n  id: string;\n  nativeId: string | null;\n  shopId: string;\n  platform: PlatformScope;\n  accountId: string | null;\n  name: string;\n  period: \"DAY\" | \"WEEK\" | \"MONTH\" | \"LIVE\" | \"SHOP\";\n  start: string;\n  end: string;\n  status: \"DRAFT\" | \"ACTIVE\" | \"CLOSED\";\n  version: number;\n  gmvTargetMinor: number;\n  budget: number;\n  currency: \"CNY\" | \"BEAN\";\n  roiFloor: number | null;\n  actualBusinessGmvMinor: number | null;\n  spent: number | null;\n  actualRoi: number | null;\n  breakdown: GoalBreakdown[];\n  trends: TrendPoint[];\n  history: {\n    at: string;\n    actor: string;\n    before: string;\n    after: string;\n    version: number;\n  }[];\n}"
+    },
+    {
+      "source": "src/lib/delivery.ts",
+      "line": 189,
+      "name": "BudgetAllocation",
+      "definition": "export interface BudgetAllocation {\n  id: string;\n  shopId: string;\n  platform: Platform;\n  accountId: string;\n  planId: string | null;\n  version: number;\n  currency: \"CNY\" | \"BEAN\";\n  limit: number;\n  allocated: number;\n  spent: number | null;\n  internalStatus: \"DRAFT\" | \"PENDING_APPROVAL\" | \"APPROVED\" | \"REJECTED\";\n  platformStatus: \"NOT_SUBMITTED\" | \"PENDING\" | \"ACCEPTED\" | \"FAILED\";\n  verificationStatus: \"PENDING\" | \"MATCHED\" | \"UNKNOWN\";\n  approvalId: string | null;\n  executionId: string | null;\n}"
+    },
+    {
+      "source": "src/lib/delivery.ts",
+      "line": 206,
+      "name": "AccountFunds",
+      "definition": "export interface AccountFunds {\n  accountId: string;\n  balance: number | null;\n  currency: \"CNY\" | \"BEAN\";\n  syncedAt: string | null;\n  warning: string | null;\n}"
+    },
+    {
+      "source": "src/lib/delivery.ts",
+      "line": 223,
+      "name": "AIDecision",
+      "definition": "export interface AIDecision {\n  id: string;\n  platform: Platform;\n  shopId: string;\n  accountId: string;\n  planId: string;\n  goalId: string | null;\n  type: keyof typeof decisionTypes;\n  title: string;\n  explanation: string;\n  recommendation: string;\n  risk: \"LOW\" | \"MEDIUM\" | \"HIGH\";\n  status:\n    | \"OPEN\"\n    | \"DEFERRED\"\n    | \"PENDING_APPROVAL\"\n    | \"ACCEPTED\"\n    | \"REJECTED\"\n    | \"EXECUTED\";\n  discoveredAt: string;\n  version: number;\n  evidence: { label: string; value: string; sourceId: string }[];\n  observation: {\n    start: string;\n    end: string;\n    sampleSize: number | null;\n    delayMinutes: number | null;\n    confidence: string;\n    limitations: string[];\n  };\n  proposedAction:\n    | \"CHANGE_DAILY_BUDGET\"\n    | \"CHANGE_BID\"\n    | \"PAUSE_AD_PLAN\"\n    | \"RESUME_AD_PLAN\"\n    | null;\n  proposedValue: number | boolean | null;\n  impact: string | null;\n  approvalId: string | null;\n  executionId: string | null;\n  outcome: string | null;\n  history?: { at: string; actorId: string; status: string; comment: string }[];\n}"
+    },
+    {
+      "source": "src/lib/delivery.ts",
+      "line": 266,
+      "name": "ApprovalRequest",
+      "definition": "export interface ApprovalRequest {\n  id: string;\n  accountId: string;\n  before: unknown;\n  after: unknown;\n  reason: string;\n  decisionId: string | null;\n  budgetId: string | null;\n  executionId: string | null;\n  status: \"PENDING\" | \"APPROVED\" | \"REJECTED\";\n  actorId: string | null;\n  version: number;\n}"
+    },
+    {
+      "source": "src/lib/delivery.ts",
+      "line": 291,
+      "name": "ExecutionTask",
+      "definition": "export interface ExecutionTask {\n  id: string;\n  nativeId: string | null;\n  platform: Platform;\n  shopId: string;\n  accountId: string;\n  planId: string;\n  goalId: string | null;\n  decisionId: string | null;\n  budgetId: string | null;\n  approvalId: string | null;\n  action: string;\n  initiator: \"MANUAL\" | \"AI\" | \"RULE\";\n  actorId: string | null;\n  approverId: string | null;\n  status: keyof typeof executionStates;\n  before: unknown;\n  after: unknown;\n  version: number;\n  createdAt: string;\n  updatedAt: string;\n  requestStatus: string;\n  response: unknown;\n  verification: string;\n  failure: string | null;\n  safeRetry: boolean;\n  idempotencyKey: string | null;\n  history: { at: string; status: string; detail: string }[];\n  legacyJobId?: string;\n}"
+    },
+    {
+      "source": "src/lib/delivery.ts",
+      "line": 321,
+      "name": "SyncStatus",
+      "definition": "export interface SyncStatus {\n  state:\n    | \"READY\"\n    | \"LOADING\"\n    | \"EMPTY\"\n    | \"UNAUTHORIZED\"\n    | \"NOT_INTEGRATED\"\n    | \"STALE\"\n    | \"FAILED\"\n    | \"FORBIDDEN\";\n  source: \"API\" | \"MOCK\";\n  syncedAt: string | null;\n  statisticStart: string;\n  statisticEnd: string;\n  message: string;\n}"
+    },
+    {
+      "source": "src/lib/delivery.ts",
+      "line": 337,
+      "name": "RiskBoundaries",
+      "definition": "export interface RiskBoundaries {\n  accountId: string;\n  dailyLimit: number;\n  singleChangeLimit: number;\n  approvalThreshold: number;\n  minObservationMinutes: number;\n  maxChangesPerDay: number;\n  currency: \"CNY\" | \"BEAN\";\n  version: number;\n}"
+    },
+    {
+      "source": "src/lib/delivery.ts",
+      "line": 347,
+      "name": "DeliveryData",
+      "definition": "export interface DeliveryData {\n  contractVersion: \"delivery-v8.0\";\n  scope: DeliveryScope;\n  source: \"API\" | \"MOCK\";\n  shops: Shop[];\n  accounts: AdAccount[];\n  capabilities: PlatformCapabilities[];\n  plans: Plan[];\n  goals: BusinessGoal[];\n  decisions: AIDecision[];\n  budgets: BudgetAllocation[];\n  funds: AccountFunds[];\n  executions: ExecutionTask[];\n  approvals: ApprovalRequest[];\n  boundaries: RiskBoundaries[];\n  trends: { planId: string; points: TrendPoint[] }[];\n  budgetTrends: { currency: \"CNY\" | \"BEAN\"; points: TrendPoint[] }[];\n  sync: SyncStatus;\n}"
+    },
+    {
+      "source": "src/lib/delivery.ts",
+      "line": 649,
+      "name": "PlanFilter",
+      "definition": "export interface PlanFilter {\n  search: string;\n  status: string;\n  level: string;\n  sort: \"name\" | \"spend\" | \"updated\";\n  descending: boolean;\n  page: number;\n  pageSize: number;\n  columns: string[];\n}"
+    },
+    {
+      "source": "src/lib/domain.ts",
+      "line": 12,
+      "name": "ConnectorId",
+      "definition": "export type ConnectorId = (typeof connectorIds)[number];"
+    },
+    {
+      "source": "src/lib/domain.ts",
+      "line": 23,
+      "name": "Tenant",
+      "definition": "export interface Tenant {\n  id: string;\n  name: string;\n}"
+    },
+    {
+      "source": "src/lib/domain.ts",
+      "line": 27,
+      "name": "Shop",
+      "definition": "export interface Shop {\n  id: string;\n  tenantId: string;\n  name: string;\n  connectorId: ConnectorId;\n}"
+    },
+    {
+      "source": "src/lib/domain.ts",
+      "line": 33,
+      "name": "AdAccount",
+      "definition": "export interface AdAccount {\n  id: string;\n  tenantId: string;\n  shopId: string;\n  connectorId: ConnectorId;\n  name: string;\n}"
+    },
+    {
+      "source": "src/lib/domain.ts",
+      "line": 40,
+      "name": "LiveSession",
+      "definition": "export interface LiveSession {\n  id: string;\n  tenantId: string;\n  shopId: string;\n  name: string;\n  sourceUpdatedAt: string;\n  fetchedAt: string;\n  online: number | null;\n  productClicks: number | null;\n  status: \"MOCK_LIVE\" | \"UNKNOWN\" | \"NOT_STARTED\" | \"LIVE\" | \"ENDED\";\n  /** Optional read-only fields; absent until supplied by the backend. */\n  connectorId?: ConnectorId;\n  coverUrl?: string | null;\n  videoUrl?: string | null;\n  startedAt?: string | null;\n  endedAt?: string | null;\n  totalViewers?: number | null;\n  paidOrders?: number | null;\n}"
+    },
+    {
+      "source": "src/lib/domain.ts",
+      "line": 59,
+      "name": "AdPlan",
+      "definition": "export interface AdPlan {\n  id: string;\n  nativePlanId: string;\n  tenantId: string;\n  shopId: string;\n  adAccountId: string;\n  liveSessionId?: string;\n  name: string;\n  aliases?: string[];\n  budgetMinor: number;\n  bidMinor: number;\n  targetRoi: number;\n  enabled: boolean;\n  spendMinor: number | null;\n  paidGmvMinor: number | null;\n  sourceUpdatedAt: string;\n  attributionWindow: string;\n}"
+    },
+    {
+      "source": "src/lib/domain.ts",
+      "line": 77,
+      "name": "Product",
+      "definition": "export interface Product {\n  id: string;\n  tenantId: string;\n  shopId: string;\n  skuId: string;\n  name: string;\n  priceMinor: number;\n  stock: number | null;\n  clicks: number | null;\n  paidOrders: number | null;\n  speechAdvice: string;\n}"
+    },
+    {
+      "source": "src/lib/domain.ts",
+      "line": 89,
+      "name": "Material",
+      "definition": "export interface Material {\n  id: string;\n  tenantId: string;\n  productId: string;\n  name: string;\n  version: string;\n  kind: \"VIDEO\" | \"IMAGE\" | \"SCRIPT\";\n  status: \"DRAFT\" | \"REVIEW\" | \"READY\";\n}"
+    },
+    {
+      "source": "src/lib/domain.ts",
+      "line": 98,
+      "name": "RiskPolicy",
+      "definition": "export interface RiskPolicy {\n  id: string;\n  tenantId: string;\n  dailyBudgetMinor: number;\n  targetRoi: number;\n  maxChangePercent: number;\n  cooldownMinutes: number;\n  mode: \"MANUAL\" | \"COPILOT\" | \"AUTOPILOT\";\n  version: number;\n}"
+    },
+    {
+      "source": "src/lib/domain.ts",
+      "line": 108,
+      "name": "ReplaySegment",
+      "definition": "export interface ReplaySegment {\n  id: string;\n  liveSessionId: string;\n  productId: string;\n  startSeconds: number;\n  endSeconds: number;\n  transcript: string;\n  advice: string;\n  videoUrl: string | null;\n}"
+    },
+    {
+      "source": "src/lib/domain.ts",
+      "line": 118,
+      "name": "ReplayReport",
+      "definition": "export interface ReplayReport {\n  id: string;\n  liveSessionId: string;\n  source: \"MOCK\" | \"API\";\n  sections: { title: string; evidenceIds: string[]; text: string }[];\n}"
+    },
+    {
+      "source": "src/lib/domain.ts",
+      "line": 124,
+      "name": "Connector",
+      "definition": "export interface Connector {\n  id: ConnectorId;\n  status: \"UNKNOWN\" | \"READ_ONLY\" | \"SUPPORTED\" | \"UNSUPPORTED\" | \"DEGRADED\";\n  scopes: string[];\n  checkedAt: string | null;\n}"
+    },
+    {
+      "source": "src/lib/domain.ts",
+      "line": 130,
+      "name": "FrontendSnapshot",
+      "definition": "export interface FrontendSnapshot {\n  schemaVersion: \"command-job-v1.0\";\n  revision: number;\n  source: \"MOCK\" | \"API\";\n  tenants: Tenant[];\n  shops: Shop[];\n  adAccounts: AdAccount[];\n  liveSessions: LiveSession[];\n  plans: AdPlan[];\n  products: Product[];\n  materials: Material[];\n  tasks: CommandJob[];\n  scope: ReportingScope;\n  riskPolicies: RiskPolicy[];\n  replaySegments: ReplaySegment[];\n  replayReports: ReplayReport[];\n  connectors: Connector[];\n}"
+    },
+    {
+      "source": "src/lib/domain.ts",
+      "line": 148,
+      "name": "Identity",
+      "definition": "export interface Identity {\n  userId: string;\n  displayName: string;\n  email?: string;\n  workspacePages?: string[];\n  tenantId: string;\n  shopIds: string[];\n  permissions: string[];\n  mode: \"MOCK\" | \"API\";\n}"
+    },
+    {
+      "source": "src/lib/platform-catalog.ts",
+      "line": 3,
+      "name": "ProviderId",
+      "definition": "export type ProviderId = \"tencent\" | \"ocean\" | \"xhs\" | \"wxshop\" | \"beans\";"
+    },
+    {
+      "source": "src/lib/platform-catalog.ts",
+      "line": 4,
+      "name": "ProductLine",
+      "definition": "export type ProductLine = AdvertisingProduct | \"wxshop\";"
+    },
+    {
+      "source": "src/lib/platform-catalog.ts",
+      "line": 12,
+      "name": "PlatformApiRecord",
+      "definition": "export interface PlatformApiRecord {\n  id: string;\n  platform: string;\n  domain: string;\n  module: string;\n  name: string;\n  nativePath: string;\n  normalizedPath: string | null;\n  method: string | null;\n  scopes: string[];\n  pathEvidence: string;\n  docUrl: string | null;\n  sourceFile: string;\n}"
+    },
+    {
+      "source": "src/lib/platform-catalog.ts",
+      "line": 84,
+      "name": "VerificationStage",
+      "definition": "export type VerificationStage = keyof typeof verificationStageNames;"
+    },
+    {
+      "source": "src/lib/platform-catalog.ts",
+      "line": 86,
+      "name": "StageEvidence",
+      "definition": "export interface StageEvidence {\n  verified: boolean;\n  proofId: string | null;\n  checkedAt: string | null;\n  reason: string;\n}"
+    },
+    {
+      "source": "src/lib/platform-catalog.ts",
+      "line": 92,
+      "name": "OperationEvidence",
+      "definition": "export type OperationEvidence = Record<VerificationStage, StageEvidence>;"
+    },
+    {
+      "source": "src/lib/platform-catalog.ts",
+      "line": 126,
+      "name": "PlatformResource",
+      "definition": "export type PlatformResource =\n  | \"campaigns\"\n  | \"promotionOrders\"\n  | \"adgroups\"\n  | \"creatives\"\n  | \"targeting\"\n  | \"keywords\"\n  | \"reports\"\n  | \"funds\"\n  | \"orders\"\n  | \"products\"\n  | \"stock\"\n  | \"lives\"\n  | \"compass\"\n  | \"settlements\"\n  | \"aftersales\"\n  | \"distribution\"\n  | \"audit\"\n  | \"decisions\"\n  | \"goals\"\n  | \"allocations\"\n  | \"executions\";"
+    },
+    {
+      "source": "src/lib/platform-catalog.ts",
+      "line": 227,
+      "name": "IntegrationScope",
+      "definition": "export interface IntegrationScope {\n  tenantId: string;\n  businessEntityId: string;\n  shopId: string;\n  provider: ProviderId;\n  productLine: ProductLine;\n  accountId: string;\n  start: string;\n  end: string;\n}"
+    },
+    {
+      "source": "src/lib/platform-catalog.ts",
+      "line": 249,
+      "name": "IntegrationContext",
+      "definition": "export interface IntegrationContext {\n  contractVersion: \"platform-workspace-v9.0\";\n  source: \"API\";\n  tenantId: string;\n  productLine: ProductLine;\n  checkedAt: string;\n  expiresAt: string;\n  entities: { id: string; name: string }[];\n  shops: {\n    id: string;\n    name: string;\n    businessEntityId: string;\n    provider: string;\n  }[];\n  accounts: {\n    id: string;\n    nativeId: string;\n    name: string;\n    businessEntityId: string;\n    provider: ProviderId;\n    productLine: ProductLine;\n    authorization:\n      | \"AUTHORIZED\"\n      | \"UNAUTHORIZED\"\n      | \"FORBIDDEN\"\n      | \"NOT_INTEGRATED\";\n  }[];\n  links: {\n    accountId: string;\n    shopId: string;\n    state: \"BOUND\" | \"AUTHORIZED\";\n    checkedAt: string;\n  }[];\n  operations: {\n    catalogId: string;\n    resource: PlatformResource;\n    kind: \"READ\" | \"WRITE\";\n    accountIds: string[];\n    evidence: OperationEvidence;\n    permission: string;\n    editableFields: (\"name\" | \"budget\" | \"bid\" | \"status\")[];\n    options?: { field: string; id: string; name: string }[];\n  }[];\n}"
+    },
+    {
+      "source": "src/lib/platform-catalog.ts",
+      "line": 293,
+      "name": "PlatformResourceRow",
+      "definition": "export interface PlatformResourceRow {\n  scopeKey: string;\n  id: string;\n  nativeId: string;\n  name: string;\n  status: string;\n  version: number | null;\n  updatedAt: string;\n  metrics: Partial<Record<(typeof safeMetricKeys)[number], number | null>>;\n  attributionWindow: string | null;\n  moneyType:\n    | \"AD_BUDGET\"\n    | \"AD_CASH_BALANCE\"\n    | \"MERCHANT_SETTLEMENT\"\n    | \"BEAN\"\n    | null;\n  related: { type: \"PRODUCT\" | \"LIVE\" | \"PLAN\"; id: string }[];\n}"
+    },
+    {
+      "source": "src/lib/platform-catalog.ts",
+      "line": 311,
+      "name": "PlatformResourcePage",
+      "definition": "export interface PlatformResourcePage {\n  contractVersion: \"platform-workspace-v9.0\";\n  source: \"API\";\n  scopeKey: string;\n  resource: PlatformResource;\n  rows: PlatformResourceRow[];\n  nextCursor: string | null;\n  syncedAt: string;\n  timezone: \"Asia/Shanghai\";\n  granularity: string;\n  attributionWindow: string | null;\n  refundHandling: string;\n  deduplication: string;\n  warnings: string[];\n}"
+    },
+    {
+      "source": "src/lib/routes.ts",
+      "line": 44,
+      "name": "LegacyPageId",
+      "definition": "export type LegacyPageId = (typeof workspaces)[number][\"pages\"][number][0];"
+    },
+    {
+      "source": "src/lib/routes.ts",
+      "line": 45,
+      "name": "PageId",
+      "definition": "export type PageId = LegacyPageId | \"command\" | \"account\";"
+    },
+    {
+      "source": "src/lib/workspace-history.ts",
+      "line": 3,
+      "name": "WorkProject",
+      "definition": "export interface WorkProject { id: string; name: string; createdAt: string; }"
+    },
+    {
+      "source": "src/lib/workspace-history.ts",
+      "line": 4,
+      "name": "ConversationMessage",
+      "definition": "export interface ConversationMessage {\n  id: string;\n  role: \"user\" | \"assistant\";\n  text: string;\n  createdAt: string;\n  interpretation?: CommandInterpretation;\n  scope?: ReportingScope;\n  jobId?: string;\n}"
+    },
+    {
+      "source": "src/lib/workspace-history.ts",
+      "line": 13,
+      "name": "Conversation",
+      "definition": "export interface Conversation {\n  id: string;\n  title: string;\n  projectId: string | null;\n  createdAt: string;\n  updatedAt: string;\n  messages: ConversationMessage[];\n}"
+    },
+    {
+      "source": "src/lib/workspace-history.ts",
+      "line": 21,
+      "name": "HistorySnapshot",
+      "definition": "export interface HistorySnapshot {\n  projects: WorkProject[];\n  conversations: Conversation[];\n  taskProjects: Record<string, string | null>;\n}"
+    },
+    {
+      "source": "src/lib/workspace-history.ts",
+      "line": 26,
+      "name": "SendMessageRequest",
+      "definition": "export interface SendMessageRequest {\n  conversationId?: string;\n  projectId?: string | null;\n  text: string;\n  source: JobSource;\n  scope: ReportingScope;\n  idempotencyKey: string;\n}"
+    },
+    {
+      "source": "src/lib/workspace-history.ts",
+      "line": 34,
+      "name": "ConversationTurn",
+      "definition": "export interface ConversationTurn { conversation: Conversation; interpretation: CommandInterpretation; messageId: string; }"
+    },
+    {
+      "source": "src/services/advertising-service.ts",
+      "line": 23,
+      "name": "ConfigurationValidation",
+      "definition": "export interface ConfigurationValidation {\n  contractVersion: \"advertising-v9.0\";\n  source: \"API\";\n  tenantId: string;\n  contextKey: string;\n  capabilityVersion: string;\n  validationToken: string | null;\n  expiresAt: string;\n  checks: {\n    field: string;\n    passed: boolean;\n    severity: \"ERROR\" | \"WARNING\";\n    message: string;\n  }[];\n  requiresApproval: boolean;\n}"
+    },
+    {
+      "source": "src/services/advertising-service.ts",
+      "line": 39,
+      "name": "ConfigurationTask",
+      "definition": "export interface ConfigurationTask {\n  contractVersion: \"advertising-v9.0\";\n  source: \"API\";\n  tenantId: string;\n  contextKey: string;\n  taskId: string;\n  idempotencyKey: string;\n  state:\n    | \"PENDING\"\n    | \"AWAITING_APPROVAL\"\n    | \"PAYMENT_REQUIRED\"\n    | \"PROCESSING\"\n    | \"SUCCEEDED\"\n    | \"FAILED\"\n    | \"REJECTED\" | \"CANCELLED\";\n  businessId: string | null;\n  platformStatus: string | null;\n  verification: \"PENDING\" | \"MATCHED\" | \"UNKNOWN\" | \"MISMATCH\";\n  approvalId:string|null;version:number;cancellable:boolean;\n  message: string;\n}"
+    },
+    {
+      "source": "src/services/advertising-service.ts",
+      "line": 60,
+      "name": "AudienceEstimate",
+      "definition": "export interface AudienceEstimate {\n  contractVersion: \"advertising-v9.0\";\n  source: \"API\";\n  tenantId: string;\n  contextKey: string;\n  lower: number;\n  upper: number;\n  estimatedAt: string;\n  description: string;\n}"
+    },
+    {
+      "source": "src/services/analysis-service.ts",
+      "line": 8,
+      "name": "AnalysisAdapter",
+      "definition": "export interface AnalysisAdapter {\n  createTask(query: AnalysisQuery, idempotencyKey: string, signal: AbortSignal, scenario?: AnalysisScenario): Promise<AnalysisTask>;\n  getTask(id: string, signal: AbortSignal): Promise<AnalysisTask>;\n  getResult(id: string, signal: AbortSignal): Promise<AnalysisResult>;\n  listResults(signal: AbortSignal): Promise<AnalysisResult[]>;\n  listDrafts(signal: AbortSignal): Promise<ReportDraft[]>;\n  getDraft(id: string, signal: AbortSignal): Promise<ReportDraft>;\n  saveDraft(draft: ReportDraft, signal: AbortSignal): Promise<ReportDraft>;\n  publishDraft(id: string, version: number, signal: AbortSignal): Promise<PublishedReport>;\n  getPublished(id: string, signal: AbortSignal): Promise<PublishedReport>;\n  listPublished(signal: AbortSignal): Promise<PublishedReport[]>;\n}"
+    },
+    {
+      "source": "src/services/contracts.ts",
+      "line": 11,
+      "name": "DataMode",
+      "definition": "export type DataMode = \"mock\" | \"api\";"
+    },
+    {
+      "source": "src/services/contracts.ts",
+      "line": 12,
+      "name": "ErrorCode",
+      "definition": "export type ErrorCode =\n  | \"UNAUTHENTICATED\"\n  | \"FORBIDDEN\"\n  | \"NO_DATA\"\n  | \"API_NOT_CONFIGURED\"\n  | \"NETWORK_ERROR\"\n  | \"TIMEOUT\"\n  | \"INVALID_RESPONSE\"\n  | \"INVALID_INPUT\"\n  | \"RATE_LIMITED\"\n  | \"CONFLICT\";"
+    },
+    {
+      "source": "src/services/contracts.ts",
+      "line": 33,
+      "name": "LoginRequest",
+      "definition": "export type LoginRequest =\n  | { email: string; password: string; method?: \"password\" }\n  | { email: string; code: string; challengeId: string; method: \"email_code\" };"
+    },
+    {
+      "source": "src/services/contracts.ts",
+      "line": 36,
+      "name": "EmailLoginChallenge",
+      "definition": "export interface EmailLoginChallenge {\n  challengeId: string;\n  expiresAt: string;\n  retryAfterSeconds: number;\n}"
+    },
+    {
+      "source": "src/services/contracts.ts",
+      "line": 41,
+      "name": "ApiSuccess",
+      "definition": "export interface ApiSuccess<T> {\n  data: T;\n  requestId: string;\n  schemaVersion: \"command-job-v1.0\";\n}"
+    },
+    {
+      "source": "src/services/contracts.ts",
+      "line": 46,
+      "name": "ApiFailure",
+      "definition": "export interface ApiFailure {\n  error: { code: ErrorCode; message: string };\n  requestId: string;\n}"
+    },
+    {
+      "source": "src/services/contracts.ts",
+      "line": 50,
+      "name": "FrontendService",
+      "definition": "export interface FrontendService {\n  readonly mode: DataMode;\n  getIdentity(): Promise<Identity | null>;\n  login(input: LoginRequest): Promise<Identity>;\n  requestEmailCode(input: { email: string }): Promise<EmailLoginChallenge>;\n  updateProfile(input: { displayName: string }): Promise<Identity>;\n  logout(): Promise<void>;\n  getSnapshot(options?: { signal?: AbortSignal }): Promise<FrontendSnapshot>;\n  getHistory(): Promise<HistorySnapshot>;\n  createProject(input: { name: string }): Promise<WorkProject>;\n  moveConversation(input: { conversationId: string; projectId: string | null }): Promise<Conversation>;\n  sendMessage(input: SendMessageRequest): Promise<ConversationTurn>;\n  attachConversationJob(input: { conversationId: string; messageId: string; jobId: string }): Promise<Conversation>;\n  assignTaskProject(input: { jobId: string; projectId: string | null }): Promise<void>;\n  interpretCommand(input: {\n    text: string;\n    scope: ReportingScope;\n  }): Promise<CommandInterpretation>;\n  createJob(\n    input: CreateJobRequest,\n    scenario?: MockScenario,\n  ): Promise<CommandJob>;\n  confirmJob(input: JobVersionRequest): Promise<CommandJob>;\n  reviewJob(\n    input: JobVersionRequest & { decision: \"APPROVE\" | \"REJECT\" },\n  ): Promise<CommandJob>;\n  cancelJob(input: JobVersionRequest): Promise<CommandJob>;\n  advanceMockJob(input: JobVersionRequest): Promise<CommandJob>;\n  expireMockJob(input: JobVersionRequest): Promise<CommandJob>;\n  updatePolicy(input: RiskPolicy): Promise<RiskPolicy>;\n  setScope(input: ReportingScope): Promise<void>;\n  subscribe(onChange: () => void): () => void;\n  resetDemo?(): Promise<void>;\n}"
+    },
+    {
+      "source": "src/services/contracts.ts",
+      "line": 84,
+      "name": "Resource",
+      "definition": "export type Resource<T> =\n  | { status: \"loading\" }\n  | { status: \"ready\"; data: T }\n  | { status: \"error\"; error: ServiceError };"
+    },
+    {
+      "source": "src/services/delivery-service.ts",
+      "line": 28,
+      "name": "DeliveryContext",
+      "definition": "export interface DeliveryContext {\n  shops: DeliveryData[\"shops\"];\n  accounts: AdAccount[];\n  capabilities: PlatformCapabilities[];\n}"
+    },
+    {
+      "source": "src/services/delivery-service.ts",
+      "line": 33,
+      "name": "CreatePlanRequest",
+      "definition": "export interface CreatePlanRequest {\n  accountId: string;\n  platform: \"adq\" | \"beans\";\n  shopId: string;\n  name: string;\n  objective: string;\n  target: { type: \"PRODUCT\" | \"VIDEO\" | \"LIVE\"; id: string };\n  amount: number;\n  bidMinor?: number;\n  start: string;\n  end: string;\n  idempotencyKey: string;\n  capabilityVersion: number;\n}"
+    },
+    {
+      "source": "src/services/delivery-service.ts",
+      "line": 47,
+      "name": "GoalRequest",
+      "definition": "export interface GoalRequest\n  extends Pick<\n    BusinessGoal,\n    | \"name\"\n    | \"period\"\n    | \"start\"\n    | \"end\"\n    | \"gmvTargetMinor\"\n    | \"budget\"\n    | \"currency\"\n    | \"roiFloor\"\n    | \"breakdown\"\n  > {\n  scope: DeliveryScope;\n  goalId?: string;\n  expectedVersion?: number;\n  idempotencyKey: string;\n}"
+    },
+    {
+      "source": "src/services/delivery-service.ts",
+      "line": 65,
+      "name": "BudgetRequest",
+      "definition": "export interface BudgetRequest {\n  scope: DeliveryScope;\n  allocationId: string;\n  planId: string | null;\n  amount: number;\n  expectedVersion: number;\n  reason: string;\n  decisionId?: string;\n  idempotencyKey: string;\n}"
+    },
+    {
+      "source": "src/services/delivery-service.ts",
+      "line": 75,
+      "name": "NewBudgetRequest",
+      "definition": "export interface NewBudgetRequest {\n  scope: DeliveryScope;\n  accountId: string;\n  planId: string | null;\n  amount: number;\n  currency: \"CNY\" | \"BEAN\";\n  parentAllocationId: string | null;\n  expectedParentVersion: number | null;\n  reason: string;\n  idempotencyKey: string;\n}"
+    },
+    {
+      "source": "src/services/delivery-service.ts",
+      "line": 86,
+      "name": "DecisionReviewRequest",
+      "definition": "export interface DecisionReviewRequest {\n  decision: \"APPROVE\" | \"REJECT\" | \"DEFER\" | \"MODIFY\";\n  expectedVersion: number;\n  comment: string;\n  proposedValue?: number | boolean;\n  idempotencyKey: string;\n}"
+    },
+    {
+      "source": "src/services/delivery-service.ts",
+      "line": 93,
+      "name": "ApprovalReviewRequest",
+      "definition": "export interface ApprovalReviewRequest {\n  expectedVersion: number;\n  decision: \"APPROVE\" | \"REJECT\";\n  comment: string;\n  idempotencyKey: string;\n}"
+    },
+    {
+      "source": "src/services/delivery-service.ts",
+      "line": 99,
+      "name": "AnalysisRequest",
+      "definition": "export interface AnalysisRequest {\n  scope: DeliveryScope;\n  kind: \"GOAL_GAP\" | \"PLAN\" | \"DECISION\" | \"BUDGET\" | \"EXECUTION\";\n  objectIds: string[];\n  idempotencyKey: string;\n}"
+    },
+    {
+      "source": "src/services/delivery-service.ts",
+      "line": 105,
+      "name": "MutationResult",
+      "definition": "export interface MutationResult {\n  resourceId: string;\n  state: string;\n  executionId: string | null;\n  approvalId: string | null;\n}"
+    },
+    {
+      "source": "src/services/delivery-service.ts",
+      "line": 111,
+      "name": "RiskPreview",
+      "definition": "export interface RiskPreview {\n  token: string;\n  expiresAt: string;\n  checks: { passed: boolean; message: string }[];\n  requiresApproval: boolean;\n  expectedVersion: number;\n}"
+    },
+    {
+      "source": "src/services/delivery-service.ts",
+      "line": 118,
+      "name": "PlanChangeRequest",
+      "definition": "export interface PlanChangeRequest {\n  planId: string;\n  accountId: string;\n  action:\n    | \"CHANGE_DAILY_BUDGET\"\n    | \"CHANGE_BID\"\n    | \"PAUSE_AD_PLAN\"\n    | \"RESUME_AD_PLAN\";\n  newValue: number | boolean;\n  expectedVersion: number | null;\n  decisionId?: string;\n  idempotencyKey: string;\n}"
+    },
+    {
+      "source": "src/services/delivery-service.ts",
+      "line": 131,
+      "name": "PolicyRequest",
+      "definition": "export interface PolicyRequest {\n  accountId: string;\n  expectedVersion: number;\n  mode: \"OBSERVE\" | \"APPROVAL\" | \"CONTROLLED\";\n  roiFloor: number;\n  pacingThreshold: number;\n  budgetLimit: number;\n  minObservationMinutes: number;\n  singleChangeLimit: number;\n  maxChangesPerDay: number;\n  idempotencyKey: string;\n}"
+    }
+  ]
+}

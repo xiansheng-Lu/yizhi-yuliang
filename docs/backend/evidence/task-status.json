@@ -4,9 +4,41 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "tasks": {},
+  "currentFocus": "R00-01",
+  "tasks": {
+    "R00-01": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "delivery": "后端规格交付和Agent自检完成，未代替人工签字",
+      "technicalVerification": {
+        "result": "PASS",
+        "routes": 52,
+        "callSites": 54,
+        "exportedTypes": 133,
+        "frozenSources": 15,
+        "goldenChecks": 45
+      },
+      "dod": [
+        {"item": 1, "technical": "PASS", "review": "PENDING_F00"},
+        {"item": 2, "technical": "PASS", "review": "PENDING_BE_FE"},
+        {"item": 3, "technical": "DELIVERED", "review": "PENDING_F01_F11"}
+      ],
+      "evidence": "tasks/R00-01/README.md",
+      "review": {"backend": "PENDING", "frontend": "PENDING"},
+      "git": "LOCAL_UNCOMMITTED"
+    },
+    "R00-02": {"owner": "BE", "status": "IN_PROGRESS", "note": "既有规格草稿保留；本轮不计完成，依赖R00-01复核"},
+    "R00-03": {"owner": "BE", "status": "IN_PROGRESS", "note": "既有资金/恢复规格草稿保留；尚未逐卡验收"},
+    "M0-01": {"owner": "BE", "status": "IMPLEMENTED", "note": "此前已准备工程，首批单元/契约14项通过；未完成依赖签字和本轮新增文件检查，不计DONE"},
+    "M0-02": {"owner": "BE", "status": "IMPLEMENTED", "note": "此前已准备响应信封与错误处理，整体尚未复核，不计DONE"},
+    "M0-04": {"owner": "BE", "status": "BLOCKED", "note": "Compose/初始化/探测草稿保留；缺Docker引擎，真实基础设施验收NOT_RUN", "blockedBy": ["E06"]}
+  },
   "gates": {},
-  "blockers": [],
+  "blockers": [
+    {"id": "E08", "reason": "R00-01后端交付已就绪，F00/F01/F11尚无人工复核记录", "affects": ["R00-01最终DONE"]},
+    {"id": "E06", "reason": "未发现Docker CLI及可用Linux容器引擎", "affects": ["M0-04真实验收及依赖它的集成任务"]},
+    {"id": "APPROVAL_SERVICE", "reason": "自动审批服务额度耗尽，提升权限操作无法完成审批，非不安全判定", "affects": ["后续提升权限验证", "Git提交合并推送尚未执行"]}
+  ],
   "rules": {
     "technicalVerification": "Agent记录实际命令与证据；不替代BE/FE签字",
     "done": "全部适用DoD与复核通过后才记DONE",

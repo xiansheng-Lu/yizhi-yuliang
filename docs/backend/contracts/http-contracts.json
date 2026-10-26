@@ -1,0 +1,257 @@
+{
+  "outerSchemaVersion": "command-job-v1.0",
+  "sourceSha256": {
+    "src/services/api-client.ts": "dacc38f1bb2549cd82379ddf270096a81176cc99bd471cc3798bc46ca35851ca",
+    "src/services/contracts.ts": "c4997eb06cac8d5f60df2b3056edaa34434e763394fb3db91f90ec77dda24fc3",
+    "src/services/delivery-service.ts": "bc2b2b5522e0b04a70caf71575e719e98f46e059f2b1cbb2e27727df05819905",
+    "src/services/advertising-service.ts": "6018a3f300d1b83c339686e83ea8dda761fb1cc50d2d3e4fb34c17897347ebb7",
+    "src/services/analysis-service.ts": "5aed85207d913da4a5ae8968928cb5b9bbf24cc49108437d1bb3d46444d519c7",
+    "src/lib/domain.ts": "5c9855ebb3e986a7eac636ee89e857d8981b9c4069e7aa65c63499dc9393a327",
+    "src/lib/command-job.ts": "01532c981bd1e5b5860418b25d4133ae016380bf183d676ca659e6ddc9cab29f",
+    "src/lib/delivery.ts": "4172bb0c3c7c8c9153d51355d09e35e51edba1af5f52caeb3662002807a2b07e",
+    "src/lib/advertising.ts": "484b48da587a265111fbaf1a0ebb050230e9c6a0321817aba6ca11f566b8df83",
+    "src/lib/business-analysis.ts": "cc8bd08759873dd53b98d32043f610fc9d79aca93bda96d598e5a20aacd661b9",
+    "src/lib/routes.ts": "8155d0e463aa1ae0f8883273a3d224a63aa1b5f781d09b9f9b72590f9d41917c",
+    "src/lib/workspace-history.ts": "afdef7e23a0227748a593e1168a2e5c055e7666b740bdbef652e840dc5196b8b",
+    "src/lib/analysis-draft.ts": "7abf26d3432eb916bc4ee84c3728f77f63fa988f3f0caba55a3e6db074599982",
+    "src/lib/platform-catalog.ts": "0719bad960c9fb6abc2656747baec26f697468c3f5baa61a8e8e5509ce45322e",
+    "src/lib/reporting-date.ts": "2d3c116bcaaa41c416f9a46a7217e02defab98d458267688fed8d93f2ec0fb97"
+  },
+  "routes": {
+    "V1": [
+      [
+        "GET",
+        "/v1/auth/session"
+      ],
+      [
+        "POST",
+        "/v1/auth/login"
+      ],
+      [
+        "POST",
+        "/v1/auth/email-codes"
+      ],
+      [
+        "PATCH",
+        "/v1/users/me"
+      ],
+      [
+        "POST",
+        "/v1/auth/logout"
+      ],
+      [
+        "GET",
+        "/v1/workspace/history"
+      ],
+      [
+        "POST",
+        "/v1/projects"
+      ],
+      [
+        "PATCH",
+        "/v1/conversations/{conversationId}"
+      ],
+      [
+        "POST",
+        "/v1/conversation-messages"
+      ],
+      [
+        "POST",
+        "/v1/conversations/{conversationId}/jobs"
+      ],
+      [
+        "PUT",
+        "/v1/command-jobs/{jobId}/project"
+      ],
+      [
+        "GET",
+        "/v1/frontend/snapshot"
+      ],
+      [
+        "POST",
+        "/v1/command-interpretations"
+      ],
+      [
+        "POST",
+        "/v1/command-jobs"
+      ],
+      [
+        "POST",
+        "/v1/command-jobs/{jobId}/confirm"
+      ],
+      [
+        "POST",
+        "/v1/command-jobs/{jobId}/approvals"
+      ],
+      [
+        "POST",
+        "/v1/command-jobs/{jobId}/cancel"
+      ],
+      [
+        "PUT",
+        "/v1/risk-policies/{policyId}"
+      ],
+      [
+        "PUT",
+        "/v1/frontend/reporting-scope"
+      ]
+    ],
+    "V8": [
+      [
+        "GET",
+        "/v1/delivery/workspace"
+      ],
+      [
+        "POST",
+        "/v1/delivery/plan-changes/preview"
+      ],
+      [
+        "POST",
+        "/v1/delivery/plan-changes"
+      ],
+      [
+        "POST",
+        "/v1/delivery/campaigns"
+      ],
+      [
+        "POST",
+        "/v1/delivery/promotion-orders"
+      ],
+      [
+        "POST",
+        "/v1/delivery/goals"
+      ],
+      [
+        "PATCH",
+        "/v1/delivery/goals/{goalId}"
+      ],
+      [
+        "POST",
+        "/v1/delivery/budget-requests"
+      ],
+      [
+        "POST",
+        "/v1/delivery/analyses"
+      ],
+      [
+        "POST",
+        "/v1/delivery/decisions/{id}/reviews"
+      ],
+      [
+        "POST",
+        "/v1/delivery/approvals/{id}/reviews"
+      ],
+      [
+        "PUT",
+        "/v1/delivery/policies"
+      ],
+      [
+        "POST",
+        "/v1/delivery/executions/{id}/verify"
+      ],
+      [
+        "POST",
+        "/v1/delivery/executions/{id}/safe-retry"
+      ]
+    ],
+    "V9": [
+      [
+        "GET",
+        "/v1/delivery/configuration/catalog"
+      ],
+      [
+        "GET",
+        "/v1/delivery/configuration/capabilities"
+      ],
+      [
+        "GET",
+        "/v1/delivery/configuration/options"
+      ],
+      [
+        "POST",
+        "/v1/delivery/configuration/validations"
+      ],
+      [
+        "POST",
+        "/v1/delivery/configuration/tasks"
+      ],
+      [
+        "GET",
+        "/v1/delivery/configuration/tasks"
+      ],
+      [
+        "POST",
+        "/v1/delivery/configuration/tasks/{taskId}/cancellations"
+      ],
+      [
+        "POST",
+        "/v1/delivery/configuration/audience-estimates"
+      ],
+      [
+        "POST",
+        "/v1/delivery/configuration/materials"
+      ]
+    ],
+    "analysis": [
+      [
+        "POST",
+        "/v1/business-analysis/tasks"
+      ],
+      [
+        "GET",
+        "/v1/business-analysis/tasks/{id}"
+      ],
+      [
+        "GET",
+        "/v1/business-analysis/results/{id}"
+      ],
+      [
+        "GET",
+        "/v1/business-analysis/results"
+      ],
+      [
+        "GET",
+        "/v1/business-analysis/drafts"
+      ],
+      [
+        "GET",
+        "/v1/business-analysis/drafts/{id}"
+      ],
+      [
+        "PUT",
+        "/v1/business-analysis/drafts/{id}"
+      ],
+      [
+        "POST",
+        "/v1/business-analysis/drafts/{id}/publications"
+      ],
+      [
+        "GET",
+        "/v1/business-analysis/publications/{id}"
+      ],
+      [
+        "GET",
+        "/v1/business-analysis/publications"
+      ]
+    ]
+  },
+  "newRoutesPendingFrontendReview": [
+    [
+      "GET",
+      "/v1/auth/csrf"
+    ],
+    [
+      "POST",
+      "/v1/delivery/configuration/material-upload-tasks"
+    ],
+    [
+      "GET",
+      "/v1/delivery/configuration/material-upload-tasks"
+    ],
+    [
+      "GET",
+      "/v1/delivery/configuration/material-upload-tasks/{taskId}"
+    ]
+  ],
+  "sourceHashMode": "sha256-utf8-lf"
+}

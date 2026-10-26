@@ -25,7 +25,9 @@
       ],
       "evidence": "tasks/R00-01/README.md",
       "review": {"backend": "PENDING", "frontend": "PENDING"},
-      "git": "LOCAL_UNCOMMITTED"
+      "git": "COMMITTED",
+      "implementationCommit": "0bd017c",
+      "syncVerification": "git merge-base --is-ancestor 0bd017c origin/main"
     },
     "R00-02": {"owner": "BE", "status": "IN_PROGRESS", "note": "既有规格草稿保留；本轮不计完成，依赖R00-01复核"},
     "R00-03": {"owner": "BE", "status": "IN_PROGRESS", "note": "既有资金/恢复规格草稿保留；尚未逐卡验收"},
@@ -37,7 +39,7 @@
   "blockers": [
     {"id": "E08", "reason": "R00-01后端交付已就绪，F00/F01/F11尚无人工复核记录", "affects": ["R00-01最终DONE"]},
     {"id": "E06", "reason": "未发现Docker CLI及可用Linux容器引擎", "affects": ["M0-04真实验收及依赖它的集成任务"]},
-    {"id": "APPROVAL_SERVICE", "reason": "自动审批服务额度耗尽，提升权限操作无法完成审批，非不安全判定", "affects": ["后续提升权限验证", "Git提交合并推送尚未执行"]}
+    {"id": "APPROVAL_SERVICE", "status": "HISTORICAL", "reason": "曾因额度导致一次提升权限Python检查未获审批；后续Git提交与fetch已成功获准，不能再把Git记为当前受阻", "affects": ["先前未执行的Python新增文件检查，R00-01独立规格检查不受影响"]}
   ],
   "rules": {
     "technicalVerification": "Agent记录实际命令与证据；不替代BE/FE签字",

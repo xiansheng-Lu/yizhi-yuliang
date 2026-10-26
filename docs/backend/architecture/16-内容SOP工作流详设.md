@@ -176,6 +176,7 @@ kind 四类：`MANUAL`（纯人工编辑，如货盘选择）、`AI_ASSISTED`（
 一期采用"云端为准、整页保存、不做 CRDT"的简单模型：
 
 1. 前端 IndexedDB 仍是编辑期高频自动保存的本地层（已有 content-drafts.ts）；云端保存由显式动作或定时防抖触发，PUT 全量文档带当前云端 revision。
+   字段约定：HTTP文档字段沿用ContentDocument.version，映射数据库revision；ContentState.revision仅是本地整个容器的并发版本。二者不得复用。云端API适配器、冲突UI、本地文件上传和迁移预览均为F09待开发，不是现有persist调用已具备的功能。
 2. 服务端以 revision 做乐观锁：匹配则写入 revision+1；不匹配返回 409 VERSION_CONFLICT + 服务端文档（updatedAt/revision）。前端提供"保留我的/采用云端/另存副本"三选一，不静默覆盖；另存副本产生新文档（新 parentId 指向同上游），两边内容都不丢。
 3. flow 派生（脚本/视频/图文/剪辑）由服务端执行：保证 brief 继承、分镜 id 重生成、视频默认三节点、图文默认画板、剪辑继承 settings 与前端 createDocument/flowDocument 完全同结果；派生是一次云端事务（父子文档同库写入）。
 4. 文档删除为软删；存在未结束 run 或在途 generation_job 的文档拒绝删除（409）。

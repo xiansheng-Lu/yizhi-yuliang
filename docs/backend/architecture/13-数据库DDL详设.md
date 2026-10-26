@@ -2,12 +2,14 @@
 
 本册把 04 册的表结构要点落成可直接用于 Alembic 迁移的 PostgreSQL 17 DDL 规范与核心表定义。命名、类型、公共字段以 04 册第 2 节为准；本册不重复全部约 50 张表，只给三类内容：(1) 库级初始化与通用模板；(2) 资金/执行/消息等最关键表的完整 DDL；(3) 分区与迁移操作规范。其余业务表按同一模板生成。
 
+2026-10-26评审说明：本册仍是分段DDL设计，含占位模板与待补业务表，**不能作为整份可直接执行的迁移脚本**。本轮修正已确认的扩展名、分区主键、支撑唯一键与关键模型冲突；全部实际复合FK、认证仓储权限、RLS和迁移顺序须在R00/R02落为迁移并真实验收，见18册D01–D06、19册A09–A11。
+
 ## 1. 库级初始化
 
 ```sql
 -- 仅迁移账号（表所有者）执行；应用运行账号不是所有者
 create extension if not exists pgcrypto;   -- gen_random_uuid()
-create extension if not exists pgvector;   -- ai_memory 向量
+create extension if not exists vector;     -- pgvector 项目的 SQL 扩展名
 create extension if not exists btree_gin;  -- jsonb 组合索引需要时
 
 -- 三个角色：迁移所有者 / 应用账号 / 运维维护账号
@@ -53,12 +55,12 @@ alter table command_jobs force row level security;  -- 所有者也受限
 create policy <t>_select on <t>
   for select using (tenant_id = nullif(current_setting('app.current_tenant', true), '')::bigint);
 create policy <t>_insert on <t>
-  for insert with check (tenant_id = nullif(current_setting('app.current_tenant', true), '')::bigint);
+  for insert with check (tenant_id > 0 and tenant_id = nullif(current_setting('app.current_tenant', true), '')::bigint);
 create policy <t>_update on <t>
-  for update using (tenant_id = nullif(current_setting('app.current_tenant', true), '')::bigint)
-  with check (tenant_id = nullif(current_setting('app.current_tenant', true), '')::bigint);
+  for update using (tenant_id > 0 and tenant_id = nullif(current_setting('app.current_tenant', true), '')::bigint)
+  with check (tenant_id > 0 and tenant_id = nullif(current_setting('app.current_tenant', true), '')::bigint);
 create policy <t>_delete on <t>
-  for delete using (tenant_id = nullif(current_setting('app.current_tenant', true), '')::bigint);
+  for delete using (tenant_id > 0 and tenant_id = nullif(current_setting('app.current_tenant', true), '')::bigint);
 ```
 
 应用侧每个事务开头执行（psycopg 参数绑定，不拼字符串）：
@@ -128,7 +130,9 @@ create table memberships (
 );
 
 create table sessions (
-  id              uuid primary key default gen_random_uuid(),  -- 即 cookie 中的不透明 id
+  id              uuid primary key default gen_random_uuid(),  -- 内部主键，不直接作为 Cookie bearer
+  token_hash      varchar(64) not null unique,                 -- 随机会话令牌的哈希，Cookie仅持原令牌
+  csrf_token_hash varchar(64) not null,
   tenant_id       bigint not null,
   user_id         uuid not null references users(id),
   membership_id   uuid not null references memberships(id),
@@ -137,6 +141,7 @@ create table sessions (
   created_at      timestamptz not null default now(),
   last_seen_at    timestamptz not null default now(),
   expires_at      timestamptz not null,          -- 滑动续期更新；绝对寿命上限 7 天由应用层强制
+  absolute_expires_at timestamptz not null,       -- 滑动续期不能超过该值
   revoked_at      timestamptz null,              -- 吊销事实源：非 null 即失效
   revoke_reason   varchar(40)
 );
@@ -188,7 +193,9 @@ create table shops (
   created_at  timestamptz not null default now(),
   updated_at  timestamptz not null default now(),
   deleted_at  timestamptz null,
-  constraint ux_shops_native unique (tenant_id, platform, native_id)
+  constraint ux_shops_native unique (tenant_id, platform, native_id),
+  constraint ux_shops_tenant_id unique (tenant_id, id),
+  foreign key (tenant_id, entity_id) references business_entities(tenant_id, id)
 );
 
 create table ad_accounts (
@@ -204,7 +211,9 @@ create table ad_accounts (
   created_at    timestamptz not null default now(),
   updated_at    timestamptz not null default now(),
   deleted_at    timestamptz null,
-  constraint ux_accounts_native unique (tenant_id, provider, product_line, native_id)
+  constraint ux_accounts_native unique (tenant_id, provider, product_line, native_id),
+  constraint ux_accounts_tenant_id unique (tenant_id, id),
+  foreign key (tenant_id, entity_id) references business_entities(tenant_id, id)
 );
 
 -- 店铺与广告账户多对多关联
@@ -214,7 +223,9 @@ create table entity_links (
   shop_id       uuid not null references shops(id),
   account_id    uuid not null references ad_accounts(id),
   created_at    timestamptz not null default now(),
-  constraint ux_entity_link unique (tenant_id, shop_id, account_id)
+  constraint ux_entity_link unique (tenant_id, shop_id, account_id),
+  foreign key (tenant_id, shop_id) references shops(tenant_id, id),
+  foreign key (tenant_id, account_id) references ad_accounts(tenant_id, id)
 );
 
 create table live_sessions (
@@ -228,7 +239,8 @@ create table live_sessions (
   ended_at      timestamptz null,
   created_at    timestamptz not null default now(),
   updated_at    timestamptz not null default now(),
-  constraint ux_live_sessions unique (tenant_id, id)
+  constraint ux_live_sessions unique (tenant_id, id),
+  foreign key (tenant_id, shop_id) references shops(tenant_id, id)
 );
 
 create table products (
@@ -241,7 +253,9 @@ create table products (
   created_at    timestamptz not null default now(),
   updated_at    timestamptz not null default now(),
   deleted_at    timestamptz null,
-  constraint ux_products_native unique (tenant_id, shop_id, native_id)
+  constraint ux_products_native unique (tenant_id, shop_id, native_id),
+  constraint ux_products_tenant_id unique (tenant_id, id),
+  foreign key (tenant_id, shop_id) references shops(tenant_id, id)
 );
 ```
 
@@ -270,7 +284,7 @@ create table command_jobs (
   account_id        uuid null,
   live_session_id   uuid null,
   target_type       varchar(20) not null check (target_type in ('AD_PLAN','LIVE_SESSION')),
-  target_id         varchar(64) not null,       -- 平台 native_id 或内部场次 id
+  target_id         varchar(64) not null,       -- 契约目标内部ID，服务端解析归属与native_id，禁止混用
   action_type       varchar(30) not null check (action_type in
                       ('CHANGE_DAILY_BUDGET','CHANGE_BID','SET_ROI_TARGET',
                        'PAUSE_AD_PLAN','RESUME_AD_PLAN','REQUEST_LIVE_START','REQUEST_LIVE_END')),
@@ -291,6 +305,10 @@ create table command_jobs (
   updated_at        timestamptz not null default now(),
   deleted_at        timestamptz null,
   constraint ux_command_jobs_idem unique (tenant_id, idempotency_key),
+  constraint ux_command_jobs_tenant_id unique (tenant_id, id),
+  foreign key (tenant_id, shop_id) references shops(tenant_id, id),
+  foreign key (tenant_id, account_id) references ad_accounts(tenant_id, id),
+  foreign key (tenant_id, live_session_id) references live_sessions(tenant_id, id),
   constraint ck_command_jobs_value check (jsonb_typeof(new_value) = 'object')
 );
 create index ix_command_jobs_status on command_jobs(tenant_id, status, updated_at desc);
@@ -318,9 +336,12 @@ JobValue 联合结构的服务端校验在 Pydantic 层完成（MONEY/RATIO/BOOL
 create table execution_orders (
   id                uuid primary key default gen_random_uuid(),
   tenant_id         bigint not null,
-  job_id            uuid not null references command_jobs(id),
+  job_id            uuid null,                  -- 仅COMMAND投影有值，其他业务不伪造command_job
   biz_type          varchar(20) not null,        -- COMMAND / CONFIG_TASK 等
   biz_id            uuid not null,
+  account_id        uuid not null,
+  provider          varchar(20) not null,
+  product_line      varchar(30) not null,
   connector_id      varchar(20) not null,
   target_type       varchar(20) not null,
   target_id         varchar(64) not null,
@@ -335,7 +356,11 @@ create table execution_orders (
   idempotency_key   varchar(64) not null,
   created_at        timestamptz not null default now(),
   updated_at        timestamptz not null default now(),
-  constraint ux_exec_orders_idem unique (tenant_id, idempotency_key)
+  constraint ux_exec_orders_idem unique (tenant_id, idempotency_key),
+  constraint ux_exec_orders_biz unique (tenant_id, biz_type, biz_id),
+  constraint ux_exec_orders_tenant_id unique (tenant_id, id),
+  foreign key (tenant_id, job_id) references command_jobs(tenant_id, id),
+  foreign key (tenant_id, account_id) references ad_accounts(tenant_id, id)
 );
 create index ix_exec_orders_pick on execution_orders(tenant_id, status, scheduled_at);
 create index ix_exec_orders_biz on execution_orders(tenant_id, biz_type, biz_id);
@@ -392,6 +417,9 @@ create index ix_exec_events_order on execution_order_events(tenant_id, order_id,
 create table target_execution_guards (
   id            uuid primary key default gen_random_uuid(),
   tenant_id     bigint not null,
+  account_id    uuid not null,
+  provider      varchar(20) not null,
+  product_line  varchar(30) not null,
   target_type   varchar(20) not null,
   target_id     varchar(64) not null,
   state         varchar(20) not null default 'IDLE'
@@ -400,7 +428,9 @@ create table target_execution_guards (
   lease_owner   varchar(80),
   lease_until   timestamptz null,
   updated_at    timestamptz not null default now(),
-  constraint ux_guard_target unique (tenant_id, target_type, target_id)
+  constraint ux_guard_target unique
+    (tenant_id, account_id, provider, product_line, target_type, target_id),
+  foreign key (tenant_id, account_id) references ad_accounts(tenant_id, id)
 );
 
 create table idempotency_requests (
@@ -458,7 +488,7 @@ create table scheduled_tasks (
   last_error    varchar(300),
   created_at    timestamptz not null default now(),
   updated_at    timestamptz not null default now(),
-  constraint ux_scheduled_biz unique (kind, business_key)
+  constraint ux_scheduled_biz unique (tenant_id, kind, business_key)
 );
 create index ix_scheduled_due on scheduled_tasks(state, due_at) where state in ('DUE','RESCHEDULED');
 
@@ -493,9 +523,7 @@ create table budget_ledgers (
   currency              char(3) not null default 'CNY',
   version               int not null default 1,
   updated_at            timestamptz not null default now(),
-  constraint ux_ledger_bucket unique (tenant_id, policy_id, bucket_key),
-  constraint ck_ledger_not_over_limit
-    check (confirmed_total_minor + reserved_increase_minor <= limit_minor)
+  constraint ux_ledger_bucket unique (tenant_id, policy_id, bucket_key)
 );
 
 create table budget_reservations (
@@ -512,7 +540,7 @@ create table budget_reservations (
 );
 ```
 
-`check (B + R <= limit)` 是兜底约束；业务上必须先 `select ... for update` 锁桶行再判断 `B+R+delta<=limit`，不能依赖 check 报错当流程控制。
+非负约束兜底，`B+R+delta<=limit` 在新增预占的额度服务内持行锁校验。不能给事实账本加全局 `check(B+R<=limit)`：平台外部调额可能已超限，真实B仍必须可入账，写差异/告警并冻结新增额。UNKNOWN保留预占；减额在核验后串行调B。R00需补差异事实和冻结原因字段，R02/M2-10实测，不宣称本示例已覆盖全部账务。
 
 ## 7. 内容域（与 16 册 SOP 配套部分）
 
@@ -569,6 +597,10 @@ create table generation_jobs (
                         (type in ('VIDEO','IMAGE','GRAPHIC','VIDEO_EDIT','SCRIPT')),
   provider            varchar(20) not null,
   external_job_id     varchar(128),                         -- 供应商任务号，查询兜底
+  idempotency_key     varchar(64) not null,                  -- 调用方创建键，发送前落库
+  provider_request_key varchar(128) not null,                -- 我方稳定请求键，不等外部ID返回
+  submit_state        varchar(12) not null default 'NOT_SENT'
+                        check (submit_state in ('NOT_SENT','SENT','ACKNOWLEDGED','UNKNOWN')),
   parameters          jsonb not null,
   status              varchar(20) not null check (status in
                         ('QUEUED','RUNNING','WAITING_PROVIDER','WAITING_REVIEW',
@@ -585,6 +617,8 @@ create table generation_jobs (
 );
 create unique index ux_generation_external on generation_jobs(provider, external_job_id)
   where external_job_id is not null;
+create unique index ux_generation_idem on generation_jobs(tenant_id, idempotency_key);
+create unique index ux_generation_request on generation_jobs(provider, provider_request_key);
 ```
 
 `generation_steps`、`content_account_links` 以及 SOP 编排三张表（workflow_templates/runs/run_steps）按 16 册定义建表，列约定同本节。
@@ -608,19 +642,29 @@ create table ai_invocations (
 );
 create index ix_ai_invoc_scenario on ai_invocations(tenant_id, scenario, created_at desc);
 
+-- 分配序号时锁该租户水位行，递增与投影同事务提交
+create table event_stream_heads (
+  tenant_id     bigint primary key references tenants(id),
+  head_seq      bigint not null default 0 check (head_seq >= 0)
+);
+
 create table event_projections (
   id            bigint generated always as identity primary key,
   tenant_id     bigint not null,
+  tenant_seq    bigint not null,
+  source_event_id uuid not null,
   scope_key     varchar(120) not null,       -- 订阅范围（用户/数据范围派生）
   entity_type   varchar(30) not null,
   entity_id     varchar(64) not null,
   version       int not null,
   event_type    varchar(60) not null,
   payload       jsonb not null,
-  created_at    timestamptz not null default now()
+  created_at    timestamptz not null default now(),
+  unique (tenant_id, tenant_seq),
+  unique (tenant_id, source_event_id)
 );
--- SSE 续传游标即本表 id；保留期（如 7 天）外的游标返回 resync
-create index ix_event_proj_scope on event_projections(tenant_id, scope_key, id);
+-- id仅作内部标识；SSE使用租户绑定的tenant_seq，保留7天
+create index ix_event_proj_scope on event_projections(tenant_id, scope_key, tenant_seq);
 ```
 
 ## 9. metric_facts 分区
@@ -629,37 +673,52 @@ create index ix_event_proj_scope on event_projections(tenant_id, scope_key, id);
 create table metric_facts (
   id            bigint generated always as identity,
   tenant_id     bigint not null,
+  fact_date     date not null,               -- Asia/Shanghai 归属日
+  granularity   varchar(4) not null check (granularity in ('DAY','HOUR')),
+  fact_hour     smallint null check (fact_hour between 0 and 23),
+  provider      varchar(20) not null,
+  product_line  varchar(30) not null,
   shop_id       uuid not null,
   account_id    uuid null,
-  platform      varchar(20) not null,
-  metric_code   varchar(40) not null,        -- gmv_pay / ad_cost / roi ...
-  period_type   char(1) not null check (period_type in ('D','H')),  -- 日/小时
-  period_start  timestamptz not null,
-  amount_minor  bigint null,                 -- 金额类
-  amount_beans  bigint null,                 -- 豆
-  ratio_value   numeric(12,4) null,          -- 比值类
-  quantity      numeric(16,3) null,          -- 数量类
-  source_run_id uuid null,
-  attrs         jsonb not null default '{}'::jsonb,  -- 归因窗口/口径/退款处理
+  live_id       uuid null,
+  product_id    uuid null,
+  sku_id        uuid null,
+  metric_name   varchar(40) not null,
+  value_num     numeric(24,6) not null,
+  unit          varchar(8) not null check (unit in ('MINOR','COUNT','RATE','RATIO','HOURS','BEAN')),
+  currency      varchar(4) null check (currency in ('CNY','BEAN')),
+  attribution_window varchar(80) not null,
+  comparable_key varchar(200) not null,       -- 含归因窗口/币种/退款等规范化口径
+  source_updated_at timestamptz null,        -- 未知不能拿fetched_at冒充
   fetched_at    timestamptz not null default now(),
-  primary key (id, period_start)
-) partition by range (period_start);
+  sync_run_id   uuid null,
+  attrs         jsonb not null default '{}'::jsonb,
+  primary key (id, fact_date),
+  check ((granularity='DAY' and fact_hour is null) or (granularity='HOUR' and fact_hour is not null)),
+  check (unit not in ('MINOR','BEAN') or value_num=trunc(value_num)),
+  foreign key (tenant_id, shop_id) references shops(tenant_id, id),
+  foreign key (tenant_id, account_id) references ad_accounts(tenant_id, id),
+  foreign key (tenant_id, live_id) references live_sessions(tenant_id, id),
+  foreign key (tenant_id, product_id) references products(tenant_id, id)
+) partition by range (fact_date);
 
 create table metric_facts_2026m10 partition of metric_facts
   for values from ('2026-10-01') to ('2026-11-01');
--- 由 app_maintain 每月预创建下月分区；过期分区 detach 后归档再删
 create unique index ux_metric_facts_biz on metric_facts
-  (tenant_id, platform, shop_id, account_id, metric_code, period_type, period_start)
-  nulls not distinct;  -- PG15+；账户为 null 的店铺指标也参与唯一
+  (tenant_id, fact_date, granularity, fact_hour, provider, product_line,
+   shop_id, account_id, live_id, product_id, sku_id, metric_name, comparable_key)
+  nulls not distinct;
 ```
 
-分区维护走专用 BYPASSRLS 账号与定时任务，DDL 不经过应用账号。物化视图（overview_mv）用 `refresh material view concurrently`，需要唯一索引，刷新任务在低峰执行。
+SKU完整表和对应复合FK在商品域迁移补齐，不能因本示例未列而省略。缺失指标不写零，真实0才写0；比率用分子分母重算。source_updated_at已知时，upsert用来源版本/时间拒绝旧页覆盖新行；未知时按同步批次已确认水位比较，不能靠抓取晚就认为数据新。
+
+分区维护走专用维护账号与定时任务，DDL不经过应用账号。物化视图用 `refresh materialized view concurrently`，需要唯一索引；读模型仍需按租户/范围过滤。
 
 ## 10. 审计流水（只增不改）
 
 ```sql
 create table audit_logs (
-  id            bigint generated always as identity primary key,
+  id            bigint generated always as identity,
   tenant_id     bigint not null,
   actor_id      uuid null,
   action        varchar(60) not null,        -- job.approve / plan.write / connection.revoke ...
@@ -670,7 +729,8 @@ create table audit_logs (
   request_id    uuid,
   ip_inet       inet,
   detail        jsonb not null default '{}'::jsonb,
-  created_at    timestamptz not null default now()
+  created_at    timestamptz not null default now(),
+  primary key (id, created_at)
 ) partition by range (created_at);          -- 按月分区，只追加
 ```
 

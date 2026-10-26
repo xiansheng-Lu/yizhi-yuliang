@@ -4,7 +4,7 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "currentFocus": "R00-01",
+  "currentFocus": "R00-02",
   "tasks": {
     "R00-01": {
       "owner": "BE",
@@ -29,7 +29,31 @@
       "implementationCommit": "0bd017c",
       "syncVerification": "git merge-base --is-ancestor 0bd017c origin/main"
     },
-    "R00-02": {"owner": "BE", "status": "IN_PROGRESS", "note": "既有规格草稿保留；本轮不计完成，依赖R00-01复核"},
+    "R00-02": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "delivery": "数据库与认证规格交付、静态结构检查及故障变体检查完成；未代填人工签字",
+      "dependencyInput": "用户明确要求继续第二项，使用R00-01技术基线；不替代R00-01双端确认",
+      "technicalVerification": {
+        "result": "PASS",
+        "layer": "D_STATIC_SPEC_ONLY",
+        "tables": 39,
+        "foreignKeys": 84,
+        "migrationStages": 11,
+        "authFunctions": 13,
+        "referenceSqlFunctionBodies": 1,
+        "negativeMutationsRejected": 25,
+        "plannedRealCases": 13
+      },
+      "dod": [
+        {"item": 1, "technical": "PASS", "realDatabaseExecution": "NOT_RUN"},
+        {"item": 2, "technical": "PASS", "realDatabaseSecurityTests": "NOT_RUN"},
+        {"item": 3, "technical": "DELIVERED", "realApiWorkerConsistencyTests": "NOT_RUN"}
+      ],
+      "evidence": "tasks/R00-02/README.md",
+      "review": {"backend": "PENDING", "frontend": "PENDING_F00_F12"},
+      "syncVerification": "git log origin/main --oneline -- docs/backend/evidence/tasks/R00-02/README.md"
+    },
     "R00-03": {"owner": "BE", "status": "IN_PROGRESS", "note": "既有资金/恢复规格草稿保留；尚未逐卡验收"},
     "M0-01": {"owner": "BE", "status": "IMPLEMENTED", "note": "此前已准备工程，首批单元/契约14项通过；未完成依赖签字和本轮新增文件检查，不计DONE"},
     "M0-02": {"owner": "BE", "status": "IMPLEMENTED", "note": "此前已准备响应信封与错误处理，整体尚未复核，不计DONE"},
@@ -37,7 +61,7 @@
   },
   "gates": {},
   "blockers": [
-    {"id": "E08", "reason": "R00-01后端交付已就绪，F00/F01/F11尚无人工复核记录", "affects": ["R00-01最终DONE"]},
+    {"id": "E08", "reason": "R00-01/02后端规格交付已就绪，BE/FE尚无人工复核记录；继续技术准备不等于代签", "affects": ["R00-01最终DONE", "R00-02最终DONE"]},
     {"id": "E06", "reason": "未发现Docker CLI及可用Linux容器引擎", "affects": ["M0-04真实验收及依赖它的集成任务"]},
     {"id": "APPROVAL_SERVICE", "status": "HISTORICAL", "reason": "曾因额度导致一次提升权限Python检查未获审批；后续Git提交与fetch已成功获准，不能再把Git记为当前受阻", "affects": ["先前未执行的Python新增文件检查，R00-01独立规格检查不受影响"]}
   ],

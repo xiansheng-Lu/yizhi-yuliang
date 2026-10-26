@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "authorizedOn": "2026-10-26",
+  "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
+  "defaultTaskStatus": "NOT_STARTED",
+  "defaultGateStatus": "NOT_PASSED",
+  "tasks": {},
+  "gates": {},
+  "blockers": [],
+  "rules": {
+    "technicalVerification": "Agent记录实际命令与证据；不替代BE/FE签字",
+    "done": "全部适用DoD与复核通过后才记DONE",
+    "offline": "离线通过不等于真实依赖、前端联调或平台验收通过"
+  }
+}

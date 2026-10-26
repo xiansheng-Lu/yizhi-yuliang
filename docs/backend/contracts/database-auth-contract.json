@@ -1,0 +1,1025 @@
+{
+  "version": "r00-02-v1",
+  "baseline": "36abdd6",
+  "verificationLayer": "D_STATIC_SPEC_ONLY",
+  "ddlSource": "docs/backend/architecture/13-数据库DDL详设.md",
+  "referenceSql": "docs/backend/contracts/r00-02-auth-surface.sql",
+  "identity": {
+    "tenantType": "bigint",
+    "tenantPositive": true,
+    "entityType": "uuid",
+    "usersGlobal": true,
+    "passwordNullable": true,
+    "displayNameMax": 40,
+    "membershipKinds": [
+      "INTERNAL",
+      "AGENCY_STAFF",
+      "CUSTOMER"
+    ],
+    "sessionMembershipFk": [
+      "tenant_id",
+      "membership_id",
+      "user_id"
+    ],
+    "absoluteSessionDays": 7,
+    "emailCodeDigest": "HMAC-SHA256(challengeId|purpose|code, independent pepper)"
+  },
+  "roles": {
+    "app_owner": {
+      "loginAtRuntime": false,
+      "bypassRls": false,
+      "ownsBusinessTables": true
+    },
+    "app_migrate": {
+      "loginAtRuntime": false,
+      "bypassRls": false,
+      "setRole": [
+        "app_owner",
+        "auth_fn_owner"
+      ]
+    },
+    "app_login": {
+      "loginAtRuntime": true,
+      "superuser": false,
+      "bypassRls": false,
+      "ownsBusinessTables": false,
+      "setRole": [],
+      "directAuthTables": []
+    },
+    "app_auth": {
+      "loginAtRuntime": true,
+      "superuser": false,
+      "bypassRls": false,
+      "ownsBusinessTables": false,
+      "setRole": [],
+      "directAuthTables": [],
+      "executeOnlyWhitelist": true
+    },
+    "auth_fn_owner": {
+      "loginAtRuntime": false,
+      "bypassRls": true,
+      "ownsBusinessTables": false,
+      "tables": [
+        "users",
+        "tenants",
+        "memberships",
+        "sessions",
+        "email_codes",
+        "auth_challenges",
+        "auth_rate_limits",
+        "auth_events"
+      ]
+    }
+  },
+  "authTables": [
+    "users",
+    "sessions",
+    "email_codes",
+    "auth_challenges",
+    "auth_rate_limits",
+    "auth_events"
+  ],
+  "globalReferenceTargets": [
+    "tenants",
+    "users"
+  ],
+  "unscopedTables": [
+    "tenants",
+    "users",
+    "auth_challenges",
+    "auth_rate_limits",
+    "consumer_inbox"
+  ],
+  "nullableTenantTables": [
+    "email_codes",
+    "auth_events"
+  ],
+  "functionSecurity": {
+    "owner": "auth_fn_owner",
+    "caller": "app_auth",
+    "securityDefiner": true,
+    "searchPath": [
+      "pg_catalog",
+      "pg_temp"
+    ],
+    "publicExecute": false,
+    "creationAndGrantSameTransaction": true,
+    "sqlIdentifiersFromCaller": false,
+    "trustsBackendPasswordVerification": true
+  },
+  "functions": [
+    {
+      "name": "auth.credentials",
+      "args": [
+        "text"
+      ],
+      "implementation": "CONTRACT_ONLY",
+      "guards": [
+        "NORMALIZED_EMAIL",
+        "ACTIVE_USER_ONLY",
+        "NO_HTTP_EMAIL_ENUMERATION"
+      ]
+    },
+    {
+      "name": "auth.memberships",
+      "args": [
+        "uuid"
+      ],
+      "implementation": "CONTRACT_ONLY",
+      "guards": [
+        "TRUSTED_VERIFIED_LOGIN",
+        "ACTIVE_MEMBERSHIP",
+        "ACTIVE_TENANT"
+      ]
+    },
+    {
+      "name": "auth.create_session",
+      "args": [
+        "uuid",
+        "uuid",
+        "text",
+        "text"
+      ],
+      "implementation": "CONTRACT_ONLY",
+      "guards": [
+        "TRUSTED_PASSWORD_VERIFICATION",
+        "MEMBERSHIP_TRIPLE",
+        "SERVER_EXPIRY",
+        "SERVER_AUTHZ_VERSION",
+        "PREAUTH_REVOKED"
+      ]
+    },
+    {
+      "name": "auth.email_session",
+      "args": [
+        "uuid",
+        "text",
+        "uuid",
+        "text",
+        "text"
+      ],
+      "implementation": "CONTRACT_ONLY",
+      "guards": [
+        "CODE_ROW_LOCK",
+        "DIGEST_MATCH",
+        "NOT_EXPIRED",
+        "ATTEMPT_LIMIT",
+        "UNUSED",
+        "USER_FROM_EMAIL",
+        "CONSUME_AND_SESSION_ATOMIC",
+        "FAILED_COUNT_COMMITTED"
+      ]
+    },
+    {
+      "name": "auth.resolve_session",
+      "args": [
+        "text"
+      ],
+      "implementation": "REFERENCE_SQL",
+      "guards": [
+        "NOT_REVOKED",
+        "SLIDING_EXPIRY",
+        "ABSOLUTE_EXPIRY",
+        "ACTIVE_USER",
+        "ACTIVE_TENANT",
+        "ACTIVE_MEMBERSHIP",
+        "NO_SECRET_OUTPUT"
+      ]
+    },
+    {
+      "name": "auth.renew_session",
+      "args": [
+        "text",
+        "integer"
+      ],
+      "implementation": "CONTRACT_ONLY",
+      "guards": [
+        "VERSION_CAS",
+        "ACTIVE_IDENTITY",
+        "ABSOLUTE_EXPIRY_CAP",
+        "NO_REDIS_AUTHORITY"
+      ]
+    },
+    {
+      "name": "auth.revoke_session",
+      "args": [
+        "text"
+      ],
+      "implementation": "CONTRACT_ONLY",
+      "guards": [
+        "IDEMPOTENT_REVOCATION",
+        "DATABASE_AUTHORITY"
+      ]
+    },
+    {
+      "name": "auth.issue_challenge",
+      "args": [
+        "text",
+        "text",
+        "text",
+        "text"
+      ],
+      "implementation": "CONTRACT_ONLY",
+      "guards": [
+        "PREAUTH_VALID",
+        "CSRF_MATCH",
+        "LOGIN_PURPOSE",
+        "DURABLE_RATE_LIMIT",
+        "NO_EMAIL_ENUMERATION"
+      ]
+    },
+    {
+      "name": "auth.issue_preauth",
+      "args": [
+        "text",
+        "text"
+      ],
+      "implementation": "CONTRACT_ONLY",
+      "guards": [
+        "HTTP_EXACT_ORIGIN",
+        "SHORT_EXPIRY",
+        "NOT_LOGIN_PROOF"
+      ]
+    },
+    {
+      "name": "auth.resolve_preauth",
+      "args": [
+        "text"
+      ],
+      "implementation": "CONTRACT_ONLY",
+      "guards": [
+        "NOT_EXPIRED",
+        "NOT_REVOKED",
+        "NOT_BUSINESS_IDENTITY"
+      ]
+    },
+    {
+      "name": "auth.rotate_csrf",
+      "args": [
+        "text",
+        "text",
+        "integer"
+      ],
+      "implementation": "CONTRACT_ONLY",
+      "guards": [
+        "ACTIVE_SESSION",
+        "VERSION_CAS",
+        "OLD_TOKEN_INVALIDATED",
+        "NO_WRITE_REPLAY"
+      ]
+    },
+    {
+      "name": "auth.rate_limit",
+      "args": [
+        "text",
+        "text"
+      ],
+      "implementation": "CONTRACT_ONLY",
+      "guards": [
+        "DIGEST_BUCKET",
+        "ATOMIC_COUNTER",
+        "SERVER_POLICY",
+        "UNKNOWN_EMAIL_SUPPORTED"
+      ]
+    },
+    {
+      "name": "auth.record_event",
+      "args": [
+        "text",
+        "text",
+        "text",
+        "text"
+      ],
+      "implementation": "CONTRACT_ONLY",
+      "guards": [
+        "CONTROLLED_OUTCOME",
+        "NO_PII",
+        "UNKNOWN_TENANT_NULL",
+        "NO_FAKE_TENANT_ZERO"
+      ]
+    }
+  ],
+  "migrations": [
+    {
+      "id": "P00",
+      "depends": [],
+      "tables": [],
+      "tasks": [
+        "M0-04",
+        "M0-06"
+      ]
+    },
+    {
+      "id": "P01",
+      "depends": [
+        "P00"
+      ],
+      "tables": [
+        "tenants",
+        "users",
+        "auth_challenges",
+        "auth_rate_limits",
+        "email_codes",
+        "auth_events"
+      ],
+      "tasks": [
+        "M0-06"
+      ]
+    },
+    {
+      "id": "P02",
+      "depends": [
+        "P01"
+      ],
+      "tables": [
+        "memberships",
+        "sessions"
+      ],
+      "tasks": [
+        "M0-06",
+        "M0-09",
+        "M0-11a"
+      ]
+    },
+    {
+      "id": "P03",
+      "depends": [
+        "P02"
+      ],
+      "tables": [
+        "business_entities",
+        "shops",
+        "ad_accounts",
+        "entity_links",
+        "live_sessions",
+        "products"
+      ],
+      "tasks": [
+        "M0-06"
+      ]
+    },
+    {
+      "id": "P04",
+      "depends": [
+        "P03"
+      ],
+      "tables": [],
+      "tasks": [
+        "M0-08a",
+        "M0-08b",
+        "M0-09",
+        "M0-13"
+      ]
+    },
+    {
+      "id": "P05",
+      "depends": [
+        "P04"
+      ],
+      "tables": [
+        "outbox_events",
+        "consumer_inbox",
+        "scheduled_tasks",
+        "audit_logs"
+      ],
+      "tasks": [
+        "M0-16a",
+        "M0-16b",
+        "M0-17"
+      ]
+    },
+    {
+      "id": "P_AI",
+      "depends": [
+        "P04"
+      ],
+      "tables": [
+        "ai_invocations"
+      ],
+      "tasks": [
+        "M2-01a"
+      ]
+    },
+    {
+      "id": "P06",
+      "depends": [
+        "P05"
+      ],
+      "tables": [
+        "skus",
+        "campaigns",
+        "metric_facts"
+      ],
+      "tasks": [
+        "M1-10",
+        "M1-11",
+        "M1-12",
+        "M1-13"
+      ]
+    },
+    {
+      "id": "P07",
+      "depends": [
+        "P05"
+      ],
+      "tables": [
+        "risk_policies",
+        "command_jobs",
+        "job_events",
+        "execution_orders",
+        "execution_attempts",
+        "platform_receipts",
+        "execution_order_events",
+        "target_execution_guards",
+        "idempotency_requests",
+        "budget_ledgers",
+        "budget_reservations",
+        "reconciliation_tasks"
+      ],
+      "tasks": [
+        "M2-05a",
+        "M2-08",
+        "M2-10a",
+        "M2-13a"
+      ]
+    },
+    {
+      "id": "P08",
+      "depends": [
+        "P05"
+      ],
+      "tables": [
+        "content_documents",
+        "content_assets",
+        "generation_jobs"
+      ],
+      "tasks": [
+        "M3-13a",
+        "M3-15a",
+        "M3-19a"
+      ]
+    },
+    {
+      "id": "P09",
+      "depends": [
+        "P05"
+      ],
+      "tables": [
+        "event_stream_heads",
+        "event_projections"
+      ],
+      "tasks": [
+        "M4-09a"
+      ]
+    }
+  ],
+  "requiredForeignKeys": [
+    [
+      "sessions",
+      [
+        "tenant_id",
+        "membership_id",
+        "user_id"
+      ],
+      "memberships",
+      [
+        "tenant_id",
+        "id",
+        "user_id"
+      ]
+    ],
+    [
+      "shops",
+      [
+        "tenant_id",
+        "entity_id"
+      ],
+      "business_entities",
+      [
+        "tenant_id",
+        "id"
+      ]
+    ],
+    [
+      "ad_accounts",
+      [
+        "tenant_id",
+        "entity_id"
+      ],
+      "business_entities",
+      [
+        "tenant_id",
+        "id"
+      ]
+    ],
+    [
+      "entity_links",
+      [
+        "tenant_id",
+        "shop_id"
+      ],
+      "shops",
+      [
+        "tenant_id",
+        "id"
+      ]
+    ],
+    [
+      "entity_links",
+      [
+        "tenant_id",
+        "account_id"
+      ],
+      "ad_accounts",
+      [
+        "tenant_id",
+        "id"
+      ]
+    ],
+    [
+      "command_jobs",
+      [
+        "tenant_id",
+        "live_session_id",
+        "shop_id"
+      ],
+      "live_sessions",
+      [
+        "tenant_id",
+        "id",
+        "shop_id"
+      ]
+    ],
+    [
+      "job_events",
+      [
+        "tenant_id",
+        "job_id"
+      ],
+      "command_jobs",
+      [
+        "tenant_id",
+        "id"
+      ]
+    ],
+    [
+      "execution_attempts",
+      [
+        "tenant_id",
+        "order_id"
+      ],
+      "execution_orders",
+      [
+        "tenant_id",
+        "id"
+      ]
+    ],
+    [
+      "platform_receipts",
+      [
+        "tenant_id",
+        "attempt_id"
+      ],
+      "execution_attempts",
+      [
+        "tenant_id",
+        "id"
+      ]
+    ],
+    [
+      "execution_order_events",
+      [
+        "tenant_id",
+        "order_id"
+      ],
+      "execution_orders",
+      [
+        "tenant_id",
+        "id"
+      ]
+    ],
+    [
+      "reconciliation_tasks",
+      [
+        "tenant_id",
+        "order_id"
+      ],
+      "execution_orders",
+      [
+        "tenant_id",
+        "id"
+      ]
+    ],
+    [
+      "budget_ledgers",
+      [
+        "tenant_id",
+        "policy_id"
+      ],
+      "risk_policies",
+      [
+        "tenant_id",
+        "id"
+      ]
+    ],
+    [
+      "budget_reservations",
+      [
+        "tenant_id",
+        "ledger_id"
+      ],
+      "budget_ledgers",
+      [
+        "tenant_id",
+        "id"
+      ]
+    ],
+    [
+      "budget_reservations",
+      [
+        "tenant_id",
+        "job_id"
+      ],
+      "command_jobs",
+      [
+        "tenant_id",
+        "id"
+      ]
+    ],
+    [
+      "budget_reservations",
+      [
+        "tenant_id",
+        "order_id"
+      ],
+      "execution_orders",
+      [
+        "tenant_id",
+        "id"
+      ]
+    ],
+    [
+      "content_documents",
+      [
+        "tenant_id",
+        "parent_id"
+      ],
+      "content_documents",
+      [
+        "tenant_id",
+        "id"
+      ]
+    ],
+    [
+      "content_assets",
+      [
+        "tenant_id",
+        "document_id"
+      ],
+      "content_documents",
+      [
+        "tenant_id",
+        "id"
+      ]
+    ],
+    [
+      "generation_jobs",
+      [
+        "tenant_id",
+        "document_id"
+      ],
+      "content_documents",
+      [
+        "tenant_id",
+        "id"
+      ]
+    ],
+    [
+      "generation_jobs",
+      [
+        "tenant_id",
+        "result_asset_id"
+      ],
+      "content_assets",
+      [
+        "tenant_id",
+        "id"
+      ]
+    ],
+    [
+      "metric_facts",
+      [
+        "tenant_id",
+        "product_id",
+        "shop_id"
+      ],
+      "products",
+      [
+        "tenant_id",
+        "id",
+        "shop_id"
+      ]
+    ],
+    [
+      "metric_facts",
+      [
+        "tenant_id",
+        "sku_id",
+        "product_id"
+      ],
+      "skus",
+      [
+        "tenant_id",
+        "id",
+        "product_id"
+      ]
+    ],
+    [
+      "metric_facts",
+      [
+        "tenant_id",
+        "campaign_id",
+        "shop_id",
+        "account_id"
+      ],
+      "campaigns",
+      [
+        "tenant_id",
+        "id",
+        "shop_id",
+        "account_id"
+      ]
+    ],
+    [
+      "metric_facts",
+      [
+        "tenant_id",
+        "account_id",
+        "provider",
+        "product_line"
+      ],
+      "ad_accounts",
+      [
+        "tenant_id",
+        "id",
+        "provider",
+        "product_line"
+      ]
+    ]
+  ],
+  "partitions": {
+    "metric_facts": "fact_date",
+    "audit_logs": "created_at"
+  },
+  "factsUniqueColumns": [
+    "tenant_id",
+    "fact_date",
+    "granularity",
+    "fact_hour",
+    "provider",
+    "product_line",
+    "entity_kind",
+    "native_entity_id",
+    "shop_id",
+    "account_id",
+    "campaign_id",
+    "live_id",
+    "product_id",
+    "sku_id",
+    "metric_name",
+    "unit",
+    "currency",
+    "timezone",
+    "attribution_window",
+    "comparable_key"
+  ],
+  "systemTemplates": {
+    "table": "workflow_templates",
+    "tenantSentinel": 0,
+    "ownerTenantGenerated": true,
+    "runtimeWritesSystem": false,
+    "runSelectorColumns": [
+      "template_tenant_id",
+      "template_id"
+    ],
+    "allowedTemplateTenants": [
+      "0",
+      "CURRENT_TENANT"
+    ]
+  },
+  "eventCursor": {
+    "format": "v1.base64url(payload).HMAC-SHA256",
+    "bindings": [
+      "tenantId",
+      "membershipId",
+      "authzVersion",
+      "scopeHash",
+      "tenantSeq",
+      "issuedAt",
+      "keyId"
+    ],
+    "ordering": [
+      "LOCK_TENANT_HEAD",
+      "DEDUP_SOURCE_EVENT",
+      "INCREMENT_HEAD",
+      "INSERT_PROJECTION",
+      "COMMIT_TOGETHER",
+      "NOTIFY_AFTER_COMMIT"
+    ],
+    "retentionDays": 7,
+    "globalIdentityIsCursor": false,
+    "scopeChange": "resync",
+    "advanceToHeadOnlyWhenPageExhausted": true
+  },
+  "sharedUseCase": {
+    "implementation": "ONE_SYNC_SESSION_USE_CASE",
+    "api": "AsyncSession.run_sync",
+    "worker": "DIRECT_SAME_USE_CASE",
+    "domainPure": true,
+    "externalIoInTransaction": false,
+    "connectionSharedAcrossProcesses": false
+  },
+  "deferredReferences": [
+    {
+      "table": "command_jobs",
+      "column": "target_id",
+      "reason": "polymorphic AD_PLAN/LIVE_SESSION",
+      "task": "M2-05a",
+      "rule": "服务端按类型解析同租户且数据范围内的目录对象"
+    },
+    {
+      "table": "execution_orders",
+      "column": "biz_id",
+      "reason": "polymorphic COMMAND/CONFIG_TASK",
+      "task": "M2-05b",
+      "rule": "同事务校验业务类型和具体业务对象，不接受客户端任意类型"
+    },
+    {
+      "table": "content_documents",
+      "column": "workflow_run_id",
+      "reason": "后建workflow表，与root_document_id形成环",
+      "task": "M3-17a",
+      "rule": "先建表/唯一键，最后ALTER加租户复合FK，不允许永久省略"
+    },
+    {
+      "table": "execution_attempts",
+      "column": "request_ref,response_ref",
+      "reason": "platform_raw_payloads未在13册展开",
+      "task": "M2-13a",
+      "rule": "存档表先建同租户唯一键，再加复合FK"
+    },
+    {
+      "table": "platform_receipts",
+      "column": "raw_ref",
+      "reason": "platform_raw_payloads后续迁移",
+      "task": "M2-13b",
+      "rule": "真实回执存档引用同租户，读取脱敏"
+    },
+    {
+      "table": "metric_facts",
+      "column": "sync_run_id",
+      "reason": "sync_runs后续迁移",
+      "task": "M1-10",
+      "rule": "真实同步批次已存在后加同租户复合FK"
+    },
+    {
+      "table": "idempotency_requests",
+      "column": "caller_id",
+      "reason": "人工成员/系统调用方多态",
+      "task": "M2-08",
+      "rule": "从服务端认证上下文派生调用者，不能接收客户端冒充"
+    }
+  ],
+  "acceptanceCases": [
+    {
+      "id": "DB-I01",
+      "task": "M0-06",
+      "state": "PLANNED_REAL_TEST",
+      "scenario": "空库upgrade head两次，无重复对象",
+      "setup": "空的独立PG17库、迁移和普通角色",
+      "action": "upgrade head两次并查询版本/对象计数",
+      "expected": "对象不重复；第二次无增量DDL",
+      "evidence": "迁移日志、alembic_version、对象计数"
+    },
+    {
+      "id": "DB-I02",
+      "task": "M0-07",
+      "state": "PLANNED_REAL_TEST",
+      "scenario": "A事务提交/异常回滚后连接给B，无上下文遗留",
+      "setup": "租户A/B各一行，同一连接池",
+      "action": "A事务正常提交和异常回滚后归还，B及无上下文事务各查询",
+      "expected": "B只见B；无上下文不见业务；无法继承A",
+      "evidence": "会话角色、事务ID、查询输出及连接复用记录"
+    },
+    {
+      "id": "DB-I03",
+      "task": "M0-08b",
+      "state": "PLANNED_REAL_TEST",
+      "scenario": "跨租户及同租户跨店铺/商品引用均拒绝",
+      "setup": "A/B租户各有店铺/商品/成员及A内部两个店铺",
+      "action": "普通角色尝试跨租户FK、A店铺1引用店铺2商品、SKU引用另一商品",
+      "expected": "全部被FK/CHECK拒绝；合法关联成功，错误响应不泄露他租户信息",
+      "evidence": "SQLSTATE、实际FK名、HTTP受控响应"
+    },
+    {
+      "id": "DB-I04",
+      "task": "M3-17a",
+      "state": "PLANNED_REAL_TEST",
+      "scenario": "系统模板可读不可写，本租户及系统模板可选，他租户模板拒绝",
+      "setup": "系统模板、A/B租户私有模板及普通角色",
+      "action": "A读系统模板，尝试修改系统行/把私有行改系统，选择A/系统/B模板",
+      "expected": "系统可读不可写；A与系统选择通过，B选择失败",
+      "evidence": "角色、RLS策略、变化行数与模板选择约束"
+    },
+    {
+      "id": "DB-I05",
+      "task": "M0-09",
+      "state": "PLANNED_REAL_TEST",
+      "scenario": "无租户认证入口可用，app_login/app_auth表直读拒绝，PUBLIC不可执行函数",
+      "setup": "独立app_login/app_auth及无租户请求",
+      "action": "用app_auth调用白名单，两个角色直读users/password；PUBLIC调用函数；临时同名表遮蔽",
+      "expected": "白名单认证可用；所有表直读/公共调用拒绝；临时表不能遮蔽真实身份",
+      "evidence": "角色ACL、函数owner/search_path、拒绝SQLSTATE"
+    },
+    {
+      "id": "DB-I06",
+      "task": "M0-10",
+      "state": "PLANNED_REAL_TEST",
+      "scenario": "未知邮箱审计tenant为空，验证码错误次数不随HTTP错误回滚",
+      "setup": "未注册邮箱与有效挑战，隔离邮件通道",
+      "action": "未知邮箱发码/失败；错误验证码后以新事务读取attempts",
+      "expected": "响应不枚举邮箱；auth_events tenant为空；attempts真实递增",
+      "evidence": "脱敏HTTP、auth_events、独立事务前后计数"
+    },
+    {
+      "id": "DB-I07",
+      "task": "M0-10",
+      "state": "PLANNED_REAL_TEST",
+      "scenario": "两连接并发同挑战仅建一会话；会话插入失败消费同时回滚",
+      "setup": "同一有效验证码，两条真实PG连接",
+      "action": "并发两次email_session；再注入会话插入失败",
+      "expected": "仅一次消费/建会话；插入失败时消费回滚，可按合法规则恢复",
+      "evidence": "并发进程/事务ID、挑战行、sessions数量"
+    },
+    {
+      "id": "DB-I08",
+      "task": "M0-11c",
+      "state": "PLANNED_REAL_TEST",
+      "scenario": "PG撤销/成员停用后Redis旧缓存不能继续授权",
+      "setup": "已登录PG会话且Redis缓存仍有效",
+      "action": "先在PG撤销或移除成员/停用用户，再发下一受保护请求",
+      "expected": "下一请求拒绝；Redis命中不能覆盖撤权，SSE关闭",
+      "evidence": "PG变化、缓存存在证据、HTTP/SSE拒绝记录"
+    },
+    {
+      "id": "DB-I09",
+      "task": "M0-17",
+      "state": "PLANNED_REAL_TEST",
+      "scenario": "审计分区可写但运行角色不能UPDATE/DELETE/TRUNCATE或直读子分区",
+      "setup": "真实审计父表、当月分区及普通角色",
+      "action": "INSERT/SELECT，再UPDATE/DELETE/TRUNCATE及直接子表查询",
+      "expected": "只允许合法追加/读取；其他动作拒绝，无分区时明确告警失败",
+      "evidence": "分区目录、ACL、SQLSTATE及审计行"
+    },
+    {
+      "id": "DB-I10",
+      "task": "M1-10",
+      "state": "PLANNED_REAL_TEST",
+      "scenario": "NULL维度幂等，币种/时区/小时/SKU不混写，旧页不能覆盖新来源",
+      "setup": "来源批次新旧版本、含NULL维度与不同小时/SKU/币种样本",
+      "action": "同键重跑，再写不同合法维度和旧来源页；插入MINOR+NULL币种",
+      "expected": "同键不重复；不同口径不混写；旧来源冲突/拒绝；NULL币种拒绝",
+      "evidence": "唯一索引、upsert前后行和版本、差异队列"
+    },
+    {
+      "id": "DB-I11",
+      "task": "M4-09a",
+      "state": "PLANNED_REAL_TEST",
+      "scenario": "两事务提交顺序、重复source_event_id、投影失败回滚head",
+      "setup": "同租户head、两个独立投影事务及重复event_id",
+      "action": "事务1持锁不提交，事务2尝试；再回滚事务1并重投同event",
+      "expected": "事务2等待；提交顺序无低序号晚可见；重复不推进head；回滚不遗留推进",
+      "evidence": "事务/锁时间线、head、投影seq/source_event_id"
+    },
+    {
+      "id": "DB-I12",
+      "task": "M4-09b",
+      "state": "PLANNED_REAL_TEST",
+      "scenario": "满页不越过未发事件，签名/租户/权限/过旧游标按规格拒绝或resync",
+      "setup": "多页事件、过滤范围、签名/旧/跨租户游标",
+      "action": "逐页补发、伪造/跨租户请求、权限变更、游标过旧/超head",
+      "expected": "满页游标只到末条；拒伪造跨租户；范围/过旧变化resync，不泄露别的范围",
+      "evidence": "逐帧SSE、实际游标范围、分页及会话版本"
+    },
+    {
+      "id": "DB-I13",
+      "task": "M0-07",
+      "state": "PLANNED_REAL_TEST",
+      "scenario": "API run_sync与Worker同用例在真实PG下状态/事务回滚一致",
+      "setup": "同一用例、API async和Worker sync真实PG会话",
+      "action": "分别执行合法动作和注入同一中途异常",
+      "expected": "规则结果一致，状态/预占/outbox事务一致；异常均完整回滚",
+      "evidence": "实际用例入口、SQL/事务、两端断言及模块导入检查"
+    }
+  ]
+}

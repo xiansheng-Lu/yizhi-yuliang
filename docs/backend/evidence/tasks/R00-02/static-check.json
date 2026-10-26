@@ -1,0 +1,144 @@
+{
+  "result": "PASS",
+  "layer": "D_STATIC_SPEC_ONLY",
+  "tables": 39,
+  "foreignKeys": 84,
+  "migrationStages": 11,
+  "authFunctions": 13,
+  "referenceSqlFunctionBodies": 1,
+  "plannedRealCases": 13,
+  "sourceSha256Utf8Lf": {
+    "docs/backend/architecture/13-数据库DDL详设.md": "862891cb13dde4b3781192ebbff12e46c0e0d9771d00c0c543e0f92ea516902a",
+    "docs/backend/contracts/r00-02-auth-surface.sql": "85738513f41b14ace508a3b0f45fc67de476e96ffa68edf2ab43d59d846ad0eb",
+    "docs/backend/contracts/database-auth-contract.json": "16e165f976174d7ae481455b0a0f76fb1995b3e9fb34ea25898222977dcbbb3f",
+    "docs/backend/contracts/R00-02-数据库与认证规格.md": "84fc175fd8faa610c2413eb3d96ae480d58592f49e1214b5763f4f981b18c1a8"
+  },
+  "negativeMutationResults": [
+    {
+      "case": "跨身份会话FK丢失",
+      "result": "REJECTED",
+      "reason": "关键FK缺失：sessions['tenant_id', 'membership_id', 'user_id']→memberships['tenant_id', 'id', 'user_id']"
+    },
+    {
+      "case": "目标三列唯一键丢失",
+      "result": "REJECTED",
+      "reason": "FK目标缺唯一键：memberships('tenant_id', 'id', 'user_id')"
+    },
+    {
+      "case": "旧单列租户FK复发",
+      "result": "REJECTED",
+      "reason": "租户FK缺tenant：execution_attempts→execution_orders"
+    },
+    {
+      "case": "FK类型错误",
+      "result": "REJECTED",
+      "reason": "FK类型不符：sessions.membership_id→memberships.id"
+    },
+    {
+      "case": "审计分区PK非法",
+      "result": "REJECTED",
+      "reason": "audit_logs唯一/主键缺分区字段"
+    },
+    {
+      "case": "NULL维度重复",
+      "result": "REJECTED",
+      "reason": "NULL维度重跑可能重复"
+    },
+    {
+      "case": "强迫验证码用户有密码",
+      "result": "REJECTED",
+      "reason": "验证码用户被强制配置密码"
+    },
+    {
+      "case": "全局用户强绑租户",
+      "result": "REJECTED",
+      "reason": "全局users仍带tenant_id"
+    },
+    {
+      "case": "运行角色绕过RLS",
+      "result": "REJECTED",
+      "reason": "app_login缺安全默认nobypassrls"
+    },
+    {
+      "case": "SKU绕过商品关联",
+      "result": "REJECTED",
+      "reason": "SKU可绕过所属商品FK"
+    },
+    {
+      "case": "金额币种为空绕过CHECK",
+      "result": "REJECTED",
+      "reason": "金额空币种可通过CHECK"
+    },
+    {
+      "case": "认证所有者获得业务表",
+      "result": "REJECTED",
+      "reason": "认证所有者超出认证表白名单"
+    },
+    {
+      "case": "认证所有者直接登录",
+      "result": "REJECTED",
+      "reason": "认证所有者可直接登录或拥有业务表"
+    },
+    {
+      "case": "业务角色直读密码表",
+      "result": "REJECTED",
+      "reason": "app_login可直读认证表"
+    },
+    {
+      "case": "PUBLIC可调用认证函数",
+      "result": "REJECTED",
+      "reason": "认证函数PUBLIC权限或发布窗口错误"
+    },
+    {
+      "case": "事实键漏币种",
+      "result": "REJECTED",
+      "reason": "事实可比键缺维度/顺序漂移"
+    },
+    {
+      "case": "事件先通知再提交",
+      "result": "REJECTED",
+      "reason": "水位分配/发布顺序错误"
+    },
+    {
+      "case": "使用全局ID游标",
+      "result": "REJECTED",
+      "reason": "游标可能跳过未提交/未发事件"
+    },
+    {
+      "case": "满页提前跳head",
+      "result": "REJECTED",
+      "reason": "游标可能跳过未提交/未发事件"
+    },
+    {
+      "case": "事务内外部付费IO",
+      "result": "REJECTED",
+      "reason": "外调事务或跨进程连接违反决定"
+    },
+    {
+      "case": "静态检查冒充真实PASS",
+      "result": "REJECTED",
+      "reason": "规格检查冒充真实验收"
+    },
+    {
+      "case": "核心SSE反向等待内容",
+      "result": "REJECTED",
+      "reason": "核心SSE/调用账本错误等待内容域"
+    },
+    {
+      "case": "邮件码错误次数回滚",
+      "result": "REJECTED",
+      "reason": "邮件认证缺并发/次数守卫"
+    },
+    {
+      "case": "不安全search_path",
+      "result": "REJECTED",
+      "reason": "参考函数未固定安全search_path"
+    },
+    {
+      "case": "遗漏绝对到期",
+      "result": "REJECTED",
+      "reason": "会话解析漏守卫：s.absolute_expires_at > pg_catalog.statement_timestamp()"
+    }
+  ],
+  "negativeMutationsRejected": 25
+}

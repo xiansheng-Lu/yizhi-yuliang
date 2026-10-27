@@ -1,0 +1,27 @@
+# M2-11b 租约到期与在途恢复
+
+负责人BE，无前端协作。WAITING_REVIEW，基线a5c7b28。M2-13a/b及M2-10c/d实际技术输入；G0/E08保留。
+
+三条DoD：租约过期不直接将SENT目标放给新写；证明未发送才能重新领取，恢复不等于重发；Worker失联仍有可见持久恢复任务，不能吞掉领取失败的消息。
+
+## 实现与验收映射
+
+1. 0036在真实COMMAND_JOB首次attempt=SENT事务内强制登记execution_recoveries、分代事件、Outbox与scheduled_tasks。租约到期先按原claim持锁撤销LEASED发送资格、改QUARANTINED，再重新读取原请求全部网络事实；保留原fence/owner，使同一尝试的迟到响应仍可定性，新claim才递增fence。已有ATTEMPT、RESPONSE、SENDING/UNKNOWN/RESPONDED任一痕迹均不能按“没收到响应”判未发送。未知保留R并只安排核对；实际拒绝走M2-13b及M2-10c的原证据终结。八轮仍不定性只将恢复任务转MANUAL_REQUIRED，不把业务任务判失败。
+2. 仅撤销原发送资格后、原尝试无任何物理发送痕迹、仍EXECUTING且无平台回执，才落SYSTEM/E1稳定未发送证明。该证明、内部CONFIRMED_NOT_EXECUTED、原申请FAILED/error=NOT_SENT/retryable=false、RELEASE/预算R扣减、守卫IDLE与审计同事务提交。不抹去claimed_at/dispatch_started_at，不伪造平台回执；原attempt和稳定请求键保留。新申请可重新取得新fence，旧发送者停在Root提交后再恢复时仍被强制ATTEMPT门拦住。原稳定outbound不允许省略execution/attempt关联绕过门。Frequency与预占强校验共用实际原请求定性谓词，只有精确关联的已终结恢复E1才排除原Root在途，不补造平台NOT_SENT响应。
+3. 新system执行恢复任务由真实prefork Celery消费，Inbox与全部恢复/财务事实同事务。领取/数据库失败不吞消息；恢复事务提交后才向MQ发布只读后继ETA，确认丢失保留PENDING。Outbox通用派发遵守not_before，并可恢复已发布但无已处理Inbox的事件。Worker失联可重投此内部DB任务，不能因此重发平台HTTP；平台/AI副作用任务原有关闭策略不改变。权限撤销仅记可见SYSTEM/E0阻塞、不动业务/资金，恢复权限后显式resume创建新代，不授予dispatch_secret。
+
+## 已执行的专项验证
+
+15项真实PG/本地MQ/Redis专项通过：无Root及有Root无ATT的E1原子终结和重放；真实Mock网络ATT后的受理/拒绝/超时分类；0 ATT但ERROR=UNKNOWN仍隔离；旧发送者停在Root与ATT之间、恢复后新申请真实取得fence=2、旧发送者恢复却无HTTP；审计失败回滚证明/资金/守卫；权限撤销和显式恢复；MQ确认丢失保留待发事件；省略执行关联的原稳定键拒绝；八轮未知保持HELD且恢复证据不可被运行身份更新或删除；旧终结任务的延迟清理不隔离新owner；实际Worker重复消费一次；财务写后提交前SIGKILL真实子进程、PG全部回滚、新PID实际redelivered且只终结一次。
+
+最后一项过程证据见[worker-recovery.json](worker-recovery.json)，仅含合成业务ID、测试PID、R与状态快照。测试中的提交前屏障仅装在既有隔离回归库，不进入生产代码；使用隔离库admin观察等待，不扩大运行/迁移角色权限。最初使用app_migrate读取其他角色wait_event而看不到屏障，已修正观测角色后实际重跑通过。新owner清理用例改用实际拒绝终结前置，避免违反已验证E2后既有五分钟冷却。
+
+本卡521项单元/契约、15项专项、Ruff全仓220文件格式与175文件Mypy通过。修后全量563项集成通过，1项生命周期重启演练明确跳过；开发库0036迁移通过，app_migrate已恢复NOLOGIN，恢复/执行/申请/资金终结业务行均0。完整命令及源码基线见verification.json。
+
+首次全量562通过、1失败、1项生命周期跳过，暴露通用Outbox恢复扫描被新增not_before延迟窗口影响。已把“到期后再等30秒”的窗口限定为新execution_recovery事件，保留旧schedule_recovery按published_at恢复的既有语义；13项持久消息真实专项修后通过，修后全量563通过、1项生命周期跳过。
+
+## 适用边界与回退
+
+所有供应商网络输入均显式Mock，真实平台/付费调用均0。独立回读与核验窗口生产者仍归M2-17/18，周期派发装配归M2-15；本卡提供实际可调用恢复/计时发布器并实际启动Worker验证，不声称已具备全平台自动恢复。现有业务生产者仅COMMAND_JOB，其他类型未建立假命令单。管理摘要要求当前policy.edit及ALL_TENANT，限100项且不含其他人的意图或原文；私有恢复账仅原actor可见。
+
+迁移只前向保留恢复证据，回退可停止新任务消费/发布，保留SENT恢复登记、QUARANTINED与HELD；不得重新开放旧发送资格或删除证明/资金账。BE具名复核、G0/E08保留，前端本卡不适用；后续V1/V8投影及F06页面由对应任务验收。原06/12未提交文档各两行继续排除。

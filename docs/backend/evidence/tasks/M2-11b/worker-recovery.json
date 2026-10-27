@@ -1,0 +1,36 @@
+{
+  "eventId": "f8da50b3-2305-482c-90b0-033ff9a903b0",
+  "jobId": "00806a85-783f-486c-8cc9-e5818b7f734d",
+  "attemptId": "aa2ad47b-0498-4954-af35-c1cfc3bb22e9",
+  "killedWorkerPid": 1725827,
+  "replacementWorkerPid": 1726097,
+  "redelivered": true,
+  "recovery": {
+    "recovery_id": "947f6619-8d93-423e-94c4-9ff48bd53f6d",
+    "attempt_id": "aa2ad47b-0498-4954-af35-c1cfc3bb22e9",
+    "state": "DONE",
+    "outcome": "NOT_SENT",
+    "proof_id": "cc6305d0-6777-4f12-9151-a42eee4a380c",
+    "evidence_level": "E1",
+    "network_attempts": 0,
+    "job_status": "FAILED",
+    "job_version": 5,
+    "next_event_id": null,
+    "next_due": null
+  },
+  "beforeCommitRollback": {
+    "B": 9990,
+    "R": 10,
+    "jobStatus": "EXECUTING",
+    "proofCount": 0,
+    "finalizationCount": 0
+  },
+  "final": {
+    "B": 9990,
+    "R": 0,
+    "platformReceipt": null
+  },
+  "realPlatformCalls": 0,
+  "paidCalls": 0,
+  "proof": "REAL_PREFORK_SIGKILL_PG_ROLLBACK_MQ_REDELIVERY_REDIS_RESULT"
+}

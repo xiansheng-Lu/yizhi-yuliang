@@ -1,0 +1,98 @@
+{
+  "checkedAt": "2026-10-27T23:56:04.472Z",
+  "baseline": "a5c7b28",
+  "implementationCommit": "632991ab25a5ee1fa56a69dc768e82bdeec8c7f4",
+  "result": "PASS_REAL_PG_FENCED_RECOVERY_AND_REAL_WORKER_LOSS_REDELIVERY",
+  "checks": [
+    {
+      "command": "uv run --frozen ruff check .",
+      "result": "PASS"
+    },
+    {
+      "command": "uv run --frozen ruff format --check .",
+      "result": "PASS",
+      "count": 220
+    },
+    {
+      "command": "uv run --frozen mypy",
+      "result": "PASS",
+      "count": 175
+    },
+    {
+      "command": "uv run --frozen pytest tests/unit tests/contract -q",
+      "result": "PASS",
+      "count": 521
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --group execution-recovery --details",
+      "result": "PASS",
+      "count": 15
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --group messages --details",
+      "result": "PASS",
+      "count": 13
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --details",
+      "result": "PASS_WITH_EXPLICIT_LIFECYCLE_SKIP",
+      "count": 563,
+      "skipped": 1
+    },
+    {
+      "command": "uv run --frozen python scripts/migrate_local.py upgrade",
+      "result": "PASS"
+    },
+    {
+      "command": "python docs/backend/tools/check_plan.py",
+      "result": "PASS",
+      "cards": 149,
+      "nodes": 156
+    },
+    {
+      "command": "python docs/backend/tools/check_task_status.py --self-test",
+      "result": "PASS",
+      "invalidVariantsRejected": 13
+    }
+  ],
+  "database": {
+    "head": "0036_execution_recovery",
+    "migrationRoleCanLogin": false,
+    "developmentRows": {
+      "execution_recoveries": 0,
+      "execution_recovery_evidence": 0,
+      "execution_orders": 0,
+      "execution_attempts": 0,
+      "budget_job_finalizations": 0,
+      "command_jobs": 0
+    }
+  },
+  "trace": "worker-recovery.json",
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "correctedFailures": [
+    {
+      "check": "real Worker commit barrier observation",
+      "reason": "app_migrate cannot see app_login wait_event",
+      "correction": "isolated test database admin observes only wait state; runtime permissions unchanged",
+      "recheck": "PASS_REAL_SIGKILL_AND_REDELIVERY"
+    },
+    {
+      "check": "first full integration",
+      "result": "562_PASS_1_FAIL_1_SKIP",
+      "reason": "new not_before timeout reference changed legacy recovery scan",
+      "correction": "due-after-grace only for new execution recovery; legacy uses published_at",
+      "recheck": "13_MESSAGE_PASS_AND_563_FULL_PASS_1_SKIP"
+    }
+  ],
+  "notCovered": [
+    "M2-17/18 independent vendor readback/reconciliation producers",
+    "M2-15 periodic dispatcher assembly",
+    "live E01 vendor acceptance and paid supplier calls",
+    "BE named review G0/E08"
+  ],
+  "review": {
+    "backend": "PENDING",
+    "frontend": "NOT_APPLICABLE"
+  }
+}

@@ -4,7 +4,7 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "currentFocus": "M0-03",
+  "currentFocus": "M0-05",
   "tasks": {
     "R00-01": {
       "owner": "BE",
@@ -870,6 +870,40 @@
         "frontendReason": "20册此卡无FE协作"
       },
       "evidence": "tasks/M0-17/README.md"
+    },
+    "M0-03": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "delivery": "受控就绪/指标与真实依赖降级技术通过，待BE复核",
+      "implementationCommit": "898620fe56ee573b60c6d382418c6d3c192dc40c",
+      "git": "COMMITTED",
+      "technicalVerification": {
+        "result": "PASS",
+        "unitContractPassed": 33,
+        "integrationPassed": 67,
+        "skipped": 1,
+        "skipReason": "显式未启用lifecycle，前卡已执行"
+      },
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS"
+        },
+        {
+          "item": 2,
+          "technical": "PASS"
+        },
+        {
+          "item": 3,
+          "technical": "PASS"
+        }
+      ],
+      "review": {
+        "backend": "PENDING",
+        "frontend": "NOT_APPLICABLE",
+        "frontendReason": "20册此卡无FE协作"
+      },
+      "evidence": "tasks/M0-03/README.md"
     }
   },
   "gates": {},
@@ -934,9 +968,9 @@
     "offline": "离线通过不等于真实依赖、前端联调或平台验收通过"
   },
   "nextTask": {
-    "id": "M0-03",
+    "id": "M0-05",
     "status": "TECHNICAL_INPUTS_READY_WAITING_REVIEW",
-    "note": "审计卡归档后立即继续存活/就绪/指标"
+    "note": "就绪探测归档后立即继续CI与空库回归门禁"
   },
   "continuation": {
     "requestedOn": "2026-10-27",

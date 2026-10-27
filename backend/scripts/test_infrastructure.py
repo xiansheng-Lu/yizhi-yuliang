@@ -60,6 +60,7 @@ def main() -> int:
             "catalog",
             "capability",
             "payload",
+            "governance",
         ),
         default="all",
     )
@@ -82,6 +83,7 @@ def main() -> int:
         "catalog": ["tests/integration/test_platform_catalog.py"],
         "capability": ["tests/integration/test_capability_evidence.py"],
         "payload": ["tests/integration/test_platform_payloads.py"],
+        "governance": ["tests/integration/test_platform_governance.py"],
         "parser": [
             "tests/integration/test_command_parse.py",
             "tests/integration/test_workspace.py",

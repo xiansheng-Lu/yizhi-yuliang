@@ -102,6 +102,7 @@ class PlatformArchive:
         target: ObjectRef | None,
         execution_id: UUID | None,
         attempt_id: UUID | None,
+        before_create: Callable[[], None] | None = None,
     ) -> bool:
         if target is not None:
             ctx.assert_ref(target)
@@ -143,6 +144,8 @@ class PlatformArchive:
                     raise ApiError(ErrorCode.IDEMPOTENCY_MISMATCH, "原出站请求与本次内容不一致")
                 return False
             _verify(session, ctx, spec)
+            if before_create is not None:
+                before_create()
             audit_id = record(
                 session,
                 ctx.identity,
@@ -402,6 +405,7 @@ class RecordedPlatformClient:
         target: ObjectRef | None = None,
         execution_id: UUID | None = None,
         attempt_id: UUID | None = None,
+        before_create: Callable[[], None] | None = None,
     ) -> RecordedResult:
         try:
             prepared = spec.parameters_model.model_validate(parameters, strict=True).model_dump(
@@ -411,7 +415,15 @@ class RecordedPlatformClient:
             raise ValueError("平台参数不符合该操作Schema") from None
         try:
             created = self.archive.begin(
-                ctx, spec, outbound_id, prepared, self.policy, target, execution_id, attempt_id
+                ctx,
+                spec,
+                outbound_id,
+                prepared,
+                self.policy,
+                target,
+                execution_id,
+                attempt_id,
+                before_create,
             )
         except SQLAlchemyError:
             raise ArchiveUnavailable("NOT_SENT") from None

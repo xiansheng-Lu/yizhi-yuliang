@@ -84,6 +84,11 @@ async def matched_input(data: dict[str, Any], amount: int = 110) -> tuple[Prepar
                 {"id": prepared.attempt.outbound_id},
             ).scalar_one()
     ExecutionReceipts(data["applications"]).record(prepared.attempt.attempt_id, raw, 1)
+    return prepared, await independent_match(data, prepared, amount)
+
+
+async def independent_match(data: dict[str, Any], prepared: PreparedExecution, amount: int) -> UUID:
+    """仅测试技术输入：独立规范回读和维护验证，不冒充M2-17运行生产者。"""
     read = uuid4()
     safe = ArchivePolicy(ArchivePolicy().fields | {"source_updated_at"})
     client = RecordedPlatformClient(
@@ -127,7 +132,7 @@ async def matched_input(data: dict[str, Any], amount: int = 110) -> tuple[Prepar
             read,
             "synthetic/M2-10c/independent-match",
         )
-    return prepared, fact
+    return fact
 
 
 @pytest.mark.parametrize("already_in_full_snapshot", [False, True])

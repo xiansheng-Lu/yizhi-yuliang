@@ -49,6 +49,12 @@ class AmountLimitRule:
                 self.name, False, "预算核验基数尚未就绪", {"reason": "BUDGET_NOT_INITIALIZED"}
             )
         day = context.checked_at.astimezone(ZoneInfo("Asia/Shanghai")).date()
+        reducing = context.request.action_type == "PAUSE_AD_PLAN" or (
+            context.request.action_type in {"CHANGE_DAILY_BUDGET", "CHANGE_BID"}
+            and isinstance(context.current_value, MoneyValue)
+            and isinstance(context.request.new_value, MoneyValue)
+            and context.request.new_value.amount_minor < context.current_value.amount_minor
+        )
         credited = []
         for row in rows:
             ready = (
@@ -62,7 +68,10 @@ class AmountLimitRule:
                 and row["fetched_at"] is not None
                 and row["valid_until"] is not None
                 and row["fetched_at"] <= context.checked_at <= row["valid_until"]
-                and row["freeze_reason"] in (None, "OVER_LIMIT")
+                and (
+                    row["freeze_reason"] in (None, "OVER_LIMIT")
+                    or (reducing and row["freeze_reason"] == "RECONCILIATION")
+                )
                 and (
                     row["account_id"] is not None or row["limit_minor"] == config.daily_budget_minor
                 )

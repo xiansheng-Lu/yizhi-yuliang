@@ -1,4 +1,4 @@
-"""状态19条合法边/149条非法边及UNKNOWN/safe-retry；事实为明确合成输入。"""
+"""声明式合法/非法状态边及UNKNOWN/safe-retry；事实为明确合成输入。"""
 
 from dataclasses import replace
 from datetime import UTC, datetime, timedelta
@@ -162,3 +162,24 @@ def test_required_facts_cannot_be_omitted_or_overridden(reason: str) -> None:
         facts = replace(facts, risk=facts.risk.model_copy(update={"checks": (check,)}))
     with pytest.raises(ApiError):
         evolve(job, event, facts, at=now, actor_id=actor, requester_id=REQUESTER)
+
+
+@pytest.mark.parametrize("missing", ["risk", "proof", "E1", "error", "receipt"])
+def test_unsent_rejection_requires_failed_risk_and_no_platform_receipt(missing: str) -> None:
+    now = datetime.now(UTC)
+    job = state_job(JobStatus.APPROVED, now)
+    facts = facts_for(JobEvent.UNSENT_REJECT, job, now)
+    if missing == "risk":
+        facts = replace(facts, risk=None)
+    elif missing == "proof":
+        facts = replace(facts, proof_ref=None)
+    elif missing == "E1":
+        facts = replace(facts, evidence_level="E0")
+    elif missing == "error":
+        facts = replace(facts, error=None)
+    else:
+        facts = replace(facts, receipt=facts_for(JobEvent.ACCEPT, job, now).receipt)
+    with pytest.raises(ApiError):
+        evolve(
+            job, JobEvent.UNSENT_REJECT, facts, at=now, actor_id=REQUESTER, requester_id=REQUESTER
+        )

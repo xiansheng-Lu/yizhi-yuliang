@@ -1,0 +1,48 @@
+{
+  "ledgerId": "07d89a7b-6371-477b-8971-422a85a24eeb",
+  "replayed": false,
+  "observationId": "a2bdfa17-decb-48b1-a03e-348d15b599a0",
+  "confirmedTotalMinor": 9990,
+  "components": [
+    {
+      "page": 0,
+      "runId": "ae543819-2c2a-4d8a-9eb5-8d1c1d99e49c",
+      "enabled": true,
+      "nativeId": "456",
+      "sourceId": "ee4c0b2a-79ed-4b44-9457-04f69342d4ee",
+      "accountId": "43e6c532-829c-469a-86e8-0b9f6cbab3bc",
+      "outboundId": "b438cf77-7416-4f14-8b49-9ae8d23c1a96",
+      "budgetMinor": 100
+    },
+    {
+      "page": 1,
+      "runId": "ae543819-2c2a-4d8a-9eb5-8d1c1d99e49c",
+      "enabled": false,
+      "nativeId": "789",
+      "sourceId": "ee4c0b2a-79ed-4b44-9457-04f69342d4ee",
+      "accountId": "43e6c532-829c-469a-86e8-0b9f6cbab3bc",
+      "outboundId": "1dc95da6-b858-41be-b53f-3ebc64a5f7e0",
+      "budgetMinor": 9890
+    }
+  ],
+  "sources": [
+    {
+      "proof": "synthetic/M2-10a/full-including-paused",
+      "currency": "CNY",
+      "accountId": "43e6c532-829c-469a-86e8-0b9f6cbab3bc",
+      "contractRevision": 1
+    },
+    {
+      "items": 2,
+      "runId": "ae543819-2c2a-4d8a-9eb5-8d1c1d99e49c",
+      "sourceAt": "2026-10-27T20:12:45.554369+00:00",
+      "sourceId": "ee4c0b2a-79ed-4b44-9457-04f69342d4ee",
+      "fetchedAt": "2026-10-27T20:12:45.554531+00:00",
+      "sourceVersion": 2
+    }
+  ],
+  "realPG": true,
+  "upstream": "SYNTHETIC_CANONICAL_DTO",
+  "platformCalls": 0,
+  "paidCalls": 0
+}

@@ -22,7 +22,7 @@ from yuliang.modules.command.jobs import (
 )
 from yuliang.modules.policy.models import PolicyConfig, RiskStage
 from yuliang.modules.policy.repository import install_policy
-from yuliang.modules.policy.service import REQUIRED_RULES, RiskFramework
+from yuliang.modules.policy.service import RiskFramework
 from yuliang.platform.db import VerifiedIdentity, business_transaction
 from yuliang.platform.errors import ApiError, ErrorCode
 
@@ -174,9 +174,8 @@ def test_four_entries_actual_basis_and_append_audit(
         "CURRENT_VALUE_UNCHANGED",
     ):
         assert values[code], code
-    assert (
-        all(values[name] is False for name in REQUIRED_RULES) and not values["POLICY_ENGINE_READY"]
-    )
+    assert not values["AMOUNT_LIMIT"] and not values["INTENT_BINDING"]
+    assert not values["POLICY_ENGINE_READY"]
     with data["maintenance"].begin() as owner:
         owner.execute(text("SET LOCAL ROLE app_owner"))
         row = (

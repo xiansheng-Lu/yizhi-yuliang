@@ -1,0 +1,74 @@
+{
+  "checkedAt": "2026-10-27T19:53:29.809Z",
+  "baseline": "3abd5b9e3e4508f575eebf52980d95c09ccc9642",
+  "implementationCommit": "ab2106a1312dcfade5f30d259e20d0088baa48da",
+  "result": "PASS_REAL_PG_RULE_COMPONENTS_SYNTHETIC_INPUTS",
+  "checks": [
+    {
+      "command": "uv run --frozen ruff check .",
+      "result": "PASS"
+    },
+    {
+      "command": "uv run --frozen ruff format --check .",
+      "result": "PASS",
+      "files": 182
+    },
+    {
+      "command": "uv run --frozen mypy",
+      "result": "PASS",
+      "files": 147
+    },
+    {
+      "command": "uv run --frozen pytest tests/unit tests/contract -q",
+      "result": "PASS",
+      "passed": 495,
+      "ruleUnit": 20
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --details",
+      "result": "PASS_WITH_EXPLICIT_LIFECYCLE_SKIP",
+      "passed": 405,
+      "skipped": 1
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --group rules --details",
+      "result": "PASS_AFTER_PRIVATE_FACT_RLS_HARDENING",
+      "passed": 16
+    },
+    {
+      "command": "uv run --frozen python scripts/migrate_local.py upgrade",
+      "result": "PASS",
+      "head": "0026_rule_facts"
+    }
+  ],
+  "database": {
+    "head": "0026_rule_facts",
+    "migrationRoleCanLogin": false,
+    "developmentRows": {
+      "budget_ledgers": 0,
+      "verified_action_facts": 0,
+      "risk_policies": 0,
+      "command_jobs": 0
+    }
+  },
+  "trace": "trace.json",
+  "coverage": [
+    "pause-inclusive confirmed budget consumer, precise money and percent boundaries",
+    "PG accepted write and independent matching read facts with canonical DTO and source clocks",
+    "unknown, mismatched currency/value/target/intent/time cannot become successful fact",
+    "PG Shanghai-day count, cooldown and unresolved write denial, cache read failure unaffected",
+    "runtime cannot mutate ledgers/facts; other requester fact details private"
+  ],
+  "notCovered": [
+    "production complete budget initialization/reservation M2-10",
+    "real supplier DTO adapters and execution/readback writer M2-17",
+    "INTENT_BINDING M2-09b",
+    "live platform acceptance, F07 browser and named BE/FE review"
+  ],
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "review": {
+    "backend": "PENDING",
+    "frontend": "PENDING_F07"
+  }
+}

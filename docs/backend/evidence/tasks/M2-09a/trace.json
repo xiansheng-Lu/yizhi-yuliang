@@ -1,0 +1,12 @@
+{
+  "layer": "REAL_PG_SYNTHETIC_PLATFORM_RESPONSES",
+  "jobId": "fd9c56d7-5cf0-409e-9244-c767623c5c95",
+  "writeOutboundId": "ae6b6ce8-da1c-4225-bab9-eeac37c8d159",
+  "readOutboundId": "aa489fa6-9741-4f55-bcde-dc0b0ec066f2",
+  "verifiedFactId": "addc6813-d47a-4cc2-889f-72233036c6da",
+  "nextJobFrequencyPassed": false,
+  "jobStatus": "BLOCKED",
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "productionBudgetInitialization": "NOT_RUN_M2_10"
+}

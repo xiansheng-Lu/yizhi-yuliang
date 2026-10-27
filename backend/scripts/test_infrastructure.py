@@ -69,6 +69,7 @@ def main() -> int:
             "applications",
             "transitions",
             "risk",
+            "rules",
         ),
         default="all",
     )
@@ -100,6 +101,7 @@ def main() -> int:
         "applications": ["tests/integration/test_job_applications.py"],
         "transitions": ["tests/integration/test_job_transitions.py"],
         "risk": ["tests/integration/test_risk_framework.py"],
+        "rules": ["tests/integration/test_risk_rules.py"],
         "parser": [
             "tests/integration/test_command_parse.py",
             "tests/integration/test_workspace.py",

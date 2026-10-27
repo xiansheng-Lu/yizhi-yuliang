@@ -4,7 +4,7 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "currentFocus": "M2-09b",
+  "currentFocus": "M2-10a",
   "tasks": {
     "R00-01": {
       "owner": "BE",
@@ -1812,6 +1812,48 @@
         "platformCalls": 0,
         "paidCalls": 0
       }
+    },
+    "M2-10a": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "scope": "已确认完整预算来源合同、真实PG预算聚合与初始化/同步来源记录，不含资金预占",
+      "dependencyInput": "M2-09b策略/意图与M1-15a/b同步/事实技术输入；持续研发授权，G0/E08保留",
+      "delivery": "真实PG完整预算来源、含暂停B聚合/稳定桶/幂等观察与失效检查已技术验证；上游合成规范DTO，真实平台初始化未执行",
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS_REAL_PG_COMPONENT",
+          "review": "PENDING_BE_FE"
+        },
+        {
+          "item": 2,
+          "technical": "PASS_REAL_PG_COMPONENT",
+          "review": "PENDING_BE_FE"
+        },
+        {
+          "item": 3,
+          "technical": "PASS_REAL_PG_COMPONENT",
+          "review": "PENDING_BE_FE"
+        }
+      ],
+      "evidence": "tasks/M2-10a/README.md",
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F07"
+      },
+      "implementationCommit": "477ebe05293fe4cee64229b6977d339fad014a31",
+      "git": "COMMITTED",
+      "syncVerification": "git merge-base --is-ancestor 477ebe05293fe4cee64229b6977d339fad014a31 origin/main",
+      "technicalVerification": {
+        "result": "PASS_REAL_PG_BUDGET_PRODUCER_SYNTHETIC_UPSTREAM",
+        "unitContractPassed": 502,
+        "dedicatedIntegration": 22,
+        "integrationPassed": 441,
+        "integrationSkipped": 1,
+        "head": "0028_budget_initialization",
+        "platformCalls": 0,
+        "paidCalls": 0
+      }
     }
   },
   "gates": {
@@ -1928,10 +1970,10 @@
     "environment": "WSL2 Ubuntu Docker; UV_PROJECT_ENVIRONMENT=/home/lenovo/.cache/yuliang-venv",
     "latestUserRequest": "补齐浏览器验收，然后按照后端任务卡继续后续的所有开发，需要资源再找我对接，不阻塞持续开发到完毕",
     "developmentPolicy": "缺人工/外部验收时记录并继续可独立技术准备；正式门禁、平台调用和付费仍按各自证据许可",
-    "lastCompletedTechnicalTask": "M2-09b",
-    "nextTechnicalTask": "M2-10a",
+    "lastCompletedTechnicalTask": "M2-10a",
+    "nextTechnicalTask": "M2-10b",
     "executionRules": "docs/backend/evidence/execution-rules.md",
-    "checkpoint": "冻结指令与旧策略409技术验证通过，下一卡实现真实完整预算来源覆盖和初始化；G0/E08与E01/E02保留"
+    "checkpoint": "完整含暂停预算B真实PG生产者已验证；继续行锁增额预占与并发上限；平台真实输入/具名验收仍保留"
   },
   "frontendIntegration": {
     "F01": {

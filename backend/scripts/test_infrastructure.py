@@ -71,6 +71,7 @@ def main() -> int:
             "risk",
             "rules",
             "intent",
+            "budgets",
         ),
         default="all",
     )
@@ -104,6 +105,7 @@ def main() -> int:
         "risk": ["tests/integration/test_risk_framework.py"],
         "rules": ["tests/integration/test_risk_rules.py"],
         "intent": ["tests/integration/test_intent_binding.py"],
+        "budgets": ["tests/integration/test_budget_initialization.py"],
         "parser": [
             "tests/integration/test_command_parse.py",
             "tests/integration/test_workspace.py",

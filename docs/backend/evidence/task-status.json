@@ -4,7 +4,7 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "currentFocus": "M1-15b",
+  "currentFocus": "M1-16",
   "tasks": {
     "R00-01": {
       "owner": "BE",
@@ -1505,6 +1505,42 @@
       },
       "evidence": "tasks/M1-15a/README.md",
       "implementationCommit": "651a6e1c09abdbe003aa28a678e58e94df4ecfaf"
+    },
+    "M1-15b": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "scope": "reporting规范事实、来源历史、必要DDL及分页事实同事务集成",
+      "dependencyInput": "M1-15a真实PG技术输入，用户持续研发授权有效；G0/E08保留",
+      "delivery": "完整事实键/来源水位/两时间/历史修订/精确数值完成真实PG技术验证；平台数据全部合成",
+      "technicalVerification": {
+        "result": "PASS",
+        "unitContractPassed": 246,
+        "factUnitCases": 8,
+        "factIntegrationCases": 11,
+        "allIntegrationPassed": 298,
+        "lifecycleNotRun": 1,
+        "platformCalls": 0
+      },
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS"
+        },
+        {
+          "item": 2,
+          "technical": "PASS"
+        },
+        {
+          "item": 3,
+          "technical": "PASS"
+        }
+      ],
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F04_F05_F08"
+      },
+      "evidence": "tasks/M1-15b/README.md",
+      "implementationCommit": "e3ffef20097849140c99b0de625b76bf153780ed"
     }
   },
   "gates": {
@@ -1593,6 +1629,15 @@
         "M1-06及相应真实ADQ验收"
       ],
       "unblock": "安全配置实际应用凭据和HTTPS回调白名单，提供scope/账户映射与逐动作许可；不在聊天粘贴密钥"
+    },
+    {
+      "id": "E02",
+      "status": "WAITING_RESOURCE",
+      "reason": "本地未提供微信小店实际应用/回调/已授权店铺及scope配置；不以假API账户或Mock验收替代",
+      "affects": [
+        "M1-07及相应真实小店验收"
+      ],
+      "unblock": "通过安全配置提供真实应用凭据、已登记HTTPS回调和授权店铺/scope映射；实际授权时按明确动作许可执行"
     }
   ],
   "rules": {
@@ -1601,9 +1646,9 @@
     "offline": "离线通过不等于真实依赖、前端联调或平台验收通过"
   },
   "nextTask": {
-    "id": "M1-15b",
+    "id": "M1-16",
     "status": "READY_FOR_TECHNICAL_PREPARATION",
-    "note": "按确认页/批次技术证据继续事实维度、可比键、历史修订；E01缺失不阻塞本地开发"
+    "note": "E01/E02仅阻塞相应真实授权/平台验收；继续独立就绪的新鲜度与写资格守卫"
   },
   "continuation": {
     "requestedOn": "2026-10-27",
@@ -1612,10 +1657,10 @@
     "environment": "WSL2 Ubuntu Docker; UV_PROJECT_ENVIRONMENT=/home/lenovo/.cache/yuliang-venv",
     "latestUserRequest": "补齐浏览器验收，然后按照后端任务卡继续后续的所有开发，需要资源再找我对接，不阻塞持续开发到完毕",
     "developmentPolicy": "缺人工/外部验收时记录并继续可独立技术准备；正式门禁、平台调用和付费仍按各自证据许可",
-    "lastCompletedTechnicalTask": "M1-15a",
-    "nextTechnicalTask": "M1-15b",
+    "lastCompletedTechnicalTask": "M1-15b",
+    "nextTechnicalTask": "M1-16",
     "executionRules": "docs/backend/evidence/execution-rules.md",
-    "checkpoint": "浏览器补验及M1-01/02/03a/03b/04/05/15a技术完成；06/12伙伴文档保留；继续规范事实，不重复付费测试"
+    "checkpoint": "M1通用底座至15a/15b技术完成并保留正式签字；平台资源单列，继续独立卡；06/12伙伴文档保留"
   },
   "frontendIntegration": {
     "F01": {

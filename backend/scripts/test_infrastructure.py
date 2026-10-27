@@ -63,6 +63,7 @@ def main() -> int:
             "governance",
             "oauth",
             "sync",
+            "facts",
         ),
         default="all",
     )
@@ -88,6 +89,7 @@ def main() -> int:
         "governance": ["tests/integration/test_platform_governance.py"],
         "oauth": ["tests/integration/test_oauth_vault.py"],
         "sync": ["tests/integration/test_sync_checkpoints.py"],
+        "facts": ["tests/integration/test_metric_facts.py"],
         "parser": [
             "tests/integration/test_command_parse.py",
             "tests/integration/test_workspace.py",

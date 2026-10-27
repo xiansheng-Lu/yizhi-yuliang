@@ -3,6 +3,7 @@
 import hashlib
 import json
 import re
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any, Literal
@@ -60,6 +61,7 @@ class SyncPage:
     terminal: bool
     fetched_at: datetime
     source_at: datetime | None = None
+    scanned_items: int | None = None
 
     def __post_init__(self) -> None:
         if (
@@ -72,6 +74,11 @@ class SyncPage:
             and (self.source_at.tzinfo is None or self.source_at.utcoffset() is None)
             or not self.terminal
             and self.next_cursor is None
+            or self.scanned_items is not None
+            and (
+                type(self.scanned_items) is not int
+                or not len(self.records) <= self.scanned_items <= 1000
+            )
         ):
             raise ValueError("同步页需唯一对象、有界条目、明确终页与带时区时间")
 
@@ -366,9 +373,16 @@ class SyncStore:
             raise SyncConflict("CURSOR_MISMATCH")
 
     def commit_page(
-        self, ctx: GatewayContext, spec: OperationSpec, permit: PagePermit, page: SyncPage
+        self,
+        ctx: GatewayContext,
+        spec: OperationSpec,
+        permit: PagePermit,
+        page: SyncPage,
+        *,
+        project_facts: Callable[[Session], None] | None = None,
     ) -> SyncLease | dict[str, Any]:
         lease = permit.lease
+        count = page.scanned_items if page.scanned_items is not None else len(page.records)
         if page.next_cursor is not None and spec.cursor_parameter is None:
             raise ValueError("非终止游标必须有Schema声明的分页参数")
         raw = [{"id": row.native_id, "values": row.values} for row in page.records]
@@ -384,6 +398,7 @@ class SyncStore:
                     raw,
                     page.source_at.isoformat() if page.source_at else None,
                     page.fetched_at.isoformat(),
+                    count,
                 ]
             ),
         )
@@ -448,7 +463,7 @@ class SyncStore:
                     "output": next_digest,
                     "digest": digest,
                     "terminal": page.terminal,
-                    "count": len(page.records),
+                    "count": count,
                 },
             )
             for row, projection in zip(page.records, projections, strict=True):
@@ -470,6 +485,8 @@ class SyncStore:
                         "fetched": page.fetched_at,
                     },
                 )
+            if project_facts is not None:
+                project_facts(session)
             encrypted, key_version = self.codec.seal(
                 ctx.identity.tenant_id, lease.source_id, page.next_cursor
             )
@@ -492,7 +509,7 @@ class SyncStore:
                 finished_at=CASE WHEN :terminal THEN clock_timestamp() ELSE NULL END
                 WHERE id=:run"""),
                 {
-                    "count": len(page.records),
+                    "count": count,
                     "state": state,
                     "run": lease.run_id,
                     "terminal": terminal,

@@ -1,0 +1,44 @@
+{
+  "checkedAt": "2026-10-27T21:35:15.246428+08:00",
+  "baseline": "9985a7d0afbca478683124613eca3f0cd9a37ae2",
+  "result": "PASS_TECHNICAL_U_ONLY",
+  "checks": [
+    {
+      "command": "uv run --frozen pytest tests/unit/test_connector_boundaries.py -q",
+      "result": "PASS",
+      "passed": 35
+    },
+    {
+      "command": "uv run --frozen pytest tests/unit tests/contract -q",
+      "result": "PASS",
+      "passed": 221
+    },
+    {
+      "command": "uv run --frozen ruff check .",
+      "result": "PASS"
+    },
+    {
+      "command": "uv run --frozen ruff format --check .",
+      "result": "PASS",
+      "files": 123
+    },
+    {
+      "command": "uv run --frozen mypy",
+      "result": "PASS",
+      "files": 98
+    }
+  ],
+  "environment": "WSL2 Ubuntu; locked Python3.13/httpx0.28.1; synthetic ExamplePort and MockTransport only",
+  "proofBoundary": "U-layer only; not real PG/platform/browser acceptance",
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "defaultRegisteredAdapters": 0,
+  "newHttpRoutes": 0,
+  "newMigrations": 0,
+  "contractDecision": "V9 actual wire productLine shop maps explicitly to internal wxpromo adapter key; no public enum changed",
+  "review": {
+    "backend": "PENDING",
+    "frontend": "NOT_APPLICABLE"
+  },
+  "implementationCommit": "5dd1b90a35d18c6c18c05a36acdec630b7f49670"
+}

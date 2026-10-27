@@ -10,6 +10,7 @@ from pathlib import Path
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--lifecycle", action="store_true", help="包含本项目服务重启与持久化验证")
+    parser.add_argument("--details", action="store_true", help="输出已遮蔽本地凭据的短失败诊断")
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
     values = dict(
@@ -26,6 +27,9 @@ def main() -> int:
         ),
         YULIANG_TEST_ADMIN_DATABASE_URL=(
             f"postgresql://postgres:{values['YULIANG_POSTGRES_PASSWORD']}@127.0.0.1:15432/yizhi"
+        ),
+        YULIANG_TEST_MIGRATION_DATABASE_URL=(
+            f"postgresql://app_migrate:{values['YULIANG_MIGRATION_PASSWORD']}@127.0.0.1:15432/yizhi"
         ),
         YULIANG_TEST_REDIS_URL=(f"redis://:{values['YULIANG_REDIS_PASSWORD']}@127.0.0.1:16379/0"),
         YULIANG_TEST_BROKER_URL=(
@@ -45,14 +49,20 @@ def main() -> int:
             "-m",
             "integration",
             "-q",
-            "--tb=no",
+            "--tb=short" if args.details else "--tb=no",
             "-rN",
             "--show-capture=no",
         ],
         cwd=root,
         env=env,
         check=False,
+        capture_output=True,
+        text=True,
     )
+    output = result.stdout + result.stderr
+    for value in values.values():
+        output = output.replace(value, "[REDACTED]")
+    print(output, end="")
     return result.returncode
 
 

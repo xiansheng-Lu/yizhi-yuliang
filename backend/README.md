@@ -1,6 +1,6 @@
 # 后端开发入口
 
-当前只实现工程、配置、JSON信封与错误映射；没有登录、业务数据库、Worker或平台写能力。执行状态和未通过依赖以 [任务台账](../docs/backend/evidence/task-status.json) 为准。
+当前已交付工程、配置、响应信封、最小身份/目录迁移、事务租户上下文、RLS与受控范围管理；尚无登录HTTP接口、Worker或平台写能力。执行状态和未通过依赖以 [任务台账](../docs/backend/evidence/task-status.json) 为准。
 
 ## Python与离线验证
 
@@ -53,3 +53,19 @@ uv run uvicorn yuliang.main:create_app --factory --host 127.0.0.1 --port 8000
 ```
 
 GET /healthz只表示进程存活；不代表数据库/队列就绪，完整readyz/metrics属于M0-03。本轮没有开放业务接口，也没有授权真实账户写入。
+
+## 身份与范围底座
+
+WSL中先重放角色/schema引导，再执行受控迁移窗口：
+
+```bash
+bash scripts/infra.sh reinitialize
+uv run python scripts/migrate_local.py upgrade
+uv run python scripts/migrate_local.py current
+```
+
+迁移后默认app_migrate为NOLOGIN，运行应用不持所有者/迁移连接。兼容及回滚见[迁移说明](alembic/README.md)。
+真实隔离/权限测试在UUID命名临时数据库中进行，不会清空本地开发库。
+五角色为初始模板，重复种子不覆盖租户已调整的权限；数据范围必须显式授予，平台管理员没有默认业务权限。
+范围管理目前为受控数据库函数与Python用例，尚未开放HTTP管理入口。
+内容workflow模板与实际平台字段分别归后续M3/M1，不提前创建。

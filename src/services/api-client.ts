@@ -24,10 +24,60 @@ export class ApiClient implements FrontendService {
   readonly mode = "api" as const;
   private listeners = new Set<() => void>();
   private authInvalidated = false;
+  private csrfGrant?: { token: string; expiresAt: number };
+  private csrfPending?: Promise<string>;
+  private authEpoch = 0;
+  private sessionOwner: string | null = null;
   constructor(
     private readonly baseUrl: string,
     private readonly fetcher: typeof fetch = fetch,
   ) {}
+  private clearCsrf() {
+    this.csrfGrant = undefined;
+    this.csrfPending = undefined;
+    this.authEpoch++;
+  }
+  private getCsrf(): Promise<string> {
+    if (this.csrfGrant && this.csrfGrant.expiresAt > Date.now() + 1000)
+      return Promise.resolve(this.csrfGrant.token);
+    if (this.csrfPending) return this.csrfPending;
+    const epoch = this.authEpoch;
+    const pending: Promise<string> = (async () => {
+      let data: { token: string; expiresAt: string };
+      try {
+        data = await this.request<{ token: string; expiresAt: string }>("/v1/auth/csrf");
+      } catch (error) {
+        // Session renewal may race the CSRF CAS. Retry only this safe GET once.
+        if (!(error instanceof ServiceError) || error.code !== "CONFLICT" || epoch !== this.authEpoch)
+          throw error;
+        data = await this.request<{ token: string; expiresAt: string }>("/v1/auth/csrf");
+      }
+      if (epoch !== this.authEpoch)
+        throw new ServiceError("FORBIDDEN", "登录状态已变化，请重新核对后操作。");
+      const expiresAt = Date.parse(data?.expiresAt);
+      if (!data || typeof data.token !== "string" || !data.token || data.token.length > 512 || /\s/.test(data.token) || typeof data.expiresAt !== "string" || !Number.isFinite(expiresAt) || expiresAt <= Date.now())
+        throw new ServiceError("INVALID_RESPONSE", "后端安全凭证无效，请稍后重试。");
+      this.csrfGrant = { token: data.token, expiresAt };
+      return data.token;
+    })().finally(() => {
+      if (this.csrfPending === pending) this.csrfPending = undefined;
+    });
+    this.csrfPending = pending;
+    return pending;
+  }
+  private waitForCsrf(signal: AbortSignal): Promise<string> {
+    signal.throwIfAborted();
+    const pending = this.getCsrf();
+    return new Promise((resolve, reject) => {
+      const abort = () => { signal.removeEventListener("abort", abort); reject(signal.reason); };
+      signal.addEventListener("abort", abort, { once: true });
+      pending.then(
+        (value) => { signal.removeEventListener("abort", abort); resolve(value); },
+        (error) => { signal.removeEventListener("abort", abort); reject(error); },
+      );
+      if (signal.aborted) abort();
+    });
+  }
   private async request<T>(
     path: string,
     method = "GET",
@@ -39,8 +89,16 @@ export class ApiClient implements FrontendService {
         "API_NOT_CONFIGURED",
         "API 模式未配置后端地址。不会回退为 Mock。",
       );
+    method = method.toUpperCase();
+    const mutation = !["GET", "HEAD", "OPTIONS"].includes(method);
+    const epoch = this.authEpoch;
+    const requestSignal = signal ? AbortSignal.any([signal, AbortSignal.timeout(15000)]) : AbortSignal.timeout(15000);
     let response: Response;
     try {
+      const token = mutation ? await this.waitForCsrf(requestSignal) : undefined;
+      requestSignal.throwIfAborted();
+      if (mutation && epoch !== this.authEpoch)
+        throw new ServiceError("FORBIDDEN", "登录状态已变化，请核对后重新发起操作。");
       response = await this.fetcher(
         `${this.baseUrl.replace(/\/$/, "")}${path}`,
         {
@@ -49,16 +107,17 @@ export class ApiClient implements FrontendService {
           cache: "no-store",
           headers: {
             Accept: "application/json",
-            ...(method === "GET" ? {} : { "X-Yuliang-Client": "web" }),
+            ...(mutation ? { "X-Yuliang-Client": "web", "X-CSRF-Token": token! } : {}),
             ...(body === undefined || body instanceof FormData
               ? {}
               : { "Content-Type": "application/json" }),
           },
           ...(body === undefined ? {} : { body: body instanceof FormData ? body : JSON.stringify(body) }),
-          signal: signal ? AbortSignal.any([signal, AbortSignal.timeout(15000)]) : AbortSignal.timeout(15000),
+          signal: requestSignal,
         },
       );
     } catch (error) {
+      if (error instanceof ServiceError) throw error;
       if (signal?.aborted) throw signal.reason;
       if (
         error instanceof Error &&
@@ -71,7 +130,14 @@ export class ApiClient implements FrontendService {
       throw new ServiceError("NETWORK_ERROR", "后端暂时无法访问，请稍后重试。");
     }
     if (!response.ok) {
-      if (response.status === 401 && path !== "/v1/auth/session" && !this.authInvalidated) {
+      const currentAuth = epoch === this.authEpoch;
+      const credentialFailure = path === "/v1/auth/login" && response.status === 401;
+      // A wrong password/code does not consume the preauth challenge. Preserve it
+      // so correcting credentials does not silently replace the email binding.
+      if (currentAuth && response.status === 401 && !credentialFailure) this.sessionOwner = null;
+      if (currentAuth && ((response.status === 401 && !credentialFailure) || (mutation && response.status === 403)))
+        this.clearCsrf();
+      if (currentAuth && response.status === 401 && !credentialFailure && path !== "/v1/auth/session" && !this.authInvalidated) {
         this.authInvalidated = true;
         this.listeners.forEach((listener) => listener());
       }
@@ -120,10 +186,24 @@ export class ApiClient implements FrontendService {
     return payload.data;
   }
   async getIdentity() {
+    const epoch = this.authEpoch;
     try {
       const data = await this.request<Identity | null>("/v1/auth/session");
-      if (data === null) return null;
+      if (data === null) {
+        // A focus/session check before login must preserve an issued email challenge.
+        if (epoch === this.authEpoch && this.sessionOwner !== null) {
+          this.sessionOwner = null;
+          this.clearCsrf();
+        }
+        return null;
+      }
       validateIdentity(data);
+      if (epoch === this.authEpoch) {
+        const owner = `${data.mode}:${data.tenantId}:${data.userId}`;
+        if (owner !== this.sessionOwner) this.clearCsrf();
+        this.sessionOwner = owner;
+        this.authInvalidated = false;
+      }
       return data;
     } catch (error) {
       if (error instanceof ServiceError && error.code === "UNAUTHENTICATED")
@@ -147,7 +227,9 @@ export class ApiClient implements FrontendService {
     if (input.method !== "email_code" && !input.password)
       throw new ServiceError("INVALID_INPUT", "请输入密码。");
     const identity = await this.request<Identity>("/v1/auth/login", "POST", { ...input, email });
+    this.clearCsrf();
     validateIdentity(identity);
+    this.sessionOwner = `${identity.mode}:${identity.tenantId}:${identity.userId}`;
     this.authInvalidated = false;
     return identity;
   }
@@ -166,6 +248,8 @@ export class ApiClient implements FrontendService {
   }
   async logout() {
     await this.request<null>("/v1/auth/logout", "POST");
+    this.clearCsrf();
+    this.sessionOwner = null;
   }
   async getHistory() {
     const state = await this.request<HistorySnapshot>("/v1/workspace/history");

@@ -67,7 +67,12 @@ export function LoginPage() {
       const actor = await reload();
       if (!actor) throw new ServiceError("UNAUTHENTICATED", "未能建立登录会话，请重试。");
       router.replace(authorizedLoginTarget(actor, target));
-    } catch (error) { setError(loginError(error)); }
+    } catch (error) {
+      if (method === "email_code" && error instanceof ServiceError && error.code === "FORBIDDEN") {
+        setChallenge(null); setCode("");
+        setError("登录页面的安全凭证已更新，请重新获取验证码后登录。");
+      } else setError(loginError(error));
+    }
     finally { setBusy(false); }
   }
   return (

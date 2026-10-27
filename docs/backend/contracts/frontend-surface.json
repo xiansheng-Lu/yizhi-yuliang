@@ -1,5 +1,5 @@
 {
-  "baseline": "4405ebc",
+  "baseline": "a1d67c7cd15acb38da9ef3a56c7954d997eccc4d",
   "extraction": "TypeScript AST and type checker; no HTTP/platform execution",
   "calls": [
     {
@@ -251,7 +251,33 @@
     },
     {
       "source": "src/services/api-client.ts",
-      "line": 124,
+      "line": 48,
+      "class": "ApiClient",
+      "method": "getCsrf",
+      "prefix": "",
+      "path": "\"/v1/auth/csrf\"",
+      "httpMethod": "\"GET\"",
+      "body": null,
+      "requestType": null,
+      "responseType": "{ token: string; expiresAt: string }",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/api-client.ts",
+      "line": 53,
+      "class": "ApiClient",
+      "method": "getCsrf",
+      "prefix": "",
+      "path": "\"/v1/auth/csrf\"",
+      "httpMethod": "\"GET\"",
+      "body": null,
+      "requestType": null,
+      "responseType": "{ token: string; expiresAt: string }",
+      "forwardingHelper": false
+    },
+    {
+      "source": "src/services/api-client.ts",
+      "line": 191,
       "class": "ApiClient",
       "method": "getIdentity",
       "prefix": "",
@@ -264,7 +290,7 @@
     },
     {
       "source": "src/services/api-client.ts",
-      "line": 137,
+      "line": 217,
       "class": "ApiClient",
       "method": "analysisRequest",
       "prefix": "",
@@ -277,7 +303,7 @@
     },
     {
       "source": "src/services/api-client.ts",
-      "line": 141,
+      "line": 221,
       "class": "ApiClient",
       "method": "deliveryRequest",
       "prefix": "",
@@ -290,7 +316,7 @@
     },
     {
       "source": "src/services/api-client.ts",
-      "line": 149,
+      "line": 229,
       "class": "ApiClient",
       "method": "login",
       "prefix": "",
@@ -303,7 +329,7 @@
     },
     {
       "source": "src/services/api-client.ts",
-      "line": 155,
+      "line": 237,
       "class": "ApiClient",
       "method": "requestEmailCode",
       "prefix": "",
@@ -316,7 +342,7 @@
     },
     {
       "source": "src/services/api-client.ts",
-      "line": 163,
+      "line": 245,
       "class": "ApiClient",
       "method": "updateProfile",
       "prefix": "",
@@ -329,7 +355,7 @@
     },
     {
       "source": "src/services/api-client.ts",
-      "line": 168,
+      "line": 250,
       "class": "ApiClient",
       "method": "logout",
       "prefix": "",
@@ -342,7 +368,7 @@
     },
     {
       "source": "src/services/api-client.ts",
-      "line": 171,
+      "line": 255,
       "class": "ApiClient",
       "method": "getHistory",
       "prefix": "",
@@ -355,7 +381,7 @@
     },
     {
       "source": "src/services/api-client.ts",
-      "line": 178,
+      "line": 262,
       "class": "ApiClient",
       "method": "createProject",
       "prefix": "",
@@ -368,7 +394,7 @@
     },
     {
       "source": "src/services/api-client.ts",
-      "line": 182,
+      "line": 266,
       "class": "ApiClient",
       "method": "moveConversation",
       "prefix": "",
@@ -381,7 +407,7 @@
     },
     {
       "source": "src/services/api-client.ts",
-      "line": 187,
+      "line": 271,
       "class": "ApiClient",
       "method": "sendMessage",
       "prefix": "",
@@ -394,7 +420,7 @@
     },
     {
       "source": "src/services/api-client.ts",
-      "line": 195,
+      "line": 279,
       "class": "ApiClient",
       "method": "attachConversationJob",
       "prefix": "",
@@ -407,7 +433,7 @@
     },
     {
       "source": "src/services/api-client.ts",
-      "line": 199,
+      "line": 283,
       "class": "ApiClient",
       "method": "assignTaskProject",
       "prefix": "",
@@ -420,7 +446,7 @@
     },
     {
       "source": "src/services/api-client.ts",
-      "line": 202,
+      "line": 286,
       "class": "ApiClient",
       "method": "getSnapshot",
       "prefix": "",
@@ -433,7 +459,7 @@
     },
     {
       "source": "src/services/api-client.ts",
-      "line": 233,
+      "line": 317,
       "class": "ApiClient",
       "method": "interpretCommand",
       "prefix": "",
@@ -446,7 +472,7 @@
     },
     {
       "source": "src/services/api-client.ts",
-      "line": 240,
+      "line": 324,
       "class": "ApiClient",
       "method": "job",
       "prefix": "",
@@ -459,7 +485,7 @@
     },
     {
       "source": "src/services/api-client.ts",
-      "line": 252,
+      "line": 336,
       "class": "ApiClient",
       "method": "createJob",
       "prefix": "",
@@ -472,7 +498,7 @@
     },
     {
       "source": "src/services/api-client.ts",
-      "line": 255,
+      "line": 339,
       "class": "ApiClient",
       "method": "confirmJob",
       "prefix": "",
@@ -485,7 +511,7 @@
     },
     {
       "source": "src/services/api-client.ts",
-      "line": 261,
+      "line": 345,
       "class": "ApiClient",
       "method": "reviewJob",
       "prefix": "",
@@ -498,7 +524,7 @@
     },
     {
       "source": "src/services/api-client.ts",
-      "line": 267,
+      "line": 351,
       "class": "ApiClient",
       "method": "cancelJob",
       "prefix": "",
@@ -511,7 +537,7 @@
     },
     {
       "source": "src/services/api-client.ts",
-      "line": 284,
+      "line": 368,
       "class": "ApiClient",
       "method": "updatePolicy",
       "prefix": "",
@@ -524,7 +550,7 @@
     },
     {
       "source": "src/services/api-client.ts",
-      "line": 291,
+      "line": 375,
       "class": "ApiClient",
       "method": "setScope",
       "prefix": "",

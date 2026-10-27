@@ -26,7 +26,7 @@ import {
   type ConfigurationTask,
   type ConfigurationValidation,
 } from "../src/services/advertising-service";
-import { ApiClient } from "../src/services/api-client";
+import { CsrfApiClient as ApiClient } from "./helpers/csrf-fetch";
 import { MockAdapter } from "../src/services/mock-adapter";
 import type { Identity } from "../src/lib/domain";
 import { productCatalog } from "../src/lib/platform-catalog";

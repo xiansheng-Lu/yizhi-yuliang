@@ -13,7 +13,7 @@ import {
 import { usePathname, useRouter } from "next/navigation";
 import type { FrontendSnapshot, Identity } from "@/lib/domain";
 import { createFrontendService } from "@/services";
-import { readSnapshot } from "@/services/snapshot-reader";
+import { invalidateSnapshotRead, readSnapshot } from "@/services/snapshot-reader";
 import {
   ServiceError,
   type FrontendService,
@@ -45,7 +45,10 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const generation = useRef(0);
   const owner = useRef<string | null>(null);
+  const logoutRequest = useRef<Promise<void> | null>(null);
   const reload = useCallback(async () => {
+    // Focus/auth notifications during logout must not reopen the old session's reads.
+    if (logoutRequest.current) return null;
     const request = ++generation.current;
     let actor: Identity | null = null;
     try {
@@ -55,7 +58,11 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
       if (request !== generation.current) return null;
       setIdentity(actor);
       const nextOwner = actor ? `${actor.mode}:${actor.tenantId}:${actor.userId}` : null;
-      if (nextOwner !== owner.current) { setData({ status: "loading" }); setLastValidSnapshot(null); }
+      if (nextOwner !== owner.current || !actor) {
+        invalidateSnapshotRead(service.current);
+        setData({ status: "loading" });
+        setLastValidSnapshot(null);
+      }
       owner.current = nextOwner;
       if (actor) {
         const snapshot = await readSnapshot(service.current);
@@ -68,6 +75,8 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
       if (request === generation.current) {
         if (error instanceof ServiceError && error.code === "UNAUTHENTICATED") {
           actor = null;
+          if (service.current) invalidateSnapshotRead(service.current);
+          owner.current = null;
           setIdentity(null);
           setLastValidSnapshot(null);
           setData({ status: "loading" });
@@ -93,11 +102,33 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     };
   }, [reload]);
   async function logout() {
-    await service.current?.logout();
+    if (logoutRequest.current) return logoutRequest.current;
+    // Fence work immediately, including snapshots that another view shares with us.
     ++generation.current;
-    setIdentity(null);
-    setLastValidSnapshot(null);
-    setData({ status: "loading" });
+    if (service.current) invalidateSnapshotRead(service.current);
+    const pending = (async () => {
+      try {
+        await service.current?.logout();
+      } catch (error) {
+        // A failed response does not prove logout. Re-read the server session while
+        // preserving the original error for the caller.
+        logoutRequest.current = null;
+        await reload();
+        throw error;
+      }
+      ++generation.current;
+      if (service.current) invalidateSnapshotRead(service.current);
+      owner.current = null;
+      setIdentity(null);
+      setLastValidSnapshot(null);
+      setData({ status: "loading" });
+    })();
+    logoutRequest.current = pending;
+    try {
+      await pending;
+    } finally {
+      if (logoutRequest.current === pending) logoutRequest.current = null;
+    }
   }
   return (
     <WorkspaceContext.Provider

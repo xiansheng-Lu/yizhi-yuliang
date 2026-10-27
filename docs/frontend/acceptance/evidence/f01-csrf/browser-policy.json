@@ -1,0 +1,12 @@
+{
+  "result": "BLOCKED_SAVED_OR_MANAGED_ORIGIN_POLICY",
+  "frontend_origin": "http://127.0.0.1:3000",
+  "frontend_navigation": "PASS_LOGIN_PAGE_RENDER_ONLY",
+  "backend_origin": "http://127.0.0.1:18000",
+  "backend_navigation": "DENIED",
+  "last_reason": "A saved user permission setting blocks this action. A saved permission or managed policy denies access.",
+  "user_authorization": "User approved both origins, then reported settings updated for both, then specifically for18000; actual tool still denied18000",
+  "workarounds_attempted": false,
+  "real_authentication_browser_result": "NOT_RUN",
+  "screenshot": "browser-blocked.png"
+}

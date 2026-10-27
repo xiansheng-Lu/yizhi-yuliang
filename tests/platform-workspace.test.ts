@@ -29,7 +29,7 @@ import {
   PlatformService,
   type PlatformChange,
 } from "../src/services/platform-service";
-import { ApiClient } from "../src/services/api-client";
+import { CsrfApiClient as ApiClient } from "./helpers/csrf-fetch";
 import type { Identity } from "../src/lib/domain";
 const actor: Identity = {
   mode: "API",

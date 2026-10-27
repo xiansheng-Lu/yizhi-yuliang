@@ -1,0 +1,84 @@
+{
+  "task_id": "F01_CSRF",
+  "date": "2026-10-27T17:09:43.780289+08:00",
+  "baseline": "a1d67c7cd15acb38da9ef3a56c7954d997eccc4d",
+  "owner": "FE",
+  "operator": "coding agent",
+  "human_review": {
+    "BE": "PENDING",
+    "FE": "PENDING"
+  },
+  "result": "PASS_AUTOMATED_BROWSER_AUTH_BLOCKED",
+  "environment": {
+    "node": "24.19.0 project runtime, official checksum verified",
+    "next": "16.2.6",
+    "react": "19.2.6",
+    "backend": "WSL Ubuntu / real PostgreSQL17 disposable database, loopback18000",
+    "browser": "ChatGPT in-app browser, real frontend page only"
+  },
+  "commands": [
+    {
+      "command": "node scripts/run.mjs test",
+      "result": "PASS",
+      "passed": 210,
+      "csrf": 20,
+      "auth": 6,
+      "provider_and_reader": 4
+    },
+    {
+      "command": "node scripts/run.mjs typecheck",
+      "result": "PASS"
+    },
+    {
+      "command": "node scripts/run.mjs lint",
+      "result": "PASS"
+    },
+    {
+      "command": "node scripts/run.mjs build",
+      "result": "PASS",
+      "mode": "api",
+      "build_dir": "ignored .runtime/next-csrf-build"
+    },
+    {
+      "command": "node docs/backend/tools/freeze_frontend_surface.mjs",
+      "result": "PASS",
+      "call_sites": 56,
+      "routes": 53,
+      "exported_types": 133,
+      "sources": 15
+    },
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs docs/backend/tools/check_frontend_contracts.ts",
+      "result": "PASS",
+      "golden_checks": 45
+    },
+    {
+      "command": "python docs/backend/tools/check_contracts.py",
+      "result": "PASS",
+      "sources": 15,
+      "routes": 53
+    }
+  ],
+  "browser": {
+    "login_page_render": "PASS",
+    "login_write_logout": "BLOCKED_NOT_RUN",
+    "reason": "backend origin18000 denied by saved/managed browser policy"
+  },
+  "limitations": [
+    "fetch fixtures are not actual browser authentication",
+    "provider mounted React flow awaits browser",
+    "no G0 release or final human signatures",
+    "no backend M1 implementation started"
+  ],
+  "sha256_utf8_lf": {
+    "src/services/api-client.ts": "9d2f13481caaf312158f099131e289dcf18567334f938370a0085412cd8bf12e",
+    "src/components/provider.tsx": "7d744ada9d7694ea447aff9ba98ac8454b09288f43778ad8db9c621e664c1db0",
+    "src/features/login-page.tsx": "6df53ba9b9e71a2d2da8d0c1fe11fc7b50c3d70628b9edf749fe96b2d0935360",
+    "tests/csrf.test.ts": "02badced96ada0ddc9e4320a4ba340b6bee3f3a188c086ff658ffbf74d67596d",
+    "tests/provider-isolation.test.ts": "d941a509410dfc6de38f66fe23364b3788f0ea7091cfacf2021737baed1fbdba",
+    "tests/helpers/csrf-fetch.ts": "5907911c2552789494e04282d5eb7316a4f166fb0fbad4d10554de6139cc49a8",
+    "tests/v12-navigation.test.ts": "4b4906c6c59c65df42caeaecf6c4bb2b24644c7ce64f534de929c2d5e355fd42",
+    "docs/backend/contracts/http-contracts.json": "ade46e614f84fddd3d9a09bb03207e4158434c4a277c9349f8477be7c5136d52",
+    "docs/backend/contracts/frontend-surface.json": "fdb5be970930601006622c9e070ba9951cfa74ac73b46f633e125e801d2cb00e"
+  }
+}

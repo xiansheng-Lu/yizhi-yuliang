@@ -1,0 +1,8 @@
+{
+  "result": "PASS",
+  "temporary_database_remaining": 0,
+  "app_migrate_can_login": false,
+  "browser_credential_submissions": 0,
+  "platform_write_calls": 0,
+  "external_mail_deliveries": 0
+}

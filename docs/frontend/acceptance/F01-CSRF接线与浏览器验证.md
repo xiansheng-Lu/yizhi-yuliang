@@ -38,3 +38,12 @@ WorkspaceProvider在owner变化、空身份、401与退出边界使共享snapsho
 解除条件：应用/受管环境真正允许浏览器访问127.0.0.1:18000后，在同样临时真实PG环境执行密码/邮箱码登录、会话CSRF轮换、昵称/项目写入、刷新与第二身份、缺失/伪造CSRF、权限拒绝和退出失效；PC1440及移动390留证。生产TLS/Cookie、真实邮件收件与平台授权分别引用适用证据，不用本地HTTP冒充正式环境。
 
 M0-11b第三条DoD/F01仍待浏览器证据，G0继续BLOCKED且人工签字不代填；M1-01及后续主链未领取。恢复后按卡继续，不重新请求已给出的开发或DeepSeek许可。回退应用可停止新客户端行为，后端身份开关仍默认关闭，本卡没有放宽服务端CSRF、CORS或权限。
+
+
+## 2026-10-27 浏览器访问恢复与原生fetch修复
+
+用户明确选择当前已连接的Chrome扩展完成联调。原内置浏览器本次未发现，历史权限拒绝不记为已修复。恢复临时真实PG后端与API模式前端后，Chrome可直达18000，但旧ApiClient将原生fetch作为实例方法调用，浏览器在发送请求前失败并显示网络错误；改为箭头函数转发，保留注入测试端口。新增接收者回归，211项测试、typecheck、lint及生产build通过。
+
+真实OPERATOR密码登录、CSRF引导、会话/快照/历史读取、昵称PATCH与刷新持久化、退出及受保护页返回登录已通过；OWNER使用CaptureMail验证码登录，授权菜单切换和退出通过。邮件未外发、平台未调用。脱敏服务端HTTP记录与截图见[evidence/browser-access-recovery/verification.json](evidence/browser-access-recovery/verification.json)。截图已检查；视口覆盖请求后图像仍为桌面尺寸，不能计手机390/PC1440通过。
+
+BROWSER_LOCAL_API_ACCESS在用户指定Chrome路径解除；F01仍缺缺失/伪造CSRF浏览器负例、项目写入、剩余身份和核验尺寸证据，BE/FE人工复核PENDING，G0不放行。服务保持运行供继续验证；临时库生命周期未结束，旧cleanup记录不代表本次实例。

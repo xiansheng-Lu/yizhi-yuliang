@@ -30,7 +30,7 @@ export class ApiClient implements FrontendService {
   private sessionOwner: string | null = null;
   constructor(
     private readonly baseUrl: string,
-    private readonly fetcher: typeof fetch = fetch,
+    private readonly fetcher: typeof fetch = (...args) => fetch(...args),
   ) {}
   private clearCsrf() {
     this.csrfGrant = undefined;

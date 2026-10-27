@@ -1,0 +1,31 @@
+{
+  "checkedAt": "2026-10-27T19:27:35.086213+08:00",
+  "result": "PASS_BROWSER_CONNECTIVITY_AND_AUTH_SMOKE",
+  "browser": "Chrome extension, explicitly selected by user",
+  "backend": "real disposable PostgreSQL; capture-only mail; no platform calls",
+  "cause": "ApiClient invoked native fetch with ApiClient as receiver; browser failed before sending requests",
+  "fix": "default fetch adapter forwards arguments through an arrow function",
+  "passed": [
+    "healthz and readyz; all four dependencies UP, degraded=false",
+    "OPERATOR password login with CSRF and real workspace reads",
+    "profile PATCH with session CSRF, saved state survives reload",
+    "logout and protected-page redirect to login",
+    "OWNER capture-mail email-code login; OWNER menu replaces OPERATOR menu",
+    "OWNER logout",
+    "211 automated tests",
+    "typecheck",
+    "lint",
+    "production build"
+  ],
+  "pending": [
+    "missing/forged CSRF browser negatives",
+    "project write and remaining role coverage",
+    "verified PC1440/mobile390 responsive evidence",
+    "BE/FE named review; G0 acceptance"
+  ],
+  "screenshotsNote": "Viewport override requested but screenshot pixels remained desktop sized. No mobile PASS claimed.",
+  "internalBrowser": "not available in current discovery; historical policy denial not resolved",
+  "secretsIncluded": false,
+  "externalMailDeliveries": 0,
+  "platformWrites": 0
+}

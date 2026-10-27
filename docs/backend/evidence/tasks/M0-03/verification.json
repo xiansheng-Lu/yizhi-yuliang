@@ -1,0 +1,55 @@
+{
+  "codeCommit": "898620fe56ee573b60c6d382418c6d3c192dc40c",
+  "executedOn": "2026-10-27",
+  "environment": {
+    "os": "WSL2 Ubuntu",
+    "python": "3.13.14",
+    "postgres": "17.10",
+    "rabbitmq": "4.1.6",
+    "redis": "7.4.7"
+  },
+  "checks": [
+    {
+      "command": "uv run --frozen ruff check .; ruff format --check .; mypy",
+      "result": "PASS",
+      "mypySourceFiles": 50
+    },
+    {
+      "command": "uv run --frozen pytest tests/unit tests/contract -q",
+      "result": "PASS",
+      "passed": 33
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --details",
+      "result": "PASS",
+      "passed": 67,
+      "failed": 0,
+      "skipped": 1,
+      "skipReason": "仅--lifecycle设施重启测试未启用；已在M0-17回归真实执行"
+    }
+  ],
+  "assertions": [
+    "运行角色真实PG/Redis/MQ均UP时readyz200，指标与依赖一致",
+    "业务库或开启身份API的认证库连接拒绝，readyz503但healthz200",
+    "MQ连接拒绝，数据库中的两条Outbox申请仍PENDING，首次失败后第二条attempts=0，快照仍200",
+    "Redis拒绝连接，PG会话仍有效且明确返回POSTGRESQL回库状态",
+    "实际外部IP或不可解析来源加伪造X-Forwarded-For仍403",
+    "指标固定标签，无身份/凭据/业务数据，无虚假任务在途零值"
+  ],
+  "limits": [
+    "仅连接/基础SQL探测，不代替迁移/分区/权限/Worker/业务验收",
+    "Worker状态UNOBSERVED，业务执行器仍关闭",
+    "BE人工复核待签"
+  ],
+  "sourceSha256Utf8Lf": {
+    "backend/.env.example": "4758a8aad6e5995e12000df6aaf20fa827dff365ab37b27d8eb9f45156f614ce",
+    "backend/README.md": "f15ef90f6d0a6c53fdb09f2c9417edf3a5ed96808ca2a63aed2d8eed9def9911",
+    "backend/src/yuliang/api/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend/src/yuliang/api/operations.py": "6458360f310aa8c51cdeaf40db44d1cde28db3c34f0a0d5d6d27705d4ab9c3e6",
+    "backend/src/yuliang/infrastructure/outbox.py": "59e0c302398fc9567bd772357c5f7b49a3ab2f96c139d3b4f3d3f468cc7bcf72",
+    "backend/src/yuliang/main.py": "3bd68f8c3200b8f9f6b7d1a965f0ea44d4422327ec91d7e2f35d5440ae5a96eb",
+    "backend/src/yuliang/platform/probes.py": "e7729f179dce51464b01c4c81182ba29aa52fad37d60fc1d2ca80afa5c2ef0cd",
+    "backend/src/yuliang/settings.py": "053a354e01ea471960ab881d65325d4899e7af3ea5e269bbfbd931b3d49c0b4c",
+    "backend/tests/integration/test_operations.py": "42043ecdbcfa532bfb320b4ae14d879a59034b44525a42fbbe734b1d57f3e8c1"
+  }
+}

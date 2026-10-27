@@ -11,6 +11,7 @@ from starlette.exceptions import HTTPException
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse
 
+from yuliang.api.operations import router as operations_router
 from yuliang.platform.envelope import success
 from yuliang.platform.errors import (
     ApiError,
@@ -20,6 +21,7 @@ from yuliang.platform.errors import (
     validation_error_handler,
 )
 from yuliang.platform.middleware import RequestContextMiddleware
+from yuliang.platform.probes import ProbeService
 from yuliang.settings import Settings
 
 
@@ -34,6 +36,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+        app.state.probes = ProbeService(app.state.settings)
         if app.state.settings.identity_api_enabled:
             from yuliang.modules.identity.service import IdentityService
 
@@ -41,6 +44,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         try:
             yield
         finally:
+            app.state.probes.close()
             if app.state.settings.identity_api_enabled:
                 app.state.identity_service.close()
 
@@ -54,6 +58,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         openapi_url=None if settings.environment == "prod" else "/openapi.json",
     )
     app.state.settings = settings
+    app.include_router(operations_router)
     if settings.identity_api_enabled:
         from yuliang.modules.identity.routes import router
         from yuliang.modules.identity.workspace_routes import router as workspace_router
@@ -80,7 +85,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @app.get("/healthz", include_in_schema=False)
     async def healthz(request: Request) -> JSONResponse:
-        # 仅存活，不宣称PG/消息/Worker已就绪。完整就绪与指标属于M0-03。
+        # 仅进程存活；依赖与降级状态通过受控来源readyz/metrics读取。
         return success(request, {"alive": True})
 
     return app

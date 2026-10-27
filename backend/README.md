@@ -52,7 +52,7 @@ Windows仍可用`scripts/prepare-local.ps1`和`scripts/infra.ps1`，后者要求
 uv run uvicorn yuliang.main:create_app --factory --host 127.0.0.1 --port 8000 --no-proxy-headers
 ```
 
-GET /healthz只表示进程存活；不代表数据库/队列就绪，完整readyz/metrics属于M0-03。本轮没有开放业务接口，也没有授权真实账户写入。
+GET /healthz只表示进程存活；依赖状态通过受控来源的/readyz和/metrics读取。真实账户写入仍需对应验收和授权。
 
 ## 身份与范围底座
 
@@ -120,3 +120,12 @@ PROCESSED重复直接跳过；过期未完成的内部恢复事件可补投到�
 业务用例调用modules.audit.service.record，同事务记录actor、服务器requestId、对象UUID及摘要；当前本人资料更新已接入，其他未来业务须显式接线。
 详情只允许字段名与APPLIED/DENIED枚举；昵称前后值使用带独立密钥的HMAC摘要，不存原值。订单/凭据/原始平台载荷不进入审计。
 by_request保持租户事务和RLS；尚无对外审计查询HTTP接口。登录前失败仅记受限auth_events、tenant=NULL，不创建tenant=0业务审计行。
+
+## 就绪探测与降级
+
+/readyz和/metrics默认只允许回环来源，可用OPERATIONS_ALLOWED_NETWORKS显式配置采集网段；启动保持--no-proxy-headers，不能信客户端X-Forwarded-For绕过来源限制。
+探测以运行账号执行真实SELECT 1、Redis PING与AMQP连接，无业务数据读取；连接/查询有超时，并在每进程内缓存1秒。数据库连通不等于迁移、权限、分区或业务已验收。
+业务库不可用，或开启身份接口时认证库不可用，readyz返回503；healthz保持进程存活200。MQ/Redis失效时返回200并明确degraded和各依赖DOWN，避免剔除仍可用的数据库读取能力。
+MQ失败保留已提交Outbox申请，首次传输失败暂停本批，后续健康派发恢复。Redis不作为会话事实源，身份仍回查PG；Beat失去Redis租约时停止派发。
+dispatchTransportReady只表示PG/MQ运输连通，Worker标为UNOBSERVED、业务执行器仍关闭；不证明外部执行已就绪。
+Prometheus文本指标仅含固定依赖状态、API/运输就绪和采样时间，无租户标签或原始异常；尚未接入的任务在途/资金指标不以固定零占位。

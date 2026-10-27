@@ -151,4 +151,20 @@ def dispatch_pending(
                 session.execute(
                     text("SELECT access.outbox_reopen_recovery(:event)"), {"event": row.event_id}
                 )
-    return sum(publish_one(engine, identity, row.event_id, sender) for row in rows)
+    count = 0
+    for row in rows:
+        if publish_one(engine, identity, row.event_id, sender):
+            count += 1
+        else:
+            with business_transaction(engine, identity) as session:
+                unavailable = session.execute(
+                    text(
+                        "SELECT last_error_code='MQ_UNAVAILABLE' FROM outbox_events "
+                        "WHERE event_id=:event"
+                    ),
+                    {"event": row.event_id},
+                ).scalar_one()
+            if unavailable:
+                # 首次传输失败暂停本批；余下已提交申请留PENDING等待下次健康派发。
+                break
+    return count

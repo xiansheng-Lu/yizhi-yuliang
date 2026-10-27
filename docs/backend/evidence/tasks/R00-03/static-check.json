@@ -1,0 +1,342 @@
+{
+  "result": "PASS",
+  "layer": "D_STATIC_SPEC_ONLY",
+  "decisions": 14,
+  "competingActions": 3,
+  "reservationTransitions": 6,
+  "evidenceLevels": 4,
+  "inboxRows": 10,
+  "crossVolumeDiffs": 4,
+  "plannedRealCases": 38,
+  "adoptedVolumes": [
+    "06",
+    "12",
+    "15"
+  ],
+  "sourceSha256Utf8Lf": {
+    "docs/backend/contracts/R00-03-资金与恢复规格.md": "7955a06282d135daaacf990b32372fe0eaed495327a66521f58050a32b696292",
+    "docs/backend/contracts/funds-recovery-contract.json": "5609dfbf996559b86e4c55ba284bbf7c91de19c9875020de5ff238c5b05888d0",
+    "docs/backend/architecture/20-后端逐任务开发与验收卡.md": "3bc643c8084faeb83ffa29bc35500214fb822759161c995d9b448df7d34726f3",
+    "docs/backend/architecture/06-执行内核与风控设计.md": "ecb55eb964a457994332c7cfc18c0ed498551036801b0177ad256f53016247a9",
+    "docs/backend/architecture/12-核心状态机详设.md": "7e87e7969d36e595750d905597ad336cf4577d110b9e05ae11101e17d7ff169d",
+    "docs/backend/architecture/15-关键链路时序与事务边界.md": "8c09fee9551a08aac5e166d260084705ea2b3cc8e87fbb303f3c3a7308a09b97"
+  },
+  "negativeMutationResults": [
+    {
+      "case": "共同谓词丢失SENT条件",
+      "result": "REJECTED",
+      "reason": "共同条件谓词未写入规格正文"
+    },
+    {
+      "case": "共同谓词丢失未过期条件",
+      "result": "REJECTED",
+      "reason": "共同条件谓词未写入规格正文"
+    },
+    {
+      "case": "共同谓词丢失版本条件",
+      "result": "REJECTED",
+      "reason": "共同条件谓词未写入规格正文"
+    },
+    {
+      "case": "正文丢失RESULT_UNKNOWN",
+      "result": "REJECTED",
+      "reason": "正文缺少RESULT_UNKNOWN表达"
+    },
+    {
+      "case": "正文丢失隔离错误码",
+      "result": "REJECTED",
+      "reason": "正文缺少隔离错误码"
+    },
+    {
+      "case": "正文丢失额度上限公式",
+      "result": "REJECTED",
+      "reason": "正文缺少额度上限公式"
+    },
+    {
+      "case": "判定表在途动作被改写",
+      "result": "REJECTED",
+      "reason": "正文判定表与机器清单逐格不一致"
+    },
+    {
+      "case": "竞争动作漏过期",
+      "result": "REJECTED",
+      "reason": "竞争动作集合变化：['cancel', 'claim']"
+    },
+    {
+      "case": "优先级缺竞争对",
+      "result": "REJECTED",
+      "reason": "优先级未覆盖全部竞争对"
+    },
+    {
+      "case": "不再保证单一终态",
+      "result": "REJECTED",
+      "reason": "未保证单一终态出口"
+    },
+    {
+      "case": "竞争失败方不再409",
+      "result": "REJECTED",
+      "reason": "竞争失败方未按409处理"
+    },
+    {
+      "case": "预占改为批准时创建",
+      "result": "REJECTED",
+      "reason": "预占创建时点被改动"
+    },
+    {
+      "case": "预占被允许存在于DRAFT",
+      "result": "REJECTED",
+      "reason": "预占存在区间被放宽"
+    },
+    {
+      "case": "减额被允许创建预占",
+      "result": "REJECTED",
+      "reason": "减额被允许创建预占"
+    },
+    {
+      "case": "执行前被允许新建预占",
+      "result": "REJECTED",
+      "reason": "执行前被允许新建预占"
+    },
+    {
+      "case": "减额不再限定MATCHED",
+      "result": "REJECTED",
+      "reason": "减额未限定MATCHED后调减"
+    },
+    {
+      "case": "结算改用E1证据",
+      "result": "REJECTED",
+      "reason": "结算使用了不允许结算的证据{'from': 'HELD', 'event': 'verification_matched', 'to': 'SETTLED', 'evidence': 'E1', 'effect': 'B += delta, R -= delta'}"
+    },
+    {
+      "case": "释放改用E0证据",
+      "result": "REJECTED",
+      "reason": "释放使用了不允许释放的证据{'from': 'HELD', 'event': 'confirmed_not_executed', 'to': 'RELEASED', 'evidence': 'E0', 'effect': 'R -= delta'}"
+    },
+    {
+      "case": "E0被允许释放预占",
+      "result": "REJECTED",
+      "reason": "未定性被允许结算或释放{'from': 'HELD', 'event': 'unknown', 'to': 'HELD', 'evidence': 'E0', 'effect': '不释放不结算'}"
+    },
+    {
+      "case": "E0不再禁止重发",
+      "result": "REJECTED",
+      "reason": "E0未禁止RESEND_WRITE"
+    },
+    {
+      "case": "E1不再允许释放",
+      "result": "REJECTED",
+      "reason": "释放使用了不允许释放的证据{'from': 'HELD', 'event': 'confirmed_not_executed', 'to': 'RELEASED', 'evidence': 'E1', 'effect': 'R -= delta'}"
+    },
+    {
+      "case": "E2不再允许结算",
+      "result": "REJECTED",
+      "reason": "结算使用了不允许结算的证据{'from': 'HELD', 'event': 'verification_matched', 'to': 'SETTLED', 'evidence': 'E2', 'effect': 'B += delta, R -= delta'}"
+    },
+    {
+      "case": "E0反例清单被清空",
+      "result": "REJECTED",
+      "reason": "E0缺少反例清单"
+    },
+    {
+      "case": "UNKNOWN被当成终态",
+      "result": "REJECTED",
+      "reason": "UNKNOWN被当成终态"
+    },
+    {
+      "case": "UNKNOWN被允许重发",
+      "result": "REJECTED",
+      "reason": "UNKNOWN被允许重发"
+    },
+    {
+      "case": "提交未知投影被改为VERIFYING",
+      "result": "REJECTED",
+      "reason": "提交未知投影状态被改动"
+    },
+    {
+      "case": "回读未知投影被改为EXECUTING",
+      "result": "REJECTED",
+      "reason": "回读未知投影状态被改动"
+    },
+    {
+      "case": "提交未知被允许声称已受理",
+      "result": "REJECTED",
+      "reason": "提交未知不得声称已受理"
+    },
+    {
+      "case": "提交未知不再隔离守卫",
+      "result": "REJECTED",
+      "reason": "UNKNOWN期间守卫未被隔离"
+    },
+    {
+      "case": "回读未知释放预占",
+      "result": "REJECTED",
+      "reason": "UNKNOWN期间预占被释放"
+    },
+    {
+      "case": "被允许私自扩展状态枚举",
+      "result": "REJECTED",
+      "reason": "被允许私自扩展前端状态枚举"
+    },
+    {
+      "case": "租约过期被允许解除隔离",
+      "result": "REJECTED",
+      "reason": "租约过期被允许解除隔离"
+    },
+    {
+      "case": "UNKNOWN不再强制隔离",
+      "result": "REJECTED",
+      "reason": "UNKNOWN未强制隔离守卫"
+    },
+    {
+      "case": "隔离态写拒绝范围被放宽",
+      "result": "REJECTED",
+      "reason": "隔离态写拒绝范围被改动"
+    },
+    {
+      "case": "inbox行被当成写资格",
+      "result": "REJECTED",
+      "reason": "inbox行被当成平台写资格"
+    },
+    {
+      "case": "恢复调度被当成写平台",
+      "result": "REJECTED",
+      "reason": "恢复调度被当成写平台"
+    },
+    {
+      "case": "PROCESSED之外也可直接ack",
+      "result": "REJECTED",
+      "reason": "PROCESSED之外被允许直接ack"
+    },
+    {
+      "case": "平台写次数上限被放宽",
+      "result": "REJECTED",
+      "reason": "平台写次数上限被放宽"
+    },
+    {
+      "case": "在途被允许重投写",
+      "result": "REJECTED",
+      "reason": "正文判定表与机器清单逐格不一致"
+    },
+    {
+      "case": "账本被加回全局约束",
+      "result": "REJECTED",
+      "reason": "账本被加回全局上限约束"
+    },
+    {
+      "case": "超限期间允许新增额",
+      "result": "REJECTED",
+      "reason": "超限期间新增额未被拒绝"
+    },
+    {
+      "case": "减额不再限定MATCHED",
+      "result": "REJECTED",
+      "reason": "减额不再限定MATCHED"
+    },
+    {
+      "case": "已批准未执行增额不再复检",
+      "result": "REJECTED",
+      "reason": "已批准未执行的增额不再复检"
+    },
+    {
+      "case": "首写失败可降级为Mock",
+      "result": "REJECTED",
+      "reason": "首写失败被允许降级为Mock"
+    },
+    {
+      "case": "首写MATCHED次数被放宽",
+      "result": "REJECTED",
+      "reason": "首写MATCHED次数被放宽"
+    },
+    {
+      "case": "能力阶段允许跳级",
+      "result": "REJECTED",
+      "reason": "能力阶段可跳级"
+    },
+    {
+      "case": "首写不再需要业务许可",
+      "result": "REJECTED",
+      "reason": "首写不再需要业务许可"
+    },
+    {
+      "case": "safe-retry改为新建申请",
+      "result": "REJECTED",
+      "reason": "safe-retry的reusesApplication被改动"
+    },
+    {
+      "case": "safe-retry允许UNKNOWN发起",
+      "result": "REJECTED",
+      "reason": "safe-retry允许从非FAILED发起"
+    },
+    {
+      "case": "资金增加类被移出白名单",
+      "result": "REJECTED",
+      "reason": "资金增加类被移出重试白名单"
+    },
+    {
+      "case": "终态集合被改动",
+      "result": "REJECTED",
+      "reason": "command_job终态集合变化"
+    },
+    {
+      "case": "UNKNOWN被列入终态",
+      "result": "REJECTED",
+      "reason": "command_job终态集合变化"
+    },
+    {
+      "case": "用例冒充已通过",
+      "result": "REJECTED",
+      "reason": "规格检查冒充真实验收A17-1"
+    },
+    {
+      "case": "真实用例缺证据",
+      "result": "REJECTED",
+      "reason": "真实用例缺evidenceA17-1"
+    },
+    {
+      "case": "真实用例引用未映射验收",
+      "result": "REJECTED",
+      "reason": "用例不属于本卡映射的验收案例A17-1"
+    },
+    {
+      "case": "跨册差异无归属卡",
+      "result": "REJECTED",
+      "reason": "跨册差异归属卡不存在{'id': 'X-01', 'topic': 'A22要求V8显示UNKNOWN与V1十二态不得私自扩展冲突', 'location': '19册 A22', 'resolution': '按D-04用error.code=RESULT_UNKNOWN与verification=UNKNOWN表达，任务状态保持EXECUTING或VERIFYING；A22的V8显示UNKNOWN理解为可解释文案与核对时间，不新增状态枚举', 'owner': ''}"
+    },
+    {
+      "case": "跨册差异归属卡不存在",
+      "result": "REJECTED",
+      "reason": "跨册差异归属卡不存在{'id': 'X-01', 'topic': 'A22要求V8显示UNKNOWN与V1十二态不得私自扩展冲突', 'location': '19册 A22', 'resolution': '按D-04用error.code=RESULT_UNKNOWN与verification=UNKNOWN表达，任务状态保持EXECUTING或VERIFYING；A22的V8显示UNKNOWN理解为可解释文案与核对时间，不新增状态枚举', 'owner': 'R00-99'}"
+    },
+    {
+      "case": "规格卡被声明为含迁移",
+      "result": "REJECTED",
+      "reason": "D类规格卡不应声明迁移适用"
+    },
+    {
+      "case": "真实验收被标为已通过",
+      "result": "REJECTED",
+      "reason": "真实验收状态被标为已通过"
+    },
+    {
+      "case": "决定标题与正文漂移",
+      "result": "REJECTED",
+      "reason": "决定标题漂移D-01"
+    },
+    {
+      "case": "12册未采用本规格",
+      "result": "REJECTED",
+      "reason": "12册未引用本卡冻结规格"
+    },
+    {
+      "case": "06册未采用本规格",
+      "result": "REJECTED",
+      "reason": "06册未引用本卡冻结规格"
+    },
+    {
+      "case": "15册未采用本规格",
+      "result": "REJECTED",
+      "reason": "15册未引用本卡冻结规格"
+    }
+  ],
+  "negativeMutationsRejected": 63
+}

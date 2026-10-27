@@ -1,0 +1,355 @@
+{
+  "version": 1,
+  "card": "R00-03",
+  "title": "资金与崩溃恢复冻结规格",
+  "date": "2026-10-27",
+  "owner": "BE",
+  "frontendCollaboration": ["F06", "F12"],
+  "verificationLayer": "D",
+  "specDocument": "docs/backend/contracts/R00-03-资金与恢复规格.md",
+  "sourceVolumes": {
+    "06": "docs/backend/architecture/06-执行内核与风控设计.md",
+    "12": "docs/backend/architecture/12-核心状态机详设.md",
+    "15": "docs/backend/architecture/15-关键链路时序与事务边界.md",
+    "19": "docs/backend/architecture/19-细化排期与验收执行方案.md",
+    "20": "docs/backend/architecture/20-后端逐任务开发与验收卡.md"
+  },
+  "adoptionVolumes": [
+    "docs/backend/architecture/06-执行内核与风控设计.md",
+    "docs/backend/architecture/12-核心状态机详设.md",
+    "docs/backend/architecture/15-关键链路时序与事务边界.md"
+  ],
+  "decisions": [
+    {
+      "id": "D-01",
+      "title": "单一领取闸：取消/过期/领取唯一出口",
+      "statement": "cancel、expire扫描、Worker领取在APPROVED上必须使用同一条条件更新谓词，只有一方能成功，其余返回409；胜出后单据只有一个终态出口。",
+      "sources": ["12册 §1.2 转移表", "19册 A17"],
+      "acceptanceCases": ["A17-1", "A17-2", "A17-3", "A17-4"]
+    },
+    {
+      "id": "D-02",
+      "title": "预占存在区间与创建时点",
+      "statement": "预占只在confirm创建，只可能存在于PENDING_APPROVAL/APPROVED；DRAFT阶段无预占，释放为幂等空操作；减额不创建预占；执行前不再新建预占。",
+      "sources": ["12册 §1.2 confirm行", "12册 §4 额度账本", "19册 A19"],
+      "acceptanceCases": ["A19-2", "A19-4"]
+    },
+    {
+      "id": "D-03",
+      "title": "safe-retry沿用原申请与原执行单",
+      "statement": "safe-retry不新建申请单、不新建执行单、不新建幂等账，只新增execution_attempts行并使用新的平台稳定请求键；只允许从已定性FAILED发起，UNKNOWN不允许。",
+      "sources": ["06册 §5.3", "12册 §1.2 FAILED行", "19册 A23"],
+      "acceptanceCases": ["A23-1", "A23-2", "A23-3", "A23-4"]
+    },
+    {
+      "id": "D-04",
+      "title": "UNKNOWN的两种来源与前端投影",
+      "statement": "提交未知投影EXECUTING且accepted=null、verification=UNKNOWN、error.code=RESULT_UNKNOWN；已受理回读未知投影VERIFYING且accepted=true、verification=UNKNOWN；两者都不重发、不计成功或失败。",
+      "sources": ["06册 §5.5", "12册 §2.4", "19册 A22", "19册 F06"],
+      "acceptanceCases": ["A22-1", "A22-2", "A22-3", "A22-4"]
+    },
+    {
+      "id": "D-05",
+      "title": "核验期不可得与提交不可得在守卫上一视同仁",
+      "statement": "执行单进入UNKNOWN一律把目标守卫转QUARANTINED，含提交未知与回读未知两条路径；租约过期不解除隔离，只恢复调度与查询资格。",
+      "sources": ["12册 §1.2 VERIFYING行", "12册 §2.1", "12册 §5 目标守卫"],
+      "acceptanceCases": ["A18-5", "A22-3"]
+    },
+    {
+      "id": "D-06",
+      "title": "释放预占与解除隔离的证据等级",
+      "statement": "E2已执行才可结算预占，E1明确未执行才可释放预占与解除隔离，E0不足以定性一律禁止释放、结算、解除隔离与重发；MISMATCH但有受理证据时保留预占与隔离。",
+      "sources": ["06册 §3.2", "12册 §4", "19册 A20"],
+      "acceptanceCases": ["A19-3", "A20-3", "A22-2"]
+    },
+    {
+      "id": "D-07",
+      "title": "外部超限事实可入账",
+      "statement": "账本不设B+R<=limit的全局CHECK，超限真实事实可以入库并告警；上限校验只对新增预占生效且在额度桶行锁内执行；已批准未执行的增额必须复检，复检不通过则不得执行并按E1释放预占。",
+      "sources": ["06册 §3.2", "19册 A20"],
+      "acceptanceCases": ["A20-1", "A20-2", "A20-3", "A20-4"]
+    },
+    {
+      "id": "D-08",
+      "title": "inbox恢复判定表",
+      "statement": "按inbox状态、attempt状态、守卫状态三元组决定允许动作；只有inbox=PROCESSED可直接ack；inbox行的存在不构成平台写资格，恢复调度不等于再次调用平台。",
+      "sources": ["12册 §6.2", "15册 §2 要点", "19册 A18"],
+      "acceptanceCases": ["A18-1", "A18-2", "A18-3", "A18-4"]
+    },
+    {
+      "id": "D-09",
+      "title": "灰度首写放行规则",
+      "statement": "首个真实写必须六阶段能力全PASS、指定账户×动作×金额白名单、走受理加独立回读完整链路、使用独立额度桶、首写期间只开该账户×动作、失败不降级为Mock或夹具，并累计5次MATCHED；需业务负责人显式许可。",
+      "sources": ["12册 §9.2", "19册 A14", "19册 A24"],
+      "acceptanceCases": ["A24-1", "A24-2", "A24-3"]
+    },
+    {
+      "id": "D-10",
+      "title": "终态集合与唯一重开例外",
+      "statement": "终态不可被普通自动事件改写，唯一重开例外是FAILED经safe-retry守卫到EXECUTING；UNKNOWN不是终态，不允许被过期扫描或超时判死；已被领取的单据不得判过期。",
+      "sources": ["12册 §0.2", "12册 §1.1"],
+      "acceptanceCases": ["A17-3", "A22-3"]
+    },
+    {
+      "id": "D-11",
+      "title": "状态转移与SQL谓词一致",
+      "statement": "所有转移用条件更新并检查影响行数，影响行数0即409；状态机只接收枚举，禁止裸赋值；对外枚举不得私自扩展V1的12态。",
+      "sources": ["12册 §0.2", "12册 §10"],
+      "acceptanceCases": ["A17-1", "A22-1"]
+    },
+    {
+      "id": "D-12",
+      "title": "冷却与次数的事实源",
+      "statement": "冷却与次数的事实来自PostgreSQL成功执行与核验记录，Redis只是加速；Redis键丢失或重启不能解除冷却，必须回库复检；计数检查与新增执行资格必须在同一受控路径内竞争。",
+      "sources": ["06册 §6.3", "19册 A17"],
+      "acceptanceCases": ["A17-2", "A19-1"]
+    },
+    {
+      "id": "D-13",
+      "title": "UNKNOWN期间的前端表现与禁止重放",
+      "statement": "UNKNOWN期间任务保持进行中样式，不进入成功或失败计数；详情必须展示对账中或结果未知、最后核对时间与核对入口；不能再提交；写请求不自动重放。",
+      "sources": ["06册 §5.5", "15册 §3", "19册 F06"],
+      "acceptanceCases": ["A22-3", "A25-2"]
+    },
+    {
+      "id": "D-14",
+      "title": "跨册差异登记与归属",
+      "statement": "本卡发现的跨册措辞与口径差异逐条登记并指定归属卡，不在越界分册直接改写；A22的V8显示UNKNOWN按错误码与verification表达理解，措辞修订归R00-04。",
+      "sources": ["19册 §2.2 R00-03行", "20册 R00-03卡"],
+      "acceptanceCases": ["A22-1", "A22-2"]
+    }
+  ],
+  "contention": {
+    "competingActions": ["cancel", "expire", "claim"],
+    "commonPredicate": "status = 'APPROVED' and version = :expected and not exists (select 1 from execution_attempts where execution_order_id = :id and status = 'SENT') and expires_at > now()",
+    "precedence": [["claim", "cancel"], ["claim", "expire"], ["cancel", "expire"]],
+    "singleTerminalOutcome": true,
+    "loserError": {"http": 409, "codes": ["VERSION_CONFLICT", "RESOURCE_TERMINAL", "ILLEGAL_TRANSITION"]}
+  },
+  "reservations": {
+    "createdAt": "confirm",
+    "states": ["HELD", "SETTLED", "RELEASED"],
+    "terminal": ["SETTLED", "RELEASED"],
+    "existingOnlyIn": ["PENDING_APPROVAL", "APPROVED"],
+    "releaseIsNoopIn": ["DRAFT"],
+    "decreaseCreatesReservation": false,
+    "decreaseAdjustOnMatchedOnly": true,
+    "newReservationBeforeExecution": false,
+    "transitions": [
+      {"from": "HELD", "event": "verification_matched", "to": "SETTLED", "evidence": "E2", "effect": "B += delta, R -= delta"},
+      {"from": "HELD", "event": "confirmed_not_executed", "to": "RELEASED", "evidence": "E1", "effect": "R -= delta"},
+      {"from": "HELD", "event": "unknown", "to": "HELD", "evidence": "E0", "effect": "不释放不结算"},
+      {"from": "HELD", "event": "rejected", "to": "RELEASED", "evidence": "E1", "effect": "R -= delta"},
+      {"from": "HELD", "event": "cancelled", "to": "RELEASED", "evidence": "E1", "effect": "R -= delta"},
+      {"from": "HELD", "event": "expired", "to": "RELEASED", "evidence": "E1", "effect": "R -= delta"}
+    ]
+  },
+  "evidenceLevels": {
+    "E2": {
+      "name": "已执行",
+      "allows": ["SETTLED", "GUARD_RELEASE", "CONFIRM_EFFECTIVE"],
+      "requires": ["platform_receipt accepted=true", "independent_readback MATCHED", "observed_value persisted", "verified_at persisted"]
+    },
+    "E1": {
+      "name": "明确未执行",
+      "allows": ["RELEASED", "GUARD_RELEASE", "CONFIRM_NOT_EXECUTED"],
+      "requires": ["rejection_receipt accepted=false with error classification", "or reconciliation resolution CONFIRMED_NOT_EXECUTED with platform evidence", "or independent readback unchanged and no acceptance evidence"]
+    },
+    "E0": {
+      "name": "不足以定性",
+      "allows": [],
+      "forbids": ["SETTLED", "RELEASED", "GUARD_RELEASE", "RESEND_WRITE", "AUTO_RETRY"],
+      "examples": ["http_200_without_receipt_semantics", "connect_timeout", "process_crash_before_response", "local_read_timeout", "failed_state_string_without_evidence", "mismatch_with_acceptance_evidence"]
+    },
+    "persistedEvidenceRequired": true
+  },
+  "guard": {
+    "states": ["IDLE", "LEASED", "QUARANTINED"],
+    "unknownAlwaysQuarantines": true,
+    "leaseExpiryDoesNotRelease": true,
+    "writeRejectedIn": ["QUARANTINED"],
+    "writeRejectedErrorCode": "TARGET_QUARANTINED",
+    "sameTargetSerializedByDatabase": true,
+    "redisLockIsAdvisoryOnly": true
+  },
+  "unknown": {
+    "isTerminal": false,
+    "resendAllowed": false,
+    "submitted": {
+      "executionOrderStatus": "UNKNOWN",
+      "jobStatus": "EXECUTING",
+      "accepted": null,
+      "verification": "UNKNOWN",
+      "errorCode": "RESULT_UNKNOWN",
+      "retryable": false,
+      "keepsReservation": true,
+      "quarantinesGuard": true
+    },
+    "readback": {
+      "executionOrderStatus": "UNKNOWN",
+      "jobStatus": "VERIFYING",
+      "accepted": true,
+      "verification": "UNKNOWN",
+      "errorCode": null,
+      "retryable": false,
+      "keepsReservation": true,
+      "quarantinesGuard": true
+    },
+    "publicStatusExtensionAllowed": false,
+    "publicStatusExtensionRule": "需联合升级前端类型、校验器、OpenAPI与UI，后端不得私自扩枚举"
+  },
+  "inboxRecovery": [
+    {"inbox": "PROCESSED", "attempt": "ANY", "guard": "ANY", "actions": ["ACK_ONLY"]},
+    {"inbox": "RECEIVED", "attempt": "NONE", "guard": "IDLE", "actions": ["RESCHEDULE_ONLY"]},
+    {"inbox": "RECEIVED", "attempt": "PENDING", "guard": "IDLE", "actions": ["RESCHEDULE_ONLY"]},
+    {"inbox": "RECEIVED", "attempt": "PENDING", "guard": "LEASED", "actions": ["WAIT_LEASE"]},
+    {"inbox": "RECEIVED", "attempt": "PENDING", "guard": "QUARANTINED", "actions": ["QUERY_ONLY", "RECONCILE"]},
+    {"inbox": "RECEIVED", "attempt": "SENT", "guard": "LEASED", "actions": ["QUERY_ONLY", "RECONCILE"]},
+    {"inbox": "RECEIVED", "attempt": "SENT", "guard": "QUARANTINED", "actions": ["QUERY_ONLY", "RECONCILE"]},
+    {"inbox": "RECEIVED", "attempt": "UNKNOWN", "guard": "QUARANTINED", "actions": ["QUERY_ONLY", "RECONCILE"]},
+    {"inbox": "RECEIVED", "attempt": "ACK_ACCEPTED", "guard": "LEASED", "actions": ["PERSIST_RECEIPT", "SCHEDULE_READBACK"]},
+    {"inbox": "RECEIVED", "attempt": "REJECTED", "guard": "LEASED", "actions": ["PERSIST_FAILED", "RELEASE_BY_E1"]}
+  ],
+  "inboxRules": {
+    "directAckOnlyWhenProcessed": true,
+    "inboxRowGrantsWriteEligibility": false,
+    "recoveryScheduleIsNotWriteCall": true,
+    "platformWriteCountMax": 1,
+    "platformWriteCountBasis": "execution_attempts的SENT记录与platform_request_key唯一性"
+  },
+  "overLimit": {
+    "noGlobalCheckConstraint": true,
+    "checkScope": "new_reservation_only",
+    "checkInsideLedgerRowLock": true,
+    "allowFactOverLimit": true,
+    "externalChangePath": "同步器发现平台侧人工改动后串行入账并产出对账差异与告警",
+    "approvedNotExecutedRecheck": true,
+    "recheckFailAction": "FAILED_NO_EXECUTION + RELEASE_BY_E1 + REQUIRE_NEW_REQUEST",
+    "newIncreaseRejectedWhenOverLimit": true,
+    "decreaseOnlyOnMatched": true,
+    "configBudgetIsNotRealSpend": true
+  },
+  "firstWrite": {
+    "requires": [
+      "CAPABILITY_SIX_STAGES_ALL_PASS",
+      "ACCOUNT_ACTION_AMOUNT_WHITELIST",
+      "FULL_CHAIN_ACCEPTED_AND_INDEPENDENT_READBACK",
+      "DEDICATED_LEDGER_RESERVATION",
+      "ONLY_THIS_ACCOUNT_ACTION_WRITABLE",
+      "NO_MOCK_OR_FIXTURE_FALLBACK",
+      "FIVE_MATCHED_EVIDENCE"
+    ],
+    "sixStageOrder": [
+      "PATH_VERIFIED",
+      "SCOPE_GRANTED",
+      "ACCOUNT_AUTHORIZED",
+      "BACKEND_INTEGRATED",
+      "SCHEMA_VERIFIED",
+      "EXECUTION_VERIFIED"
+    ],
+    "skipStageForbidden": true,
+    "failedFirstWriteFallsBackToMock": false,
+    "matchedCountRequired": 5,
+    "businessLicenseRequired": true
+  },
+  "safeRetry": {
+    "reusesApplication": true,
+    "reusesExecutionOrder": true,
+    "newAttemptOnly": true,
+    "newPlatformRequestKey": true,
+    "reusesIdempotencyKey": true,
+    "allowedSourceStates": ["FAILED"],
+    "blockedSourceStates": ["UNKNOWN", "EXECUTING", "VERIFYING"],
+    "alwaysBlockedActions": ["INCREASE_BUDGET"],
+    "recheck": [
+      "original_idempotency_key_has_no_inflight_attempt",
+      "error_classification_retryable",
+      "current_value_matches_or_diff_explainable",
+      "action_in_retry_whitelist",
+      "current_policy_version_and_approval_still_valid"
+    ]
+  },
+  "terminalStates": {
+    "commandJob": ["SUCCEEDED", "FAILED", "REJECTED", "CANCELLED", "EXPIRED", "BLOCKED", "MANUAL_REQUIRED"],
+    "executionOrder": ["EFFECTIVE", "FAILED", "CANCELLED", "MANUAL", "PARTIAL"]
+  },
+  "crossVolumeDiffs": [
+    {
+      "id": "X-01",
+      "topic": "A22要求V8显示UNKNOWN与V1十二态不得私自扩展冲突",
+      "location": "19册 A22",
+      "resolution": "按D-04用error.code=RESULT_UNKNOWN与verification=UNKNOWN表达，任务状态保持EXECUTING或VERIFYING；A22的V8显示UNKNOWN理解为可解释文案与核对时间，不新增状态枚举",
+      "owner": "R00-04"
+    },
+    {
+      "id": "X-02",
+      "topic": "12册1.2在DRAFT行写释放HELD预占但预占在confirm才创建",
+      "location": "12册 §1.2 DRAFT cancel/expire行",
+      "resolution": "按D-02明确DRAFT无预占，释放为幂等空操作，不得创建负额预占",
+      "owner": "R00-03"
+    },
+    {
+      "id": "X-03",
+      "topic": "12册1.2 VERIFYING持续UNKNOWN行未写守卫后果，与2.1的UNKNOWN隔离不一致",
+      "location": "12册 §1.2 VERIFYING行",
+      "resolution": "按D-05执行单进入UNKNOWN一律转QUARANTINED，回读不可得与提交不可得一致",
+      "owner": "R00-03"
+    },
+    {
+      "id": "X-04",
+      "topic": "06册3.2已批准未执行的增额需复检但未写复检不通过的处理",
+      "location": "06册 §3.2",
+      "resolution": "按D-07复检不通过则不得执行，置FAILED并按E1释放预占，要求人工重新申请",
+      "owner": "R00-03"
+    }
+  ],
+  "acceptanceCases": [
+    {"id": "A17-1", "acceptance": "A17", "setup": "同一申请单两个审批人同时提交批准", "action": "并发调用批准接口", "expected": "条件更新只有一方成功，另一方返回409且不产生两条审批留痕", "evidence": "并发测试输出、审批表行数与状态流水", "decisions": ["D-01", "D-11"], "state": "PLANNED_REAL_TEST"},
+    {"id": "A17-2", "acceptance": "A17", "setup": "申请处于APPROVED且存在无SENT尝试", "action": "用户取消与Worker领取并发触发", "expected": "只有一方条件更新成功；被取消的单绝不写平台；领取胜出后取消返回409", "evidence": "行锁竞争记录、execution_orders与platform写计数", "decisions": ["D-01", "D-12"], "state": "PLANNED_REAL_TEST"},
+    {"id": "A17-3", "acceptance": "A17", "setup": "申请处于APPROVED且已过expires_at", "action": "过期扫描与Worker领取并发触发", "expected": "领取胜出则不判过期；已被领取的单据不得置EXPIRED", "evidence": "expire扫描日志、状态流水终态", "decisions": ["D-01", "D-10"], "state": "PLANNED_REAL_TEST"},
+    {"id": "A17-4", "acceptance": "A17", "setup": "申请处于PENDING_APPROVAL", "action": "取消与过期扫描并发触发", "expected": "只产生一个终态出口，不会同时出现CANCELLED与EXPIRED", "evidence": "状态流水与终态唯一性断言", "decisions": ["D-01", "D-10"], "state": "PLANNED_REAL_TEST"},
+    {"id": "A18-1", "acceptance": "A18", "setup": "consumer_inbox为RECEIVED且无attempt", "action": "在登记后杀Worker", "expected": "重投后走受控重新调度或对账，任务保持可见不丢失，不得直接丢弃", "evidence": "inbox与恢复调度记录、任务列表截图", "decisions": ["D-08"], "state": "PLANNED_REAL_TEST"},
+    {"id": "A18-2", "acceptance": "A18", "setup": "attempt为SENT且平台未返回", "action": "在提交后杀Worker", "expected": "重投后只查询不写平台，平台写次数不超过1", "evidence": "假网关调用计数、attempts行与守卫状态", "decisions": ["D-08", "D-06"], "state": "PLANNED_REAL_TEST"},
+    {"id": "A18-3", "acceptance": "A18", "setup": "平台已返回受理但未落T5", "action": "在落账前杀Worker", "expected": "按UNKNOWN路径挂起并对账定性，不重复下单", "evidence": "attempt状态、reconciliation任务与平台查询记录", "decisions": ["D-08", "D-04"], "state": "PLANNED_REAL_TEST"},
+    {"id": "A18-4", "acceptance": "A18", "setup": "T6落账完成但消息未ack", "action": "在ack前杀Worker", "expected": "重投后inbox为PROCESSED可直接ack，不重复业务副作用", "evidence": "inbox行状态、ack日志、无重复平台写计数", "decisions": ["D-08"], "state": "PLANNED_REAL_TEST"},
+    {"id": "A18-5", "acceptance": "A18", "setup": "已受理且回读长期不可得", "action": "等待核验窗口结束", "expected": "执行单保持UNKNOWN、守卫保持QUARANTINED、预占保持HELD，转人工对账", "evidence": "执行单状态、守卫state、预占状态三方断言", "decisions": ["D-05", "D-06"], "state": "PLANNED_REAL_TEST"},
+    {"id": "A19-1", "acceptance": "A19", "setup": "同一额度桶limit=100000分、B=80000、R=10000", "action": "两个不同计划同时各提交delta=10000", "expected": "最多一笔成功预占，另一笔被拒并给出可解释原因", "evidence": "行锁并发日志、budget_ledgers与budget_reservations勾稽", "decisions": ["D-12", "D-07"], "state": "PLANNED_REAL_TEST"},
+    {"id": "A19-2", "acceptance": "A19", "setup": "存在一笔HELD预占", "action": "驳回后再次取消或过期扫描", "expected": "预占只释放一次，R不会被扣成负数", "evidence": "预占状态流水与账本R值", "decisions": ["D-02", "D-06"], "state": "PLANNED_REAL_TEST"},
+    {"id": "A19-3", "acceptance": "A19", "setup": "存在一笔HELD预占且执行单为UNKNOWN", "action": "进入UNKNOWN后观察账本", "expected": "预占保持HELD不被释放也不被结算", "evidence": "预占状态与账本R值快照", "decisions": ["D-06", "D-05"], "state": "PLANNED_REAL_TEST"},
+    {"id": "A19-4", "acceptance": "A19", "setup": "计划预算需要调减", "action": "执行减额动作", "expected": "不创建任何HELD预占，核验MATCHED后按持锁调减B", "evidence": "预占表无新增行、账本变动记录", "decisions": ["D-02"], "state": "PLANNED_REAL_TEST"},
+    {"id": "A20-1", "acceptance": "A20", "setup": "limit=100000分，平台侧被人工把B改为120000", "action": "同步器发现外部改动", "expected": "超限事实可以入库并产生对账差异与告警，不被CHECK挡在库外", "evidence": "账本行、对账差异记录与告警", "decisions": ["D-07"], "state": "PLANNED_REAL_TEST"},
+    {"id": "A20-2", "acceptance": "A20", "setup": "账本已处于B超limit状态", "action": "提交新的增额申请", "expected": "新增额被拒绝且不产生新预占", "evidence": "拒绝响应、预占表无新增行", "decisions": ["D-07"], "state": "PLANNED_REAL_TEST"},
+    {"id": "A20-3", "acceptance": "A20", "setup": "存在已批准未执行的增额且账本已超限", "action": "执行前复检", "expected": "复检不通过则不得执行，置FAILED并按E1释放预占，要求人工重新申请", "evidence": "复检记录、执行单状态、预占状态", "decisions": ["D-06", "D-07"], "state": "PLANNED_REAL_TEST"},
+    {"id": "A20-4", "acceptance": "A20", "setup": "账本已超限", "action": "执行减额动作并核验MATCHED", "expected": "按核验事实调减B，不做其他补偿性写入", "evidence": "账本变动记录与回读值", "decisions": ["D-07", "D-06"], "state": "PLANNED_REAL_TEST"},
+    {"id": "A21-1", "acceptance": "A21", "setup": "两个账户native_id相同", "action": "分别对两个账户发起写请求", "expected": "目标守卫不串目标，平台写分别落到各自账户", "evidence": "守卫行键与平台回执账户", "decisions": ["D-11", "D-12"], "state": "PLANNED_REAL_TEST"},
+    {"id": "A21-2", "acceptance": "A21", "setup": "两个租户使用相同调度business_key", "action": "同时发起写请求", "expected": "守卫不串租户，租户上下文互不污染", "evidence": "守卫行租户列与连接回池检查", "decisions": ["D-11"], "state": "PLANNED_REAL_TEST"},
+    {"id": "A21-3", "acceptance": "A21", "setup": "创编类申请并非command_job入口", "action": "创建并查询该申请", "expected": "通用执行单不伪造command_job，状态不串用12态", "evidence": "各单据表行与接口响应", "decisions": ["D-11", "D-14"], "state": "PLANNED_REAL_TEST"},
+    {"id": "A22-1", "acceptance": "A22", "setup": "提交平台写请求时超时且无受理证据", "action": "查询任务详情", "expected": "任务状态EXECUTING、accepted为null、verification为UNKNOWN、error.code为RESULT_UNKNOWN、retryable为false", "evidence": "双端页面与request/attempt链", "decisions": ["D-04", "D-11"], "state": "PLANNED_REAL_TEST"},
+    {"id": "A22-2", "acceptance": "A22", "setup": "平台已accepted但回读超时", "action": "查询任务详情", "expected": "任务状态VERIFYING、accepted为true、verification为UNKNOWN并附最后核验时间", "evidence": "回执与回读记录、双端页面", "decisions": ["D-04", "D-06"], "state": "PLANNED_REAL_TEST"},
+    {"id": "A22-3", "acceptance": "A22", "setup": "长期查不到平台事实", "action": "观察任务列表与详情并尝试再次提交", "expected": "不计成功也不计失败、保持进行中样式、核对时间可见、再次提交被拒", "evidence": "列表与详情截图、拒绝响应码", "decisions": ["D-10", "D-13"], "state": "PLANNED_REAL_TEST"},
+    {"id": "A22-4", "acceptance": "A22", "setup": "分别构造提交未知与回读未知", "action": "统计平台写调用次数", "expected": "两种场景都不产生第二次写请求", "evidence": "假网关写调用计数", "decisions": ["D-04", "D-08"], "state": "PLANNED_REAL_TEST"},
+    {"id": "A23-1", "acceptance": "A23", "setup": "执行单已定性FAILED且错误分类可重试且动作在白名单", "action": "点击安全重试", "expected": "只新增attempt行，平台使用新的稳定请求键，不新建申请单与执行单", "evidence": "attempts行、申请与执行单ID对比、平台键对比", "decisions": ["D-03"], "state": "PLANNED_REAL_TEST"},
+    {"id": "A23-2", "acceptance": "A23", "setup": "执行单为UNKNOWN", "action": "点击安全重试", "expected": "被拒绝，只允许查询与对账", "evidence": "拒绝响应码与状态不变断言", "decisions": ["D-03", "D-06"], "state": "PLANNED_REAL_TEST"},
+    {"id": "A23-3", "acceptance": "A23", "setup": "动作类型为预算增额", "action": "点击安全重试", "expected": "被拒绝，资金增加类默认不在重试白名单", "evidence": "拒绝原因与白名单配置", "decisions": ["D-03"], "state": "PLANNED_REAL_TEST"},
+    {"id": "A23-4", "acceptance": "A23", "setup": "平台现值已被他人改动", "action": "点击安全重试", "expected": "被拒绝并给出差异可解释性不足的说明", "evidence": "现值对比记录与拒绝原因", "decisions": ["D-03"], "state": "PLANNED_REAL_TEST"},
+    {"id": "A24-1", "acceptance": "A24", "setup": "账户能力六阶段存在非PASS项", "action": "在灰度账户发起首写", "expected": "写能力未开放，首写被拒绝", "evidence": "能力断言行与拒绝响应", "decisions": ["D-09"], "state": "PLANNED_REAL_TEST"},
+    {"id": "A24-2", "acceptance": "A24", "setup": "六阶段全PASS且账户动作金额在白名单", "action": "在同一灰度账户重复执行5次并独立回读", "expected": "5次均为accepted加MATCHED，每次均有独立回读证据", "evidence": "5次回执与回读记录", "decisions": ["D-09", "D-06"], "state": "PLANNED_REAL_TEST"},
+    {"id": "A24-3", "acceptance": "A24", "setup": "首写回读为MISMATCH", "action": "观察系统行为", "expected": "不补写、保留预占与隔离、产生告警与对账任务", "evidence": "预占与守卫状态、告警与对账记录", "decisions": ["D-09", "D-06"], "state": "PLANNED_REAL_TEST"},
+    {"id": "A25-1", "acceptance": "A25", "setup": "两个事件事务低序号延迟提交", "action": "订阅事件流", "expected": "不漏掉晚提交事件，客户端按版本去重", "evidence": "事务并发记录与SSE帧序列", "decisions": ["D-13"], "state": "PLANNED_REAL_TEST"},
+    {"id": "A25-2", "acceptance": "A25", "setup": "会话权限在订阅期间被撤销", "action": "保持事件流连接", "expected": "服务端关闭流，不泄露后续事件", "evidence": "SSE帧与关流日志", "decisions": ["D-13"], "state": "PLANNED_REAL_TEST"},
+    {"id": "A33-1", "acceptance": "A33", "setup": "准备发起付费生成", "action": "检查调用前持久化状态", "expected": "请求键与费用预占在发送供应商前已落库", "evidence": "生成任务与费用预占的时间序记录", "decisions": ["D-02"], "state": "PLANNED_REAL_TEST"},
+    {"id": "A33-2", "acceptance": "A33", "setup": "同一请求键重复到达", "action": "重复触发回调与轮询", "expected": "不产生第二次付费调用，重复回调只回200不重复处理", "evidence": "供应商调用计数与账本", "decisions": ["D-02", "D-06"], "state": "PLANNED_REAL_TEST"},
+    {"id": "A33-3", "acceptance": "A33", "setup": "已扣费但受理号丢失", "action": "查询任务状态", "expected": "保持WAITING_PROVIDER并转人工核对，不自动重发也不凭本地超时判未受理", "evidence": "任务状态、供应商账单人工核对记录", "decisions": ["D-06"], "state": "PLANNED_REAL_TEST"},
+    {"id": "A36-1", "acceptance": "A36", "setup": "数据库与对象存储完成恢复", "action": "恢复后先执行只读核对", "expected": "先只读、默认冻结写派发，实测RPO不超过24小时与RTO不超过4小时", "evidence": "恢复计时、校验和与恢复步骤记录", "decisions": ["D-10", "D-13"], "state": "PLANNED_REAL_TEST"},
+    {"id": "A36-2", "acceptance": "A36", "setup": "存在已落平台未落库的在途单据", "action": "逐账户核对后放开写派发", "expected": "在途单据先核对再逐账户解冻，解冻有审计留痕，不自动重投", "evidence": "在途核对表与解冻审计", "decisions": ["D-06", "D-10"], "state": "PLANNED_REAL_TEST"}
+  ],
+  "migrations": {
+    "applicable": false,
+    "note": "本卡是D类规格卡，只冻结规则与判定表，不新增表或迁移；实现期表结构由M0-06基线与各M卡负责"
+  },
+  "realVerification": {
+    "state": "NOT_RUN",
+    "reason": "本卡为D类静态规格；真实数据库、平台写入、供应商付费与恢复演练由M0/M2/M3/M5各卡按对应门禁执行",
+    "plannedRealCaseCount": 38
+  }
+}

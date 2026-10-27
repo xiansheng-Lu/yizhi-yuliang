@@ -4,7 +4,7 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "currentFocus": "R00-02",
+  "currentFocus": "R00-04",
   "tasks": {
     "R00-01": {
       "owner": "BE",
@@ -27,7 +27,13 @@
       "review": {"backend": "PENDING", "frontend": "PENDING"},
       "git": "COMMITTED",
       "implementationCommit": "0bd017c",
-      "syncVerification": "git merge-base --is-ancestor 0bd017c origin/main"
+      "syncVerification": "git merge-base --is-ancestor 0bd017c origin/main",
+      "recheck": {
+        "date": "2026-10-27",
+        "command": "python docs/backend/tools/check_contracts.py",
+        "result": "PASS",
+        "note": "本机补装Python后本地复跑，结论与原归档一致"
+      }
     },
     "R00-02": {
       "owner": "BE",
@@ -52,17 +58,56 @@
       ],
       "evidence": "tasks/R00-02/README.md",
       "review": {"backend": "PENDING", "frontend": "PENDING_F00_F12"},
-      "syncVerification": "git log origin/main --oneline -- docs/backend/evidence/tasks/R00-02/README.md"
+      "syncVerification": "git log origin/main --oneline -- docs/backend/evidence/tasks/R00-02/README.md",
+      "recheck": {
+        "date": "2026-10-27",
+        "command": "python docs/backend/tools/check_database_auth.py",
+        "result": "PASS",
+        "note": "本机补装Python后本地复跑，结论与原归档一致"
+      }
     },
-    "R00-03": {"owner": "BE", "status": "IN_PROGRESS", "note": "既有资金/恢复规格草稿保留；尚未逐卡验收"},
+    "R00-03": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "delivery": "资金与崩溃恢复规则冻结完成：14条决定、机器清单、逐格自检与63项故障变体拦截；06/12/15册就地采用；未代填人工签字",
+      "dependencyInput": "使用R00-01/R00-02技术基线；两卡双端签字仍PENDING，不因本卡技术通过而提前关闭",
+      "technicalVerification": {
+        "result": "PASS",
+        "layer": "D_STATIC_SPEC_ONLY",
+        "decisions": 14,
+        "competingActions": 3,
+        "reservationTransitions": 6,
+        "evidenceLevels": 4,
+        "inboxRows": 10,
+        "crossVolumeDiffs": 4,
+        "negativeMutationsRejected": 63,
+        "plannedRealCases": 38,
+        "adoptedVolumes": ["06", "12", "15"]
+      },
+      "dod": [
+        {"item": 1, "technical": "PASS", "realConcurrencyTest": "NOT_RUN"},
+        {"item": 2, "technical": "PASS", "realUnknownScenarios": "NOT_RUN"},
+        {"item": 3, "technical": "PASS", "realOverLimitIngest": "NOT_RUN"}
+      ],
+      "crossVolumeDiffs": [
+        {"id": "X-01", "topic": "19册A22要求V8显示UNKNOWN与十二态不得扩枚举冲突", "owner": "R00-04", "status": "OPEN"},
+        {"id": "X-02", "topic": "12册DRAFT行释放HELD预占", "owner": "R00-03", "status": "CLOSED"},
+        {"id": "X-03", "topic": "12册VERIFYING持续UNKNOWN行缺守卫后果", "owner": "R00-03", "status": "CLOSED"},
+        {"id": "X-04", "topic": "06册已批准未执行增额复检不通过的处理缺失", "owner": "R00-03", "status": "CLOSED"}
+      ],
+      "evidence": "tasks/R00-03/README.md",
+      "review": {"backend": "PENDING", "frontend": "PENDING_F06_F12"},
+      "tool": "docs/backend/tools/check_funds_recovery.py"
+    },
     "M0-01": {"owner": "BE", "status": "IMPLEMENTED", "note": "此前已准备工程，首批单元/契约14项通过；未完成依赖签字和本轮新增文件检查，不计DONE"},
     "M0-02": {"owner": "BE", "status": "IMPLEMENTED", "note": "此前已准备响应信封与错误处理，整体尚未复核，不计DONE"},
     "M0-04": {"owner": "BE", "status": "BLOCKED", "note": "Compose/初始化/探测草稿保留；缺Docker引擎，真实基础设施验收NOT_RUN", "blockedBy": ["E06"]}
   },
   "gates": {},
   "blockers": [
-    {"id": "E08", "reason": "R00-01/02后端规格交付已就绪，BE/FE尚无人工复核记录；继续技术准备不等于代签", "affects": ["R00-01最终DONE", "R00-02最终DONE"]},
+    {"id": "E08", "reason": "R00-01/02/03后端规格交付已就绪，BE/FE尚无人工复核记录；继续技术准备不等于代签", "affects": ["R00-01最终DONE", "R00-02最终DONE", "R00-03最终DONE"]},
     {"id": "E06", "reason": "未发现Docker CLI及可用Linux容器引擎", "affects": ["M0-04真实验收及依赖它的集成任务"]},
+    {"id": "ENV-RUNTIME", "status": "RESOLVED", "reason": "本机原无Python与Node，python命令触发Microsoft Store重定向器返回9009；2026-10-27已安装Python 3.11.9与Node v24.20.0，R00-01/02/03三项自检均可本地复跑", "affects": []},
     {"id": "APPROVAL_SERVICE", "status": "HISTORICAL", "reason": "曾因额度导致一次提升权限Python检查未获审批；后续Git提交与fetch已成功获准，不能再把Git记为当前受阻", "affects": ["先前未执行的Python新增文件检查，R00-01独立规格检查不受影响"]}
   ],
   "rules": {

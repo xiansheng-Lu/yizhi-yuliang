@@ -1,0 +1,90 @@
+{
+  "codeCommit": "1c07a2082eb310ed5fc32aad4ccb19c88f7990c6",
+  "executedOn": "2026-10-27",
+  "environment": {
+    "os": "WSL2 Ubuntu",
+    "python": "3.13.14",
+    "postgres": "17.10"
+  },
+  "checks": [
+    {
+      "command": "uv run --frozen ruff check .; ruff format --check .; mypy",
+      "result": "PASS",
+      "mypySourceFiles": 76
+    },
+    {
+      "command": "uv run --frozen pytest tests/unit tests/contract -q",
+      "result": "PASS",
+      "passed": 80
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --lifecycle --details",
+      "result": "PASS",
+      "passed": 150,
+      "failed": 0,
+      "skipped": 0,
+      "gatewayCases": 15
+    },
+    {
+      "command": "uv run --frozen python scripts/check_ci_sensitivity.py",
+      "result": "PASS",
+      "healthyControls": 3,
+      "mutationsRejected": 3
+    },
+    {
+      "command": "explicit approved live pytest tests/live/test_deepseek.py -m live",
+      "result": "PASS",
+      "testsPassed": 1,
+      "actualRequests": 6,
+      "totalTestSeconds": 8.88,
+      "perCallLatencyMs": [
+        1310,
+        1017,
+        933,
+        1315,
+        878,
+        1193
+      ]
+    },
+    {
+      "command": "uv run --frozen python scripts/migrate_local.py upgrade; current",
+      "result": "PASS",
+      "head": "0013_ai_response_metadata"
+    }
+  ],
+  "scope": {
+    "realStructuredSamples": 6,
+    "realPlatformWrites": 0,
+    "defaultModelApiEnabled": false,
+    "actualBillReconciled": false,
+    "officialPeakPriceEstimateCny": "0.011394",
+    "humanGoldenExpectationsConfirmed": false,
+    "singleRunCallAllowanceConsumed": true
+  },
+  "hostedPreviousBaselines": [
+    {
+      "head": "7a02b83f2179c93da8993d18ebbd38872c678057",
+      "runId": 40465543093,
+      "result": "SUCCESS"
+    },
+    {
+      "head": "6772f056b17b84e09a24cae98c6b298da5c97d56",
+      "runId": 40466614518,
+      "result": "SUCCESS"
+    }
+  ],
+  "sourceSha256Utf8Lf": {
+    "backend/README.md": "ca2a39ba651ed48ec02b770d729535d3d8646f1891a3ef60633d93da304988bf",
+    "backend/alembic/README.md": "2e886cd58dbb0f2c507bf33a5c8994cd9b86df0f0a18c5d0b5906b1700e86125",
+    "backend/alembic/versions/0013_ai_response_metadata.py": "6b182ab8d903f507f5d9c74a22dbd347799bdf72816886d10afe4d92c5d0fce7",
+    "backend/alembic/versions/0013_ai_response_metadata.sql": "3cf43a14946e72e5a67714641c69e22d1f75087823e75557555ce4c61f96a416",
+    "backend/deployment/.env.llm.example": "31ab5755c192535cd15a88a5608c1f41a9300c808e67c9ebf229736cf80679e7",
+    "backend/scripts/test_infrastructure.py": "384a2324ba1e3dd55b53338f70869f9d5407dbcaf058033b64c5061c4e51dd86",
+    "backend/src/yuliang/modules/aikernel/deepseek.py": "dddffdf40cad946574fe82dea4bb1dc064ae199690b6e8c6725f81ed3ae9aaed",
+    "backend/src/yuliang/modules/aikernel/ledger.py": "d12010ba7cd15a510833a5b894b38ac89707fa4680c7fe8e3845f881fb0214d1",
+    "backend/src/yuliang/modules/aikernel/models.py": "2dc320d5cf26df224a0a8cb09677186bf86c6fcbe8a496d89ee260d12d31b441",
+    "backend/tests/integration/test_deepseek_gateway.py": "233069c7064c46ea9095dfba2d5314951df47b5e13bcc022fb2196a15fdfb127",
+    "backend/tests/live/__init__.py": "3abdc5d53db00eff18829462f5dc29281808cff5ffcefef51c2515c82df13c89",
+    "backend/tests/live/test_deepseek.py": "ff8a41c5328ed0d4ae9a3217e4e2830b4ff2ff253451a6de14a55e084f271802"
+  }
+}

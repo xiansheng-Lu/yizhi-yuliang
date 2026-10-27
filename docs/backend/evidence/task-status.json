@@ -4,7 +4,7 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "currentFocus": "M1-05",
+  "currentFocus": "M1-15a",
   "tasks": {
     "R00-01": {
       "owner": "BE",
@@ -1436,6 +1436,40 @@
       },
       "evidence": "tasks/M1-04/README.md",
       "implementationCommit": "daf54ec376445e36d08951c98e252855f83b784e"
+    },
+    "M1-05": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "delivery": "一次性state、无Cookie原会话回调、事务外换码与版本化AES-GCM令牌保管完成真实PG技术验证；平台换码输入合成",
+      "dependencyInput": "M1-03b/M1-02技术输入及用户持续研发授权；正式G0/E08仍保留",
+      "technicalVerification": {
+        "result": "PASS",
+        "unitContractPassed": 237,
+        "oauthIntegrationCases": 15,
+        "allIntegrationPassed": 275,
+        "lifecycleNotRun": 1,
+        "platformCalls": 0
+      },
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS"
+        },
+        {
+          "item": 2,
+          "technical": "PASS"
+        },
+        {
+          "item": 3,
+          "technical": "PASS"
+        }
+      ],
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F03"
+      },
+      "evidence": "tasks/M1-05/README.md",
+      "implementationCommit": "0674bec19d850afd5c8fc40eedcff9d995995316"
     }
   },
   "gates": {
@@ -1515,6 +1549,15 @@
       "reason": "用户明确选择当前Chrome扩展联调；已实际访问18000并完成密码/邮箱码登录、资料写入、刷新与退出。原内置浏览器权限问题未修复。",
       "affects": [],
       "unblock": "Chrome联调路径已可用；证据docs/frontend/acceptance/evidence/browser-access-recovery/verification.json"
+    },
+    {
+      "id": "E01",
+      "status": "WAITING_RESOURCE",
+      "reason": "本地未配置ADQ应用/回调/scope/灰度账户映射，已异步向用户对接；通用OAuth与独立同步开发继续",
+      "affects": [
+        "M1-06及相应真实ADQ验收"
+      ],
+      "unblock": "安全配置实际应用凭据和HTTPS回调白名单，提供scope/账户映射与逐动作许可；不在聊天粘贴密钥"
     }
   ],
   "rules": {
@@ -1523,9 +1566,9 @@
     "offline": "离线通过不等于真实依赖、前端联调或平台验收通过"
   },
   "nextTask": {
-    "id": "M1-05",
+    "id": "M1-15a",
     "status": "READY_FOR_TECHNICAL_PREPARATION",
-    "note": "OAuth基件可依M1-03b/M1-02技术证据继续；E01/E02仅阻塞相应真实平台验收"
+    "note": "依M1-03b/M0-08b技术证据实现同步批次与游标原子落库；不等E01真实授权"
   },
   "continuation": {
     "requestedOn": "2026-10-27",
@@ -1534,10 +1577,10 @@
     "environment": "WSL2 Ubuntu Docker; UV_PROJECT_ENVIRONMENT=/home/lenovo/.cache/yuliang-venv",
     "latestUserRequest": "补齐浏览器验收，然后按照后端任务卡继续后续的所有开发，需要资源再找我对接，不阻塞持续开发到完毕",
     "developmentPolicy": "缺人工/外部验收时记录并继续可独立技术准备；正式门禁、平台调用和付费仍按各自证据许可",
-    "lastCompletedTechnicalTask": "M1-04",
-    "nextTechnicalTask": "M1-05",
+    "lastCompletedTechnicalTask": "M1-05",
+    "nextTechnicalTask": "M1-15a",
     "executionRules": "docs/backend/evidence/execution-rules.md",
-    "checkpoint": "浏览器补验、M1-01/02/03a/03b/04技术完成；两份06/12原有未提交文档保留"
+    "checkpoint": "浏览器补验及M1-01/02/03a/03b/04/05技术完成；继续同步基件，06/12伙伴文档保留"
   },
   "frontendIntegration": {
     "F01": {

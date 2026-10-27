@@ -1,0 +1,122 @@
+{
+  "codeCommit": "371834a574cfd076abeb527b8601a33bb4727bf6",
+  "implementationCommits": [
+    "f47d052",
+    "dcc68fa"
+  ],
+  "executedOn": "2026-10-27",
+  "localEnvironment": {
+    "os": "WSL2 Ubuntu",
+    "freshVenv": "/home/lenovo/.cache/yuliang-ci-clean-venv",
+    "python": "3.13.14",
+    "uv": "0.12.13"
+  },
+  "checks": [
+    {
+      "command": "uv sync --frozen --all-groups; ruff check .; ruff format --check .; mypy; pytest tests/unit tests/contract -q",
+      "result": "PASS",
+      "freshVenvPackages": 65,
+      "unitContractPassed": 33,
+      "mypySourceFiles": 50
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --lifecycle --details",
+      "result": "PASS",
+      "passed": 68,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "command": "uv run --frozen python scripts/check_ci_sensitivity.py",
+      "result": "PASS",
+      "healthyControlExitCodes": [
+        0,
+        0,
+        0
+      ],
+      "mutatedExitCodes": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "command": "actionlint 1.7.12 .github/workflows/backend-ci.yml",
+      "result": "PASS",
+      "binarySha256": "8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8"
+    }
+  ],
+  "hostedCi": {
+    "result": "PASS",
+    "runId": 40454908715,
+    "jobId": 122025860023,
+    "headSha": "371834a574cfd076abeb527b8601a33bb4727bf6",
+    "url": "https://github.com/xiansheng-Lu/yizhi-yuliang/actions/runs/40454908715",
+    "runner": "ubuntu-24.04",
+    "unitContractPassed": 33,
+    "realIntegrationPassed": 68,
+    "sensitivityCasesRejected": 3,
+    "allSteps": "SUCCESS"
+  },
+  "earlierFailure": {
+    "runId": 40454204774,
+    "result": "FAIL",
+    "reason": "上游minio/minio预构建镜像不可匿名拉取；集成与敏感性步骤未运行，未记PASS",
+    "fix": "官方签名发布固定源码07c3a429构建CI镜像，后续托管全量验证通过"
+  },
+  "sensitivity": {
+    "result": "PASS",
+    "cases": [
+      {
+        "case": "contract",
+        "mutatedFile": "src/yuliang/platform/envelope.py",
+        "test": "tests/contract/test_envelope.py::test_success_200_202_and_null_keep_outer_version",
+        "baselineExitCode": 0,
+        "exitCode": 1,
+        "matchedDiagnostic": true,
+        "expectedOutcome": "failed",
+        "rejected": true
+      },
+      {
+        "case": "migration",
+        "mutatedFile": "alembic/versions/0008_audit_log.sql",
+        "test": "tests/integration/test_identity_database.py::test_m0_06_empty_upgrade_repeat_and_safe_rollback",
+        "baselineExitCode": 0,
+        "exitCode": 1,
+        "matchedDiagnostic": true,
+        "expectedOutcome": "error",
+        "rejected": true
+      },
+      {
+        "case": "isolation",
+        "mutatedFile": "alembic/versions/0002_tenant_policies.py",
+        "test": "tests/integration/test_identity_database.py::test_m0_07_pool_reuse_and_rollback",
+        "baselineExitCode": 0,
+        "exitCode": 1,
+        "matchedDiagnostic": true,
+        "expectedOutcome": "failed",
+        "rejected": true
+      }
+    ],
+    "livePlatformCalls": "NOT_RUN"
+  },
+  "minioSource": {
+    "tag": "RELEASE.2025-09-07T16-13-09Z",
+    "commit": "07c3a429bfed433e49018cb0f78a52145d4bedeb",
+    "signedTagVerified": true,
+    "scope": "本地/CI兼容测试候选，生产存储仍按M5验收"
+  },
+  "limits": [
+    "BE/FE F00具名复核待签",
+    "live真实平台与付费调用NOT_RUN",
+    "本卡PASS不代替G0或真实平台验收"
+  ],
+  "sourceSha256Utf8Lf": {
+    ".github/workflows/backend-ci.yml": "ad1db7060c8c13aded6a89348a63947299b13be9e89cfc694e8e92f16201d491",
+    "backend/README.md": "4571f86ab5d4652c8ccde34cd19a064d1ba81dcfae877154832234db599a836b",
+    "backend/scripts/test_infrastructure.py": "22a9ae7cffbaa746375182b37aa2e0a5e3c056c21282583c1ac9f5562c0274d6",
+    "backend/scripts/check_ci_sensitivity.py": "89e9e6ceebe6e71f8fa70bae1107cf0347e8ebdf8a293522411b0d54ed2e663a",
+    "backend/docker-compose.yml": "931e925b203a889f22df1c17a4aacfe55d46a947e82d418a0c881b70b3147f06",
+    "backend/deployment/minio/Dockerfile": "e017e18f5ee8401fe421ae4a4d213f91c005196c44283fec751efd865eefc105"
+  }
+}

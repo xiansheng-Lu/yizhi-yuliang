@@ -28,6 +28,7 @@ class Settings(BaseSettings):
     auth_audit_secret: SecretStr | None = None
     admin_api_enabled: bool = False
     admin_allowed_networks: list[str] = Field(default_factory=lambda: ["127.0.0.1/32", "::1/128"])
+    worker_queue_prefix: str = Field(default="yuliang", pattern=r"^[a-z0-9][a-z0-9-]{0,63}$")
 
     @model_validator(mode="after")
     def auth_rollout_requirements(self) -> "Settings":

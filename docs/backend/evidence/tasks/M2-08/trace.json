@@ -1,0 +1,269 @@
+{
+  "assessmentId": "6e0943c9-24c5-45f0-823f-067832a9d8d4",
+  "requestId": "4bd4055d-b837-4ed6-ac03-e107822f0fe4",
+  "jobId": "aec1e91a-fc29-437a-8d5c-ce474350cb2e",
+  "stage": "EXECUTE",
+  "policyId": "518dcacd-caff-467e-8f29-f92d366d82f3",
+  "policyVersion": 1,
+  "summary": {
+    "level": "HIGH",
+    "checks": [
+      {
+        "code": "TARGET_SCOPE",
+        "passed": true,
+        "message": "已重新核对当前动作与目标范围"
+      },
+      {
+        "code": "POLICY_CONFIGURED",
+        "passed": true,
+        "message": "核对有效策略配置"
+      },
+      {
+        "code": "POLICY_VERSION",
+        "passed": true,
+        "message": "核对申请与当前策略版本"
+      },
+      {
+        "code": "STAGE_STATUS",
+        "passed": true,
+        "message": "核对当前申请阶段"
+      },
+      {
+        "code": "JOB_WINDOW",
+        "passed": true,
+        "message": "核对申请有效期"
+      },
+      {
+        "code": "REQUESTER_AUTHORIZATION",
+        "passed": true,
+        "message": "核对申请人当前动作授权"
+      },
+      {
+        "code": "ACTION_CAPABILITY",
+        "passed": true,
+        "message": "核对该动作当前能力证据"
+      },
+      {
+        "code": "CURRENT_VALUE_CONFIRMED",
+        "passed": true,
+        "message": "核对当前已确认且有效的数据"
+      },
+      {
+        "code": "CURRENT_VALUE_UNCHANGED",
+        "passed": true,
+        "message": "核对平台现值与原申请是否一致"
+      },
+      {
+        "code": "AMOUNT_LIMIT",
+        "passed": false,
+        "message": "必要风险依据尚未就绪，暂不能执行"
+      },
+      {
+        "code": "CHANGE_BOUND",
+        "passed": false,
+        "message": "必要风险依据尚未就绪，暂不能执行"
+      },
+      {
+        "code": "FREQUENCY",
+        "passed": false,
+        "message": "必要风险依据尚未就绪，暂不能执行"
+      },
+      {
+        "code": "INTENT_BINDING",
+        "passed": false,
+        "message": "必要风险依据尚未就绪，暂不能执行"
+      },
+      {
+        "code": "ASSESSMENT_WINDOW",
+        "passed": true,
+        "message": "核对本次检查仍在有效窗口"
+      },
+      {
+        "code": "POLICY_ENGINE_READY",
+        "passed": false,
+        "message": "必要风险检查尚未全部就绪时保持阻断"
+      }
+    ],
+    "result": "BLOCKED",
+    "source": "SERVER",
+    "checked_at": "2026-10-27T19:06:47.138894Z",
+    "policy_version": 1
+  },
+  "evidence": [
+    {
+      "check": {
+        "code": "TARGET_SCOPE",
+        "passed": true,
+        "message": "已重新核对当前动作与目标范围"
+      },
+      "evidence": {
+        "stage": "EXECUTE"
+      }
+    },
+    {
+      "check": {
+        "code": "POLICY_CONFIGURED",
+        "passed": true,
+        "message": "核对有效策略配置"
+      },
+      "evidence": {
+        "version": 1,
+        "policyId": "518dcacd-caff-467e-8f29-f92d366d82f3"
+      }
+    },
+    {
+      "check": {
+        "code": "POLICY_VERSION",
+        "passed": true,
+        "message": "核对申请与当前策略版本"
+      },
+      "evidence": {
+        "current": 1,
+        "expected": 1
+      }
+    },
+    {
+      "check": {
+        "code": "STAGE_STATUS",
+        "passed": true,
+        "message": "核对当前申请阶段"
+      },
+      "evidence": {
+        "stage": "EXECUTE",
+        "status": "APPROVED"
+      }
+    },
+    {
+      "check": {
+        "code": "JOB_WINDOW",
+        "passed": true,
+        "message": "核对申请有效期"
+      },
+      "evidence": {
+        "expired": false
+      }
+    },
+    {
+      "check": {
+        "code": "REQUESTER_AUTHORIZATION",
+        "passed": true,
+        "message": "核对申请人当前动作授权"
+      },
+      "evidence": {
+        "authorized": true,
+        "permission": "budget.edit"
+      }
+    },
+    {
+      "check": {
+        "code": "ACTION_CAPABILITY",
+        "passed": true,
+        "message": "核对该动作当前能力证据"
+      },
+      "evidence": {
+        "status": "AUTHORIZED",
+        "writableOperation": true
+      }
+    },
+    {
+      "check": {
+        "code": "CURRENT_VALUE_CONFIRMED",
+        "passed": true,
+        "message": "核对当前已确认且有效的数据"
+      },
+      "evidence": {
+        "field": "budget_minor",
+        "sourceId": "ea578af6-4b07-43c8-be07-e172fe2f29fb",
+        "errorCode": null,
+        "fetchedAt": "2026-10-27T19:06:47.030245+00:00",
+        "outboundId": "c7f9b973-e493-46b7-927f-84ecb63a7a41",
+        "policyRevision": 1,
+        "sourceUpdatedAt": "2026-10-27T19:06:46.030245+00:00"
+      }
+    },
+    {
+      "check": {
+        "code": "CURRENT_VALUE_UNCHANGED",
+        "passed": true,
+        "message": "核对平台现值与原申请是否一致"
+      },
+      "evidence": {
+        "unchanged": true
+      }
+    },
+    {
+      "check": {
+        "code": "AMOUNT_LIMIT",
+        "passed": false,
+        "message": "必要风险依据尚未就绪，暂不能执行"
+      },
+      "evidence": {
+        "rule": "AMOUNT_LIMIT",
+        "reason": "RULE_NOT_INSTALLED"
+      }
+    },
+    {
+      "check": {
+        "code": "CHANGE_BOUND",
+        "passed": false,
+        "message": "必要风险依据尚未就绪，暂不能执行"
+      },
+      "evidence": {
+        "rule": "CHANGE_BOUND",
+        "reason": "RULE_NOT_INSTALLED"
+      }
+    },
+    {
+      "check": {
+        "code": "FREQUENCY",
+        "passed": false,
+        "message": "必要风险依据尚未就绪，暂不能执行"
+      },
+      "evidence": {
+        "rule": "FREQUENCY",
+        "reason": "RULE_NOT_INSTALLED"
+      }
+    },
+    {
+      "check": {
+        "code": "INTENT_BINDING",
+        "passed": false,
+        "message": "必要风险依据尚未就绪，暂不能执行"
+      },
+      "evidence": {
+        "rule": "INTENT_BINDING",
+        "reason": "RULE_NOT_INSTALLED"
+      }
+    },
+    {
+      "check": {
+        "code": "ASSESSMENT_WINDOW",
+        "passed": true,
+        "message": "核对本次检查仍在有效窗口"
+      },
+      "evidence": {
+        "checkedAt": "2026-10-27T19:06:47.138894+00:00",
+        "expiresAt": "2026-10-27T19:06:57.138894+00:00"
+      }
+    },
+    {
+      "check": {
+        "code": "POLICY_ENGINE_READY",
+        "passed": false,
+        "message": "必要风险检查尚未全部就绪时保持阻断"
+      },
+      "evidence": {
+        "required": [
+          "AMOUNT_LIMIT",
+          "CHANGE_BOUND",
+          "FREQUENCY",
+          "INTENT_BINDING"
+        ],
+        "installed": []
+      }
+    }
+  ],
+  "stageSetup": "SYNTHETIC_PRECONDITIONS_ONLY",
+  "platformCalls": 0,
+  "paidCalls": 0
+}

@@ -4,7 +4,7 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "currentFocus": "M2-08",
+  "currentFocus": "M2-09a",
   "tasks": {
     "R00-01": {
       "owner": "BE",
@@ -1688,6 +1688,43 @@
         "productionParticipantsInstalled": false,
         "platformCalls": 0
       }
+    },
+    "M2-08": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "scope": "policy四时点真实检查/版本与追加风险记录，command必要集成及DDL/测试",
+      "dependencyInput": "M2-06a真实PG状态内核与M1-02能力底座；复用M1-15/16确认页，持续研发授权，G0/E08保留",
+      "delivery": "四时点真实范围/能力/确认页/策略版本检查及私有追加评估和审计已验证；必需规则缺项明确阻断，未装配生产生命周期参与者",
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS"
+        },
+        {
+          "item": 2,
+          "technical": "PASS"
+        },
+        {
+          "item": 3,
+          "technical": "PASS"
+        }
+      ],
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F06_F07"
+      },
+      "evidence": "tasks/M2-08/README.md",
+      "implementationCommit": "07ed986a6c438f2a741b906a174e5b9f912b43e4",
+      "technicalVerification": {
+        "result": "PASS_FRAMEWORK_REAL_PG_RULES_NOT_INSTALLED_FAIL_CLOSED",
+        "unitContractPassed": 475,
+        "policyConfigUnitCases": 14,
+        "riskIntegrationCases": 14,
+        "allIntegrationPassed": 389,
+        "lifecycleNotRun": 1,
+        "realRulesInstalled": 0,
+        "platformCalls": 0
+      }
     }
   },
   "gates": {
@@ -1793,9 +1830,9 @@
     "offline": "离线通过不等于真实依赖、前端联调或平台验收通过"
   },
   "nextTask": {
-    "id": "M2-08",
+    "id": "M2-09a",
     "status": "READY_FOR_TECHNICAL_DEVELOPMENT",
-    "note": "状态内核真实PG技术输入就绪；继续四时点风险检查，实际资金/执行门禁仍关闭"
+    "note": "四时点框架真实PG技术输入就绪，继续金额/幅度/频率/资格规则；意图/额度/审批/执行后续卡仍需补齐"
   },
   "continuation": {
     "requestedOn": "2026-10-27",
@@ -1804,10 +1841,10 @@
     "environment": "WSL2 Ubuntu Docker; UV_PROJECT_ENVIRONMENT=/home/lenovo/.cache/yuliang-venv",
     "latestUserRequest": "补齐浏览器验收，然后按照后端任务卡继续后续的所有开发，需要资源再找我对接，不阻塞持续开发到完毕",
     "developmentPolicy": "缺人工/外部验收时记录并继续可独立技术准备；正式门禁、平台调用和付费仍按各自证据许可",
-    "lastCompletedTechnicalTask": "M2-06a",
-    "nextTechnicalTask": "M2-08",
+    "lastCompletedTechnicalTask": "M2-08",
+    "nextTechnicalTask": "M2-09a",
     "executionRules": "docs/backend/evidence/execution-rules.md",
-    "checkpoint": "M1通用底座/连接管理、申请仓储及状态内核技术验证已归档；继续真实本地风险/额度/审批/执行实现；E01/E02、具名复核和06/12伙伴文档保留"
+    "checkpoint": "四时点检查框架技术验证完成；规则缺项保持阻断，继续确定性规则与必要事实依赖，不开放真实写；E01/E02、具名复核和06/12文档保留"
   },
   "frontendIntegration": {
     "F01": {

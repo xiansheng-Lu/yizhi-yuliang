@@ -10,6 +10,14 @@ WSL中运行`uv run python scripts/import_platform_catalog.py`只做本地核对
 
 验证入口为`uv run python scripts/test_infrastructure.py --group catalog --details`。本卡以已验证底座进行技术准备，G0的BE/FE具名复核独立保留，目录导入不放行正式平台流量。
 
+## 账户能力证据与灰度验证许可
+
+M1-02的0016迁移按租户、账户、连接器、产品线、动作、目录版本及不可变绑定保存六阶段证据。证据仅由独立维护身份录入，没有用户自授权HTTP入口；运行身份只读。任何前置缺失、过期、失败或先于更新后前置的旧证据，都会使后续阶段无效。账户状态/身份变化停用旧绑定；目录或授权上下文变化须重新绑定取证。读路径使用READ_SCHEMA/READ_RESULT，写路径使用WRITE_SCHEMA/MATCHED_RECEIPT，不能混用。巨量、小红书及微信豆仍不开放平台操作。
+
+首次写验证仅在前五阶段有效且没有既往执行结果时，消费由他人批准、具备相应店铺/账户审批范围、绑定请求键/冻结载荷摘要/金额上限/时间窗的一次性许可。消费再次检查当前成员、审批人、权限、账户和证据；同一上下文即使更换请求键也只能领取一次未核对的首次尝试，UNKNOWN不重新领取。许可不产生普通业务写能力，也不等于平台已受理或写入成功。后续执行内核必须从冻结载荷计算摘要/金额，并在同一受控流程持久化许可消费，继续经过风控、审批、执行和回读。
+
+`uv run python scripts/test_infrastructure.py --group capability --details`覆盖真实PG隔离和消费竞争。当前没有实际账户证据或许可，没有平台请求；自动探测与证据回写由后续连接器任务接入。F03/F11接线、BE/FE复核和真实平台验收分别留证。
+
 ## Python与离线验证
 
 基线Python 3.13.14、uv，Windows PowerShell。依赖由uv.lock锁定；当前网络无法连接pypi.org，项目使用清华PyPI镜像，未更改全局包源。Python安装行为见[uv官方说明](https://docs.astral.sh/uv/guides/install-python/)。在backend目录执行：

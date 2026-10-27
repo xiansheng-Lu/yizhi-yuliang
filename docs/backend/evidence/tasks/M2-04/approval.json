@@ -1,0 +1,24 @@
+{
+  "source": "USER_DIRECT_REPLY_2026-10-27",
+  "quote": "确认解析预期，继续推进任务卡开发，需要调用deepseek模型直接调用即可",
+  "scope": "task development and synthetic DeepSeek validation; no platform write authorization",
+  "agent_internal_limits": [
+    {
+      "run": "initial",
+      "max_calls": 28,
+      "budget_minor": 100,
+      "started_calls": 28,
+      "reserved_minor": 84
+    },
+    {
+      "run": "recheck_after_code_fix",
+      "max_calls": 3,
+      "budget_minor": 10,
+      "started_calls": 3,
+      "reserved_minor": 9
+    }
+  ],
+  "limit_origin": "Agent internal protection, not amounts specified by user",
+  "no_automatic_retry": true,
+  "historical_six_call_allowance": "untouched"
+}

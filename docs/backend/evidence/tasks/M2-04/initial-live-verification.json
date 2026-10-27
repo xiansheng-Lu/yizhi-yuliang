@@ -1,0 +1,1291 @@
+{
+  "approval": "2026-10-27用户直接授权：确认解析预期，继续推进任务卡开发，需要调用deepseek模型直接调用即可",
+  "currency": "CNY",
+  "budget_minor": 100,
+  "max_calls": 28,
+  "max_input_tokens": 8192,
+  "max_output_tokens": 512,
+  "requested_model": "deepseek-v4-flash",
+  "price_evidence": {
+    "url": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/",
+    "verified_on": "2026-10-27",
+    "input_minor_per_million": 200,
+    "output_minor_per_million": 800
+  },
+  "price_proof_hash": "0438e08626d01c93974abac89f315ae830f5d003f2bd5378d2ceefc18873325e",
+  "prompt_version": 1,
+  "prompt_hash": "c8d6c80f4abd0b8c5978eb37078dcd2dd97aeda5d8481a002a82eef90a95d0a3",
+  "cases_hash": "f1c97cf1785a1fedf9f8384c2c419a5f930e000bdc8b0130f179d7fafd93e124",
+  "confirmation_source": "USER",
+  "database": "yuliang_test_809888f35369498185da48e019f0bfb3",
+  "temporary_database_cleanup": "fixture_finalizer",
+  "requests": [
+    {
+      "case_id": "CP-001",
+      "call_id": "664ddcbb-930c-4ad9-8d2e-ce9a59ae7040",
+      "request_id": "4839e16c-6768-4614-94f0-89e59e477cfe",
+      "quote_id": "b3283d16-965f-4cd3-a032-9c94c6e377f8",
+      "permit_id": "24897174-b284-4883-acfa-7f401f5e7420",
+      "quote_max_minor": 3,
+      "expected": {
+        "kind": "ACTION",
+        "action_type": "CHANGE_DAILY_BUDGET",
+        "new_value": {
+          "kind": "MONEY",
+          "currency": "CNY",
+          "amount_minor": 500000
+        },
+        "target_type": "AD_PLAN",
+        "candidate_ids": [
+          "00000000-0000-4000-8000-000000000101"
+        ]
+      },
+      "latency_ms": 1203,
+      "source": "MODEL",
+      "status": "CANDIDATE",
+      "reason": "MODEL_CANDIDATE",
+      "upstream_status": null,
+      "raw": {
+        "kind": "ACTION",
+        "action_type": "CHANGE_DAILY_BUDGET",
+        "new_value": {
+          "kind": "MONEY",
+          "currency": "CNY",
+          "amount_minor": 500000
+        },
+        "target_type": "AD_PLAN",
+        "candidate_ids": [
+          "00000000-0000-4000-8000-000000000101"
+        ]
+      },
+      "guarded": {
+        "kind": "ACTION",
+        "action_type": "CHANGE_DAILY_BUDGET",
+        "new_value": {
+          "kind": "MONEY",
+          "currency": "CNY",
+          "amount_minor": 500000
+        },
+        "target_type": "AD_PLAN",
+        "candidate_ids": [
+          "00000000-0000-4000-8000-000000000101"
+        ]
+      },
+      "raw_matches_expected": true,
+      "guarded_matches_expected": true,
+      "provider_model": "deepseek-flash",
+      "external_request_id": "ff2e2954-3d3d-48b6-80fd-b98bb30ecec1",
+      "response_hash": "cf2b02f01a439d596e4ed1d612e50b842fed91eb273811ae29b5be3624dd3683",
+      "usage_state": "KNOWN",
+      "tokens_in": 669,
+      "tokens_out": 88,
+      "cost_state": "UNKNOWN",
+      "cost_minor": null,
+      "interpretation_id": "4fda1da1-ae5f-44dc-89c3-5752672619f3",
+      "interpretation_source": "MODEL_GUARDED"
+    },
+    {
+      "case_id": "CP-002",
+      "call_id": "02176ac8-4fd6-4be3-8fad-be2ec90b3bf8",
+      "request_id": "f1ed863f-9a7d-441d-8697-f5aa16d64e77",
+      "quote_id": "a763390c-4ba7-455e-93c2-4c41bb846094",
+      "permit_id": "700559a4-d514-44e8-aa0b-eadc9dab248a",
+      "quote_max_minor": 3,
+      "expected": {
+        "kind": "ACTION",
+        "action_type": "CHANGE_BID",
+        "new_value": {
+          "kind": "MONEY",
+          "currency": "CNY",
+          "amount_minor": 320
+        },
+        "target_type": "AD_PLAN",
+        "candidate_ids": [
+          "00000000-0000-4000-8000-000000000101"
+        ]
+      },
+      "latency_ms": 1230,
+      "source": "MODEL",
+      "status": "CANDIDATE",
+      "reason": "MODEL_CANDIDATE",
+      "upstream_status": null,
+      "raw": {
+        "kind": "ACTION",
+        "action_type": "CHANGE_BID",
+        "new_value": {
+          "kind": "MONEY",
+          "currency": "CNY",
+          "amount_minor": 320
+        },
+        "target_type": "AD_PLAN",
+        "candidate_ids": [
+          "00000000-0000-4000-8000-000000000101"
+        ]
+      },
+      "guarded": {
+        "kind": "ACTION",
+        "action_type": "CHANGE_BID",
+        "new_value": {
+          "kind": "MONEY",
+          "currency": "CNY",
+          "amount_minor": 320
+        },
+        "target_type": "AD_PLAN",
+        "candidate_ids": [
+          "00000000-0000-4000-8000-000000000101"
+        ]
+      },
+      "raw_matches_expected": true,
+      "guarded_matches_expected": true,
+      "provider_model": "deepseek-flash",
+      "external_request_id": "c742ff69-779e-4422-a9fc-3e9c93f218a5",
+      "response_hash": "c0bb409f3e31d3a9386797061b3ab0f1a694c143ba07c391fda2ac8a940438e9",
+      "usage_state": "KNOWN",
+      "tokens_in": 669,
+      "tokens_out": 85,
+      "cost_state": "UNKNOWN",
+      "cost_minor": null,
+      "interpretation_id": "51838a40-b1bf-4f2c-be46-9aa34dc8d4db",
+      "interpretation_source": "MODEL_GUARDED"
+    },
+    {
+      "case_id": "CP-003",
+      "call_id": "afaee3c2-2154-4f26-89b5-ad00cfe17ee6",
+      "request_id": "68403a53-e59e-4faf-936e-319ec0e6a6ad",
+      "quote_id": "457b7794-df46-4e69-91ee-65a67de046f4",
+      "permit_id": "d013bd84-f2d8-4582-adb3-a1094a663d56",
+      "quote_max_minor": 3,
+      "expected": {
+        "kind": "ACTION",
+        "action_type": "SET_ROI_TARGET",
+        "new_value": {
+          "kind": "RATIO",
+          "value": 6.2
+        },
+        "target_type": "AD_PLAN",
+        "candidate_ids": [
+          "00000000-0000-4000-8000-000000000101"
+        ]
+      },
+      "latency_ms": 1224,
+      "source": "MODEL",
+      "status": "CANDIDATE",
+      "reason": "MODEL_CANDIDATE",
+      "upstream_status": null,
+      "raw": {
+        "kind": "ACTION",
+        "action_type": "SET_ROI_TARGET",
+        "new_value": {
+          "kind": "RATIO",
+          "value": 6.2
+        },
+        "target_type": "AD_PLAN",
+        "candidate_ids": [
+          "00000000-0000-4000-8000-000000000101"
+        ]
+      },
+      "guarded": {
+        "kind": "ACTION",
+        "action_type": "SET_ROI_TARGET",
+        "new_value": {
+          "kind": "RATIO",
+          "value": 6.2
+        },
+        "target_type": "AD_PLAN",
+        "candidate_ids": [
+          "00000000-0000-4000-8000-000000000101"
+        ]
+      },
+      "raw_matches_expected": true,
+      "guarded_matches_expected": true,
+      "provider_model": "deepseek-flash",
+      "external_request_id": "9fa3fcf2-beef-444b-83a2-055bd5a23f1b",
+      "response_hash": "b4a12d26c27d15a84f429fd58d19c28d7ef96cedb538e014ec65935f5a8e20a8",
+      "usage_state": "KNOWN",
+      "tokens_in": 667,
+      "tokens_out": 81,
+      "cost_state": "UNKNOWN",
+      "cost_minor": null,
+      "interpretation_id": "6e7f0a97-072a-43b6-8727-bccf73e817bb",
+      "interpretation_source": "MODEL_GUARDED"
+    },
+    {
+      "case_id": "CP-004",
+      "call_id": "9b9509ac-6b09-4c8a-936b-0ede07de9b53",
+      "request_id": "289769cf-50be-4a74-b7cc-07edef69fc9e",
+      "quote_id": "51b0872f-d25b-4a33-9082-248e8a00cadc",
+      "permit_id": "b2066280-9b8d-4f75-8131-d5f4df839855",
+      "quote_max_minor": 3,
+      "expected": {
+        "kind": "ACTION",
+        "action_type": "PAUSE_AD_PLAN",
+        "new_value": {
+          "kind": "BOOLEAN",
+          "value": false
+        },
+        "target_type": "AD_PLAN",
+        "candidate_ids": [
+          "00000000-0000-4000-8000-000000000101"
+        ]
+      },
+      "latency_ms": 1277,
+      "source": "MODEL",
+      "status": "CANDIDATE",
+      "reason": "MODEL_CANDIDATE",
+      "upstream_status": null,
+      "raw": {
+        "kind": "ACTION",
+        "action_type": "PAUSE_AD_PLAN",
+        "new_value": {
+          "kind": "BOOLEAN",
+          "value": false
+        },
+        "target_type": "AD_PLAN",
+        "candidate_ids": [
+          "00000000-0000-4000-8000-000000000101",
+          "00000000-0000-4000-8000-000000000102"
+        ]
+      },
+      "guarded": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "raw_matches_expected": false,
+      "guarded_matches_expected": false,
+      "provider_model": "deepseek-flash",
+      "external_request_id": "2b47b7fd-a539-4483-8983-a7bf1cb77994",
+      "response_hash": "ed738dbc6246a09d471e3046eba68ee42b8a12863652cf194384b37373afe735",
+      "usage_state": "KNOWN",
+      "tokens_in": 661,
+      "tokens_out": 105,
+      "cost_state": "UNKNOWN",
+      "cost_minor": null,
+      "interpretation_id": "7e68884e-83c9-4d3e-ab31-57c433591629",
+      "interpretation_source": "MODEL_GUARDED"
+    },
+    {
+      "case_id": "CP-005",
+      "call_id": "3367788b-1061-424d-a45e-f00765217bb6",
+      "request_id": "cbcab798-3f87-4e43-accb-b26feb0c751b",
+      "quote_id": "3ea6f76e-3662-4a75-8b41-5f0d37f3f56c",
+      "permit_id": "187e6019-b69e-4e55-8834-bde7e405b096",
+      "quote_max_minor": 3,
+      "expected": {
+        "kind": "ACTION",
+        "action_type": "RESUME_AD_PLAN",
+        "new_value": {
+          "kind": "BOOLEAN",
+          "value": true
+        },
+        "target_type": "AD_PLAN",
+        "candidate_ids": [
+          "00000000-0000-4000-8000-000000000101"
+        ]
+      },
+      "latency_ms": 1367,
+      "source": "MODEL",
+      "status": "CANDIDATE",
+      "reason": "MODEL_CANDIDATE",
+      "upstream_status": null,
+      "raw": {
+        "kind": "ACTION",
+        "action_type": "RESUME_AD_PLAN",
+        "new_value": {
+          "kind": "BOOLEAN",
+          "value": true
+        },
+        "target_type": "AD_PLAN",
+        "candidate_ids": [
+          "00000000-0000-4000-8000-000000000101"
+        ]
+      },
+      "guarded": {
+        "kind": "ACTION",
+        "action_type": "RESUME_AD_PLAN",
+        "new_value": {
+          "kind": "BOOLEAN",
+          "value": true
+        },
+        "target_type": "AD_PLAN",
+        "candidate_ids": [
+          "00000000-0000-4000-8000-000000000101"
+        ]
+      },
+      "raw_matches_expected": true,
+      "guarded_matches_expected": true,
+      "provider_model": "deepseek-flash",
+      "external_request_id": "9747f63b-ed6e-4931-865b-8d6f2920bc27",
+      "response_hash": "7ac9a2185ab9c0eee41855b4ccb6d3c2a366b00f4d23480e3e47d218d5f198c1",
+      "usage_state": "KNOWN",
+      "tokens_in": 661,
+      "tokens_out": 78,
+      "cost_state": "UNKNOWN",
+      "cost_minor": null,
+      "interpretation_id": "fccd14fe-f1b4-49b5-b53c-680e398661bc",
+      "interpretation_source": "MODEL_GUARDED"
+    },
+    {
+      "case_id": "CP-006",
+      "call_id": "7c6c58c9-8d8f-4576-ad02-eceeebf83524",
+      "request_id": "4ff00d8d-084e-4d7e-b9ab-fb9179dd3d1f",
+      "quote_id": "84407cd5-4a3c-4bcb-8954-af373b5b2199",
+      "permit_id": "45a7e7ae-4ee5-4786-93cc-3855304ee72d",
+      "quote_max_minor": 3,
+      "expected": {
+        "kind": "ACTION",
+        "action_type": "REQUEST_LIVE_START",
+        "new_value": {
+          "kind": "HANDOFF",
+          "value": "START"
+        },
+        "target_type": "LIVE_SESSION",
+        "candidate_ids": [
+          "00000000-0000-4000-8000-000000000201"
+        ]
+      },
+      "latency_ms": 1074,
+      "source": "MODEL",
+      "status": "CANDIDATE",
+      "reason": "MODEL_CANDIDATE",
+      "upstream_status": null,
+      "raw": {
+        "kind": "ACTION",
+        "action_type": "REQUEST_LIVE_START",
+        "new_value": {
+          "kind": "HANDOFF",
+          "value": "START"
+        },
+        "target_type": "LIVE_SESSION",
+        "candidate_ids": [
+          "00000000-0000-4000-8000-000000000201"
+        ]
+      },
+      "guarded": {
+        "kind": "ACTION",
+        "action_type": "REQUEST_LIVE_START",
+        "new_value": {
+          "kind": "HANDOFF",
+          "value": "START"
+        },
+        "target_type": "LIVE_SESSION",
+        "candidate_ids": [
+          "00000000-0000-4000-8000-000000000201"
+        ]
+      },
+      "raw_matches_expected": true,
+      "guarded_matches_expected": true,
+      "provider_model": "deepseek-flash",
+      "external_request_id": "ed1a2aac-362c-4edc-b665-8e98bac3a20a",
+      "response_hash": "2980e68f41ff1800a2f171451474167e411c6ce2af7c2601baf21fbe21622cbc",
+      "usage_state": "KNOWN",
+      "tokens_in": 661,
+      "tokens_out": 79,
+      "cost_state": "UNKNOWN",
+      "cost_minor": null,
+      "interpretation_id": "3bec1baf-dc73-410a-800a-0c1883fad956",
+      "interpretation_source": "MODEL_GUARDED"
+    },
+    {
+      "case_id": "CP-007",
+      "call_id": "6e3d5a89-9238-44ee-bee5-a30cdcc22a1b",
+      "request_id": "4baf4419-4137-46b3-a8d4-21e2aff25342",
+      "quote_id": "7fcd0b4c-2feb-4dbe-99d0-61a13b4af6d8",
+      "permit_id": "a8e62745-bec3-4df5-9607-cdf6dcfb6987",
+      "quote_max_minor": 3,
+      "expected": {
+        "kind": "ACTION",
+        "action_type": "REQUEST_LIVE_END",
+        "new_value": {
+          "kind": "HANDOFF",
+          "value": "END"
+        },
+        "target_type": "LIVE_SESSION",
+        "candidate_ids": [
+          "00000000-0000-4000-8000-000000000201"
+        ]
+      },
+      "latency_ms": 1332,
+      "source": "MODEL",
+      "status": "CANDIDATE",
+      "reason": "MODEL_CANDIDATE",
+      "upstream_status": null,
+      "raw": {
+        "kind": "ACTION",
+        "action_type": "REQUEST_LIVE_END",
+        "new_value": {
+          "kind": "HANDOFF",
+          "value": "END"
+        },
+        "target_type": "LIVE_SESSION",
+        "candidate_ids": [
+          "00000000-0000-4000-8000-000000000201"
+        ]
+      },
+      "guarded": {
+        "kind": "ACTION",
+        "action_type": "REQUEST_LIVE_END",
+        "new_value": {
+          "kind": "HANDOFF",
+          "value": "END"
+        },
+        "target_type": "LIVE_SESSION",
+        "candidate_ids": [
+          "00000000-0000-4000-8000-000000000201"
+        ]
+      },
+      "raw_matches_expected": true,
+      "guarded_matches_expected": true,
+      "provider_model": "deepseek-flash",
+      "external_request_id": "79417d82-7a53-4e51-a21c-5006b61be69a",
+      "response_hash": "78bf9a14727a2f692957c90e200078efb61c323bcf28895fbe0ed7d7e0a32d85",
+      "usage_state": "KNOWN",
+      "tokens_in": 661,
+      "tokens_out": 83,
+      "cost_state": "UNKNOWN",
+      "cost_minor": null,
+      "interpretation_id": "fb8b556c-cad1-479f-8ae8-7414d134ee7a",
+      "interpretation_source": "MODEL_GUARDED"
+    },
+    {
+      "case_id": "CP-008",
+      "call_id": "94deb469-8200-4ca1-b7c4-b2d4c030756d",
+      "request_id": "b1aac2f9-5b3a-4b16-acbc-3188c47de836",
+      "quote_id": "b264daa3-e5c4-4e4d-aa0c-9f12a313d870",
+      "permit_id": "466d1930-1667-4a3a-824f-d59a72126312",
+      "quote_max_minor": 3,
+      "expected": {
+        "kind": "QUERY",
+        "candidate_ids": [],
+        "live_session_id": "00000000-0000-4000-8000-000000000201"
+      },
+      "latency_ms": 975,
+      "source": "MODEL",
+      "status": "CANDIDATE",
+      "reason": "MODEL_CANDIDATE",
+      "upstream_status": null,
+      "raw": {
+        "kind": "QUERY",
+        "candidate_ids": []
+      },
+      "guarded": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "raw_matches_expected": false,
+      "guarded_matches_expected": false,
+      "provider_model": "deepseek-flash",
+      "external_request_id": "f36c9bca-3843-47e4-941f-1950ba03e6b0",
+      "response_hash": "2c93484376cea2e3516a50508adc4d97675ae151c5629dedd47f5f32e4722078",
+      "usage_state": "KNOWN",
+      "tokens_in": 662,
+      "tokens_out": 47,
+      "cost_state": "UNKNOWN",
+      "cost_minor": null,
+      "interpretation_id": "2061b22b-35f5-4c2b-9fdf-55ff8af8a41c",
+      "interpretation_source": "MODEL_GUARDED"
+    },
+    {
+      "case_id": "CP-009",
+      "call_id": "d2118f0d-747b-46e6-aaaf-e71382adecf1",
+      "request_id": "d2fa91ab-1cf8-4395-a12b-89cfcb611f24",
+      "quote_id": "316b7c1f-383b-4fd6-9956-f34f4c9ab540",
+      "permit_id": "d1b097bf-1175-4573-bf0c-5757dd9d7ba0",
+      "quote_max_minor": 3,
+      "expected": {
+        "kind": "ACTION",
+        "action_type": "PAUSE_AD_PLAN",
+        "new_value": {
+          "kind": "BOOLEAN",
+          "value": false
+        },
+        "target_type": "AD_PLAN",
+        "candidate_ids": [
+          "00000000-0000-4000-8000-000000000101",
+          "00000000-0000-4000-8000-000000000102"
+        ]
+      },
+      "latency_ms": 1345,
+      "source": "MODEL",
+      "status": "CANDIDATE",
+      "reason": "MODEL_CANDIDATE",
+      "upstream_status": null,
+      "raw": {
+        "kind": "ACTION",
+        "action_type": "PAUSE_AD_PLAN",
+        "new_value": {
+          "kind": "BOOLEAN",
+          "value": false
+        },
+        "target_type": "AD_PLAN",
+        "candidate_ids": [
+          "00000000-0000-4000-8000-000000000101",
+          "00000000-0000-4000-8000-000000000102"
+        ]
+      },
+      "guarded": {
+        "kind": "ACTION",
+        "action_type": "PAUSE_AD_PLAN",
+        "new_value": {
+          "kind": "BOOLEAN",
+          "value": false
+        },
+        "target_type": "AD_PLAN",
+        "candidate_ids": [
+          "00000000-0000-4000-8000-000000000101",
+          "00000000-0000-4000-8000-000000000102"
+        ]
+      },
+      "raw_matches_expected": true,
+      "guarded_matches_expected": true,
+      "provider_model": "deepseek-flash",
+      "external_request_id": "24b4a2b0-db6c-4daf-a490-c8dffbc5ebc8",
+      "response_hash": "efd15d694bd96a6e0f6df541b350255f75a7d4b5b0b7bcfb0f3198181521528d",
+      "usage_state": "KNOWN",
+      "tokens_in": 662,
+      "tokens_out": 100,
+      "cost_state": "UNKNOWN",
+      "cost_minor": null,
+      "interpretation_id": "4752c5e3-f171-4320-a9c9-1f1bda7fe269",
+      "interpretation_source": "MODEL_GUARDED"
+    },
+    {
+      "case_id": "CP-010",
+      "call_id": "142d3376-b9e0-4f7f-b396-3a50cbb3cbad",
+      "request_id": "0015574f-9ba7-4708-b4b7-da444a548579",
+      "quote_id": "585e0c00-0c9e-4e7b-ab24-0d8fcb6a4c39",
+      "permit_id": "7bca4933-34f3-4793-906a-40f0fce94e55",
+      "quote_max_minor": 3,
+      "expected": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "latency_ms": 1118,
+      "source": "MODEL",
+      "status": "CANDIDATE",
+      "reason": "MODEL_CANDIDATE",
+      "upstream_status": null,
+      "raw": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "guarded": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "raw_matches_expected": true,
+      "guarded_matches_expected": true,
+      "provider_model": "deepseek-flash",
+      "external_request_id": "b320cfaf-6585-4876-b9c4-11433edbeccf",
+      "response_hash": "02e9ff01bd5ffbd7d5674d63383279a0e174f435e3038eeb00b2ec25a8d3829e",
+      "usage_state": "KNOWN",
+      "tokens_in": 559,
+      "tokens_out": 36,
+      "cost_state": "UNKNOWN",
+      "cost_minor": null,
+      "interpretation_id": "f0be31d2-e251-434c-afdf-48de1d4e3316",
+      "interpretation_source": "MODEL_GUARDED"
+    },
+    {
+      "case_id": "CP-011",
+      "call_id": "03a560e0-5ffd-4fa9-8e87-b4529dd007c2",
+      "request_id": "9db29c53-160a-4d72-a709-641921763664",
+      "quote_id": "d4adc856-77d3-42a5-895a-a676d46b8c66",
+      "permit_id": "5fb1190a-f316-4c59-a7e9-0ae6bd78f39a",
+      "quote_max_minor": 3,
+      "expected": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "latency_ms": 939,
+      "source": "MODEL",
+      "status": "CANDIDATE",
+      "reason": "MODEL_CANDIDATE",
+      "upstream_status": null,
+      "raw": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "guarded": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "raw_matches_expected": true,
+      "guarded_matches_expected": true,
+      "provider_model": "deepseek-flash",
+      "external_request_id": "938e8a9b-c1de-47ef-a004-e743c8034361",
+      "response_hash": "e719fc996be13e7700691b95fcbb7af9b15cd78b3479744483a07e1ec24f0590",
+      "usage_state": "KNOWN",
+      "tokens_in": 671,
+      "tokens_out": 32,
+      "cost_state": "UNKNOWN",
+      "cost_minor": null,
+      "interpretation_id": "97c665a5-8436-4096-9122-5fa11befa9fd",
+      "interpretation_source": "MODEL_GUARDED"
+    },
+    {
+      "case_id": "CP-012",
+      "call_id": "842b9b18-cdcf-41ce-9cb5-a1c27ce0a09a",
+      "request_id": "a3ef0917-1380-428e-b9ca-5a31cb2fced3",
+      "quote_id": "07bbcf35-d680-4fc2-95e9-800dc45fe388",
+      "permit_id": "e1dd57bd-d5f3-40b4-b7ef-0735193b4ed3",
+      "quote_max_minor": 3,
+      "expected": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "latency_ms": 1157,
+      "source": "MODEL",
+      "status": "CANDIDATE",
+      "reason": "MODEL_CANDIDATE",
+      "upstream_status": null,
+      "raw": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "guarded": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "raw_matches_expected": true,
+      "guarded_matches_expected": true,
+      "provider_model": "deepseek-flash",
+      "external_request_id": "1850e757-0e44-43e8-b0ff-c1f7757a2852",
+      "response_hash": "3f8de63b2839cca2bda6b043817a04dad6b7fa035c14f35b19543262702e0db4",
+      "usage_state": "KNOWN",
+      "tokens_in": 664,
+      "tokens_out": 34,
+      "cost_state": "UNKNOWN",
+      "cost_minor": null,
+      "interpretation_id": "9b5f2891-c4cc-4642-9859-6bdbe33fd6b9",
+      "interpretation_source": "MODEL_GUARDED"
+    },
+    {
+      "case_id": "CP-013",
+      "call_id": "dc7a532b-bbd3-412b-b7ae-3c80a0223e48",
+      "request_id": "f63ed458-c925-4b94-a226-09b46cad3c70",
+      "quote_id": "14b5e214-ba86-4037-9e25-966f6ddd77fb",
+      "permit_id": "fbfea3ee-5857-40ac-977e-e474ae6ba410",
+      "quote_max_minor": 3,
+      "expected": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "latency_ms": 1053,
+      "source": "MODEL",
+      "status": "CANDIDATE",
+      "reason": "MODEL_CANDIDATE",
+      "upstream_status": null,
+      "raw": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "guarded": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "raw_matches_expected": true,
+      "guarded_matches_expected": true,
+      "provider_model": "deepseek-flash",
+      "external_request_id": "35fad379-9f1e-4904-b538-817297a3baac",
+      "response_hash": "902a9926401cc51a2f0ad58114fdb870b32d7c93a39800db287cb95f5d9093c7",
+      "usage_state": "KNOWN",
+      "tokens_in": 665,
+      "tokens_out": 35,
+      "cost_state": "UNKNOWN",
+      "cost_minor": null,
+      "interpretation_id": "3408743f-dc26-4d75-8bf4-63d1724c1122",
+      "interpretation_source": "MODEL_GUARDED"
+    },
+    {
+      "case_id": "CP-014",
+      "call_id": "a6369608-6454-4a9c-b366-d2892dbd7909",
+      "request_id": "03eafbd7-b8f5-402e-b0fc-f84de5ea4ff1",
+      "quote_id": "67f189e7-1b5f-481d-b0f2-d0383066aad9",
+      "permit_id": "9c7a0102-206e-4c44-a288-131ff8b69341",
+      "quote_max_minor": 3,
+      "expected": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "latency_ms": 1261,
+      "source": "MODEL",
+      "status": "CANDIDATE",
+      "reason": "MODEL_CANDIDATE",
+      "upstream_status": null,
+      "raw": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "guarded": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "raw_matches_expected": true,
+      "guarded_matches_expected": true,
+      "provider_model": "deepseek-flash",
+      "external_request_id": "2b3199b2-cd05-4a0a-adce-de8240b87f6c",
+      "response_hash": "d81437f3657353ea2e197db41b5eab7538ee1cb942e16eb4e757852d9b560ecd",
+      "usage_state": "KNOWN",
+      "tokens_in": 667,
+      "tokens_out": 32,
+      "cost_state": "UNKNOWN",
+      "cost_minor": null,
+      "interpretation_id": "2616149c-0768-4094-81e0-7fe6cb565d34",
+      "interpretation_source": "MODEL_GUARDED"
+    },
+    {
+      "case_id": "CP-015",
+      "call_id": "a065f22c-0126-4038-abd9-96d958da7c73",
+      "request_id": "cdaa0cdb-2783-4975-bac8-d668a1af379c",
+      "quote_id": "dd02dc65-f48c-479d-a4e8-f6c076a193d9",
+      "permit_id": "a9993599-5866-4de0-81fe-cad4a89ef3fc",
+      "quote_max_minor": 3,
+      "expected": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "latency_ms": 967,
+      "source": "MODEL",
+      "status": "CANDIDATE",
+      "reason": "MODEL_CANDIDATE",
+      "upstream_status": null,
+      "raw": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "guarded": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "raw_matches_expected": true,
+      "guarded_matches_expected": true,
+      "provider_model": "deepseek-flash",
+      "external_request_id": "cc4da356-abbc-4f5e-8ccf-0976a0e87ddf",
+      "response_hash": "35e74e8764a7f6388de3187dc608b7a34055df8e2441c8e5a409f0412a98aa5c",
+      "usage_state": "KNOWN",
+      "tokens_in": 667,
+      "tokens_out": 30,
+      "cost_state": "UNKNOWN",
+      "cost_minor": null,
+      "interpretation_id": "1f852d26-eeef-404f-ab5c-991b1d29e0bf",
+      "interpretation_source": "MODEL_GUARDED"
+    },
+    {
+      "case_id": "CP-016",
+      "call_id": "5f96189a-23e0-44b3-8031-897ef36523f0",
+      "request_id": "7845b8db-3fdb-45e9-8c84-3eb6f6c6987c",
+      "quote_id": "ab3909e4-3fc6-4a7c-ac1f-610fede621e5",
+      "permit_id": "f8d38a23-7422-454f-a906-723124b88c17",
+      "quote_max_minor": 3,
+      "expected": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "latency_ms": 1050,
+      "source": "MODEL",
+      "status": "CANDIDATE",
+      "reason": "MODEL_CANDIDATE",
+      "upstream_status": null,
+      "raw": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "guarded": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "raw_matches_expected": true,
+      "guarded_matches_expected": true,
+      "provider_model": "deepseek-flash",
+      "external_request_id": "9e1435e3-97b3-4412-a32a-f4863acb3e6a",
+      "response_hash": "db242f9fbe691b7454fa8e7482deaba6b2e449350ab982b757ba434667d8dca1",
+      "usage_state": "KNOWN",
+      "tokens_in": 666,
+      "tokens_out": 30,
+      "cost_state": "UNKNOWN",
+      "cost_minor": null,
+      "interpretation_id": "bae9a218-372e-46fa-a766-dd4ff8654032",
+      "interpretation_source": "MODEL_GUARDED"
+    },
+    {
+      "case_id": "CP-017",
+      "call_id": "b95fb095-2dc4-4ee0-ba60-d23fcced9e2a",
+      "request_id": "2224bb60-2804-4f05-8491-07a4dc011593",
+      "quote_id": "6b70cdaa-7bb9-4145-85d5-81a9c751a0fc",
+      "permit_id": "cf9f4146-f0b9-45ee-bfb1-723a051c08da",
+      "quote_max_minor": 3,
+      "expected": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "latency_ms": 1068,
+      "source": "MODEL",
+      "status": "CANDIDATE",
+      "reason": "MODEL_CANDIDATE",
+      "upstream_status": null,
+      "raw": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "guarded": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "raw_matches_expected": true,
+      "guarded_matches_expected": true,
+      "provider_model": "deepseek-flash",
+      "external_request_id": "bbe56ab2-6d72-4208-b115-ef9147a74e75",
+      "response_hash": "16a3ffe51d9bbe6577175276838e9b28b96ff418a27f0cea190c82b3184c2063",
+      "usage_state": "KNOWN",
+      "tokens_in": 667,
+      "tokens_out": 31,
+      "cost_state": "UNKNOWN",
+      "cost_minor": null,
+      "interpretation_id": "398b1800-7e21-4d92-879f-e2da8419ad50",
+      "interpretation_source": "MODEL_GUARDED"
+    },
+    {
+      "case_id": "CP-018",
+      "call_id": "e6d10f48-a782-43e1-a95b-fd155704671a",
+      "request_id": "282922b7-8e7c-478f-b044-e81dbbe12cd9",
+      "quote_id": "16a0089a-d54c-4e1c-901d-49f3dbbfa483",
+      "permit_id": "f0806456-5215-49c8-ac4e-312871681ff1",
+      "quote_max_minor": 3,
+      "expected": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "latency_ms": 1364,
+      "source": "MODEL",
+      "status": "CANDIDATE",
+      "reason": "MODEL_CANDIDATE",
+      "upstream_status": null,
+      "raw": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "guarded": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "raw_matches_expected": true,
+      "guarded_matches_expected": true,
+      "provider_model": "deepseek-flash",
+      "external_request_id": "ed51b49a-2390-4237-8b0f-0733134af717",
+      "response_hash": "f93892de22fc3ee0051c51d0c2a6e1052f2b539216b50d9bece5df00218b1bf9",
+      "usage_state": "KNOWN",
+      "tokens_in": 664,
+      "tokens_out": 39,
+      "cost_state": "UNKNOWN",
+      "cost_minor": null,
+      "interpretation_id": "d5040e20-cb45-43ad-9b88-4c59939863cf",
+      "interpretation_source": "MODEL_GUARDED"
+    },
+    {
+      "case_id": "CP-019",
+      "call_id": "339d9367-4af4-4314-a70d-521a9e0a07e9",
+      "request_id": "d429fd9c-c8e4-4f6b-bdba-7c3a9c39973d",
+      "quote_id": "7ffd6b4c-65e5-41f4-badb-1eeb9c54fc34",
+      "permit_id": "d525f313-5c54-48b4-ac81-888f829ab0e2",
+      "quote_max_minor": 3,
+      "expected": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "latency_ms": 1272,
+      "source": "MODEL",
+      "status": "CANDIDATE",
+      "reason": "MODEL_CANDIDATE",
+      "upstream_status": null,
+      "raw": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "guarded": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "raw_matches_expected": true,
+      "guarded_matches_expected": true,
+      "provider_model": "deepseek-flash",
+      "external_request_id": "cc87134a-983c-47a4-b0bd-8b168e0c7bf0",
+      "response_hash": "73d6c755f079c054e749c52f3a143783db027a2662bf580c76e55309be56b914",
+      "usage_state": "KNOWN",
+      "tokens_in": 665,
+      "tokens_out": 40,
+      "cost_state": "UNKNOWN",
+      "cost_minor": null,
+      "interpretation_id": "22d26595-1a5c-4e51-ba1c-7a4c46a8f4a2",
+      "interpretation_source": "MODEL_GUARDED"
+    },
+    {
+      "case_id": "CP-020",
+      "call_id": "b0481c50-c466-494c-9fad-ab502a9dc422",
+      "request_id": "3b99e0ec-9409-41b6-9c8d-e144fc7555f1",
+      "quote_id": "34862d5b-174a-4914-9eef-8baca54db3f3",
+      "permit_id": "47cffdd1-bcaf-439d-be20-8525244b41d9",
+      "quote_max_minor": 3,
+      "expected": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "latency_ms": 1204,
+      "source": "MODEL",
+      "status": "CANDIDATE",
+      "reason": "MODEL_CANDIDATE",
+      "upstream_status": null,
+      "raw": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "guarded": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "raw_matches_expected": true,
+      "guarded_matches_expected": true,
+      "provider_model": "deepseek-flash",
+      "external_request_id": "ea815f73-7ef1-4648-9df7-765bd0993fd9",
+      "response_hash": "8d79e885ca5f2a954e0f31d9453558d515342f56d086a468b30c80cedc7469eb",
+      "usage_state": "KNOWN",
+      "tokens_in": 671,
+      "tokens_out": 37,
+      "cost_state": "UNKNOWN",
+      "cost_minor": null,
+      "interpretation_id": "ec3fe3f3-a916-441b-a4c9-e5d620ca27ee",
+      "interpretation_source": "MODEL_GUARDED"
+    },
+    {
+      "case_id": "CP-021",
+      "call_id": "daac778a-5f59-42cc-8048-3321001975e2",
+      "request_id": "856448d4-4f14-40d9-822f-69101db4eb42",
+      "quote_id": "84376370-5b22-478d-91c1-f475c9600045",
+      "permit_id": "3d3b35c5-238c-46e7-84e4-6ea31c4e2b25",
+      "quote_max_minor": 3,
+      "expected": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "latency_ms": 1015,
+      "source": "MODEL",
+      "status": "CANDIDATE",
+      "reason": "MODEL_CANDIDATE",
+      "upstream_status": null,
+      "raw": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "guarded": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "raw_matches_expected": true,
+      "guarded_matches_expected": true,
+      "provider_model": "deepseek-flash",
+      "external_request_id": "ac26432b-1a9e-4cc2-b3f2-3be93170a5d4",
+      "response_hash": "62f64cb0bb6923d605ae7db76442b251b2f71ab9140c57427efcb6c0a8841bf9",
+      "usage_state": "KNOWN",
+      "tokens_in": 666,
+      "tokens_out": 39,
+      "cost_state": "UNKNOWN",
+      "cost_minor": null,
+      "interpretation_id": "234a39db-b04b-434a-8a1d-1695b7a9177d",
+      "interpretation_source": "MODEL_GUARDED"
+    },
+    {
+      "case_id": "CP-022",
+      "call_id": "7eb2eeb6-c7c2-4263-b91e-bafcf3b591ad",
+      "request_id": "396dfb47-fa8e-48dd-99d0-fb99b91bd59b",
+      "quote_id": "002213af-fd1a-482d-bcf7-7403df9eea1d",
+      "permit_id": "845d947e-31ae-48e6-85ea-269c54318928",
+      "quote_max_minor": 3,
+      "expected": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "latency_ms": 855,
+      "source": "MODEL",
+      "status": "CANDIDATE",
+      "reason": "MODEL_CANDIDATE",
+      "upstream_status": null,
+      "raw": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "guarded": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "raw_matches_expected": true,
+      "guarded_matches_expected": true,
+      "provider_model": "deepseek-flash",
+      "external_request_id": "954c2587-3d26-4a2e-87e9-e948bcfcc1a1",
+      "response_hash": "8ff7b0d5207bfd7024ca061ad1edbb5c5cdc473471cf647961de77527c6b9156",
+      "usage_state": "KNOWN",
+      "tokens_in": 668,
+      "tokens_out": 43,
+      "cost_state": "UNKNOWN",
+      "cost_minor": null,
+      "interpretation_id": "9b54b6a5-930b-4d29-a9a0-4c76e66ffef5",
+      "interpretation_source": "MODEL_GUARDED"
+    },
+    {
+      "case_id": "CP-023",
+      "call_id": "5000b2cd-87ad-4fff-950a-849add03e7c9",
+      "request_id": "27d92edb-91d9-4b8d-a72a-67fd5fb54751",
+      "quote_id": "d4b6d71e-8dfc-4fdd-bf12-01b195ac667d",
+      "permit_id": "b1027487-8855-485c-af69-b4dcdb2b02ac",
+      "quote_max_minor": 3,
+      "expected": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "latency_ms": 1314,
+      "source": "MODEL",
+      "status": "CANDIDATE",
+      "reason": "MODEL_CANDIDATE",
+      "upstream_status": null,
+      "raw": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "guarded": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "raw_matches_expected": true,
+      "guarded_matches_expected": true,
+      "provider_model": "deepseek-flash",
+      "external_request_id": "6f194938-e12b-412b-ae7a-585cf93d976d",
+      "response_hash": "245952547cdc34bc9e3dda31702dac430906a9fc225a64befe247122688e3eea",
+      "usage_state": "KNOWN",
+      "tokens_in": 617,
+      "tokens_out": 25,
+      "cost_state": "UNKNOWN",
+      "cost_minor": null,
+      "interpretation_id": "43d7894c-a637-4837-9337-f65cfe0a2714",
+      "interpretation_source": "MODEL_GUARDED"
+    },
+    {
+      "case_id": "CP-024",
+      "call_id": "e5157ec8-7d80-43e3-a17e-33ef89b56566",
+      "request_id": "0fa8a655-e909-4751-b424-ef114737ce6b",
+      "quote_id": "c533eeb5-b74e-4b5a-ba72-e78b6e9a5dac",
+      "permit_id": "07d3f935-c86d-4cde-a3ae-c882400a78ff",
+      "quote_max_minor": 3,
+      "expected": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "latency_ms": 1432,
+      "source": "MODEL",
+      "status": "CANDIDATE",
+      "reason": "MODEL_CANDIDATE",
+      "upstream_status": null,
+      "raw": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "guarded": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "raw_matches_expected": true,
+      "guarded_matches_expected": true,
+      "provider_model": "deepseek-flash",
+      "external_request_id": "658bf210-c9ce-4704-8e76-5ba805d1c9d4",
+      "response_hash": "a0a3dd890b55a6dad5382e844121fc61999373ab1ce273879604001b814aeb6c",
+      "usage_state": "KNOWN",
+      "tokens_in": 564,
+      "tokens_out": 33,
+      "cost_state": "UNKNOWN",
+      "cost_minor": null,
+      "interpretation_id": "7ece03eb-52fe-4a08-8806-c4f8b28a8317",
+      "interpretation_source": "MODEL_GUARDED"
+    },
+    {
+      "case_id": "CP-025",
+      "call_id": "38cc0fc8-67b5-44f8-8ef3-b082ce9e2f8b",
+      "request_id": "7418430c-0ebc-499a-936b-b5e4d8e78e0a",
+      "quote_id": "46682d6b-268d-46f8-ac9a-0540bb850351",
+      "permit_id": "42283b03-19ac-4ba5-82e2-0ba5ce398940",
+      "quote_max_minor": 3,
+      "expected": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "latency_ms": 906,
+      "source": "MODEL",
+      "status": "CANDIDATE",
+      "reason": "MODEL_CANDIDATE",
+      "upstream_status": null,
+      "raw": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "guarded": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "raw_matches_expected": true,
+      "guarded_matches_expected": true,
+      "provider_model": "deepseek-flash",
+      "external_request_id": "e1010bfc-37d0-4a6c-9c2d-28f83f9492a5",
+      "response_hash": "275dfabf82a8f8673af8c74826eb1d8f9dcf4ef357d8ac13ce528f0f95f58874",
+      "usage_state": "KNOWN",
+      "tokens_in": 665,
+      "tokens_out": 26,
+      "cost_state": "UNKNOWN",
+      "cost_minor": null,
+      "interpretation_id": "71156fdb-c4be-43f1-b093-228cede0b211",
+      "interpretation_source": "MODEL_GUARDED"
+    },
+    {
+      "case_id": "CP-026",
+      "call_id": "723c7abd-e75a-46c4-8f14-de18feb1bfa6",
+      "request_id": "458ce5c5-db8e-4d2d-b876-7356a47f5ea3",
+      "quote_id": "cddd61dc-a0bf-434c-a517-158542514f22",
+      "permit_id": "4db2a816-e109-4ff8-98ff-98e4eb12ed62",
+      "quote_max_minor": 3,
+      "expected": {
+        "kind": "ACTION",
+        "action_type": "CHANGE_BID",
+        "new_value": {
+          "kind": "MONEY",
+          "currency": "CNY",
+          "amount_minor": 500025
+        },
+        "target_type": "AD_PLAN",
+        "candidate_ids": [
+          "00000000-0000-4000-8000-000000000101"
+        ]
+      },
+      "latency_ms": 1374,
+      "source": "MODEL",
+      "status": "CANDIDATE",
+      "reason": "MODEL_CANDIDATE",
+      "upstream_status": null,
+      "raw": {
+        "kind": "ACTION",
+        "action_type": "CHANGE_BID",
+        "new_value": {
+          "kind": "MONEY",
+          "currency": "CNY",
+          "amount_minor": 500025
+        },
+        "target_type": "AD_PLAN",
+        "candidate_ids": [
+          "00000000-0000-4000-8000-000000000101",
+          "00000000-0000-4000-8000-000000000102"
+        ]
+      },
+      "guarded": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "raw_matches_expected": false,
+      "guarded_matches_expected": false,
+      "provider_model": "deepseek-flash",
+      "external_request_id": "e5ddb255-bbb6-4fa8-bd0c-de22bee0cd00",
+      "response_hash": "60c693ac02a678a0273aad70f154b315ee18317685de41b749f00f0385b9b0d8",
+      "usage_state": "KNOWN",
+      "tokens_in": 669,
+      "tokens_out": 115,
+      "cost_state": "UNKNOWN",
+      "cost_minor": null,
+      "interpretation_id": "a7e31c93-09af-40e4-93ae-e18af9003adb",
+      "interpretation_source": "MODEL_GUARDED"
+    },
+    {
+      "case_id": "CP-027",
+      "call_id": "72050dd5-69af-4ef4-8c4d-1234036bfaab",
+      "request_id": "f0a4dd1e-cef6-4a2a-873c-b1b66fe5ad39",
+      "quote_id": "ebeabceb-7259-46b4-a895-121ed2476da8",
+      "permit_id": "1c0ebc54-af59-40ed-b3d9-eb8de7a82794",
+      "quote_max_minor": 3,
+      "expected": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "latency_ms": 1089,
+      "source": "MODEL",
+      "status": "CANDIDATE",
+      "reason": "MODEL_CANDIDATE",
+      "upstream_status": null,
+      "raw": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "guarded": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "raw_matches_expected": true,
+      "guarded_matches_expected": true,
+      "provider_model": "deepseek-flash",
+      "external_request_id": "547b75a7-9994-4c51-8b41-918f8ab8a89f",
+      "response_hash": "75a35e5175efe699773604086882d2745e06d976d00a2518ec3da739c3fe353f",
+      "usage_state": "KNOWN",
+      "tokens_in": 665,
+      "tokens_out": 37,
+      "cost_state": "UNKNOWN",
+      "cost_minor": null,
+      "interpretation_id": "f901ee83-a9e2-4bf2-aa08-8e4039e30292",
+      "interpretation_source": "MODEL_GUARDED"
+    },
+    {
+      "case_id": "CP-028",
+      "call_id": "44f236a9-8bbe-45ba-a447-3c543233fd28",
+      "request_id": "0c7c70f8-bed4-4918-8c47-95774ff3714c",
+      "quote_id": "58174f60-d8f3-4754-8741-8e6dcf68959e",
+      "permit_id": "a20bf6d5-d3d3-4267-9f50-da282c8b1e74",
+      "quote_max_minor": 3,
+      "expected": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "latency_ms": 1130,
+      "source": "MODEL",
+      "status": "CANDIDATE",
+      "reason": "MODEL_CANDIDATE",
+      "upstream_status": null,
+      "raw": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "guarded": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "raw_matches_expected": true,
+      "guarded_matches_expected": true,
+      "provider_model": "deepseek-flash",
+      "external_request_id": "c882b2c8-e7ac-4c8c-ade0-008edb3324d7",
+      "response_hash": "16428d703a5c12b050f83bd2ca1a9cb55ebfa1465201d5b67991208e094eee7e",
+      "usage_state": "KNOWN",
+      "tokens_in": 665,
+      "tokens_out": 37,
+      "cost_state": "UNKNOWN",
+      "cost_minor": null,
+      "interpretation_id": "eb542cd2-b14d-4aaa-9536-a336f0502afc",
+      "interpretation_source": "MODEL_GUARDED"
+    }
+  ],
+  "result": "FAIL_GUARDED_SEMANTICS",
+  "platform_write_calls": 0,
+  "actual_bill_reconciled": false,
+  "started_calls": 28,
+  "reserved_minor": 84,
+  "raw_failed_ids": [
+    "CP-004",
+    "CP-008",
+    "CP-026"
+  ],
+  "guarded_failed_ids": [
+    "CP-004",
+    "CP-008",
+    "CP-026"
+  ],
+  "raw_matched": 25,
+  "guarded_matched": 25
+}

@@ -1,0 +1,366 @@
+{
+  "result": "PASS",
+  "cases": 28,
+  "matched": 28,
+  "external_calls": 0,
+  "source": "initial 28 actual response semantics; corrected deterministic resolver",
+  "requests": [
+    {
+      "case_id": "CP-001",
+      "call_id": "664ddcbb-930c-4ad9-8d2e-ce9a59ae7040",
+      "raw_matches_expected": true,
+      "guarded": {
+        "kind": "ACTION",
+        "action_type": "CHANGE_DAILY_BUDGET",
+        "new_value": {
+          "kind": "MONEY",
+          "currency": "CNY",
+          "amount_minor": 500000
+        },
+        "target_type": "AD_PLAN",
+        "candidate_ids": [
+          "00000000-0000-4000-8000-000000000101"
+        ]
+      },
+      "guarded_matches_expected": true
+    },
+    {
+      "case_id": "CP-002",
+      "call_id": "02176ac8-4fd6-4be3-8fad-be2ec90b3bf8",
+      "raw_matches_expected": true,
+      "guarded": {
+        "kind": "ACTION",
+        "action_type": "CHANGE_BID",
+        "new_value": {
+          "kind": "MONEY",
+          "currency": "CNY",
+          "amount_minor": 320
+        },
+        "target_type": "AD_PLAN",
+        "candidate_ids": [
+          "00000000-0000-4000-8000-000000000101"
+        ]
+      },
+      "guarded_matches_expected": true
+    },
+    {
+      "case_id": "CP-003",
+      "call_id": "afaee3c2-2154-4f26-89b5-ad00cfe17ee6",
+      "raw_matches_expected": true,
+      "guarded": {
+        "kind": "ACTION",
+        "action_type": "SET_ROI_TARGET",
+        "new_value": {
+          "kind": "RATIO",
+          "value": 6.2
+        },
+        "target_type": "AD_PLAN",
+        "candidate_ids": [
+          "00000000-0000-4000-8000-000000000101"
+        ]
+      },
+      "guarded_matches_expected": true
+    },
+    {
+      "case_id": "CP-004",
+      "call_id": "9b9509ac-6b09-4c8a-936b-0ede07de9b53",
+      "raw_matches_expected": false,
+      "guarded": {
+        "kind": "ACTION",
+        "action_type": "PAUSE_AD_PLAN",
+        "new_value": {
+          "kind": "BOOLEAN",
+          "value": false
+        },
+        "target_type": "AD_PLAN",
+        "candidate_ids": [
+          "00000000-0000-4000-8000-000000000101"
+        ]
+      },
+      "guarded_matches_expected": true
+    },
+    {
+      "case_id": "CP-005",
+      "call_id": "3367788b-1061-424d-a45e-f00765217bb6",
+      "raw_matches_expected": true,
+      "guarded": {
+        "kind": "ACTION",
+        "action_type": "RESUME_AD_PLAN",
+        "new_value": {
+          "kind": "BOOLEAN",
+          "value": true
+        },
+        "target_type": "AD_PLAN",
+        "candidate_ids": [
+          "00000000-0000-4000-8000-000000000101"
+        ]
+      },
+      "guarded_matches_expected": true
+    },
+    {
+      "case_id": "CP-006",
+      "call_id": "7c6c58c9-8d8f-4576-ad02-eceeebf83524",
+      "raw_matches_expected": true,
+      "guarded": {
+        "kind": "ACTION",
+        "action_type": "REQUEST_LIVE_START",
+        "new_value": {
+          "kind": "HANDOFF",
+          "value": "START"
+        },
+        "target_type": "LIVE_SESSION",
+        "candidate_ids": [
+          "00000000-0000-4000-8000-000000000201"
+        ]
+      },
+      "guarded_matches_expected": true
+    },
+    {
+      "case_id": "CP-007",
+      "call_id": "6e3d5a89-9238-44ee-bee5-a30cdcc22a1b",
+      "raw_matches_expected": true,
+      "guarded": {
+        "kind": "ACTION",
+        "action_type": "REQUEST_LIVE_END",
+        "new_value": {
+          "kind": "HANDOFF",
+          "value": "END"
+        },
+        "target_type": "LIVE_SESSION",
+        "candidate_ids": [
+          "00000000-0000-4000-8000-000000000201"
+        ]
+      },
+      "guarded_matches_expected": true
+    },
+    {
+      "case_id": "CP-008",
+      "call_id": "94deb469-8200-4ca1-b7c4-b2d4c030756d",
+      "raw_matches_expected": false,
+      "guarded": {
+        "kind": "QUERY",
+        "candidate_ids": [],
+        "live_session_id": "00000000-0000-4000-8000-000000000201"
+      },
+      "guarded_matches_expected": true
+    },
+    {
+      "case_id": "CP-009",
+      "call_id": "d2118f0d-747b-46e6-aaaf-e71382adecf1",
+      "raw_matches_expected": true,
+      "guarded": {
+        "kind": "ACTION",
+        "action_type": "PAUSE_AD_PLAN",
+        "new_value": {
+          "kind": "BOOLEAN",
+          "value": false
+        },
+        "target_type": "AD_PLAN",
+        "candidate_ids": [
+          "00000000-0000-4000-8000-000000000101",
+          "00000000-0000-4000-8000-000000000102"
+        ]
+      },
+      "guarded_matches_expected": true
+    },
+    {
+      "case_id": "CP-010",
+      "call_id": "142d3376-b9e0-4f7f-b396-3a50cbb3cbad",
+      "raw_matches_expected": true,
+      "guarded": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "guarded_matches_expected": true
+    },
+    {
+      "case_id": "CP-011",
+      "call_id": "03a560e0-5ffd-4fa9-8e87-b4529dd007c2",
+      "raw_matches_expected": true,
+      "guarded": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "guarded_matches_expected": true
+    },
+    {
+      "case_id": "CP-012",
+      "call_id": "842b9b18-cdcf-41ce-9cb5-a1c27ce0a09a",
+      "raw_matches_expected": true,
+      "guarded": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "guarded_matches_expected": true
+    },
+    {
+      "case_id": "CP-013",
+      "call_id": "dc7a532b-bbd3-412b-b7ae-3c80a0223e48",
+      "raw_matches_expected": true,
+      "guarded": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "guarded_matches_expected": true
+    },
+    {
+      "case_id": "CP-014",
+      "call_id": "a6369608-6454-4a9c-b366-d2892dbd7909",
+      "raw_matches_expected": true,
+      "guarded": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "guarded_matches_expected": true
+    },
+    {
+      "case_id": "CP-015",
+      "call_id": "a065f22c-0126-4038-abd9-96d958da7c73",
+      "raw_matches_expected": true,
+      "guarded": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "guarded_matches_expected": true
+    },
+    {
+      "case_id": "CP-016",
+      "call_id": "5f96189a-23e0-44b3-8031-897ef36523f0",
+      "raw_matches_expected": true,
+      "guarded": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "guarded_matches_expected": true
+    },
+    {
+      "case_id": "CP-017",
+      "call_id": "b95fb095-2dc4-4ee0-ba60-d23fcced9e2a",
+      "raw_matches_expected": true,
+      "guarded": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "guarded_matches_expected": true
+    },
+    {
+      "case_id": "CP-018",
+      "call_id": "e6d10f48-a782-43e1-a95b-fd155704671a",
+      "raw_matches_expected": true,
+      "guarded": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "guarded_matches_expected": true
+    },
+    {
+      "case_id": "CP-019",
+      "call_id": "339d9367-4af4-4314-a70d-521a9e0a07e9",
+      "raw_matches_expected": true,
+      "guarded": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "guarded_matches_expected": true
+    },
+    {
+      "case_id": "CP-020",
+      "call_id": "b0481c50-c466-494c-9fad-ab502a9dc422",
+      "raw_matches_expected": true,
+      "guarded": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "guarded_matches_expected": true
+    },
+    {
+      "case_id": "CP-021",
+      "call_id": "daac778a-5f59-42cc-8048-3321001975e2",
+      "raw_matches_expected": true,
+      "guarded": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "guarded_matches_expected": true
+    },
+    {
+      "case_id": "CP-022",
+      "call_id": "7eb2eeb6-c7c2-4263-b91e-bafcf3b591ad",
+      "raw_matches_expected": true,
+      "guarded": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "guarded_matches_expected": true
+    },
+    {
+      "case_id": "CP-023",
+      "call_id": "5000b2cd-87ad-4fff-950a-849add03e7c9",
+      "raw_matches_expected": true,
+      "guarded": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "guarded_matches_expected": true
+    },
+    {
+      "case_id": "CP-024",
+      "call_id": "e5157ec8-7d80-43e3-a17e-33ef89b56566",
+      "raw_matches_expected": true,
+      "guarded": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "guarded_matches_expected": true
+    },
+    {
+      "case_id": "CP-025",
+      "call_id": "38cc0fc8-67b5-44f8-8ef3-b082ce9e2f8b",
+      "raw_matches_expected": true,
+      "guarded": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "guarded_matches_expected": true
+    },
+    {
+      "case_id": "CP-026",
+      "call_id": "723c7abd-e75a-46c4-8f14-de18feb1bfa6",
+      "raw_matches_expected": false,
+      "guarded": {
+        "kind": "ACTION",
+        "action_type": "CHANGE_BID",
+        "new_value": {
+          "kind": "MONEY",
+          "currency": "CNY",
+          "amount_minor": 500025
+        },
+        "target_type": "AD_PLAN",
+        "candidate_ids": [
+          "00000000-0000-4000-8000-000000000101"
+        ]
+      },
+      "guarded_matches_expected": true
+    },
+    {
+      "case_id": "CP-027",
+      "call_id": "72050dd5-69af-4ef4-8c4d-1234036bfaab",
+      "raw_matches_expected": true,
+      "guarded": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "guarded_matches_expected": true
+    },
+    {
+      "case_id": "CP-028",
+      "call_id": "44f236a9-8bbe-45ba-a447-3c543233fd28",
+      "raw_matches_expected": true,
+      "guarded": {
+        "kind": "UNRECOGNIZED",
+        "candidate_ids": []
+      },
+      "guarded_matches_expected": true
+    }
+  ]
+}

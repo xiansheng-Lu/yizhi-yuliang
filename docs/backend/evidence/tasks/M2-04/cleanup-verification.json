@@ -1,0 +1,8 @@
+{
+  "result": "PASS",
+  "temporary_databases_remaining": 0,
+  "app_migrate_can_login": false,
+  "calls_started": 31,
+  "reserved_minor": 93,
+  "actual_bill_reconciled": false
+}

@@ -1,0 +1,12 @@
+{
+  "initial": {
+    "rules_version_at_execution": "command-rules-v1",
+    "source_sha256_utf8_lf": "7dd9af3edff9ea9c96415368e7711665dac4c5f77af54b9438b7b9c50bca7e70",
+    "baseline": "84cf284"
+  },
+  "corrected_recheck": {
+    "rules_version_at_execution": "command-rules-v1",
+    "source_sha256_utf8_lf": "a60d53b838bb32d92fb80b9ee25f838f444fa7e83c4ac827f5ad5226f5aa6842",
+    "semantic_revision": "M2-04 deterministic object resolution fix; final tag v2 applied after live without logic change"
+  }
+}

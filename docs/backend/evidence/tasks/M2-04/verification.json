@@ -1,0 +1,105 @@
+{
+  "task_id": "M2-04",
+  "date": "2026-10-27T16:36:24.399752+08:00",
+  "baseline": "a604789eef8f8548b12411a1eb5a7b98fcdd8193",
+  "operator": "coding agent",
+  "BE_review": "PENDING",
+  "FE_F06_review": "PENDING",
+  "result": "PASS_BACKEND_COMPOSED_PARSER_PENDING_REVIEW_AND_BROWSER",
+  "commands": [
+    {
+      "command": "uv run ruff check .",
+      "result": "PASS"
+    },
+    {
+      "command": "uv run ruff format --check .",
+      "result": "PASS",
+      "files": 105
+    },
+    {
+      "command": "uv run mypy",
+      "result": "PASS",
+      "sources": 83
+    },
+    {
+      "command": "uv run pytest tests/unit tests/contract -q",
+      "result": "PASS",
+      "passed": 142
+    },
+    {
+      "command": "uv run python scripts/test_infrastructure.py --group parser --details",
+      "result": "PASS",
+      "passed": 75
+    },
+    {
+      "command": "explicit live test, initial 28 case suite",
+      "result": "FAIL_GUARDED_SEMANTICS",
+      "calls": 28,
+      "raw_matched": 25,
+      "guarded_matched": 25,
+      "failed_ids": [
+        "CP-004",
+        "CP-008",
+        "CP-026"
+      ]
+    },
+    {
+      "command": "offline replay of original 28 real response semantics after resolver correction",
+      "result": "PASS",
+      "cases": 28,
+      "matched": 28,
+      "external_calls": 0
+    },
+    {
+      "command": "explicit live test with YULIANG_COMMAND_LIVE_RUN=recheck",
+      "result": "PASS_GUARDED",
+      "calls": 3,
+      "raw_matched": 1,
+      "guarded_matched": 3
+    },
+    {
+      "command": "query temporary database absence and app_migrate NOLOGIN",
+      "result": "PASS",
+      "temporary_databases_remaining": 0
+    }
+  ],
+  "actual_model_calls": 31,
+  "platform_write_calls": 0,
+  "new_command_jobs": 0,
+  "total_tokens_in": 20370,
+  "total_tokens_out": 1697,
+  "max_live_latency_ms": 1432,
+  "reserved_minor": 93,
+  "estimated_cny_at_verified_peak_uncached_price": "0.054316",
+  "actual_bill_reconciled": false,
+  "cost_state": "UNKNOWN",
+  "cost_minor": null,
+  "price_source": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/",
+  "defects": [
+    {
+      "id": "M2-04-RESOLUTION",
+      "status": "CLOSED_BACKEND",
+      "initial_badcase_ids": [
+        "CP-004",
+        "CP-008",
+        "CP-026"
+      ],
+      "resolution": "server resolves authorized model supersets using original statement and authorized directory; genuine ambiguity cannot be reduced by model",
+      "verification": "28 historical actual responses replayed; 3 new real calls after correction"
+    }
+  ],
+  "rules_version": "command-rules-v2",
+  "execution_rule_history": "rule-execution.json",
+  "limitations": [
+    "raw model output is not 100 percent correct",
+    "no real browser F06 verification",
+    "G0 remains blocked",
+    "AD_PLAN production catalog awaits M1",
+    "no production online model enablement"
+  ],
+  "sha256_utf8_lf": {
+    "backend/src/yuliang/modules/command/parser.py": "816d6fccf807037b081fc53b5804f827fe1bbaeba06be296f9cfc5b3c265f566",
+    "backend/tests/unit/test_command_parser.py": "f8132b3325d105b4bb9fb7da6d8b81999a6ec3e531d54101da781521b6875b48",
+    "backend/tests/live/test_command_parse.py": "7d8413e27a5550cb3a76471be1cb528a78124236675dbf41348aa1c6b88609f4"
+  }
+}

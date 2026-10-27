@@ -34,7 +34,10 @@ RLS防漏过滤，不能防持有运行数据库凭据的人任意设置GUC；�
 范围服务要求成员有效、动作权限、店铺范围、账户范围及实际关联同时成立；两个对象均须有授权，不接受客户端声明权限。
 普通角色不能直接修改成员/角色/范围；M0-13受控管理函数执行事务内校验与追加审计，表ACL只开放读取。
 auth.check_csrf(text,text)是新增的内部最小布尔守卫，只精确授权app_auth；不扩展resolve_session的输出，也不返回CSRF摘要。
-auth_fn_owner当前只获密码/会话所需7张表的最小权限，未预授邮件表权限；本人资料更新由受限access函数完成，不扩大users的认证角色写权。
+auth_fn_owner先前仅获密码/会话所需7张表权限；0011按需增加email_codes的SELECT/INSERT及限定列UPDATE，运行角色仍不能直读邮件码。本人资料更新由受限access函数完成，不扩大users的认证角色写权。
 
 OWNER初始模板不默认给可配置的投放写权限；OPERATOR含内容写，AGENCY_OPERATOR无默认审批/连接管理，PLATFORM_ADMIN仅admin.access。
 工作台页面从权限推导，不能用页面授权代替动作和范围检查。M0-13的成员/范围变更经独立受控函数执行，普通表ACL仍只读。
+
+0011实现auth.issue_challenge/email_session及内部email_delivery布尔守卫，声明与授权同一事务。服务端预分配challengeId经本事务GUC传入，以便在数据库外计算独立pepper的HMAC；HTTP不接受GUC或摘要参数。
+邮件函数统一按预认证行→邮件码行加锁，成功消费与会话插入原子提交。无成员候选时，在邮件摘要验证后从该邮箱真实活跃成员中选择，不能由客户端任意user/tenant创建会话。

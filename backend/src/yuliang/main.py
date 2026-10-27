@@ -12,6 +12,7 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse
 
 from yuliang.api.operations import router as operations_router
+from yuliang.infrastructure.mail import MailSender
 from yuliang.platform.envelope import success
 from yuliang.platform.errors import (
     ApiError,
@@ -25,7 +26,7 @@ from yuliang.platform.probes import ProbeService
 from yuliang.settings import Settings
 
 
-def create_app(settings: Settings | None = None) -> FastAPI:
+def create_app(settings: Settings | None = None, mail_sender: MailSender | None = None) -> FastAPI:
     if settings is None:
         try:
             settings = Settings()
@@ -40,7 +41,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         if app.state.settings.identity_api_enabled:
             from yuliang.modules.identity.service import IdentityService
 
-            app.state.identity_service = IdentityService(app.state.settings)
+            app.state.identity_service = IdentityService(
+                app.state.settings, mail_sender=mail_sender
+            )
         try:
             yield
         finally:

@@ -26,6 +26,9 @@ class Settings(BaseSettings):
     allowed_origins: list[str] = Field(default_factory=list)
     identity_api_enabled: bool = False
     auth_audit_secret: SecretStr | None = None
+    email_login_enabled: bool = False
+    email_code_secret: SecretStr | None = None
+    email_daily_limit: int = Field(default=10, ge=1, le=100)
     admin_api_enabled: bool = False
     admin_allowed_networks: list[str] = Field(default_factory=lambda: ["127.0.0.1/32", "::1/128"])
     worker_queue_prefix: str = Field(default="yuliang", pattern=r"^[a-z0-9][a-z0-9-]{0,63}$")
@@ -46,6 +49,13 @@ class Settings(BaseSettings):
                 raise ValueError("开放身份接口需要独立的至少32字符认证审计密钥")
             if self.auth_audit_secret == self.session_secret or not self.allowed_origins:
                 raise ValueError("认证审计密钥需独立且需要精确来源白名单")
+        if self.email_login_enabled:
+            if not self.identity_api_enabled or not self.email_code_secret:
+                raise ValueError("邮件登录需要身份接口与独立邮件验证码密钥")
+            if len(self.email_code_secret.get_secret_value()) < 32:
+                raise ValueError("邮件验证码密钥至少32字符")
+            if self.email_code_secret in (self.session_secret, self.auth_audit_secret):
+                raise ValueError("邮件验证码密钥须独立于会话与审计密钥")
         return self
 
     @field_validator("session_secret")

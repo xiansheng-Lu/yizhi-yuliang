@@ -83,7 +83,7 @@ F01尚未完成浏览器联合接线，因此IDENTITY_API_ENABLED默认false。
 ADMIN_API_ENABLED另行默认false，只有实际内部PLATFORM_ADMIN成员可读/internal/admin/directory；OWNER不会隐式取得权限。
 管理入口默认仅回环网段，最多投影100条用户/租户，排除哈希/令牌并追加读取审计；不提供业务数据通用查询或资金写接口。
 默认启动关闭代理头解析，反代部署需另行确认可信代理范围，不能用客户端X-Forwarded-For作为来源许可依据。
-邮箱验证码M0-10需要实际SMTP/邮件服务和收件地址，目前未接入，密码流程不能冒充邮件投递已验收。
+邮箱验证码由独立EMAIL_LOGIN_ENABLED控制，默认关闭；已实现真实SMTP与一次性消费，F01/F02浏览器联合接线仍单列。
 
 ## Worker与Beat
 
@@ -164,3 +164,12 @@ ModelGateway是场景统一端口；当前UnavailableGateway明确返回RULES/UN
 当前解释明确UNRECOGNIZED并说明能力未接入；不伪造模型输出或平台数据。只有已持久ACTION助手消息能关联本人有范围权限的真实任务标识，归类操作不改变任务状态。
 command_jobs本卡只建立DRAFT任务标识、所有权与对象FK底座，运行账号不能写入；完整申请/风险/审批/执行字段及任务创建接口归M2-05a/b。关联测试中的ACTION和DRAFT记录为迁移身份夹具，不代表解析或执行通过。
 身份接口仍默认关闭；F01/F06真实浏览器接线和最终联合验收继续单列。
+
+## 邮箱验证码
+
+配置deployment/.env.smtp.local（参考.env.smtp.example），仅支持证书校验开启的SSL或STARTTLS；凭据保持SecretStr，不输出供应商原始异常。另设至少32字符且独立于会话/审计密钥的EMAIL_CODE_SECRET，只有身份与邮件开关均开启才加载发送器。
+先GET /v1/auth/csrf取得预认证Cookie和令牌，再POST /v1/auth/email-codes，email+purpose=LOGIN返回challengeId、expiresAt和重发间隔；登录method=email_code，携带相同预认证上下文、challengeId和6位code。
+邮件码5分钟有效、最多5次尝试，HMAC-SHA256绑定challengeId|LOGIN|code，只存摘要；重发使旧码失效。失败次数先提交，成功消费和建会话同事务，插入失败整体回滚，并发只有一次成功。
+邮箱/IP摘要上的重发间隔均为滑动60秒，验证5次/5分钟，EMAIL_DAILY_LIMIT控制UTC日发送上限（默认10）；429带Retry-After。未知系统邮箱走相同挑战流程，不自动注册或新增租户，登录失败使用统一文案。
+SMTP在数据库事务外执行；服务商接受只记ACCEPTED，故障返回502并使挑战不可用，不能把接受状态等同实际收件。真实收件通过用户提供邮件中的验证码完成独立验收，证据仅存挑战/请求ID和结果。
+CI邮件发送为捕获端口夹具，不会读取本地SMTP凭据或向外发信；实际SMTP/收件结果单独归档。默认不开启身份/邮箱接口，不因资源到位跳过F01/F02及具名复核。

@@ -1238,7 +1238,7 @@
         "F01_BROWSER",
         "E08"
       ],
-      "note": "前端CSRF代码/自动验证通过；真实浏览器API18000访问受策略阻塞，认证闭环及人工复核仍缺，未放行"
+      "note": "Chrome真实认证与资料写闭环通过；F01剩余场景及人工联合复核仍缺，保持未放行"
     }
   },
   "blockers": [
@@ -1279,13 +1279,13 @@
     {
       "id": "F01_BROWSER",
       "status": "OPEN",
-      "reason": "前端CSRF接线/并发/认证边界已实现，210项自动测试与build通过；真实浏览器3000登录页可渲染，但API18000被保存权限/受管策略拒绝，登录写入退出闭环未执行",
+      "reason": "Chrome真实登录/资料写入/刷新/退出通过；缺失伪造CSRF浏览器负例、项目写入、剩余身份与核验尺寸证据待补，BE/FE复核未完成",
       "affects": [
         "M0-11b第三条DoD",
         "身份接口正式开放",
         "G0联合验收"
       ],
-      "unblock": "浏览器实际允许18000后补真实登录/CSRF/写入/退出及适用PC/手机证据，不以fetch桩替代"
+      "unblock": "完成F01剩余适用浏览器场景及BE/FE具名复核；访问阻塞已解除"
     },
     {
       "id": "GIT_NETWORK",
@@ -1309,15 +1309,10 @@
     },
     {
       "id": "BROWSER_LOCAL_API_ACCESS",
-      "status": "OPEN",
-      "reason": "用户已批准并报告修改站点权限，Browser工具仍拒绝127.0.0.1:18000，不能绕过",
-      "affects": [
-        "F01真实浏览器认证闭环",
-        "M0-11b DoD3",
-        "G0",
-        "M1-01后续领取"
-      ],
-      "unblock": "由实际站点设置/受管策略解除18000浏览器访问拒绝后复验"
+      "status": "RESOLVED",
+      "reason": "用户明确选择当前Chrome扩展联调；已实际访问18000并完成密码/邮箱码登录、资料写入、刷新与退出。原内置浏览器权限问题未修复。",
+      "affects": [],
+      "unblock": "Chrome联调路径已可用；证据docs/frontend/acceptance/evidence/browser-access-recovery/verification.json"
     }
   ],
   "rules": {
@@ -1329,10 +1324,9 @@
     "id": "M1-01",
     "status": "BLOCKED",
     "blockedBy": [
-      "G0",
-      "BROWSER_LOCAL_API_ACCESS"
+      "G0"
     ],
-    "note": "按用户要求先完成前端真实浏览器验证再继续后端；当前只读整理下一卡输入，未绕过G0领取实现"
+    "note": "浏览器访问已通过用户指定Chrome恢复；G0尚未通过，M1-01仍未领取"
   },
   "continuation": {
     "requestedOn": "2026-10-27",
@@ -1344,8 +1338,8 @@
     "F01": {
       "owner": "FE",
       "status": "BLOCKED",
-      "implementation": "CSRF transport and identity snapshot fencing implemented; 210 automated tests passed",
-      "browser": "FRONTEND_RENDER_PASS_AUTH_BLOCKED_SAVED_OR_MANAGED_POLICY",
+      "implementation": "native browser fetch receiver fixed; 211 automated tests, typecheck, lint, build passed",
+      "browser": "CHROME_CONNECTIVITY_PASSWORD_EMAIL_PROFILE_REFRESH_LOGOUT_PASS_REMAINING_SCENARIOS_PENDING",
       "latestPermissionDiagnosis": {
         "checkedAt": "2026-10-27T18:58:58+08:00",
         "desktopBundledCli": "0.164.0-alpha.11.1",
@@ -1365,9 +1359,13 @@
         "evidence": "docs/frontend/acceptance/evidence/f01-csrf/browser-policy.json"
       },
       "blockedBy": [
-        "BROWSER_LOCAL_API_ACCESS"
+        "F01_BROWSER"
       ],
-      "evidence": "docs/frontend/acceptance/F01-CSRF接线与浏览器验证.md"
+      "evidence": "docs/frontend/acceptance/F01-CSRF接线与浏览器验证.md",
+      "latestAccessRecovery": {
+        "evidence": "docs/frontend/acceptance/evidence/browser-access-recovery/verification.json",
+        "result": "PASS_BROWSER_CONNECTIVITY_AND_AUTH_SMOKE"
+      }
     }
   }
 }

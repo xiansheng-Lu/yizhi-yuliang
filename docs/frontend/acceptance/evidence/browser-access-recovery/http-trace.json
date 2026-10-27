@@ -1,0 +1,274 @@
+[
+  {
+    "method": "GET",
+    "path": "/healthz",
+    "origin": null,
+    "status": 200,
+    "csrf_header_present": false,
+    "request_id": "eb06f5c09e3f4e1e9dbaf9b424e4b9a3"
+  },
+  {
+    "method": "GET",
+    "path": "/readyz",
+    "origin": null,
+    "status": 200,
+    "csrf_header_present": false,
+    "request_id": "22dfa0c742ce4769b35a94364aac1dba"
+  },
+  {
+    "method": "GET",
+    "path": "/healthz",
+    "origin": null,
+    "status": 200,
+    "csrf_header_present": false,
+    "request_id": "2b58d4ecb459403f9f9f87e9b1db794b"
+  },
+  {
+    "method": "GET",
+    "path": "/v1/auth/session",
+    "origin": "http://127.0.0.1:3000",
+    "status": 200,
+    "csrf_header_present": false,
+    "request_id": "e3c63bb3947546acb946d70a94465f48"
+  },
+  {
+    "method": "GET",
+    "path": "/v1/auth/session",
+    "origin": null,
+    "status": 403,
+    "csrf_header_present": false,
+    "request_id": "32c03adc203e4b63bd11fb4f796d9cbc"
+  },
+  {
+    "method": "GET",
+    "path": "/v1/auth/session",
+    "origin": "http://127.0.0.1:3000",
+    "status": 200,
+    "csrf_header_present": false,
+    "request_id": "36671fb345c0474fb7cee8ac96578f29"
+  },
+  {
+    "method": "GET",
+    "path": "/v1/auth/csrf",
+    "origin": "http://127.0.0.1:3000",
+    "status": 200,
+    "csrf_header_present": false,
+    "request_id": "88bda4568063428cb7a47f91ece81467"
+  },
+  {
+    "method": "OPTIONS",
+    "path": "/v1/auth/login",
+    "origin": "http://127.0.0.1:3000",
+    "status": 200,
+    "csrf_header_present": false,
+    "request_id": null
+  },
+  {
+    "method": "POST",
+    "path": "/v1/auth/login",
+    "origin": "http://127.0.0.1:3000",
+    "status": 200,
+    "csrf_header_present": true,
+    "request_id": "838a01e002fa47b88385d89c2d931ffd"
+  },
+  {
+    "method": "GET",
+    "path": "/v1/auth/session",
+    "origin": "http://127.0.0.1:3000",
+    "status": 200,
+    "csrf_header_present": false,
+    "request_id": "cab66089ce7d46aab108453b1b95a672"
+  },
+  {
+    "method": "GET",
+    "path": "/v1/frontend/snapshot",
+    "origin": "http://127.0.0.1:3000",
+    "status": 200,
+    "csrf_header_present": false,
+    "request_id": "5f3a3294733449edac01922bd552ce52"
+  },
+  {
+    "method": "GET",
+    "path": "/v1/workspace/history",
+    "origin": "http://127.0.0.1:3000",
+    "status": 200,
+    "csrf_header_present": false,
+    "request_id": "cf0045ae75e343c08bd0c487970964e9"
+  },
+  {
+    "method": "GET",
+    "path": "/v1/auth/csrf",
+    "origin": "http://127.0.0.1:3000",
+    "status": 200,
+    "csrf_header_present": false,
+    "request_id": "51dec3ea6d3a4d44af44fb1e87cf25c5"
+  },
+  {
+    "method": "OPTIONS",
+    "path": "/v1/users/me",
+    "origin": "http://127.0.0.1:3000",
+    "status": 200,
+    "csrf_header_present": false,
+    "request_id": null
+  },
+  {
+    "method": "PATCH",
+    "path": "/v1/users/me",
+    "origin": "http://127.0.0.1:3000",
+    "status": 200,
+    "csrf_header_present": true,
+    "request_id": "a4cc86d38e1645ec8247a9424e341c3b"
+  },
+  {
+    "method": "GET",
+    "path": "/v1/auth/session",
+    "origin": "http://127.0.0.1:3000",
+    "status": 200,
+    "csrf_header_present": false,
+    "request_id": "48c02069d73a489f8f5a180af5e931ed"
+  },
+  {
+    "method": "GET",
+    "path": "/v1/frontend/snapshot",
+    "origin": "http://127.0.0.1:3000",
+    "status": 200,
+    "csrf_header_present": false,
+    "request_id": "c256e09ad5314f13b2b39707341ec667"
+  },
+  {
+    "method": "GET",
+    "path": "/v1/auth/session",
+    "origin": "http://127.0.0.1:3000",
+    "status": 200,
+    "csrf_header_present": false,
+    "request_id": "b9562c51f4684dc39bbd86b1713c593b"
+  },
+  {
+    "method": "GET",
+    "path": "/v1/frontend/snapshot",
+    "origin": "http://127.0.0.1:3000",
+    "status": 200,
+    "csrf_header_present": false,
+    "request_id": "07bba48014d34be3859004e3957806a3"
+  },
+  {
+    "method": "GET",
+    "path": "/v1/workspace/history",
+    "origin": "http://127.0.0.1:3000",
+    "status": 200,
+    "csrf_header_present": false,
+    "request_id": "106caa7bdd1b4db8b2dd791efeaef9a3"
+  },
+  {
+    "method": "GET",
+    "path": "/v1/auth/csrf",
+    "origin": "http://127.0.0.1:3000",
+    "status": 200,
+    "csrf_header_present": false,
+    "request_id": "c49222c9966a4a5caaa29a878598c06d"
+  },
+  {
+    "method": "OPTIONS",
+    "path": "/v1/auth/logout",
+    "origin": "http://127.0.0.1:3000",
+    "status": 200,
+    "csrf_header_present": false,
+    "request_id": null
+  },
+  {
+    "method": "POST",
+    "path": "/v1/auth/logout",
+    "origin": "http://127.0.0.1:3000",
+    "status": 200,
+    "csrf_header_present": true,
+    "request_id": "dfaa647a75d245be96f7199ad926f132"
+  },
+  {
+    "method": "GET",
+    "path": "/v1/auth/session",
+    "origin": "http://127.0.0.1:3000",
+    "status": 200,
+    "csrf_header_present": false,
+    "request_id": "02287c487251496dafc46f26038deec5"
+  },
+  {
+    "method": "GET",
+    "path": "/v1/auth/csrf",
+    "origin": "http://127.0.0.1:3000",
+    "status": 200,
+    "csrf_header_present": false,
+    "request_id": "77d1b152c89849f0ab7e3b45b1f3a4d6"
+  },
+  {
+    "method": "OPTIONS",
+    "path": "/v1/auth/email-codes",
+    "origin": "http://127.0.0.1:3000",
+    "status": 200,
+    "csrf_header_present": false,
+    "request_id": null
+  },
+  {
+    "method": "POST",
+    "path": "/v1/auth/email-codes",
+    "origin": "http://127.0.0.1:3000",
+    "status": 200,
+    "csrf_header_present": true,
+    "request_id": "41b3b4a238fa44a4b416de4ba69e5ee1"
+  },
+  {
+    "method": "OPTIONS",
+    "path": "/v1/auth/login",
+    "origin": "http://127.0.0.1:3000",
+    "status": 200,
+    "csrf_header_present": false,
+    "request_id": null
+  },
+  {
+    "method": "POST",
+    "path": "/v1/auth/login",
+    "origin": "http://127.0.0.1:3000",
+    "status": 200,
+    "csrf_header_present": true,
+    "request_id": "9d45ef44726e401e8bc123926fe1eb3c"
+  },
+  {
+    "method": "GET",
+    "path": "/v1/auth/session",
+    "origin": "http://127.0.0.1:3000",
+    "status": 200,
+    "csrf_header_present": false,
+    "request_id": "9768a699a4c24e029e0605d3cf2389b9"
+  },
+  {
+    "method": "GET",
+    "path": "/v1/frontend/snapshot",
+    "origin": "http://127.0.0.1:3000",
+    "status": 200,
+    "csrf_header_present": false,
+    "request_id": "ab118ca7b8f74c038fee5b5d97037542"
+  },
+  {
+    "method": "GET",
+    "path": "/v1/auth/csrf",
+    "origin": "http://127.0.0.1:3000",
+    "status": 200,
+    "csrf_header_present": false,
+    "request_id": "b26bb3f8325c4ba0af730258828187b9"
+  },
+  {
+    "method": "OPTIONS",
+    "path": "/v1/auth/logout",
+    "origin": "http://127.0.0.1:3000",
+    "status": 200,
+    "csrf_header_present": false,
+    "request_id": null
+  },
+  {
+    "method": "POST",
+    "path": "/v1/auth/logout",
+    "origin": "http://127.0.0.1:3000",
+    "status": 200,
+    "csrf_header_present": true,
+    "request_id": "0a24c354217b4f8a969ac1b0b6ca3dce"
+  }
+]

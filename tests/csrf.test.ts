@@ -16,6 +16,23 @@ const path = (url: RequestInfo | URL) => new URL(String(url)).pathname;
 const header = (options?: RequestInit) => new Headers(options?.headers).get("X-CSRF-Token");
 const flush = () => new Promise<void>((resolve) => setImmediate(resolve));
 
+test("default browser fetch is called without binding it to ApiClient", async () => {
+  const original = globalThis.fetch;
+  let calls = 0;
+  globalThis.fetch = async function (this: unknown) {
+    // Browsers reject a native fetch invoked with an ApiClient receiver.
+    assert.ok(this === undefined || this === globalThis);
+    calls++;
+    return envelope(null);
+  };
+  try {
+    assert.equal(await new ApiClient(base).getIdentity(), null);
+    assert.equal(calls, 1);
+  } finally {
+    globalThis.fetch = original;
+  }
+});
+
 function deferred<T>() {
   let resolve!: (value: T) => void;
   const promise = new Promise<T>((done) => { resolve = done; });

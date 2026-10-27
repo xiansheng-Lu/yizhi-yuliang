@@ -1725,6 +1725,50 @@
         "realRulesInstalled": 0,
         "platformCalls": 0
       }
+    },
+    "M2-09a": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "scope": "policy确定性金额/幅度/频率规则与必要事实读模型/证据验证依赖、DDL与测试",
+      "dependencyInput": "M2-08四时点真实PG技术输入；预算写入/核验生产者归M2-10/17，缺可核对来源不放行；持续研发授权G0/E08保留",
+      "delivery": "确定性规则与真实PG事实读合同技术交付；生产预算初始化/执行Writer另卡，未代签",
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS_COMPONENT_CONTRACT",
+          "review": "PENDING_BE_FE"
+        },
+        {
+          "item": 2,
+          "technical": "PASS_COMPONENT_CONTRACT",
+          "review": "PENDING_BE_FE"
+        },
+        {
+          "item": 3,
+          "technical": "PASS_COMPONENT_CONTRACT",
+          "review": "PENDING_BE_FE"
+        }
+      ],
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F07"
+      },
+      "evidence": "tasks/M2-09a/README.md",
+      "implementationCommit": "ab2106a1312dcfade5f30d259e20d0088baa48da",
+      "git": "COMMITTED",
+      "syncVerification": "git merge-base --is-ancestor ab2106a1312dcfade5f30d259e20d0088baa48da origin/main",
+      "technicalVerification": {
+        "result": "PASS_REAL_PG_RULE_COMPONENTS_SYNTHETIC_INPUTS",
+        "unitAndContract": 495,
+        "ruleUnit": 20,
+        "dedicatedIntegration": 16,
+        "integrationPassed": 405,
+        "integrationSkipped": 1,
+        "realRulesInstalled": 3,
+        "head": "0026_rule_facts",
+        "platformCalls": 0,
+        "paidCalls": 0
+      }
     }
   },
   "gates": {
@@ -1831,8 +1875,8 @@
   },
   "nextTask": {
     "id": "M2-09a",
-    "status": "READY_FOR_TECHNICAL_DEVELOPMENT",
-    "note": "四时点框架真实PG技术输入就绪，继续金额/幅度/频率/资格规则；意图/额度/审批/执行后续卡仍需补齐"
+    "status": "IN_PROGRESS",
+    "note": "先补必需预算/成功事实读模型和来源约束，再验证阈值/冷却/日次数；M210初始化与M217真实核验未完成不假称已验"
   },
   "continuation": {
     "requestedOn": "2026-10-27",
@@ -1841,10 +1885,10 @@
     "environment": "WSL2 Ubuntu Docker; UV_PROJECT_ENVIRONMENT=/home/lenovo/.cache/yuliang-venv",
     "latestUserRequest": "补齐浏览器验收，然后按照后端任务卡继续后续的所有开发，需要资源再找我对接，不阻塞持续开发到完毕",
     "developmentPolicy": "缺人工/外部验收时记录并继续可独立技术准备；正式门禁、平台调用和付费仍按各自证据许可",
-    "lastCompletedTechnicalTask": "M2-08",
-    "nextTechnicalTask": "M2-09a",
+    "lastCompletedTechnicalTask": "M2-09a",
+    "nextTechnicalTask": "M2-09b",
     "executionRules": "docs/backend/evidence/execution-rules.md",
-    "checkpoint": "四时点检查框架技术验证完成；规则缺项保持阻断，继续确定性规则与必要事实依赖，不开放真实写；E01/E02、具名复核和06/12文档保留"
+    "checkpoint": "确定性规则、真实PG核验事实及预算读合同技术验证完成；继续策略版本/冻结意图校验，不开放真实写；E01/E02与具名复核保留"
   },
   "frontendIntegration": {
     "F01": {

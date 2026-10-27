@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-10-27T19:10:37.362Z",
+  "baseline": "0b8bffa500629b0e76ca2dfa4473091a02da75c8",
+  "implementationCommit": "07ed986a6c438f2a741b906a174e5b9f912b43e4",
+  "result": "PASS_FRAMEWORK_REAL_PG_RULES_NOT_INSTALLED_FAIL_CLOSED",
+  "checks": [
+    {
+      "command": "uv run --frozen ruff check .",
+      "result": "PASS"
+    },
+    {
+      "command": "uv run --frozen ruff format --check .",
+      "result": "PASS",
+      "files": 176
+    },
+    {
+      "command": "uv run --frozen mypy",
+      "result": "PASS",
+      "files": 142
+    },
+    {
+      "command": "uv run --frozen pytest tests/unit tests/contract -q",
+      "result": "PASS",
+      "passed": 475,
+      "policyConfigUnitCases": 14
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --group risk --details",
+      "result": "PASS",
+      "passed": 14
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --details",
+      "result": "PASS_WITH_EXPLICIT_NOT_RUN_LIFECYCLE",
+      "passed": 389,
+      "skipped": 1
+    },
+    {
+      "command": "uv run --frozen python scripts/migrate_local.py upgrade",
+      "result": "PASS",
+      "head": "0025_risk_framework"
+    }
+  ],
+  "database": {
+    "head": "0025_risk_framework",
+    "migrationRoleCanLogin": false,
+    "developmentRows": {
+      "risk_policies": 0,
+      "policy_versions": 0,
+      "risk_assessments": 0
+    }
+  },
+  "trace": "trace.json",
+  "verified": [
+    "CREATE/CONFIRM/APPROVE/EXECUTE fresh actual PG basis with nonempty checks",
+    "creation integrates risk row/job/audit in same transaction with deferred FK",
+    "current actor scope versus original requester authorization",
+    "actual current six-stage WRITE evidence and latest confirmed source/current value",
+    "new assessment identity/time on every call and immutable policy versions",
+    "policy change/auth expiry/stale source/current change/capability/requester revocation produce failing checks",
+    "all missing rule implementations explicit failed checks; no all-pass fake rule injected",
+    "generic scope errors without object details and private risk history",
+    "risk audit failure rolls back entire creation",
+    "runtime cannot modify policy or risk history",
+    "CNY exact configuration and invalid/unknown unit boundaries"
+  ],
+  "notCovered": [
+    "actual AMOUNT_LIMIT/CHANGE_BOUND/FREQUENCY/INTENT_BINDING implementations M2-09a/09b",
+    "budget reservation/execution attempt/approval participant installation",
+    "real supplier inputs or platform I/O",
+    "public task lifecycle API and F06/F07 browser integration",
+    "named BE/FE review and G0/E08"
+  ],
+  "realRulesInstalled": 0,
+  "productionLifecycleParticipantsInstalled": false,
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "review": {
+    "backend": "PENDING",
+    "frontend": "PENDING_F06_F07"
+  }
+}

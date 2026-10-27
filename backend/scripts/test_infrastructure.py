@@ -68,6 +68,7 @@ def main() -> int:
             "connections",
             "applications",
             "transitions",
+            "risk",
         ),
         default="all",
     )
@@ -98,6 +99,7 @@ def main() -> int:
         "connections": ["tests/integration/test_connection_management.py"],
         "applications": ["tests/integration/test_job_applications.py"],
         "transitions": ["tests/integration/test_job_transitions.py"],
+        "risk": ["tests/integration/test_risk_framework.py"],
         "parser": [
             "tests/integration/test_command_parse.py",
             "tests/integration/test_workspace.py",

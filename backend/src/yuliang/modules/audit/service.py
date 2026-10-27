@@ -31,6 +31,7 @@ Action = Literal[
     "connection.disconnect",
     "job.create",
     "job.transition",
+    "risk.assess",
 ]
 ObjectType = Literal[
     "user",

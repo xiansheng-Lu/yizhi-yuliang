@@ -48,7 +48,9 @@ class FullBudgetParameters(BaseModel):
     cursor: str | None = None
 
 
-async def full_snapshot(data: dict[str, Any], *, paused: int = 9890, empty: bool = False) -> UUID:
+async def full_snapshot(
+    data: dict[str, Any], *, paused: int = 9890, empty: bool = False, active: int = 100
+) -> UUID:
     ctx = data["readctx"]
     spec = replace(data["readspec"], parameters_model=FullBudgetParameters, target_parameter=None)
     safe = ArchivePolicy(ArchivePolicy().fields | {"enabled", "source_updated_at"})
@@ -60,7 +62,7 @@ async def full_snapshot(data: dict[str, Any], *, paused: int = 9890, empty: bool
         [[]]
         if empty
         else [
-            [{"id": "456", "budget_minor": 100, "enabled": True, "currency": "CNY"}],
+            [{"id": "456", "budget_minor": active, "enabled": True, "currency": "CNY"}],
             [{"id": "789", "budget_minor": paused, "enabled": False, "currency": "CNY"}],
         ]
     )

@@ -37,6 +37,7 @@ Action = Literal[
     "idempotency.start",
     "idempotency.complete",
     "idempotency.recover",
+    "execution.prepare",
 ]
 ObjectType = Literal[
     "user",
@@ -53,6 +54,7 @@ ObjectType = Literal[
     "sync_source",
     "budget_ledger",
     "idempotency_request",
+    "execution_order",
 ]
 ChangedField = Literal["displayName", "name", "status", "permissions", "scope"]
 

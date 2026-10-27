@@ -1,5 +1,6 @@
 """请求先持久化、逐次网络观察追加留痕；存档不是平台执行授权。"""
 
+import hashlib
 import json
 from collections.abc import Callable
 from dataclasses import dataclass, field
@@ -131,6 +132,8 @@ class PlatformArchive:
         attempt_id: UUID | None,
         before_create: Callable[[], None] | None = None,
         before_persist: Callable[[Session], None] | None = None,
+        before_verify: Callable[[Session], None] | None = None,
+        after_admission: Callable[[Session], None] | None = None,
     ) -> bool:
         if target is not None:
             ctx.assert_ref(target)
@@ -171,11 +174,26 @@ class PlatformArchive:
                 if existing != digest:
                     raise ApiError(ErrorCode.IDEMPOTENCY_MISMATCH, "原出站请求与本次内容不一致")
                 return False
+            if execution_id is not None and spec.effect == "WRITE":
+                session.execute(
+                    text("""SELECT set_config('app.execution_wire_digest',:wire,true),
+                    set_config('app.execution_schema_digest',:schema,true)"""),
+                    {
+                        "wire": hashlib.sha256(canonical(parameters)).hexdigest(),
+                        "schema": hashlib.sha256(
+                            canonical(spec.parameters_model.model_json_schema())
+                        ).hexdigest(),
+                    },
+                )
+            if before_verify is not None:
+                before_verify(session)
             _verify(session, ctx, spec)
             if before_persist is not None:
                 before_persist(session)
             if before_create is not None:
                 before_create()
+            if after_admission is not None:
+                after_admission(session)
             audit_id = record(
                 session,
                 ctx.identity,
@@ -453,6 +471,8 @@ class RecordedPlatformClient:
         attempt_id: UUID | None = None,
         before_create: Callable[[], None] | None = None,
         before_persist: Callable[[Session], None] | None = None,
+        before_verify: Callable[[Session], None] | None = None,
+        after_admission: Callable[[Session], None] | None = None,
     ) -> RecordedResult:
         try:
             prepared = spec.parameters_model.model_validate(parameters, strict=True).model_dump(
@@ -472,6 +492,8 @@ class RecordedPlatformClient:
                 attempt_id,
                 before_create,
                 before_persist,
+                before_verify,
+                after_admission,
             )
         except SQLAlchemyError:
             raise ArchiveUnavailable("NOT_SENT") from None

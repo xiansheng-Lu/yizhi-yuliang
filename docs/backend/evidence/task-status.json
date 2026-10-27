@@ -1366,7 +1366,8 @@
         "frontend": "NOT_APPLICABLE",
         "frontendReason": "20册本卡无FE协作；真实端间平台接线归后续任务"
       },
-      "evidence": "tasks/M1-03a/README.md"
+      "evidence": "tasks/M1-03a/README.md",
+      "implementationCommit": "5dd1b90a35d18c6c18c05a36acdec630b7f49670"
     }
   },
   "gates": {

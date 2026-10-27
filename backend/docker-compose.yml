@@ -1,0 +1,78 @@
+name: yuliang-local
+services:
+  postgres:
+    image: pgvector/pgvector:0.8.2-pg17-bookworm
+    environment:
+      POSTGRES_DB: yizhi
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${YULIANG_POSTGRES_PASSWORD:?set local postgres password}
+      YULIANG_APP_PASSWORD: ${YULIANG_APP_PASSWORD:?set local application password}
+      YULIANG_AUTH_PASSWORD: ${YULIANG_AUTH_PASSWORD:?set local authentication password}
+      YULIANG_MIGRATION_PASSWORD: ${YULIANG_MIGRATION_PASSWORD:?set local migration password}
+    ports: ["127.0.0.1:15432:5432"]
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./deployment/postgres/init.sh:/docker-entrypoint-initdb.d/10-yuliang.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d yizhi"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    networks: [infra]
+    restart: unless-stopped
+  redis:
+    image: redis:7.4.7-alpine
+    environment:
+      REDISCLI_AUTH: ${YULIANG_REDIS_PASSWORD:?set local redis password}
+    command: ["sh", "-ec", "exec redis-server --appendonly yes --requirepass \"$$REDISCLI_AUTH\""]
+    ports: ["127.0.0.1:16379:6379"]
+    volumes: ["redis-data:/data"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    networks: [infra]
+    restart: unless-stopped
+  rabbitmq:
+    image: rabbitmq:4.1.6-management-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: yuliang
+      RABBITMQ_DEFAULT_PASS: ${YULIANG_BROKER_PASSWORD:?set local broker password}
+      RABBITMQ_DEFAULT_VHOST: yuliang
+    ports: ["127.0.0.1:15672:5672", "127.0.0.1:15673:15672"]
+    volumes: ["rabbitmq-data:/var/lib/rabbitmq"]
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks: [infra]
+    restart: unless-stopped
+  minio:
+    # 本地验证候选镜像；上游已归档，生产S3方案与镜像须在M5交付前另行复核。
+    image: minio/minio@sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e
+    environment:
+      MINIO_ROOT_USER: yuliang-local
+      MINIO_ROOT_PASSWORD: ${YULIANG_MINIO_PASSWORD:?set local object storage password}
+    command: ["server", "/data", "--console-address", ":9001"]
+    ports: ["127.0.0.1:19000:9000", "127.0.0.1:19001:9001"]
+    volumes: ["minio-data:/data"]
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "http://127.0.0.1:9000/minio/health/ready"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    networks: [infra]
+    restart: unless-stopped
+networks:
+  infra:
+    driver: bridge
+    # 应用在WSL宿主运行，需要实际发布端口；宿主绑定仍严格限制回环。
+    driver_opts:
+      com.docker.network.bridge.host_binding_ipv4: "127.0.0.1"
+volumes:
+  postgres-data:
+  redis-data:
+  rabbitmq-data:
+  minio-data:

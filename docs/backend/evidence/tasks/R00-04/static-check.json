@@ -1,0 +1,17 @@
+{
+  "plan": {
+    "result": "PASS",
+    "cards": 149,
+    "gates": 7,
+    "queue_nodes": 156,
+    "parents": 101,
+    "acceptance_cases": 42,
+    "frontend_cards": 14,
+    "release_coverage": "all cards"
+  },
+  "status": {
+    "result": "PASS",
+    "registeredTasks": 7,
+    "invalidVariantsRejected": 13
+  }
+}

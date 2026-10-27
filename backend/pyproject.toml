@@ -1,0 +1,56 @@
+[build-system]
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+[project]
+name = "yizhi-yuliang-backend"
+version = "0.1.0"
+description = "易致驭量模块化单体后端"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+  "fastapi>=0.115,<1", "uvicorn[standard]>=0.30,<1",
+  "pydantic>=2.10,<3", "pydantic-settings>=2.7,<3",
+  "sqlalchemy[asyncio]>=2.0.36,<2.1", "psycopg[binary]>=3.2,<4",
+  "alembic>=1.14,<2", "redis>=5,<8", "celery>=5.4,<6",
+  "httpx>=0.28,<1", "structlog>=24,<27",
+  "argon2-cffi>=23,<26", "cryptography>=44,<49",
+]
+
+[dependency-groups]
+dev = ["pytest>=8.3,<10", "pytest-asyncio>=0.25,<2", "ruff>=0.9,<1", "mypy>=1.14,<2", "pyyaml>=6,<7", "types-PyYAML>=6,<7"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/yuliang"]
+
+# 当前网络无法与pypi.org建立TLS连接，使用清华PyPI镜像；版本/哈希在uv.lock固定。
+[[tool.uv.index]]
+name = "pypi-mirror"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+default = true
+
+[tool.ruff]
+target-version = "py313"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "S"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["S101", "S105", "S106"]
+
+[tool.mypy]
+python_version = "3.13"
+strict = true
+files = ["src", "tests"]
+plugins = ["pydantic.mypy"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--strict-markers --strict-config -m 'not live'"
+asyncio_mode = "auto"
+markers = [
+  "unit: 纯规则和基础模型",
+  "contract: HTTP协议和现有客户端约束",
+  "integration: 真实基础设施验证",
+  "live: 真实平台或付费调用，默认排除，需独立操作许可",
+]

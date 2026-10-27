@@ -4,7 +4,7 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "currentFocus": "R00-04",
+  "currentFocus": "M0-06",
   "tasks": {
     "R00-01": {
       "owner": "BE",
@@ -19,12 +19,27 @@
         "goldenChecks": 45
       },
       "dod": [
-        {"item": 1, "technical": "PASS", "review": "PENDING_F00"},
-        {"item": 2, "technical": "PASS", "review": "PENDING_BE_FE"},
-        {"item": 3, "technical": "DELIVERED", "review": "PENDING_F01_F11"}
+        {
+          "item": 1,
+          "technical": "PASS",
+          "review": "PENDING_F00"
+        },
+        {
+          "item": 2,
+          "technical": "PASS",
+          "review": "PENDING_BE_FE"
+        },
+        {
+          "item": 3,
+          "technical": "DELIVERED",
+          "review": "PENDING_F01_F11"
+        }
       ],
       "evidence": "tasks/R00-01/README.md",
-      "review": {"backend": "PENDING", "frontend": "PENDING"},
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING"
+      },
       "git": "COMMITTED",
       "implementationCommit": "0bd017c",
       "syncVerification": "git merge-base --is-ancestor 0bd017c origin/main",
@@ -52,12 +67,27 @@
         "plannedRealCases": 13
       },
       "dod": [
-        {"item": 1, "technical": "PASS", "realDatabaseExecution": "NOT_RUN"},
-        {"item": 2, "technical": "PASS", "realDatabaseSecurityTests": "NOT_RUN"},
-        {"item": 3, "technical": "DELIVERED", "realApiWorkerConsistencyTests": "NOT_RUN"}
+        {
+          "item": 1,
+          "technical": "PASS",
+          "realDatabaseExecution": "NOT_RUN"
+        },
+        {
+          "item": 2,
+          "technical": "PASS",
+          "realDatabaseSecurityTests": "NOT_RUN"
+        },
+        {
+          "item": 3,
+          "technical": "DELIVERED",
+          "realApiWorkerConsistencyTests": "NOT_RUN"
+        }
       ],
       "evidence": "tasks/R00-02/README.md",
-      "review": {"backend": "PENDING", "frontend": "PENDING_F00_F12"},
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F00_F12"
+      },
       "syncVerification": "git log origin/main --oneline -- docs/backend/evidence/tasks/R00-02/README.md",
       "recheck": {
         "date": "2026-10-27",
@@ -82,37 +112,252 @@
         "crossVolumeDiffs": 4,
         "negativeMutationsRejected": 63,
         "plannedRealCases": 38,
-        "adoptedVolumes": ["06", "12", "15"]
+        "adoptedVolumes": [
+          "06",
+          "12",
+          "15"
+        ]
       },
       "dod": [
-        {"item": 1, "technical": "PASS", "realConcurrencyTest": "NOT_RUN"},
-        {"item": 2, "technical": "PASS", "realUnknownScenarios": "NOT_RUN"},
-        {"item": 3, "technical": "PASS", "realOverLimitIngest": "NOT_RUN"}
+        {
+          "item": 1,
+          "technical": "PASS",
+          "realConcurrencyTest": "NOT_RUN"
+        },
+        {
+          "item": 2,
+          "technical": "PASS",
+          "realUnknownScenarios": "NOT_RUN"
+        },
+        {
+          "item": 3,
+          "technical": "PASS",
+          "realOverLimitIngest": "NOT_RUN"
+        }
       ],
       "crossVolumeDiffs": [
-        {"id": "X-01", "topic": "19册A22要求V8显示UNKNOWN与十二态不得扩枚举冲突", "owner": "R00-04", "status": "OPEN"},
-        {"id": "X-02", "topic": "12册DRAFT行释放HELD预占", "owner": "R00-03", "status": "CLOSED"},
-        {"id": "X-03", "topic": "12册VERIFYING持续UNKNOWN行缺守卫后果", "owner": "R00-03", "status": "CLOSED"},
-        {"id": "X-04", "topic": "06册已批准未执行增额复检不通过的处理缺失", "owner": "R00-03", "status": "CLOSED"}
+        {
+          "id": "X-01",
+          "topic": "19册A22要求V8显示UNKNOWN与十二态不得扩枚举冲突",
+          "owner": "R00-04",
+          "status": "CLOSED",
+          "resolution": "R00-04修订19册A22，UNKNOWN为verification与错误说明，不新增任务状态；真实页面验收仍待后续任务"
+        },
+        {
+          "id": "X-02",
+          "topic": "12册DRAFT行释放HELD预占",
+          "owner": "R00-03",
+          "status": "CLOSED"
+        },
+        {
+          "id": "X-03",
+          "topic": "12册VERIFYING持续UNKNOWN行缺守卫后果",
+          "owner": "R00-03",
+          "status": "CLOSED"
+        },
+        {
+          "id": "X-04",
+          "topic": "06册已批准未执行增额复检不通过的处理缺失",
+          "owner": "R00-03",
+          "status": "CLOSED"
+        }
       ],
       "evidence": "tasks/R00-03/README.md",
-      "review": {"backend": "PENDING", "frontend": "PENDING_F06_F12"},
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F06_F12"
+      },
       "tool": "docs/backend/tools/check_funds_recovery.py"
     },
-    "M0-01": {"owner": "BE", "status": "IMPLEMENTED", "note": "此前已准备工程，首批单元/契约14项通过；未完成依赖签字和本轮新增文件检查，不计DONE"},
-    "M0-02": {"owner": "BE", "status": "IMPLEMENTED", "note": "此前已准备响应信封与错误处理，整体尚未复核，不计DONE"},
-    "M0-04": {"owner": "BE", "status": "BLOCKED", "note": "Compose/初始化/探测草稿保留；缺Docker引擎，真实基础设施验收NOT_RUN", "blockedBy": ["E06"]}
+    "M0-01": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "codeCommit": "c95a4f85ac095f38fea2d28afd4ab4eb3d98f998",
+      "delivery": "工程、配置和分层验证入口已交付",
+      "dependencyInput": "使用R00技术基线与M0-01工程验证结果；人工签字不代填",
+      "technicalVerification": {
+        "result": "PASS",
+        "layer": "U",
+        "unitContractPassed": 17,
+        "realIntegrationPassed": 5
+      },
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS",
+          "review": "PENDING_BE"
+        },
+        {
+          "item": 2,
+          "technical": "PASS",
+          "review": "PENDING_BE"
+        },
+        {
+          "item": 3,
+          "technical": "PASS",
+          "review": "PENDING_BE"
+        }
+      ],
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F00"
+      },
+      "evidence": "tasks/M0-01/README.md"
+    },
+    "M0-02": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "codeCommit": "c95a4f85ac095f38fea2d28afd4ab4eb3d98f998",
+      "delivery": "响应信封、错误与requestId关联已交付",
+      "dependencyInput": "使用R00技术基线与M0-01工程验证结果；人工签字不代填",
+      "technicalVerification": {
+        "result": "PASS",
+        "layer": "C",
+        "unitContractPassed": 17,
+        "realIntegrationPassed": 5
+      },
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS",
+          "review": "PENDING_BE"
+        },
+        {
+          "item": 2,
+          "technical": "PASS",
+          "review": "PENDING_BE"
+        },
+        {
+          "item": 3,
+          "technical": "PASS",
+          "review": "PENDING_BE"
+        }
+      ],
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F01"
+      },
+      "evidence": "tasks/M0-02/README.md"
+    },
+    "M0-04": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "codeCommit": "c95a4f85ac095f38fea2d28afd4ab4eb3d98f998",
+      "delivery": "WSL四类真实设施、初始化及重启持久化验证已通过",
+      "dependencyInput": "使用R00技术基线与M0-01工程验证结果；人工签字不代填",
+      "technicalVerification": {
+        "result": "PASS",
+        "layer": "I_REAL_LOCAL_DOCKER",
+        "unitContractPassed": 17,
+        "realIntegrationPassed": 5
+      },
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS",
+          "review": "PENDING_BE"
+        },
+        {
+          "item": 2,
+          "technical": "PASS",
+          "review": "PENDING_BE"
+        },
+        {
+          "item": 3,
+          "technical": "PASS",
+          "review": "PENDING_BE"
+        }
+      ],
+      "review": {
+        "backend": "PENDING",
+        "frontend": "NOT_APPLICABLE",
+        "frontendReason": "设施验证无前端交互，按任务卡无需FE协作"
+      },
+      "evidence": "tasks/M0-04/README.md",
+      "tenantSeedValidation": "NOT_APPLICABLE: 尚无租户种子，后续M0-06/M0-13验证"
+    },
+    "R00-04": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "scope": [
+        "19/20册登记规则",
+        "证据/签字模板",
+        "台账守卫",
+        "X-01措辞"
+      ],
+      "dependencyInput": "用户2026-10-27明确继续开发，采用R00-01/02/03技术基线；双端签字不代填",
+      "delivery": "任务领取、证据命名、具名复核模板及台账检查工具",
+      "technicalVerification": {
+        "result": "PASS",
+        "layer": "D_STATIC_SPEC_ONLY",
+        "cards": 149,
+        "queueNodes": 156,
+        "parents": 101,
+        "invalidVariantsRejected": 13
+      },
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS",
+          "review": "PENDING_BE_FE"
+        },
+        {
+          "item": 2,
+          "technical": "PASS",
+          "review": "PENDING_BE_FE"
+        },
+        {
+          "item": 3,
+          "technical": "PASS",
+          "review": "PENDING_BE_FE"
+        }
+      ],
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F00_F13"
+      },
+      "evidence": "tasks/R00-04/README.md"
+    }
   },
   "gates": {},
   "blockers": [
-    {"id": "E08", "reason": "R00-01/02/03后端规格交付已就绪，BE/FE尚无人工复核记录；继续技术准备不等于代签", "affects": ["R00-01最终DONE", "R00-02最终DONE", "R00-03最终DONE"]},
-    {"id": "E06", "reason": "未发现Docker CLI及可用Linux容器引擎", "affects": ["M0-04真实验收及依赖它的集成任务"]},
-    {"id": "ENV-RUNTIME", "status": "RESOLVED", "reason": "本机原无Python与Node，python命令触发Microsoft Store重定向器返回9009；2026-10-27已安装Python 3.11.9与Node v24.20.0，R00-01/02/03三项自检均可本地复跑", "affects": []},
-    {"id": "APPROVAL_SERVICE", "status": "HISTORICAL", "reason": "曾因额度导致一次提升权限Python检查未获审批；后续Git提交与fetch已成功获准，不能再把Git记为当前受阻", "affects": ["先前未执行的Python新增文件检查，R00-01独立规格检查不受影响"]}
+    {
+      "id": "E08",
+      "reason": "R00-01～04及工程技术交付待对应BE/FE人工复核，技术通过不代签",
+      "affects": [
+        "R00-01/02/03/04最终DONE",
+        "M0-01/02/04最终复核"
+      ]
+    },
+    {
+      "id": "E06",
+      "reason": "2026-10-27已实测WSL2 Ubuntu Docker29.1.3/Compose，四设施真实读写及重复初始化/重启持久化5项通过",
+      "affects": [],
+      "status": "RESOLVED"
+    },
+    {
+      "id": "ENV-RUNTIME",
+      "status": "RESOLVED",
+      "reason": "本机原无Python与Node，python命令触发Microsoft Store重定向器返回9009；2026-10-27已安装Python 3.11.9与Node v24.20.0，R00-01/02/03三项自检均可本地复跑",
+      "affects": []
+    },
+    {
+      "id": "APPROVAL_SERVICE",
+      "status": "HISTORICAL",
+      "reason": "曾因额度导致一次提升权限Python检查未获审批；后续Git提交与fetch已成功获准，不能再把Git记为当前受阻",
+      "affects": [
+        "先前未执行的Python新增文件检查，R00-01独立规格检查不受影响"
+      ]
+    }
   ],
   "rules": {
     "technicalVerification": "Agent记录实际命令与证据；不替代BE/FE签字",
     "done": "全部适用DoD与复核通过后才记DONE",
     "offline": "离线通过不等于真实依赖、前端联调或平台验收通过"
+  },
+  "nextTask": {
+    "id": "M0-06",
+    "status": "TECHNICAL_INPUTS_READY_WAITING_REVIEW",
+    "note": "工程与真实PG技术输入已就绪，按授权可准备最小身份迁移；前置卡人工复核及门禁状态不提前关闭"
   }
 }

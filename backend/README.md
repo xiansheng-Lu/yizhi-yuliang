@@ -1,6 +1,6 @@
 # 后端开发入口
 
-当前已交付工程、身份/目录迁移、租户隔离、权限管理、密码登录/会话/CSRF、本人资料与最小管理接口；身份与管理HTTP入口默认关闭，尚无Worker或平台写能力。执行状态和未通过依赖以 [任务台账](../docs/backend/evidence/task-status.json) 为准。
+当前已交付工程、身份/目录迁移、租户隔离、权限管理、密码会话、最小管理接口及Worker骨架；身份与管理HTTP默认关闭，尚无平台写能力。执行状态和未通过依赖以 [任务台账](../docs/backend/evidence/task-status.json) 为准。
 
 ## Python与离线验证
 
@@ -84,3 +84,20 @@ ADMIN_API_ENABLED另行默认false，只有实际内部PLATFORM_ADMIN成员可�
 管理入口默认仅回环网段，最多投影100条用户/租户，排除哈希/令牌并追加读取审计；不提供业务数据通用查询或资金写接口。
 默认启动关闭代理头解析，反代部署需另行确认可信代理范围，不能用客户端X-Forwarded-For作为来源许可依据。
 邮箱验证码M0-10需要实际SMTP/邮件服务和收件地址，目前未接入，密码流程不能冒充邮件投递已验收。
+
+## Worker与Beat
+
+WSL中复用Linux环境，运行：
+
+```bash
+uv run celery -A yuliang.worker.app:app worker --pool=prefork --concurrency=1 --loglevel=WARNING
+uv run celery -A yuliang.worker.app:app beat --loglevel=WARNING
+```
+
+默认四队列为yuliang.execute/platform/ai-media/system，JSON消息只携event/job/member/user ID及正租户标识。
+逐任务重新建立事务上下文、复核成员，连接池在实际子进程按PID创建，不继承父进程连接。
+当前只有system.identity_probe为真实只读诊断；三个副作用队列的guard明确失败，不调用平台或供应商。
+默认副作用任务acks_late但worker丢失不自动重投、无自动retry；恢复事实由后续Outbox/Inbox卡提供。
+只读探针允许Worker丢失后重投，真实测试已验证SIGKILL子进程后由新子进程消费同一消息。
+Beat使用Redis比较令牌租约，失去租约或Redis不可用时不派发；默认尚无周期业务任务。
+租约不等于业务恰好一次，消息/业务幂等仍归后续Outbox/Inbox及执行内核。

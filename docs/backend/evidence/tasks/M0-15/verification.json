@@ -1,0 +1,55 @@
+{
+  "codeCommit": "780c3b82b1672d2677dea6da42521022bd2e789d",
+  "executedOn": "2026-10-27",
+  "timezone": "Asia/Shanghai",
+  "environment": {
+    "os": "WSL2 Ubuntu",
+    "python": "3.13.14",
+    "realRabbitMq": "4.1.6",
+    "realRedis": "7.4.7",
+    "realPg": "17.10",
+    "workerPool": "prefork",
+    "concurrency": 1
+  },
+  "checks": [
+    {
+      "command": "uv run --frozen ruff check .; uv run --frozen ruff format --check .; uv run --frozen mypy",
+      "result": "PASS",
+      "mypySourceFiles": 36
+    },
+    {
+      "command": "uv run --frozen pytest tests/unit tests/contract -q",
+      "result": "PASS",
+      "passed": 29
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --lifecycle",
+      "result": "PASS",
+      "passed": 33,
+      "failed": 0,
+      "skipped": 0
+    }
+  ],
+  "realWorkerProof": [
+    "独立真实Worker子进程，A/B顺序使用同一PID但租户上下文正确",
+    "伪造成员/租户组合失败后下一正确任务无上下文污染",
+    "execute/platform/ai-media三个guard实际消费失败，不自动重试且无平台/供应商调用",
+    "测试库成员表锁阻塞只读任务，确认其真实活动worker_pid后SIGKILL，新子进程收到redelivered=true且retries=0"
+  ],
+  "beatProof": "真实Redis比较令牌租约：竞争方拿不到、非所有者release不删除、释放后可接任",
+  "cleanup": "测试Worker终止，临时数据库/四队列/交换机/结果键及Beat租约已清理",
+  "limits": [
+    "没有平台执行器或AI供应商接入",
+    "Beat尚无周期业务任务；租约不是恰好一次交付，业务恢复由Outbox/Inbox完成",
+    "人工BE复核PENDING"
+  ],
+  "sourceSha256Utf8Lf": {
+    "backend/README.md": "5ced4ef1e5d75faa9079475979bffc863d91a389c086fea9fe4364850b472462",
+    "backend/src/yuliang/settings.py": "a48b01ec287f800642c4063f32b078b7c1e47dea64bd6d51855776ef1940bbda",
+    "backend/src/yuliang/worker/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend/src/yuliang/worker/app.py": "f7f4799bbff54521233aab467f72745a8910c12dac7102cb7bb9eca9f4ae8680",
+    "backend/src/yuliang/worker/scheduler.py": "a4911bcd2df55f04102e9074e34e5512a466d0d92005e96101ca56ddb9216f8f",
+    "backend/src/yuliang/worker/tasks.py": "f203ea52a3be290031a6ff57dee374088eaf1d7781bee94984e54d587be58a6a",
+    "backend/tests/integration/test_worker.py": "a315a6156c1c7d9d7d962a5b7e822811418f5aa894d8c5e90e2bd5fcb3b92acb"
+  }
+}

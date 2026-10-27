@@ -4,7 +4,7 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "currentFocus": "M0-15",
+  "currentFocus": "M0-16a",
   "tasks": {
     "R00-01": {
       "owner": "BE",
@@ -696,6 +696,38 @@
         "E06_MAIL"
       ],
       "realDelivery": "NOT_RUN"
+    },
+    "M0-15": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "codeCommit": "780c3b82b1672d2677dea6da42521022bd2e789d",
+      "delivery": "四队列Worker、逐任务上下文与Redis单例租约已交付",
+      "technicalVerification": {
+        "result": "PASS",
+        "layer": "REAL_PG_MQ_REDIS_WORKER",
+        "unitContractPassed": 29,
+        "realIntegrationPassed": 33
+      },
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS"
+        },
+        {
+          "item": 2,
+          "technical": "PASS"
+        },
+        {
+          "item": 3,
+          "technical": "PASS"
+        }
+      ],
+      "review": {
+        "backend": "PENDING",
+        "frontend": "NOT_APPLICABLE",
+        "frontendReason": "20册此卡无FE协作"
+      },
+      "evidence": "tasks/M0-15/README.md"
     }
   },
   "gates": {},
@@ -754,9 +786,9 @@
     "offline": "离线通过不等于真实依赖、前端联调或平台验收通过"
   },
   "nextTask": {
-    "id": "M0-15",
+    "id": "M0-16a",
     "status": "TECHNICAL_INPUTS_READY_WAITING_REVIEW",
-    "note": "上一卡技术完成且无此卡资源阻塞，立即继续Worker/调度；邮件阻塞仅影响M0-10"
+    "note": "Worker技术验证后立即继续Outbox，不等待定时唤醒"
   },
   "continuation": {
     "requestedOn": "2026-10-27",

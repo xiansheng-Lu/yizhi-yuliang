@@ -6,7 +6,7 @@ from datetime import UTC, datetime, timedelta
 import pytest
 from state_cases import APPROVER, REQUESTER, facts_for, state_job
 
-from yuliang.modules.command.jobs import JobStatus, MoneyValue
+from yuliang.modules.command.jobs import JobError, JobStatus, MoneyValue
 from yuliang.modules.command.state import RULES, JobEvent, StateFacts, evolve
 from yuliang.platform.errors import ApiError, ErrorCode
 
@@ -96,6 +96,53 @@ def test_transport_unknown_keeps_platform_receipt_absent_and_requires_explicit_f
                 actor_id=REQUESTER,
                 requester_id=REQUESTER,
             )
+
+
+def test_transport_not_sent_requires_e1_and_cannot_erase_platform_acceptance() -> None:
+    now = datetime.now(UTC)
+    job = state_job(JobStatus.EXECUTING, now)
+    facts = StateFacts(
+        transport_not_sent=True,
+        proof_ref="execution-recovery/synthetic-proof",
+        evidence_level="E1",
+        error=JobError(code="NOT_SENT", message="synthetic", retryable=False, at=now),
+    )
+    after = evolve(
+        job,
+        JobEvent.CONFIRMED_NOT_EXECUTED,
+        facts,
+        at=now,
+        actor_id=REQUESTER,
+        requester_id=REQUESTER,
+    )
+    assert after.status == JobStatus.FAILED and after.execution_receipt is None
+    assert after.error is not None and not after.error.retryable
+    assert facts.error is not None
+    for invalid in (
+        replace(facts, transport_not_sent=False),
+        replace(facts, proof_ref=None),
+        replace(facts, evidence_level="E0"),
+        replace(facts, error=None),
+        replace(facts, error=facts.error.model_copy(update={"retryable": True})),
+    ):
+        with pytest.raises(ApiError):
+            evolve(
+                job,
+                JobEvent.CONFIRMED_NOT_EXECUTED,
+                invalid,
+                at=now,
+                actor_id=REQUESTER,
+                requester_id=REQUESTER,
+            )
+    with pytest.raises(ApiError):
+        evolve(
+            state_job(JobStatus.VERIFYING, now),
+            JobEvent.CONFIRMED_NOT_EXECUTED,
+            facts,
+            at=now,
+            actor_id=REQUESTER,
+            requester_id=REQUESTER,
+        )
 
 
 @pytest.mark.parametrize(

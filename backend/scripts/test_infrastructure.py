@@ -79,6 +79,7 @@ def main() -> int:
             "receipts",
             "settlement",
             "budget-governance",
+            "execution-recovery",
         ),
         default="all",
     )
@@ -120,6 +121,10 @@ def main() -> int:
         "receipts": ["tests/integration/test_execution_receipts.py"],
         "settlement": ["tests/integration/test_budget_settlement.py"],
         "budget-governance": ["tests/integration/test_budget_governance.py"],
+        "execution-recovery": [
+            "tests/integration/test_execution_recovery.py",
+            "tests/integration/test_execution_recovery_worker.py",
+        ],
         "parser": [
             "tests/integration/test_command_parse.py",
             "tests/integration/test_workspace.py",

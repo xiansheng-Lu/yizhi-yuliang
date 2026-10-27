@@ -199,13 +199,51 @@ class Manifest(StrictModel):
     case_changes: dict[str, str] = Field(default_factory=dict)
 
 
+class UserConfirmation(StrictModel):
+    """用户对冻结预期的直接确认；不伪造BE/FE复核或放行平台执行。"""
+
+    kind: Literal["USER_CONFIRMATION"]
+    confirmed_by: Literal["USER"]
+    confirmed_on: date
+    baseline: str = Field(pattern=r"^[0-9a-f]{40}$")
+    source: str = Field(min_length=1)
+    prompt_version: int = Field(strict=True, gt=0)
+    template_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    cases_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    case_hashes: dict[str, str] = Field(min_length=1)
+
+
 class PromptBundle(StrictModel):
     manifest: Manifest
     template: str
     cases: tuple[GoldenCase, ...]
+    confirmation: UserConfirmation | None = None
+
+    @model_validator(mode="after")
+    def confirmation_matches_frozen_content(self) -> "PromptBundle":
+        self._check_confirmation()
+        return self
+
+    def _check_confirmation(self) -> None:
+        confirmation = self.confirmation
+        if confirmation is not None and (
+            confirmation.prompt_version != self.manifest.prompt_version
+            or confirmation.template_sha256 != self.manifest.template_sha256
+            or confirmation.cases_sha256 != self.manifest.cases_sha256
+            or confirmation.case_hashes != {case.id: case.case_hash() for case in self.cases}
+        ):
+            raise ValueError("冻结版本或样例变化使用户确认失效")
 
     def pending_review_ids(self) -> list[str]:
+        self._check_confirmation()
+        if self.confirmation is not None:
+            return []
         return [case.id for case in self.cases if {r.role for r in case.reviews} != {"BE", "FE"}]
+
+    def confirmation_source(self) -> Literal["USER", "BE_FE", "PENDING"]:
+        if self.pending_review_ids():
+            return "PENDING"
+        return "USER" if self.confirmation is not None else "BE_FE"
 
     def require_human_labels(self) -> None:
         if self.pending_review_ids():
@@ -238,6 +276,7 @@ class PromptBundle(StrictModel):
             "matched": len(self.cases) - len(failed),
             "failed_ids": failed,
             "human_labels_confirmed": not self.pending_review_ids(),
+            "confirmation_source": self.confirmation_source(),
             "release_allowed": False,
         }  # CANDIDATE报告不执行发布或激活。
 
@@ -275,4 +314,12 @@ def load_bundle(directory: Path | None = None) -> PromptBundle:
     tags = {tag for case in cases for tag in case.tags}
     if not {"legal", "ambiguous", "mixed", "units", "unauthorized", "injection"} <= tags:
         raise ValueError("缺少必测解析场景")
-    return PromptBundle(manifest=manifest, template=template, cases=cases)
+    confirmation_path = root / "confirmation.json"
+    confirmation = (
+        UserConfirmation.model_validate_json(confirmation_path.read_text(encoding="utf-8"))
+        if confirmation_path.is_file()
+        else None
+    )
+    return PromptBundle(
+        manifest=manifest, template=template, cases=cases, confirmation=confirmation
+    )

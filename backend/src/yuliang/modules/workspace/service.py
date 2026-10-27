@@ -12,11 +12,11 @@ from sqlalchemy.orm import Session
 
 from yuliang.modules.access.service import require_shop_account
 from yuliang.modules.audit.service import Action, ObjectType, record
+from yuliang.modules.command.models import ParseInput
+from yuliang.modules.command.service import CommandParser
 from yuliang.modules.workspace.models import MessageSend, ReportingScope
 from yuliang.platform.db import VerifiedIdentity, business_transaction
 from yuliang.platform.errors import ApiError, ErrorCode
-
-UNAVAILABLE = "模型能力尚未接入，当前无法可靠解析这条指令。输入已保存，请待能力验收后重试。"
 
 
 class WorkspaceService:
@@ -222,11 +222,13 @@ class WorkspaceService:
                 )
             else:
                 self.conversation(session, conversation_id, lock=True)
-            interpretation = {"kind": "UNRECOGNIZED", "text": UNAVAILABLE}
+            interpretation = CommandParser(self).interpret(
+                session, ParseInput(text=value.text, scope=value.scope)
+            )
             message_id = uuid4()
             for role, content, identifier in (
                 ("user", value.text, uuid4()),
-                ("assistant", UNAVAILABLE, message_id),
+                ("assistant", interpretation["text"], message_id),
             ):
                 session.execute(
                     text("""INSERT INTO conversation_messages(

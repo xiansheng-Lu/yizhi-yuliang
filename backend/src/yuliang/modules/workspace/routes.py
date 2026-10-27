@@ -3,6 +3,8 @@ from uuid import UUID
 from fastapi import APIRouter, Request
 from starlette.responses import JSONResponse
 
+from yuliang.modules.command.models import ParseInput
+from yuliang.modules.command.service import CommandParser
 from yuliang.modules.identity.routes import SESSION_COOKIE, service
 from yuliang.modules.workspace.models import (
     JobAttachment,
@@ -43,6 +45,14 @@ def create_project(value: ProjectCreate, request: Request) -> JSONResponse:
 @router.post("/conversation-messages")
 def send_message(value: MessageSend, request: Request) -> JSONResponse:
     return success(request, workspace(request).send(value))
+
+
+@router.post("/command-interpretations")
+def interpret_command(value: ParseInput, request: Request) -> JSONResponse:
+    instance = workspace(request)
+    with instance.transaction() as session:
+        result = CommandParser(instance).interpret(session, value)
+    return success(request, result)
 
 
 @router.patch("/conversations/{conversation_id}")

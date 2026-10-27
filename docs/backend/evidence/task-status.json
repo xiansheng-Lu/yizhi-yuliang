@@ -4,7 +4,7 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "currentFocus": "M2-03",
+  "currentFocus": "M2-04",
   "tasks": {
     "R00-01": {
       "owner": "BE",
@@ -1067,21 +1067,22 @@
     "M5-03a": {
       "owner": "BE",
       "status": "WAITING_REVIEW",
-      "delivery": "28条解析候选/模板/版本与离线回归守卫交付；人工预期尚未确认",
+      "delivery": "28条解析预期已获用户直接确认，冻结内容与确认守卫通过；BE/FE最终复核不代签",
       "implementationCommit": "2e93d0021a277ca894336c59a99552fe96e11dc3",
       "git": "COMMITTED",
       "technicalVerification": {
-        "result": "PARTIAL_PENDING_HUMAN_LABELS",
+        "result": "PASS",
         "unitContractPassed": 80,
         "cases": 28,
-        "humanLabelsConfirmed": 0,
-        "externalCalls": 0
+        "humanLabelsConfirmed": 28,
+        "externalCalls": 0,
+        "confirmationSource": "USER"
       },
       "dod": [
         {
           "item": 1,
-          "technical": "CANDIDATES_DELIVERED",
-          "review": "PENDING_BE_FE_LABELS"
+          "technical": "PASS",
+          "review": "USER_CONFIRMED_EXPECTATIONS_BE_FE_FINAL_REVIEW_PENDING"
         },
         {
           "item": 2,
@@ -1096,7 +1097,12 @@
         "backend": "PENDING",
         "frontend": "PENDING_F06"
       },
-      "evidence": "tasks/M5-03a/README.md"
+      "evidence": "tasks/M5-03a/README.md",
+      "confirmation": {
+        "source": "USER",
+        "date": "2026-10-27",
+        "record": "backend/src/yuliang/modules/aikernel/prompts/v1/confirmation.json"
+      }
     },
     "M2-01b": {
       "owner": "BE",
@@ -1137,14 +1143,37 @@
     },
     "M2-03": {
       "owner": "BE",
-      "status": "BLOCKED",
-      "delivery": "未开始在线解析接线；前置候选集缺BE/FE人工预期，未把Agent自比或6次结构验证当作签字",
-      "blockedBy": [
-        "M5-03a_LABELS"
-      ],
+      "status": "WAITING_REVIEW",
+      "delivery": "七动作规则/模型后置守卫、两个HTTP入口与私有解析留痕后端通过；计划真实目录待M1，F06与具名复核待完成",
+      "dependencyInput": "M2-02/M2-01b技术验证及用户直接确认的28条预期；不代签前置人工复核",
       "technicalVerification": {
-        "result": "NOT_RUN"
-      }
+        "result": "PASS",
+        "layer": "I_REAL_LOCAL_POSTGRES_HTTP",
+        "unitContractPassed": 138,
+        "affectedIntegrationPassed": 75,
+        "parserIntegrationPassed": 49,
+        "modelCalls": 0,
+        "browserIntegration": "NOT_RUN"
+      },
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS"
+        },
+        {
+          "item": 2,
+          "technical": "PASS"
+        },
+        {
+          "item": 3,
+          "technical": "PASS"
+        }
+      ],
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F06"
+      },
+      "evidence": "tasks/M2-03/README.md"
     }
   },
   "gates": {
@@ -1211,23 +1240,17 @@
     },
     {
       "id": "M5-03a_LABELS",
-      "status": "OPEN",
-      "reason": "28条候选预期已具象归档，但DoD1要求的BE/FE人工确认尚缺；样例守卫实际拒绝发布",
-      "affects": [
-        "M5-03a DoD1",
-        "M2-03",
-        "M2-04"
-      ],
-      "unblock": "具名复核review-cases.md，注明通过/修改ID及代码基线；有变更升版本并重新校验"
+      "status": "RESOLVED",
+      "reason": "2026-10-27用户直接确认全部28条解析预期，USER_CONFIRMATION逐项摘要绑定；未代填BE/FE角色签字",
+      "affects": [],
+      "unblock": "用户确认记录已归档，机器守卫通过"
     },
     {
       "id": "E04",
-      "status": "LIMITED_VERIFICATION_COMPLETE",
-      "reason": "DeepSeek通道已实际验证，用户授权人民币0.20元/6次，6次全部使用；后续真实回归预算需另行核对",
-      "affects": [
-        "M2-04真实回归预算"
-      ],
-      "unblock": "人工样例确认后根据固定回归集另做报价，不自动重复调用"
+      "status": "AUTHORIZED_FOR_DEVELOPMENT_VALIDATION",
+      "reason": "用户2026-10-27明确允许任务开发需要时直接调用DeepSeek；本轮固定28样例使用独立持久许可和内部1元保护上限，不重置历史6次许可",
+      "affects": [],
+      "unblock": "模型调用按本轮授权直接执行；真实广告操作不在此授权内"
     }
   ],
   "rules": {
@@ -1236,12 +1259,9 @@
     "offline": "离线通过不等于真实依赖、前端联调或平台验收通过"
   },
   "nextTask": {
-    "id": "M2-03",
-    "status": "BLOCKED",
-    "blockedBy": [
-      "M5-03a_LABELS"
-    ],
-    "note": "当前其余未启动任务没有全部技术前置就绪者；等待可核对人工预期，不按固定间隔空跑或跳G0"
+    "id": "M2-04",
+    "status": "READY",
+    "note": "M2-03后端通过；用户已确认固定预期并允许直接DeepSeek验证，完成离线验证后立即领取"
   },
   "continuation": {
     "requestedOn": "2026-10-27",

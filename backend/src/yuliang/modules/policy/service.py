@@ -53,7 +53,13 @@ def check(code: str, passed: bool, message: str, evidence: dict[str, Any]) -> Ch
 
 
 class RiskFramework:
-    def __init__(self, applications: "JobApplications", rules: Iterable[RiskRule] = ()) -> None:
+    def __init__(
+        self, applications: "JobApplications", rules: Iterable[RiskRule] | None = None
+    ) -> None:
+        if rules is None:
+            from yuliang.modules.policy.rules import deterministic_rules
+
+            rules = deterministic_rules()
         self.applications = applications
         implementations = tuple(rules)
         self.rules = {rule.name: rule for rule in implementations}

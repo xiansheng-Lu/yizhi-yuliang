@@ -1,0 +1,11 @@
+{
+  "head": "0035_budget_governance",
+  "migrationRoleCanLogin": false,
+  "developmentRows": {
+    "budget_discrepancies": 0,
+    "budget_alerts": 0,
+    "budget_job_finalizations": 0,
+    "execution_orders": 0,
+    "command_jobs": 0
+  }
+}

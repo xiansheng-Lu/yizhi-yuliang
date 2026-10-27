@@ -13,8 +13,7 @@ from sqlalchemy.orm import Session
 
 from yuliang.modules.access.service import require_shop_account
 from yuliang.modules.audit.service import record
-from yuliang.modules.capability.models import CONNECTOR_CONTEXTS
-from yuliang.modules.capability.service import evaluate_action, maintenance
+from yuliang.modules.capability.service import maintenance
 from yuliang.modules.command.jobs import (
     Action,
     BooleanValue,
@@ -26,8 +25,6 @@ from yuliang.modules.command.jobs import (
     JobValue,
     MoneyValue,
     RatioValue,
-    RiskCheck,
-    RiskSummary,
 )
 from yuliang.modules.connectors.base import GatewayContext, ObjectRef
 from yuliang.modules.connectors.freshness import ResourceFreshness
@@ -153,6 +150,10 @@ class JobApplications:
                 "kind": "MANUAL_HANDOFF",
                 "targetVersion": target["updated_at"].isoformat(),
             }
+        session.execute(
+            text("SELECT pg_advisory_xact_lock_shared(hashtextextended(:key,760117))"),
+            {"key": f"{self.identity.tenant_id}|{target['account_id']}"},
+        )
         mapping = (
             session.execute(
                 text("""SELECT m.*,b.id AS binding_id,b.connector_id,b.revision,
@@ -277,66 +278,28 @@ class JobApplications:
                     if previous["request_digest"] != digest:
                         raise ApiError(ErrorCode.IDEMPOTENCY_MISMATCH, "同一申请键已用于不同内容")
                     return self._project(session, dict(previous))
+                from yuliang.modules.policy.repository import policy_lock
+                from yuliang.modules.policy.service import RiskFramework
+
+                policy_lock(session, self.identity.tenant_id, shared=True)
                 old, proof = self.current_value(session, value, target)
                 now = session.execute(text("SELECT clock_timestamp()")).scalar_one()
                 manual = value.target_type == "LIVE_SESSION"
-                checks = [
-                    RiskCheck(
-                        code="TARGET_SCOPE", passed=True, message="已核对内部目标归属与当前申请权限"
-                    )
-                ]
-                if manual:
-                    checks.append(
-                        RiskCheck(
-                            code="STREAM_CONTROL_UNAVAILABLE",
-                            passed=False,
-                            message="尚无实际推流控制适配，按人工交接记录",
-                        )
-                    )
-                else:
-                    connector = next(
-                        k
-                        for k, v in CONNECTOR_CONTEXTS.items()
-                        if v == (target["provider"], target["product_line"])
-                    )
-                    cap = evaluate_action(
-                        session,
-                        self.identity,
-                        value.shop_id,
-                        target["account_id"],
-                        connector,
-                        target["product_line"],
-                        ACTION_CAPABILITIES[value.action_type][0],
-                    )
-                    checks.extend(
-                        [
-                            RiskCheck(
-                                code="CURRENT_VALUE_CONFIRMED",
-                                passed=True,
-                                message="现值来自最新完整且仍新鲜的已确认页面",
-                            ),
-                            RiskCheck(
-                                code="ACTION_CAPABILITY",
-                                passed=cap["status"] == "AUTHORIZED",
-                                message="逐动作能力按当前证据复核",
-                            ),
-                            RiskCheck(
-                                code="POLICY_ENGINE_READY",
-                                passed=False,
-                                message="四时点策略尚未装配，本阶段不放行广告执行",
-                            ),
-                        ]
-                    )
-                risk = RiskSummary(
-                    result="MANUAL_ONLY" if manual else "BLOCKED",
-                    level="HIGH",
-                    checks=tuple(checks),
-                    policy_version=0,
-                    checked_at=now,
+                job_id = uuid4()
+                risk = (
+                    RiskFramework(self)
+                    .assess_create(session, value, target, old, proof, job_id, now)
+                    .summary
                 )
-                status = JobStatus.MANUAL_REQUIRED if manual else JobStatus.BLOCKED
+                status = (
+                    JobStatus.MANUAL_REQUIRED
+                    if manual
+                    else (
+                        JobStatus.DRAFT if risk.result == "REVIEW_REQUIRED" else JobStatus.BLOCKED
+                    )
+                )
                 job = CommandJob(
-                    job_id=str(uuid4()),
+                    job_id=str(job_id),
                     source=value.source,
                     tenant_id=str(self.identity.tenant_id),
                     shop_id=str(value.shop_id),

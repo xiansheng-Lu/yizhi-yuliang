@@ -4,7 +4,7 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "currentFocus": "M0-16a",
+  "currentFocus": "M0-17",
   "tasks": {
     "R00-01": {
       "owner": "BE",
@@ -728,6 +728,111 @@
         "frontendReason": "20册此卡无FE协作"
       },
       "evidence": "tasks/M0-15/README.md"
+    },
+    "M0-16a": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "delivery": "Outbox持久化与发布确认技术验证通过，人工复核待签",
+      "implementationCommit": "75cb1ef170ce328b3d259cb3775f7aa17362e109",
+      "git": "LOCAL_COMMITTED_PENDING_NETWORK_SYNC",
+      "dependencyInput": "使用已验证技术输入继续开发，不替代前置人工验收",
+      "technicalVerification": {
+        "result": "PASS",
+        "unitContractPassed": 30,
+        "integrationPassed": 46,
+        "failed": 0,
+        "skipped": 0
+      },
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS"
+        },
+        {
+          "item": 2,
+          "technical": "PASS"
+        },
+        {
+          "item": 3,
+          "technical": "PASS"
+        }
+      ],
+      "review": {
+        "backend": "PENDING",
+        "frontend": "NOT_APPLICABLE",
+        "frontendReason": "20册此卡无FE协作"
+      },
+      "evidence": "tasks/M0-16a/README.md"
+    },
+    "M0-16b": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "delivery": "Inbox未完成任务恢复技术验证通过，人工复核待签",
+      "implementationCommit": "75cb1ef170ce328b3d259cb3775f7aa17362e109",
+      "git": "LOCAL_COMMITTED_PENDING_NETWORK_SYNC",
+      "dependencyInput": "使用已验证技术输入继续开发，不替代前置人工验收",
+      "technicalVerification": {
+        "result": "PASS",
+        "unitContractPassed": 30,
+        "integrationPassed": 46,
+        "failed": 0,
+        "skipped": 0
+      },
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS"
+        },
+        {
+          "item": 2,
+          "technical": "PASS"
+        },
+        {
+          "item": 3,
+          "technical": "PASS"
+        }
+      ],
+      "review": {
+        "backend": "PENDING",
+        "frontend": "NOT_APPLICABLE",
+        "frontendReason": "20册此卡无FE协作"
+      },
+      "evidence": "tasks/M0-16b/README.md"
+    },
+    "M0-16c": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "delivery": "基础消息故障演练技术验证通过，人工复核待签",
+      "implementationCommit": "75cb1ef170ce328b3d259cb3775f7aa17362e109",
+      "git": "LOCAL_COMMITTED_PENDING_NETWORK_SYNC",
+      "dependencyInput": "使用已验证技术输入继续开发，不替代前置人工验收",
+      "technicalVerification": {
+        "result": "PASS",
+        "unitContractPassed": 30,
+        "integrationPassed": 46,
+        "failed": 0,
+        "skipped": 0
+      },
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS"
+        },
+        {
+          "item": 2,
+          "technical": "PASS"
+        },
+        {
+          "item": 3,
+          "technical": "PASS"
+        }
+      ],
+      "review": {
+        "backend": "PENDING",
+        "frontend": "NOT_APPLICABLE",
+        "frontendReason": "20册此卡无FE协作"
+      },
+      "evidence": "tasks/M0-16c/README.md"
     }
   },
   "gates": {},
@@ -762,11 +867,11 @@
     {
       "id": "E06_MAIL",
       "status": "OPEN",
-      "reason": "需要SMTP/邮件服务与实际收件地址；凭据写本地忽略配置，不能发入仓库",
+      "reason": "已确认实际收件地址；尚缺发件SMTP/邮件服务和本地凭据，不能冒充投递验收",
       "affects": [
         "M0-10实际收件验证"
       ],
-      "unblock": "用户提供通道并实际收到测试验证码"
+      "unblock": "提供实际发件通道并收到测试验证码"
     },
     {
       "id": "F01_BROWSER",
@@ -778,6 +883,14 @@
         "G0联合验收"
       ],
       "unblock": "FE按冻结契约接线并完成真实浏览器证据"
+    },
+    {
+      "id": "GIT_NETWORK",
+      "status": "OPEN",
+      "reason": "2026-10-27本轮GitHub HTTPS直连和原代理连接超时，本地成果保留，尚未推送M0-16",
+      "affects": [
+        "M0-16远程同步"
+      ]
     }
   ],
   "rules": {
@@ -786,9 +899,9 @@
     "offline": "离线通过不等于真实依赖、前端联调或平台验收通过"
   },
   "nextTask": {
-    "id": "M0-16a",
+    "id": "M0-17",
     "status": "TECHNICAL_INPUTS_READY_WAITING_REVIEW",
-    "note": "Worker技术验证后立即继续Outbox，不等待定时唤醒"
+    "note": "消息技术验证完成即继续审计横切，不等待心跳"
   },
   "continuation": {
     "requestedOn": "2026-10-27",

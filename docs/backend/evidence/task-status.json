@@ -503,7 +503,12 @@
         "backend": "PENDING",
         "frontend": "PENDING_F02"
       },
-      "evidence": "tasks/M0-13/README.md"
+      "evidence": "tasks/M0-13/README.md",
+      "browserCompletion": {
+        "result": "PASS_LOCAL_BROWSER_SCENARIOS",
+        "evidence": "docs/frontend/acceptance/evidence/f01-completion/verification.json",
+        "review": "PENDING_BE_FE"
+      }
     },
     "M0-09": {
       "owner": "BE",
@@ -535,7 +540,12 @@
         "backend": "PENDING",
         "frontend": "PENDING_F01_F02"
       },
-      "evidence": "tasks/M0-09/README.md"
+      "evidence": "tasks/M0-09/README.md",
+      "browserCompletion": {
+        "result": "PASS_LOCAL_BROWSER_SCENARIOS",
+        "evidence": "docs/frontend/acceptance/evidence/f01-completion/verification.json",
+        "review": "PENDING_BE_FE"
+      }
     },
     "M0-11a": {
       "owner": "BE",
@@ -567,7 +577,12 @@
         "backend": "PENDING",
         "frontend": "PENDING_F02"
       },
-      "evidence": "tasks/M0-11a/README.md"
+      "evidence": "tasks/M0-11a/README.md",
+      "browserCompletion": {
+        "result": "PASS_LOCAL_BROWSER_SCENARIOS",
+        "evidence": "docs/frontend/acceptance/evidence/f01-completion/verification.json",
+        "review": "PENDING_BE_FE"
+      }
     },
     "M0-11b": {
       "owner": "BE",
@@ -604,6 +619,11 @@
         "csrfFrontend": "IMPLEMENTED_AUTOMATED_PASS",
         "realBrowser": "BLOCKED_POLICY_NOT_RUN",
         "evidence": "docs/frontend/acceptance/F01-CSRF接线与浏览器验证.md"
+      },
+      "browserCompletion": {
+        "result": "PASS_LOCAL_BROWSER_SCENARIOS",
+        "evidence": "docs/frontend/acceptance/evidence/f01-completion/verification.json",
+        "review": "PENDING_BE_FE"
       }
     },
     "M0-11c": {
@@ -636,7 +656,12 @@
         "backend": "PENDING",
         "frontend": "PENDING_F02"
       },
-      "evidence": "tasks/M0-11c/README.md"
+      "evidence": "tasks/M0-11c/README.md",
+      "browserCompletion": {
+        "result": "PASS_LOCAL_BROWSER_SCENARIOS",
+        "evidence": "docs/frontend/acceptance/evidence/f01-completion/verification.json",
+        "review": "PENDING_BE_FE"
+      }
     },
     "M0-12": {
       "owner": "BE",
@@ -668,7 +693,12 @@
         "backend": "PENDING",
         "frontend": "PENDING_F02"
       },
-      "evidence": "tasks/M0-12/README.md"
+      "evidence": "tasks/M0-12/README.md",
+      "browserCompletion": {
+        "result": "PASS_LOCAL_BROWSER_SCENARIOS",
+        "evidence": "docs/frontend/acceptance/evidence/f01-completion/verification.json",
+        "review": "PENDING_BE_FE"
+      }
     },
     "M0-14": {
       "owner": "BE",
@@ -735,7 +765,12 @@
         "backend": "PENDING",
         "frontend": "PENDING_F01_F02"
       },
-      "evidence": "tasks/M0-10/README.md"
+      "evidence": "tasks/M0-10/README.md",
+      "browserCompletion": {
+        "result": "PASS_LOCAL_BROWSER_SCENARIOS",
+        "evidence": "docs/frontend/acceptance/evidence/f01-completion/verification.json",
+        "review": "PENDING_BE_FE"
+      }
     },
     "M0-15": {
       "owner": "BE",
@@ -1235,10 +1270,9 @@
     "G0": {
       "status": "BLOCKED",
       "blockedBy": [
-        "F01_BROWSER",
         "E08"
       ],
-      "note": "Chrome真实认证与资料写闭环通过；F01剩余场景及人工联合复核仍缺，保持未放行"
+      "note": "F01/F02本地浏览器技术缺项已补齐；仅待BE/FE对底座与适用A/F具名联合复核，不自动放行"
     }
   },
   "blockers": [
@@ -1278,14 +1312,10 @@
     },
     {
       "id": "F01_BROWSER",
-      "status": "OPEN",
-      "reason": "Chrome真实登录/资料写入/刷新/退出通过；缺失伪造CSRF浏览器负例、项目写入、剩余身份与核验尺寸证据待补，BE/FE复核未完成",
-      "affects": [
-        "M0-11b第三条DoD",
-        "身份接口正式开放",
-        "G0联合验收"
-      ],
-      "unblock": "完成F01剩余适用浏览器场景及BE/FE具名复核；访问阻塞已解除"
+      "status": "RESOLVED",
+      "reason": "Chrome实际四角色登录、项目/资料写与刷新、CSRF缺失/伪造/旧令牌拒绝、权限拒绝、退出失效及1440/390视口完成；独立真实PG库清理通过。",
+      "affects": [],
+      "unblock": "浏览器技术缺项已补齐，BE/FE最终具名复核仍归E08"
     },
     {
       "id": "GIT_NETWORK",
@@ -1322,24 +1352,24 @@
   },
   "nextTask": {
     "id": "M1-01",
-    "status": "BLOCKED",
-    "blockedBy": [
-      "G0"
-    ],
-    "note": "浏览器访问已通过用户指定Chrome恢复；G0尚未通过，M1-01仍未领取"
+    "status": "READY_FOR_TECHNICAL_PREPARATION",
+    "formalGate": "G0 still BLOCKED by E08",
+    "note": "用户2026-10-27明确要求资源不阻塞持续开发；按已技术验证底座进行本地实现和验证，人工门禁不代签，不开放真实平台流量。"
   },
   "continuation": {
     "requestedOn": "2026-10-27",
     "authorization": "持续推进后端任务卡，缺资源再找用户对接",
-    "heartbeat": "执行时卡间立即连续推进；5分钟唤醒仅用于中断/空闲恢复，不作为卡间等待",
-    "environment": "WSL2 Ubuntu Docker; UV_PROJECT_ENVIRONMENT=/home/lenovo/.cache/yuliang-venv"
+    "heartbeat": "已在本聊天设置5分钟中断/空闲恢复；卡间立即推进",
+    "environment": "WSL2 Ubuntu Docker; UV_PROJECT_ENVIRONMENT=/home/lenovo/.cache/yuliang-venv",
+    "latestUserRequest": "补齐浏览器验收，然后按照后端任务卡继续后续的所有开发，需要资源再找我对接，不阻塞持续开发到完毕",
+    "developmentPolicy": "缺人工/外部验收时记录并继续可独立技术准备；正式门禁、平台调用和付费仍按各自证据许可"
   },
   "frontendIntegration": {
     "F01": {
       "owner": "FE",
-      "status": "BLOCKED",
+      "status": "WAITING_REVIEW",
       "implementation": "native browser fetch receiver fixed; 211 automated tests, typecheck, lint, build passed",
-      "browser": "CHROME_CONNECTIVITY_PASSWORD_EMAIL_PROFILE_REFRESH_LOGOUT_PASS_REMAINING_SCENARIOS_PENDING",
+      "browser": "LOCAL_CHROME_FOUR_ROLES_CSRF_PROJECT_PROFILE_REFRESH_LOGOUT_1440_390_PASS",
       "latestPermissionDiagnosis": {
         "checkedAt": "2026-10-27T18:58:58+08:00",
         "desktopBundledCli": "0.164.0-alpha.11.1",
@@ -1359,12 +1389,17 @@
         "evidence": "docs/frontend/acceptance/evidence/f01-csrf/browser-policy.json"
       },
       "blockedBy": [
-        "F01_BROWSER"
+        "E08"
       ],
       "evidence": "docs/frontend/acceptance/F01-CSRF接线与浏览器验证.md",
       "latestAccessRecovery": {
         "evidence": "docs/frontend/acceptance/evidence/browser-access-recovery/verification.json",
         "result": "PASS_BROWSER_CONNECTIVITY_AND_AUTH_SMOKE"
+      },
+      "latestCompletion": {
+        "checkedAt": "2026-10-27T20:34:17.696886+08:00",
+        "result": "PASS_LOCAL_BROWSER_SCENARIOS",
+        "evidence": "docs/frontend/acceptance/evidence/f01-completion/verification.json"
       }
     }
   }

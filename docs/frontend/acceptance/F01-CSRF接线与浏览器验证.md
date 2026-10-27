@@ -1,6 +1,6 @@
 # F01 CSRF接线与浏览器验证
 
-日期：2026-10-27（Asia/Shanghai）；基线a1d67c7cd15acb38da9ef3a56c7954d997eccc4d；FE范围，coding agent实施。状态：代码与自动检查通过，真实浏览器认证闭环BLOCKED，BE/FE最终复核PENDING。
+日期：2026-10-27（Asia/Shanghai）；最初基线a1d67c7cd15acb38da9ef3a56c7954d997eccc4d，补验基线3b1ffd5；FE范围，coding agent实施。最新状态：本地Chrome浏览器技术验收通过，BE/FE最终具名复核PENDING。下文早期BLOCKED记录保留为历史，当前结论以末节补验为准。
 
 ## 接线结果
 
@@ -47,3 +47,13 @@ M0-11b第三条DoD/F01仍待浏览器证据，G0继续BLOCKED且人工签字不�
 真实OPERATOR密码登录、CSRF引导、会话/快照/历史读取、昵称PATCH与刷新持久化、退出及受保护页返回登录已通过；OWNER使用CaptureMail验证码登录，授权菜单切换和退出通过。邮件未外发、平台未调用。脱敏服务端HTTP记录与截图见[evidence/browser-access-recovery/verification.json](evidence/browser-access-recovery/verification.json)。截图已检查；视口覆盖请求后图像仍为桌面尺寸，不能计手机390/PC1440通过。
 
 BROWSER_LOCAL_API_ACCESS在用户指定Chrome路径解除；F01仍缺缺失/伪造CSRF浏览器负例、项目写入、剩余身份和核验尺寸证据，BE/FE人工复核PENDING，G0不放行。服务保持运行供继续验证；临时库生命周期未结束，旧cleanup记录不代表本次实例。
+
+## 2026-10-27 剩余浏览器场景补验
+
+用户本次明确要求补齐浏览器验收并持续推进全部后端开发。重新启动独立真实PG测试库与本地API模式前端，Chrome扩展执行OPERATOR、AGENCY_OPERATOR、AUDITOR密码登录，以及OWNER的CaptureMail邮箱码登录；无外发邮件、模型付费或平台调用。
+
+OPERATOR创建项目并刷新读取成功；切换到代理运营身份后原用户私有项目不出现，访问未授权内容页显示拒绝。审计员无中枢菜单，使用真实浏览器Cookie发出的项目POST返回403；独立PG查询确认被拒项目为0条。OWNER昵称PATCH、刷新持久化和产品退出通过。十二快照集合均为数组；租户集合1条，其余平台集合为空，不把身份测试种子投影成真实平台事实。
+
+浏览器安全探针由本地临时静态页触发实际跨域fetch，使用真实Cookie/预检/后端，未替换网络或鉴权。缺失、伪造、轮换后旧CSRF均403，当前令牌PATCH为200；退出200信封data=null，session=null，受保护快照401。探针源码、脱敏requestId、数据库断言、HTTP轨迹和截图见[补验记录](evidence/f01-completion/verification.json)。临时公共探针文件已移除，不进入产品构建；本地测试库已删除，app_migrate为NOLOGIN。
+
+本次从DOM核对PC1440×900和手机390×844实际视口，项目页无横向溢出，相应截图均已目视检查；其他角色截图按实际像素记录，不以文件名推定尺寸。浏览器技术缺项已解除，F01转WAITING_REVIEW，G0仅保留E08具名联合复核。生产TLS/Secure Cookie与后续F06审批/执行/真实平台场景不在此本地补验范围。

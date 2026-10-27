@@ -1,0 +1,80 @@
+{
+  "checkedAt": "2026-10-27T20:34:17.696886+08:00",
+  "baseline": "3b1ffd5",
+  "result": "PASS_LOCAL_BROWSER_SCENARIOS",
+  "browser": "Chrome extension",
+  "environment": "disposable real PostgreSQL; local HTTP; capture-only mail",
+  "passed": [
+    "OPERATOR password login; project create and refresh persistence",
+    "AGENCY_OPERATOR password login; private project absent; ungranted scripts page denied",
+    "AUDITOR password login; command menu absent; project POST 403; database confirms zero inserted rows",
+    "OWNER capture-mail email-code login; menu change; profile PATCH and refresh persistence; product logout",
+    "12 array snapshot collections; no platform data invented",
+    "missing/forged/rotated-old CSRF 403; current token PATCH 200",
+    "logout envelope data=null; session=null; protected snapshot 401",
+    "verified DOM viewport 1440x900 and 390x844; no horizontal overflow; screenshots visually inspected"
+  ],
+  "csrfEvidence": "security.json",
+  "permissionEvidence": "auditor-permission.json",
+  "databaseEvidence": "database-check.json",
+  "cleanup": {
+    "result": "PASS",
+    "temporaryDatabaseRemaining": 0,
+    "migrationRoleCanLogin": false,
+    "platformWrites": 0,
+    "externalMailDeliveries": 0
+  },
+  "screenshots": [
+    {
+      "file": "agency-denied.jpg",
+      "width": 1440,
+      "height": 900,
+      "sha256": "6797497d96b9f4e69713f885ba605b3936ef84a8aebeff120f85ba10bfc95071",
+      "visualInspection": "PASS"
+    },
+    {
+      "file": "auditor.jpg",
+      "width": 1425,
+      "height": 891,
+      "sha256": "197d802215cdf220bf88e396f54129e155e9c48655c4c7c145715fca8730a8aa",
+      "visualInspection": "PASS"
+    },
+    {
+      "file": "login-mobile390.jpg",
+      "width": 375,
+      "height": 812,
+      "sha256": "a906e51f9e0b6b8db18710cefde5ded03bc27f854f6546d07250282d5f00af9c",
+      "visualInspection": "PASS"
+    },
+    {
+      "file": "operator-mobile390.jpg",
+      "width": 390,
+      "height": 844,
+      "sha256": "c702f2394c3f68ad95f431b8530555cedd86c8416f088b568103874638c9c544",
+      "visualInspection": "PASS"
+    },
+    {
+      "file": "operator-pc1440.jpg",
+      "width": 1440,
+      "height": 900,
+      "sha256": "a2025ed90aaa4f429cd1d0f741196e4e0819fa7fa2e7a110e94adb1bad6724fb",
+      "visualInspection": "PASS"
+    },
+    {
+      "file": "owner-profile.jpg",
+      "width": 1425,
+      "height": 731,
+      "sha256": "2040c48696e445354d6bf310e736b614792c20d8ecee1023dbc65610ce8f127d",
+      "visualInspection": "PASS"
+    }
+  ],
+  "notCovered": [
+    "production TLS/Secure cookie deployment",
+    "final BE/FE named review",
+    "domain-specific F06 approval/execution UI and real platform scenarios"
+  ],
+  "platformWrites": 0,
+  "paidModelCalls": 0,
+  "externalMailDeliveries": 0,
+  "secretsIncluded": false
+}

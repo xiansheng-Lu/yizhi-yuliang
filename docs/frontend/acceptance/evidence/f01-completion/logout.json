@@ -1,0 +1,11 @@
+{
+  "result": "PASS",
+  "logout": 200,
+  "logoutData": null,
+  "session": null,
+  "protectedResource": 401,
+  "requestIds": [
+    "288f3bc0a98649698f08c557433f2fd2",
+    "ee2f08cea3cc439399efbe36d774ea72"
+  ]
+}

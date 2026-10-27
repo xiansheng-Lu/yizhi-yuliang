@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>F01 浏览器安全验收探针</title>
+<style>body{font:16px system-ui;max-width:960px;margin:24px auto;padding:16px}button{padding:12px;margin:8px}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#eef4f2;padding:16px}</style>
+<h1>F01 浏览器安全验收探针</h1>
+<p>仅用于本地独立测试库。使用浏览器实际 Cookie、跨域预检与 HTTP；不展示令牌，不发邮件，不调用平台。</p>
+<button id="security">核验会话、空快照和 CSRF</button>
+<button id="permission">核验只读角色拒绝创建项目</button>
+<button id="logout">核验退出后的访问失效</button>
+<pre id="result" role="status">等待操作</pre>
+<script>
+const base = "http://127.0.0.1:18000";
+const output = document.querySelector("#result");
+async function request(path, method="GET", body, token) {
+  const headers = {};
+  if (body !== undefined) headers["Content-Type"] = "application/json";
+  if (token !== undefined) headers["X-CSRF-Token"] = token;
+  const response = await fetch(base + path, {method,headers,credentials:"include",body:body === undefined ? undefined : JSON.stringify(body)});
+  const value = await response.json();
+  return {status:response.status,value,requestId:response.headers.get("x-request-id")};
+}
+function requireResult(ok, label) { if (!ok) throw new Error(label); }
+async function token() {
+  const result = await request("/v1/auth/csrf");
+  requireResult(result.status === 200, "CSRF 引导失败");
+  return result.value.data.token;
+}
+async function run(action) {
+  output.textContent = "核验中…";
+  try { output.textContent = JSON.stringify(await action(),null,2); }
+  catch (error) { output.textContent = "FAIL: " + error.message; }
+}
+document.querySelector("#security").onclick = () => run(async () => {
+  const identity = await request("/v1/auth/session");
+  requireResult(identity.status === 200 && identity.value.data?.mode === "API", "需要先在产品页登录合成账号");
+  const before = identity.value.data;
+  const snapshot = await request("/v1/frontend/snapshot");
+  requireResult(snapshot.status === 200, "工作区快照失败");
+  const collections = Object.entries(snapshot.value.data).filter(([,value]) => Array.isArray(value)).map(([name,value]) => ({name,count:value.length}));
+  const body = {displayName:before.displayName};
+  const missing = await request("/v1/users/me","PATCH",body);
+  const forged = await request("/v1/users/me","PATCH",body,"forged-browser-test");
+  const oldToken = await token();
+  const currentToken = await token();
+  const stale = await request("/v1/users/me","PATCH",body,oldToken);
+  const valid = await request("/v1/users/me","PATCH",body,currentToken);
+  const after = await request("/v1/auth/session");
+  requireResult(missing.status === 403 && forged.status === 403 && stale.status === 403 && valid.status === 200, "CSRF 正反例不符合预期");
+  requireResult(after.value.data.displayName === before.displayName, "资料发生意外变化");
+  return {result:"PASS",identity:{mode:before.mode,role:before.role,workspacePages:before.workspacePages},collections,csrf:{missing:missing.status,forged:forged.status,rotatedOld:stale.status,current:valid.status},profileUnchanged:true,requestIds:[missing,forged,stale,valid].map(item => item.requestId),viewport:{width:innerWidth,height:innerHeight,dpr:devicePixelRatio}};
+});
+document.querySelector("#permission").onclick = () => run(async () => {
+  const before = await request("/v1/workspace/history");
+  const denied = await request("/v1/projects","POST",{name:"必须被拒绝的审计员项目"},await token());
+  const after = await request("/v1/workspace/history");
+  requireResult(denied.status === 403, "只读角色未拒绝创建");
+  requireResult(before.status === after.status && JSON.stringify(before.value.data) === JSON.stringify(after.value.data), "拒绝请求改变了历史访问结果");
+  return {result:"PASS",projectWrite:denied.status,error:denied.value.error,historyReadStatuses:[before.status,after.status],historyComparison:before.status === 200 ? "UNCHANGED" : "NOT_READABLE_CHECK_DATABASE_SEPARATELY",requestId:denied.requestId};
+});
+document.querySelector("#logout").onclick = () => run(async () => {
+  const csrf = await token();
+  const logout = await request("/v1/auth/logout","POST",undefined,csrf);
+  const session = await request("/v1/auth/session");
+  const protectedResource = await request("/v1/frontend/snapshot");
+  requireResult(logout.status === 200 && logout.value.data === null && session.value.data === null && protectedResource.status === 401, "退出失效未满足契约");
+  return {result:"PASS",logout:logout.status,logoutData:logout.value.data,session:session.value.data,protectedResource:protectedResource.status,requestIds:[logout.requestId,protectedResource.requestId]};
+});
+</script>
+</html>

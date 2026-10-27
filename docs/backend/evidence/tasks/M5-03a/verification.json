@@ -1,0 +1,71 @@
+{
+  "codeCommit": "2e93d0021a277ca894336c59a99552fe96e11dc3",
+  "executedOn": "2026-10-27",
+  "checks": [
+    {
+      "command": "uv run --frozen ruff check .; ruff format --check .; mypy",
+      "result": "PASS",
+      "mypySourceFiles": 72
+    },
+    {
+      "command": "uv run --frozen pytest tests/unit tests/contract -q",
+      "result": "PASS",
+      "passed": 80
+    },
+    {
+      "command": "uv run --frozen python scripts/check_prompt_bundle.py --review",
+      "result": "PASS",
+      "frozenContent": "PASS",
+      "cases": 28,
+      "caseHashes": {
+        "CP-001": "8b11fdf3fd03774e1ba76dc8718824e1456a7a9f591cfb85f3dfa3d5cc5fd1f4",
+        "CP-002": "3ffad60d6f3ab8f7e95a9a6b5f59d54199390311171108b3ccb751b7c14ea7c8",
+        "CP-003": "c618f6672b3150705576e97539a75b04df87491521d6b1c9dcf5efcd97272bfc",
+        "CP-004": "0e9f0cf54bdca4476183cc18a12f7b5822288181e9eca7129ebf94c50ffd166e",
+        "CP-005": "fbc18831e54914b579e36fb9af4ee0c41346aa5b952938f75314f401c04128eb",
+        "CP-006": "b1aca07c922ff14e7b085181ace19c855a4e447739673b4be1a6673a196dcc5c",
+        "CP-007": "6fddcdfb9667f23f316321028c58b9027e231d2416caccd4a8b93314e76ac672",
+        "CP-008": "78915bb691cf2421ed9d94d77b057ac09024bd9932b5f7ef0e5f57d7babdd837",
+        "CP-009": "0b72f22dfca6f09689bcc4e9571bddbff26bb65d753284cb2b4ddb61c455a555",
+        "CP-010": "cde7ed9674b7e4c4f8882f12982de176c40862617d39e2afad6d5dc678f7d9ec",
+        "CP-011": "c334d176445e04ab70493e76973bc7153852a373d44b3ba47cf10437b723963d",
+        "CP-012": "6910d3817937f45d1e546705af068a25bece37561105ac15aca22c7e334eaf8d",
+        "CP-013": "85c6fa8b171fbaceebbea742a4cde315ecd45e5c1bdbd79255d0134f148339c2",
+        "CP-014": "87241329149a7a0e49ee48211e133576ab8c0551025ce7ef17c28a5021413cc7",
+        "CP-015": "6555507f11009ad49c132794d08cfa982e400c5d225fbee9ae27bf84278f8f52",
+        "CP-016": "698da7c120493b4fb396ed7431e9a16409ca55378ecb4e8b3229c17c6ef12585",
+        "CP-017": "0d7063c2b62be701cdbaef47230c9d2248f56ecfc1ab7a2a7e3ca25e028c2382",
+        "CP-018": "1869d9a827005a9c474f100500a011458320a669396eaa8a32ae69ab08b5967f",
+        "CP-019": "3585538ca32cff646f8ab3ae2ed3c357070348433a42efcb89e8a3ed9ae1ac32",
+        "CP-020": "f4827004290e1126fd002f069976ebac6550a0bbd2a08f9d8e00eedcc945c1ca",
+        "CP-021": "c161099480bb12da8705fb6afa2fc3eb66a321beccde92ec8876c68babe5cf6f",
+        "CP-022": "d3a4e5298ebac073d0373164b0e89f60e74fa61ae68277719a8ee5d94543ed73",
+        "CP-023": "33329883fc7cc445b4527fb19f9785fc75c460b5575049ff5003af5c50acd1b1",
+        "CP-024": "b08ff85cd5489d44f0509456b7c0f3bd27dacf52e49c9f42c32ad5e5a84dda09",
+        "CP-025": "e312a6f84880fe3b91aab8a4a02e27dfedd974fe9b110e2d442bd5008187a110",
+        "CP-026": "5f0e8cac964c77c7d83647818de72c80ac1108cc0079f2ca16726c9757addfd1",
+        "CP-027": "ff780f0e93283f2b103c5b0c08262d6f728d465dadf802d67598ad4fe796edb5",
+        "CP-028": "7db4b4618beb2b9bdf8ee2605a1c09827fc686f6ef59c5ee519e2c32f5c580f1"
+      }
+    },
+    {
+      "command": "uv run --frozen python scripts/check_prompt_bundle.py --require-human-labels",
+      "exitCode": 1,
+      "result": "EXPECTED_REJECTION",
+      "pendingCases": 28
+    }
+  ],
+  "externalCalls": 0,
+  "qualityClaim": "NOT_VERIFIED_BY_REAL_MODEL_OR_HUMAN_LABELS",
+  "humanReviews": "PENDING_BE_FE_F06",
+  "sourceSha256Utf8Lf": {
+    "backend/README.md": "83474a4710c0b9bb53cea66d1ea9c484e9387dfb5863ade8bf01b613f31f7cfb",
+    "backend/scripts/check_prompt_bundle.py": "53ce8bc63bc199fdaf42da940f24225954164bd8dd3f804e5e11eff37950c114",
+    "backend/src/yuliang/modules/aikernel/prompts/__init__.py": "8b642543743bedc48fc03ce628e4746015e215c5c06dbdf8d91e53345eb4ab5d",
+    "backend/src/yuliang/modules/aikernel/prompts/registry.py": "8005a6bbaf90594913b451b5a759a19dce8948021e93563de6b51f2bda2641d8",
+    "backend/src/yuliang/modules/aikernel/prompts/v1/cases.json": "f1c97cf1785a1fedf9f8384c2c419a5f930e000bdc8b0130f179d7fafd93e124",
+    "backend/src/yuliang/modules/aikernel/prompts/v1/manifest.json": "bfa61eaae4218083b28db2d7f7bfa60b640a638826986d38073e1c00107c5149",
+    "backend/src/yuliang/modules/aikernel/prompts/v1/template.txt": "c8d6c80f4abd0b8c5978eb37078dcd2dd97aeda5d8481a002a82eef90a95d0a3",
+    "backend/tests/unit/test_prompt_registry.py": "36c20b9d5c43259a5581997850a2830f98ff6f0e887ae66a80cf51de95409254"
+  }
+}

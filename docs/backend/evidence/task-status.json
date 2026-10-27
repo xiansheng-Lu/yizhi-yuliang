@@ -4,7 +4,7 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "currentFocus": "M5-03a",
+  "currentFocus": "M2-01b",
   "tasks": {
     "R00-01": {
       "owner": "BE",
@@ -1063,6 +1063,40 @@
         "frontend": "PENDING_F10"
       },
       "evidence": "tasks/M5-02a/README.md"
+    },
+    "M5-03a": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "delivery": "28条解析候选/模板/版本与离线回归守卫交付；人工预期尚未确认",
+      "implementationCommit": "2e93d0021a277ca894336c59a99552fe96e11dc3",
+      "git": "COMMITTED",
+      "technicalVerification": {
+        "result": "PARTIAL_PENDING_HUMAN_LABELS",
+        "unitContractPassed": 80,
+        "cases": 28,
+        "humanLabelsConfirmed": 0,
+        "externalCalls": 0
+      },
+      "dod": [
+        {
+          "item": 1,
+          "technical": "CANDIDATES_DELIVERED",
+          "review": "PENDING_BE_FE_LABELS"
+        },
+        {
+          "item": 2,
+          "technical": "PASS"
+        },
+        {
+          "item": 3,
+          "technical": "PASS"
+        }
+      ],
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F06"
+      },
+      "evidence": "tasks/M5-03a/README.md"
     }
   },
   "gates": {
@@ -1134,9 +1168,9 @@
     "offline": "离线通过不等于真实依赖、前端联调或平台验收通过"
   },
   "nextTask": {
-    "id": "M5-03a",
+    "id": "M2-01b",
     "status": "TECHNICAL_INPUTS_READY_WAITING_REVIEW",
-    "note": "费用门禁归档后立即推进解析黄金样例/提示词版本；人工确认预期仍需BE/FE具名复核"
+    "note": "DeepSeek通道已提供；用户授权本次人民币0.20元/最多6次，先适配自测后真实验证，不扩为长期许可"
   },
   "continuation": {
     "requestedOn": "2026-10-27",

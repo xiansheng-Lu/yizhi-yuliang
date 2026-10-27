@@ -1,0 +1,93 @@
+{
+  "checkedAt": "2026-10-27T18:19:43.629Z",
+  "baseline": "cdbc6d9",
+  "implementationCommit": "0e538d1242f115ae34783b699eed9ecbbf36218f",
+  "result": "PASS_TECHNICAL_REAL_PG_REDIS_SYNTHETIC_SOURCE",
+  "checks": [
+    {
+      "command": "uv run --frozen ruff check .",
+      "result": "PASS"
+    },
+    {
+      "command": "uv run --frozen ruff format --check .",
+      "result": "PASS",
+      "files": 163
+    },
+    {
+      "command": "uv run --frozen mypy",
+      "result": "PASS",
+      "files": 131
+    },
+    {
+      "command": "uv run --frozen pytest tests/unit tests/contract -q",
+      "result": "PASS",
+      "passed": 281,
+      "jobContractCases": 35
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --group applications --details",
+      "result": "PASS",
+      "passed": 18
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --details",
+      "result": "PASS_WITH_EXPLICIT_NOT_RUN_LIFECYCLE",
+      "passed": 346,
+      "skipped": 1
+    },
+    {
+      "command": "node --import tsx backend/scripts/check_job_frontend.mts docs/backend/evidence/tasks/M2-05a/trace.json",
+      "result": "PASS",
+      "validJobs": 1,
+      "invalidResponsesRejected": 5,
+      "injectedFetchCalls": 12,
+      "realNetworkCalls": 0
+    },
+    {
+      "command": "uv run --frozen python scripts/migrate_local.py upgrade",
+      "result": "PASS",
+      "head": "0023_job_applications"
+    }
+  ],
+  "database": {
+    "head": "0023_job_applications",
+    "migrationRoleCanLogin": false,
+    "developmentRows": {
+      "command_value_sources": 0,
+      "job_events": 0,
+      "completeApplications": 0,
+      "legacyJobReferences": 0
+    }
+  },
+  "trace": "trace.json",
+  "frontend": "frontend-check.json",
+  "verified": [
+    "exact snake fields and 12 statuses versus frozen golden",
+    "strict seven action/new value pairs; zero old values preserved",
+    "internal UUID tenant/shop/account resolution",
+    "latest confirmed fresh page current values and persisted proof",
+    "all five ad parameter/state old values plus manual handoff in real PG",
+    "same-key replay and different-payload conflict; eight concurrent transactions one job/event/audit",
+    "missing/stale/scope/wrong-native fields fail closed",
+    "private cross-member isolation and audit rollback",
+    "legacy references not fabricated and incomplete document SQL check"
+  ],
+  "notCovered": [
+    "M2-08/09 actual policy/approval/funds/execution gate",
+    "public create/confirm/review/cancel API M2-05b",
+    "real platform values or M1-08 mirror acceptance",
+    "frontend F06 browser integration and named review"
+  ],
+  "currentBehavior": {
+    "advertisingApplication": "BLOCKED_POLICY_NOT_READY",
+    "policyVersion": 0,
+    "liveHandoff": "MANUAL_REQUIRED",
+    "publicJobWriteRoute": false
+  },
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "review": {
+    "backend": "PENDING",
+    "frontend": "PENDING_F06"
+  }
+}

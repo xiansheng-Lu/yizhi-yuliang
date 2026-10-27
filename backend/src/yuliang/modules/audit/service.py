@@ -29,6 +29,7 @@ Action = Literal[
     "connection.token.rotate",
     "connection.sync.toggle",
     "connection.disconnect",
+    "job.create",
 ]
 ObjectType = Literal[
     "user",

@@ -1,0 +1,88 @@
+{
+  "job": {
+    "schema_version": "1.0",
+    "job_id": "55cacbea-dfab-41c5-8c83-56e82ec152de",
+    "source": "PC_MANUAL",
+    "tenant_id": "6",
+    "shop_id": "f59f3a5f-fe92-4991-9290-e7ba1fbd1d50",
+    "account_id": "f1aa15f1-836d-4765-bb81-8941e4296c5e",
+    "live_session_id": null,
+    "target_type": "AD_PLAN",
+    "target_id": "48d69d8e-b32d-4dfe-88d1-524045362c85",
+    "action_type": "CHANGE_DAILY_BUDGET",
+    "old_value": {
+      "kind": "MONEY",
+      "currency": "CNY",
+      "amount_minor": 100
+    },
+    "new_value": {
+      "kind": "MONEY",
+      "currency": "CNY",
+      "amount_minor": 200
+    },
+    "intent": "测试预算申请",
+    "status": "BLOCKED",
+    "created_at": "2026-10-27T18:17:26.532098Z",
+    "updated_at": "2026-10-27T18:17:26.532098Z",
+    "expires_at": "2026-10-27T18:32:26.532098Z",
+    "risk_summary": {
+      "source": "SERVER",
+      "result": "BLOCKED",
+      "level": "HIGH",
+      "checks": [
+        {
+          "code": "TARGET_SCOPE",
+          "passed": true,
+          "message": "已核对内部目标归属与当前申请权限"
+        },
+        {
+          "code": "CURRENT_VALUE_CONFIRMED",
+          "passed": true,
+          "message": "现值来自最新完整且仍新鲜的已确认页面"
+        },
+        {
+          "code": "ACTION_CAPABILITY",
+          "passed": false,
+          "message": "逐动作能力按当前证据复核"
+        },
+        {
+          "code": "POLICY_ENGINE_READY",
+          "passed": false,
+          "message": "四时点策略尚未装配，本阶段不放行广告执行"
+        }
+      ],
+      "policy_version": 0,
+      "checked_at": "2026-10-27T18:17:26.532098Z"
+    },
+    "approval": {
+      "state": "NOT_REQUESTED",
+      "actor_id": null,
+      "decided_at": null,
+      "method": null,
+      "approved_version": null
+    },
+    "execution_receipt": null,
+    "error": null,
+    "version": 1,
+    "idempotency_key": "17bebb624d854008ba3f8dcbc69b967e",
+    "mode": "API",
+    "history": [
+      {
+        "status": "BLOCKED",
+        "at": "2026-10-27T18:17:26.532098Z",
+        "detail": "申请已保存，执行策略尚未就绪"
+      }
+    ]
+  },
+  "requestId": "b32a8c6b-c97f-43e4-b17f-d3beb9bb707c",
+  "proof": {
+    "field": "budget_minor",
+    "sourceId": "b38fcd69-cfbb-4200-9319-78df77db4a17",
+    "fetchedAt": "2026-10-27T18:17:26.479179+00:00",
+    "outboundId": "9912d190-22ed-4730-b709-eb0b5e4d0da9",
+    "policyRevision": 1,
+    "sourceUpdatedAt": "2026-10-27T18:17:25.479179+00:00"
+  },
+  "platformCalls": 0,
+  "paidCalls": 0
+}

@@ -4,7 +4,7 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "currentFocus": "M2-05a",
+  "currentFocus": "M2-06a",
   "tasks": {
     "R00-01": {
       "owner": "BE",
@@ -1611,6 +1611,44 @@
         "lifecycleNotRun": 1,
         "platformCalls": 0
       }
+    },
+    "M2-05a": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "scope": "command申请完整模型、真实现值解析、申请仓储与必要DDL/契约证据",
+      "dependencyInput": "M0-12/17、M1-02实际技术证据；复用M1-15/16确认页与新鲜度；持续研发授权，G0/E08保留",
+      "delivery": "完整申请模型/确认页现值/服务端归属/并发幂等和原子仓储已验证；策略未装配的广告申请明确BLOCKED，无公开任务写路由",
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS"
+        },
+        {
+          "item": 2,
+          "technical": "PASS"
+        },
+        {
+          "item": 3,
+          "technical": "PASS"
+        }
+      ],
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F06"
+      },
+      "evidence": "tasks/M2-05a/README.md",
+      "implementationCommit": "0e538d1242f115ae34783b699eed9ecbbf36218f",
+      "technicalVerification": {
+        "result": "PASS",
+        "unitContractPassed": 281,
+        "jobContractCases": 35,
+        "applicationIntegrationCases": 18,
+        "allIntegrationPassed": 346,
+        "lifecycleNotRun": 1,
+        "actualFrontendValidator": true,
+        "executionReleased": false,
+        "platformCalls": 0
+      }
     }
   },
   "gates": {
@@ -1716,9 +1754,9 @@
     "offline": "离线通过不等于真实依赖、前端联调或平台验收通过"
   },
   "nextTask": {
-    "id": "M2-05a",
+    "id": "M2-06a",
     "status": "READY_FOR_TECHNICAL_DEVELOPMENT",
-    "note": "M0-12/17和M1-02已有实际技术输入；M1-18真实镜像依赖未实现，继续独立就绪申请模型卡"
+    "note": "申请模型/仓储已真实技术验证，继续状态机/条件更新，不等待真实平台资源；执行策略尚未放行"
   },
   "continuation": {
     "requestedOn": "2026-10-27",
@@ -1727,10 +1765,10 @@
     "environment": "WSL2 Ubuntu Docker; UV_PROJECT_ENVIRONMENT=/home/lenovo/.cache/yuliang-venv",
     "latestUserRequest": "补齐浏览器验收，然后按照后端任务卡继续后续的所有开发，需要资源再找我对接，不阻塞持续开发到完毕",
     "developmentPolicy": "缺人工/外部验收时记录并继续可独立技术准备；正式门禁、平台调用和付费仍按各自证据许可",
-    "lastCompletedTechnicalTask": "M1-17",
-    "nextTechnicalTask": "M2-05a",
+    "lastCompletedTechnicalTask": "M2-05a",
+    "nextTechnicalTask": "M2-06a",
     "executionRules": "docs/backend/evidence/execution-rules.md",
-    "checkpoint": "M1通用底座及连接管理技术验证并保留复核；E01/E02限制真实平台镜像验收，继续独立申请/执行底座；06/12伙伴文档保留"
+    "checkpoint": "M1通用底座/连接管理与申请模型技术验证已归档；继续状态机与四时点策略，平台E01/E02和具名复核保留，06/12伙伴文档保留"
   },
   "frontendIntegration": {
     "F01": {

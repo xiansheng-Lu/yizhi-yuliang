@@ -66,5 +66,6 @@
     "backend": "PENDING",
     "frontend": "PENDING_F03"
   },
-  "formalGate": "G0 remains BLOCKED by E08"
+  "formalGate": "G0 remains BLOCKED by E08",
+  "implementationCommit": "135923bf2bc7076a32f9c118d0778a8dc5735e8d"
 }

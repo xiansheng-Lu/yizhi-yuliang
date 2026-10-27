@@ -1298,7 +1298,8 @@
         "backend": "PENDING",
         "frontend": "PENDING_F03"
       },
-      "evidence": "tasks/M1-01/README.md"
+      "evidence": "tasks/M1-01/README.md",
+      "implementationCommit": "135923bf2bc7076a32f9c118d0778a8dc5735e8d"
     }
   },
   "gates": {

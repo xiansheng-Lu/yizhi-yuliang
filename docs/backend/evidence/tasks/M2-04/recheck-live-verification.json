@@ -1,0 +1,207 @@
+{
+  "approval": "2026-10-27用户直接授权：确认解析预期，继续推进任务卡开发，需要调用deepseek模型直接调用即可",
+  "currency": "CNY",
+  "budget_minor": 10,
+  "max_calls": 3,
+  "case_ids": [
+    "CP-004",
+    "CP-008",
+    "CP-026"
+  ],
+  "run": "recheck_after_deterministic_resolution_fix",
+  "max_input_tokens": 8192,
+  "max_output_tokens": 512,
+  "requested_model": "deepseek-v4-flash",
+  "price_evidence": {
+    "url": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/",
+    "verified_on": "2026-10-27",
+    "input_minor_per_million": 200,
+    "output_minor_per_million": 800
+  },
+  "price_proof_hash": "0438e08626d01c93974abac89f315ae830f5d003f2bd5378d2ceefc18873325e",
+  "prompt_version": 1,
+  "prompt_hash": "c8d6c80f4abd0b8c5978eb37078dcd2dd97aeda5d8481a002a82eef90a95d0a3",
+  "cases_hash": "f1c97cf1785a1fedf9f8384c2c419a5f930e000bdc8b0130f179d7fafd93e124",
+  "confirmation_source": "USER",
+  "database": "yuliang_test_69c1705ffc164e31b7d0fbb3c8a2573f",
+  "temporary_database_cleanup": "fixture_finalizer",
+  "requests": [
+    {
+      "case_id": "CP-004",
+      "call_id": "787afc4e-d948-4780-9e04-d5f0435bc7df",
+      "request_id": "aea0a880-7fc1-4d54-a128-3d8658523d85",
+      "quote_id": "80edacc0-469d-4884-97d7-23ccc9978085",
+      "permit_id": "2c20055e-913c-46e2-97e5-20a757777e67",
+      "quote_max_minor": 3,
+      "expected": {
+        "kind": "ACTION",
+        "action_type": "PAUSE_AD_PLAN",
+        "new_value": {
+          "kind": "BOOLEAN",
+          "value": false
+        },
+        "target_type": "AD_PLAN",
+        "candidate_ids": [
+          "00000000-0000-4000-8000-000000000101"
+        ]
+      },
+      "latency_ms": 918,
+      "source": "MODEL",
+      "status": "CANDIDATE",
+      "reason": "MODEL_CANDIDATE",
+      "upstream_status": null,
+      "raw": {
+        "kind": "ACTION",
+        "action_type": "PAUSE_AD_PLAN",
+        "new_value": {
+          "kind": "BOOLEAN",
+          "value": false
+        },
+        "target_type": "AD_PLAN",
+        "candidate_ids": [
+          "00000000-0000-4000-8000-000000000101"
+        ]
+      },
+      "guarded": {
+        "kind": "ACTION",
+        "action_type": "PAUSE_AD_PLAN",
+        "new_value": {
+          "kind": "BOOLEAN",
+          "value": false
+        },
+        "target_type": "AD_PLAN",
+        "candidate_ids": [
+          "00000000-0000-4000-8000-000000000101"
+        ]
+      },
+      "raw_matches_expected": true,
+      "guarded_matches_expected": true,
+      "provider_model": "deepseek-flash",
+      "external_request_id": "730ce0aa-1d14-4ca5-a783-5b7f8db16412",
+      "response_hash": "ced73b625f5151325230b0de45305a083a2a3213b1c306e73a9c3f2dacd6b170",
+      "usage_state": "KNOWN",
+      "tokens_in": 661,
+      "tokens_out": 87,
+      "cost_state": "UNKNOWN",
+      "cost_minor": null,
+      "interpretation_id": "65f63c56-b171-476a-9f14-cc50be00db99",
+      "interpretation_source": "MODEL_GUARDED"
+    },
+    {
+      "case_id": "CP-008",
+      "call_id": "9be5b867-691c-4cc7-8ef4-e0d91b8a20c5",
+      "request_id": "0150d20e-92fc-4096-abef-d8b01be7412c",
+      "quote_id": "03f95d4c-0613-408d-95dd-58cdbfb06126",
+      "permit_id": "4eb6780b-094c-4931-8c17-5bd3a0ad473c",
+      "quote_max_minor": 3,
+      "expected": {
+        "kind": "QUERY",
+        "candidate_ids": [],
+        "live_session_id": "00000000-0000-4000-8000-000000000201"
+      },
+      "latency_ms": 1105,
+      "source": "MODEL",
+      "status": "CANDIDATE",
+      "reason": "MODEL_CANDIDATE",
+      "upstream_status": null,
+      "raw": {
+        "kind": "QUERY",
+        "candidate_ids": []
+      },
+      "guarded": {
+        "kind": "QUERY",
+        "candidate_ids": [],
+        "live_session_id": "00000000-0000-4000-8000-000000000201"
+      },
+      "raw_matches_expected": false,
+      "guarded_matches_expected": true,
+      "provider_model": "deepseek-flash",
+      "external_request_id": "a41c1b44-0ea7-427a-96bd-cc696e750c3e",
+      "response_hash": "17f39b9661277830cd187ab5ec4ac9cfaf16c17af4b776afe969602eaba353d6",
+      "usage_state": "KNOWN",
+      "tokens_in": 662,
+      "tokens_out": 13,
+      "cost_state": "UNKNOWN",
+      "cost_minor": null,
+      "interpretation_id": "1559d3c2-5fbd-4c0c-8c78-f0ac687e296b",
+      "interpretation_source": "MODEL_GUARDED"
+    },
+    {
+      "case_id": "CP-026",
+      "call_id": "3a149525-5594-4675-bb20-02528d9da9e4",
+      "request_id": "25ae8681-ae8d-4188-a618-db8bd14aaec0",
+      "quote_id": "7bf6fd33-427f-407d-a54b-4f9928a03373",
+      "permit_id": "5f6f6bcc-c865-4984-a8c2-3b2769c2fa9a",
+      "quote_max_minor": 3,
+      "expected": {
+        "kind": "ACTION",
+        "action_type": "CHANGE_BID",
+        "new_value": {
+          "kind": "MONEY",
+          "currency": "CNY",
+          "amount_minor": 500025
+        },
+        "target_type": "AD_PLAN",
+        "candidate_ids": [
+          "00000000-0000-4000-8000-000000000101"
+        ]
+      },
+      "latency_ms": 1398,
+      "source": "MODEL",
+      "status": "CANDIDATE",
+      "reason": "MODEL_CANDIDATE",
+      "upstream_status": null,
+      "raw": {
+        "kind": "ACTION",
+        "action_type": "CHANGE_BID",
+        "new_value": {
+          "kind": "MONEY",
+          "currency": "CNY",
+          "amount_minor": 500025
+        },
+        "target_type": "AD_PLAN",
+        "candidate_ids": [
+          "00000000-0000-4000-8000-000000000101",
+          "00000000-0000-4000-8000-000000000102"
+        ]
+      },
+      "guarded": {
+        "kind": "ACTION",
+        "action_type": "CHANGE_BID",
+        "new_value": {
+          "kind": "MONEY",
+          "currency": "CNY",
+          "amount_minor": 500025
+        },
+        "target_type": "AD_PLAN",
+        "candidate_ids": [
+          "00000000-0000-4000-8000-000000000101"
+        ]
+      },
+      "raw_matches_expected": false,
+      "guarded_matches_expected": true,
+      "provider_model": "deepseek-flash",
+      "external_request_id": "afddb9ed-7b41-48a7-9ec1-4c66e591eba2",
+      "response_hash": "64cb1f77e4c1e0d0e6c04da1b71d4706265d20cc4a18164ca721527783b7d8d4",
+      "usage_state": "KNOWN",
+      "tokens_in": 669,
+      "tokens_out": 120,
+      "cost_state": "UNKNOWN",
+      "cost_minor": null,
+      "interpretation_id": "18d1b6d4-2bba-4974-b50d-e5069f06e27d",
+      "interpretation_source": "MODEL_GUARDED"
+    }
+  ],
+  "result": "PASS_GUARDED",
+  "platform_write_calls": 0,
+  "actual_bill_reconciled": false,
+  "started_calls": 3,
+  "reserved_minor": 9,
+  "raw_failed_ids": [
+    "CP-008",
+    "CP-026"
+  ],
+  "guarded_failed_ids": [],
+  "raw_matched": 1,
+  "guarded_matched": 3
+}

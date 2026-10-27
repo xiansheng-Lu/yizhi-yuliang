@@ -90,3 +90,36 @@ def test_m2_03_explicit_unknown_query_never_selects_the_only_visible_session() -
     assert result.kind == "QUERY" and result.live_session_id == case.expected.live_session_id
     context = case.context.model_copy(update={"candidates": ()})
     assert parse_rules("看看当前直播间情况", context).live_session_id is None
+
+
+@pytest.mark.parametrize("index", [3, 25])
+def test_m2_04_named_object_resolves_authorized_model_superset_without_guessing(index: int) -> None:
+    case = load_bundle().cases[index]
+    proposed = case.expected.model_copy(
+        update={
+            "candidate_ids": tuple(
+                c.id for c in case.context.candidates if c.target_type == "AD_PLAN"
+            )
+        }
+    )
+    assert guard_model(case.input, case.context, proposed).semantic() == case.expected.semantic()
+    missing_target = proposed.model_copy(update={"candidate_ids": (proposed.candidate_ids[1],)})
+    assert guard_model(case.input, case.context, missing_target).kind == "UNRECOGNIZED"
+
+
+def test_m2_04_current_query_can_fill_missing_model_session_but_never_wrong_session() -> None:
+    case = load_bundle().cases[7]
+    proposed = Interpretation(kind="QUERY", live_session_id=None)
+    assert guard_model(case.input, case.context, proposed).semantic() == case.expected.semantic()
+    assert guard_model("查看不存在的场次数据", case.context, proposed).kind == "UNRECOGNIZED"
+
+
+def test_m2_04_model_cannot_replace_named_query_or_choose_ambiguous_session() -> None:
+    case = load_bundle().cases[7]
+    first = [c for c in case.context.candidates if c.target_type == "LIVE_SESSION"][0]
+    second = CandidateObject(id=uuid4(), target_type="LIVE_SESSION", name="另一场次")
+    context = case.context.model_copy(update={"candidates": (first, second)})
+    wrong = Interpretation(kind="QUERY", live_session_id=second.id)
+    assert guard_model("查看测试场次数据", context, wrong).kind == "UNRECOGNIZED"
+    selected = Interpretation(kind="QUERY", live_session_id=first.id)
+    assert guard_model("看看当前直播间情况", context, selected).kind == "UNRECOGNIZED"

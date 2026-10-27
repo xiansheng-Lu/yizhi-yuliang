@@ -17,7 +17,7 @@ from yuliang.modules.aikernel.prompts.registry import (
     validate_context,
 )
 
-RULE_VERSION = "command-rules-v1"
+RULE_VERSION = "command-rules-v2"
 PATTERNS: tuple[tuple[Action, str], ...] = (
     ("CHANGE_DAILY_BUDGET", r"(?:日)?预算"),
     ("CHANGE_BID", r"出价"),
@@ -177,8 +177,25 @@ def guard_model(statement: str, context: CaseContext, proposed: Interpretation) 
         validate_context(proposed, context)
     except ValueError:
         return rejected("模型候选超出授权范围，请重新核对。")
-    if proposed.semantic() != expected.semantic():
+    if expected.kind == "UNRECOGNIZED":
+        return expected
+    if expected.kind == "QUERY":
+        compatible = proposed.kind == "QUERY" and proposed.live_session_id in (
+            None,
+            expected.live_session_id,
+        )
+    else:
+        compatible = (
+            proposed.kind == "ACTION"
+            and proposed.action_type == expected.action_type
+            and proposed.target_type == expected.target_type
+            and proposed.new_value == expected.new_value
+            and set(expected.candidate_ids) <= set(proposed.candidate_ids)
+        )
+    if not compatible:
         return rejected("模型候选与确定性核对不一致，请明确对象、动作和目标值。")
+    # 目录解析可以根据原话收窄模型给出的授权候选超集，但不能采信模型缩减真正歧义。
+    # 查询场次由当前授权范围决定；模型缺省不阻止确定性补全，错误的明确对象仍拒绝。
     # 不返回模型自由文本，避免把“已完成”或编造指标写成事实。
     return expected
 

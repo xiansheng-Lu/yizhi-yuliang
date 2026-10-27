@@ -4,7 +4,7 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "currentFocus": "M2-04",
+  "currentFocus": "G0",
   "tasks": {
     "R00-01": {
       "owner": "BE",
@@ -1173,7 +1173,47 @@
         "backend": "PENDING",
         "frontend": "PENDING_F06"
       },
-      "evidence": "tasks/M2-03/README.md"
+      "evidence": "tasks/M2-03/README.md",
+      "implementationCommit": "84cf284"
+    },
+    "M2-04": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "delivery": "固定安全集31次真实DeepSeek调用完成；保留首轮3条差异，修复确定性消歧后28条实际响应回放及3条真实复验通过；模型裸输出非全对",
+      "dependencyInput": "M2-03后端验证、28条用户确认预期及用户直接DeepSeek调用许可；不代签前置复核",
+      "technicalVerification": {
+        "result": "PASS",
+        "unitContractPassed": 142,
+        "affectedIntegrationPassed": 75,
+        "actualModelCalls": 31,
+        "initialRawMatched": 25,
+        "initialCases": 28,
+        "correctedReplayMatched": 28,
+        "targetedLiveRecheckPassed": 3,
+        "reservedMinor": 93,
+        "estimatedCostCnyAtVerifiedPeak": "0.054316",
+        "actualBillReconciled": false,
+        "browserIntegration": "NOT_RUN"
+      },
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS"
+        },
+        {
+          "item": 2,
+          "technical": "PASS"
+        },
+        {
+          "item": 3,
+          "technical": "PASS"
+        }
+      ],
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F06"
+      },
+      "evidence": "tasks/M2-04/README.md"
     }
   },
   "gates": {
@@ -1247,10 +1287,10 @@
     },
     {
       "id": "E04",
-      "status": "AUTHORIZED_FOR_DEVELOPMENT_VALIDATION",
-      "reason": "用户2026-10-27明确允许任务开发需要时直接调用DeepSeek；本轮固定28样例使用独立持久许可和内部1元保护上限，不重置历史6次许可",
+      "status": "AUTHORIZED_DEVELOPMENT_VALIDATION_EXECUTED",
+      "reason": "用户允许任务需要时直接调用DeepSeek；本轮28条首测+3条修后复验共31次，独立持久许可保留93分预占，实际账单未知；历史6次许可未重置",
       "affects": [],
-      "unblock": "模型调用按本轮授权直接执行；真实广告操作不在此授权内"
+      "unblock": "供应商已可用于授权范围开发验证；后续调用继续独立限量留痕，不自动清零本轮许可"
     }
   ],
   "rules": {
@@ -1259,9 +1299,12 @@
     "offline": "离线通过不等于真实依赖、前端联调或平台验收通过"
   },
   "nextTask": {
-    "id": "M2-04",
-    "status": "READY",
-    "note": "M2-03后端通过；用户已确认固定预期并允许直接DeepSeek验证，完成离线验证后立即领取"
+    "id": "M1-01",
+    "status": "BLOCKED",
+    "blockedBy": [
+      "G0"
+    ],
+    "note": "M2-04后端通过后重审149叶卡依赖，无其他未启动且技术前置全部就绪的卡；等待F01浏览器CSRF接线与G0联合复核，不能代签或跳门禁"
   },
   "continuation": {
     "requestedOn": "2026-10-27",

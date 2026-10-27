@@ -1,0 +1,14 @@
+{
+  "technical_readiness_audit": true,
+  "plan_cards": 149,
+  "unstarted_technically_ready": [],
+  "G0": {
+    "status": "BLOCKED",
+    "blockedBy": [
+      "F01_BROWSER",
+      "E08"
+    ],
+    "note": "邮件真实收件已通过，仍待真实浏览器接线及适用人工复核；未放行"
+  },
+  "note": "technical readiness is not human final acceptance; gate dependencies require actual PASSED"
+}

@@ -103,6 +103,7 @@ class PlatformArchive:
         execution_id: UUID | None,
         attempt_id: UUID | None,
         before_create: Callable[[], None] | None = None,
+        before_persist: Callable[[Session], None] | None = None,
     ) -> bool:
         if target is not None:
             ctx.assert_ref(target)
@@ -144,6 +145,8 @@ class PlatformArchive:
                     raise ApiError(ErrorCode.IDEMPOTENCY_MISMATCH, "原出站请求与本次内容不一致")
                 return False
             _verify(session, ctx, spec)
+            if before_persist is not None:
+                before_persist(session)
             if before_create is not None:
                 before_create()
             audit_id = record(
@@ -406,6 +409,7 @@ class RecordedPlatformClient:
         execution_id: UUID | None = None,
         attempt_id: UUID | None = None,
         before_create: Callable[[], None] | None = None,
+        before_persist: Callable[[Session], None] | None = None,
     ) -> RecordedResult:
         try:
             prepared = spec.parameters_model.model_validate(parameters, strict=True).model_dump(
@@ -424,6 +428,7 @@ class RecordedPlatformClient:
                 execution_id,
                 attempt_id,
                 before_create,
+                before_persist,
             )
         except SQLAlchemyError:
             raise ArchiveUnavailable("NOT_SENT") from None

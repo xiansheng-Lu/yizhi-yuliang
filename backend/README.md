@@ -155,3 +155,12 @@ InvocationLedger先独立提交STARTED事实，费用/用量默认UNKNOWN且NULL
 备用调用须关联同请求/场景/用户的失败主调用并沿用原路由版本，不能在主调用仍在途时启动。该底座不自动重试或切备，结果未知的调用保留待核对事实。
 ModelGateway是场景统一端口；当前UnavailableGateway明确返回RULES/UNAVAILABLE、NOT_SENT和待复核标志，不产生AI正文或执行动作。真实供应商适配、出站保护、限额与耗时验收仍归M2-01b/M5-02a，当前没有真实或付费模型调用。
 13册旧示意DDL的token/cost默认0未沿用；按20册M2-01a和04册UNKNOWN规则落实NULL及独立已知状态，差异随本卡由BE复核。
+
+## 中枢项目、对话与归类
+
+0010增加本人私有的项目、会话、消息、幂等响应与任务归类。业务事务首条SQL同时设置租户和actor，均为LOCAL；私有表RLS同时校验租户与本人，连接池复用不能遗留身份。
+开放身份API时同时挂载六个冻结接口：workspace/history、projects、conversation-messages、PATCH conversations/{id}、POST conversations/{id}/jobs、PUT command-jobs/{id}/project。需当前task.create权限，写请求检查精确来源和CSRF。
+消息键在租户/本人范围内唯一，载荷规范化摘要相同回放已持久响应，不新增消息；更换文本、范围或来源返回409。项目/会话所有权同时有RLS和复合FK保护，写操作同事务追加不含正文的审计。
+当前解释明确UNRECOGNIZED并说明能力未接入；不伪造模型输出或平台数据。只有已持久ACTION助手消息能关联本人有范围权限的真实任务标识，归类操作不改变任务状态。
+command_jobs本卡只建立DRAFT任务标识、所有权与对象FK底座，运行账号不能写入；完整申请/风险/审批/执行字段及任务创建接口归M2-05a/b。关联测试中的ACTION和DRAFT记录为迁移身份夹具，不代表解析或执行通过。
+身份接口仍默认关闭；F01/F06真实浏览器接线和最终联合验收继续单列。

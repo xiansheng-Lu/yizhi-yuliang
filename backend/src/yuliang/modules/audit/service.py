@@ -12,9 +12,19 @@ from yuliang.platform.db import VerifiedIdentity
 from yuliang.platform.errors import ApiError, ErrorCode
 
 Action = Literal[
-    "profile.update", "shop.update", "member.status", "role.grant", "role.revoke", "scope.change"
+    "profile.update",
+    "shop.update",
+    "member.status",
+    "role.grant",
+    "role.revoke",
+    "scope.change",
+    "project.create",
+    "conversation.move",
+    "message.send",
+    "conversation.attach",
+    "task.project",
 ]
-ObjectType = Literal["user", "shop", "member", "role"]
+ObjectType = Literal["user", "shop", "member", "role", "project", "conversation", "message", "job"]
 ChangedField = Literal["displayName", "name", "status", "permissions", "scope"]
 
 

@@ -4,7 +4,7 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "currentFocus": "M2-02",
+  "currentFocus": "M0-10",
   "tasks": {
     "R00-01": {
       "owner": "BE",
@@ -690,12 +690,10 @@
     },
     "M0-10": {
       "owner": "BE",
-      "status": "BLOCKED",
+      "status": "IN_PROGRESS",
       "note": "未具备实际SMTP/邮件服务和测试收件地址，已向用户异步请求资源；未实现/未验收投递，不记PASS",
-      "blockedBy": [
-        "E06_MAIL"
-      ],
-      "realDelivery": "NOT_RUN"
+      "realDelivery": "NOT_RUN",
+      "delivery": "新收发件资源已配置并通过TLS登录探测，未发送邮件；开始闭环实现"
     },
     "M0-15": {
       "owner": "BE",
@@ -971,6 +969,39 @@
         "frontendReason": "20册此卡无FE协作"
       },
       "evidence": "tasks/M2-01a/README.md"
+    },
+    "M2-02": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "delivery": "项目/对话/消息与任务归类后端验证通过，待F06真实浏览器及人工复核",
+      "implementationCommit": "c8a5af8b5d85e1817dd8b0bc94ce5ea0779f6c4e",
+      "git": "COMMITTED",
+      "technicalVerification": {
+        "result": "PASS",
+        "unitContractPassed": 59,
+        "integrationPassed": 97,
+        "mutationsRejected": 3,
+        "browserIntegration": "NOT_RUN"
+      },
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS"
+        },
+        {
+          "item": 2,
+          "technical": "PASS"
+        },
+        {
+          "item": 3,
+          "technical": "BACKEND_PASS_BROWSER_NOT_RUN"
+        }
+      ],
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F06"
+      },
+      "evidence": "tasks/M2-02/README.md"
     }
   },
   "gates": {
@@ -1014,12 +1045,12 @@
     },
     {
       "id": "E06_MAIL",
-      "status": "OPEN",
-      "reason": "已确认实际收件地址；尚缺发件SMTP/邮件服务和本地凭据，不能冒充投递验收",
+      "status": "IN_VERIFICATION",
+      "reason": "新SMTP配置已写本地忽略文件，TLS登录通过；待验证码投递与实际收件验证",
       "affects": [
         "M0-10实际收件验证"
       ],
-      "unblock": "提供实际发件通道并收到测试验证码"
+      "unblock": "实际收到测试邮件并完成邮箱码登录验证"
     },
     {
       "id": "F01_BROWSER",
@@ -1045,9 +1076,9 @@
     "offline": "离线通过不等于真实依赖、前端联调或平台验收通过"
   },
   "nextTask": {
-    "id": "M2-02",
-    "status": "TECHNICAL_INPUTS_READY_WAITING_REVIEW",
-    "note": "AI账本归档后立即继续项目/对话持久化，F06联合验收单列"
+    "id": "M0-10",
+    "status": "RESOURCES_READY",
+    "note": "新SMTP资源TLS登录实测成功，继续实现/验证真实收件；凭据仅本地忽略文件"
   },
   "continuation": {
     "requestedOn": "2026-10-27",

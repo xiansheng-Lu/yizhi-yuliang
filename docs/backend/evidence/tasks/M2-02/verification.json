@@ -1,0 +1,73 @@
+{
+  "codeCommit": "c8a5af8b5d85e1817dd8b0bc94ce5ea0779f6c4e",
+  "executedOn": "2026-10-27",
+  "environment": {
+    "os": "WSL2 Ubuntu",
+    "python": "3.13.14",
+    "postgres": "17.10"
+  },
+  "checks": [
+    {
+      "command": "uv run --frozen ruff check .; ruff format --check .; mypy",
+      "result": "PASS",
+      "mypySourceFiles": 61
+    },
+    {
+      "command": "uv run --frozen pytest tests/unit tests/contract -q",
+      "result": "PASS",
+      "passed": 59
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --lifecycle --details",
+      "result": "PASS",
+      "passed": 97,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "command": "uv run --frozen python scripts/check_ci_sensitivity.py",
+      "result": "PASS",
+      "healthyControls": 3,
+      "mutationsRejected": 3
+    },
+    {
+      "command": "uv run --frozen python scripts/migrate_local.py upgrade; current",
+      "result": "PASS",
+      "head": "0010_workspace_history"
+    },
+    {
+      "command": "python docs/backend/tools/check_contracts.py; check_task_status.py --self-test",
+      "result": "PASS"
+    }
+  ],
+  "assertions": [
+    "六个API遵循冻结路由和DTO，JWT/客户端tenant不作身份来源",
+    "事务首条SQL同时设置tenant/actor且LOCAL，私有RLS同时校验本人；池回收/无效actor失败关闭",
+    "同发送键同载荷返回持久化同turn，异载荷409，双并发只写一组USER/ASSISTANT消息",
+    "助手interpretation/scope与响应相同，独立客户端重新登录后读取同一数据库记录",
+    "同租户他用户/跨租户不能读、移动或绑定，本人范围或task.create撤销立即拒绝",
+    "归类/绑定只更改历史关系，任务保持DRAFT；无CSRF/恶意来源拒绝"
+  ],
+  "limits": [
+    "真实浏览器F01/F06联合接线NOT_RUN，默认身份API仍关闭",
+    "当前解析明确UNRECOGNIZED，未实现M2-03或模型调用",
+    "command_jobs仅DRAFT标识/所有权/对象FK底座，完整申请/风险/审批/执行属于M2-05a/b",
+    "任务绑定测试的ACTION/DRAFT是受控迁移夹具，不代表解析或任务执行验收",
+    "BE/FE具名复核PENDING"
+  ],
+  "sourceSha256Utf8Lf": {
+    "backend/README.md": "ed0281dafb5c2aed54b60096fcc8dd8531723f92fdb02a43e189dc0749d29797",
+    "backend/alembic/README.md": "abcfd7cb1a8719ac82afb0e342ba59fe5d92d60cd5f826172cc8f29b426d343e",
+    "backend/alembic/versions/0010_workspace_history.py": "64ab4dcdca1532514997db47e149da560d1ac5063ebc11e650ee449e8850835a",
+    "backend/alembic/versions/0010_workspace_history.sql": "81e1156e3f82a2f658991cd4035e38b4ec39bd7c7da6b2dbb0d1ab3ea3dbcc32",
+    "backend/src/yuliang/main.py": "f0a4c134b5f820afad78eb23024075c1834f4138e873bb21cbb89e26d961ba7a",
+    "backend/src/yuliang/modules/audit/service.py": "60cef1115ca85205db773f80ae360574611da3e4420b1b461405f9c8af47a91a",
+    "backend/src/yuliang/modules/workspace/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend/src/yuliang/modules/workspace/models.py": "91d716df8f6235f6e918c77082ea77fbc48ae6e1b54e04cb07cca84faee21a16",
+    "backend/src/yuliang/modules/workspace/routes.py": "05fd3dd4dd7c4cf6188813e0cd2d212b1c23c77b3ec22d2b37fd60cf05488bdd",
+    "backend/src/yuliang/modules/workspace/service.py": "3c7cbe1c5cfa78b39d45f87eea75a494b0e452d0ee175900c3e394431ac3b9d8",
+    "backend/src/yuliang/platform/db.py": "2474e5eaa506727ab86ca2027c12c60b293b4b4da9532c109c3a9f381c01b12e",
+    "backend/tests/integration/test_workspace.py": "d322f64f2ce5eec11ecf50fde54683e72271709677c638b6988e551c3c1941dd",
+    "backend/tests/unit/test_workspace_models.py": "323f2b93bd7ebefa4a6cef8ca000ed4af354a254322f8d466e337a304958fd42"
+  }
+}

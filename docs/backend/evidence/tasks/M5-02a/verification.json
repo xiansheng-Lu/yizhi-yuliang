@@ -1,0 +1,72 @@
+{
+  "codeCommit": "4a10fd5a85481d4d4c18eb05a6f0023c1713db80",
+  "executedOn": "2026-10-27",
+  "environment": {
+    "os": "WSL2 Ubuntu",
+    "python": "3.13.14",
+    "postgres": "17.10"
+  },
+  "checks": [
+    {
+      "command": "uv run --frozen ruff check .; ruff format --check .; mypy",
+      "result": "PASS",
+      "mypySourceFiles": 69
+    },
+    {
+      "command": "uv run --frozen pytest tests/unit tests/contract -q",
+      "result": "PASS",
+      "passed": 69
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --lifecycle --details",
+      "result": "PASS",
+      "passed": 135,
+      "failed": 0,
+      "skipped": 0,
+      "costGateCases": 26
+    },
+    {
+      "command": "uv run --frozen python scripts/check_ci_sensitivity.py",
+      "result": "PASS",
+      "healthyControls": 3,
+      "mutationsRejected": 3
+    },
+    {
+      "command": "uv run --frozen python scripts/migrate_local.py upgrade; current",
+      "result": "PASS",
+      "head": "0012_ai_cost_gate"
+    }
+  ],
+  "assertions": [
+    "并发预算许可只放行一次调用；同请求和同许可不能重复发起",
+    "NULL/过期/变更/未确认报价、价格/预算/身份失效均拒绝，调用前IN_FLIGHT已提交",
+    "外部异常或记账失败持有UNKNOWN；未回写的IN_FLIGHT不自动退零",
+    "并发同回执仅结算一次；明确0需回执；终态事实不能覆盖",
+    "币种冲突保留预占及追加原报告事实；超额如实记录并拦后续许可",
+    "跨租户/本人RLS，运行角色五表只读，令牌仅摘要，LLM账本请求关联"
+  ],
+  "limits": [
+    "默认无真实价格或预算，测试价格和回执全部合成",
+    "无外部供应商或付费调用，许可限制预估，不能强制第三方扣费上限",
+    "供应商必须落实请求单位上限，M2-01b真实验收待E04资源和本次预算",
+    "GENERATION为复用端口，真实生成账本接线归M3-19",
+    "F10前端确认展示和BE/FE具名复核PENDING，G0未放行"
+  ],
+  "previousCardHostedCi": {
+    "card": "M0-10",
+    "head": "cbdf32b214a7ec754a8ea7a3a169eabde5058f9a",
+    "runId": 40462749233,
+    "result": "SUCCESS"
+  },
+  "sourceSha256Utf8Lf": {
+    "backend/README.md": "fb4a69aea19ec562aec77ebe988e92f577f74440a7037a309dd0bdf8b807d080",
+    "backend/alembic/README.md": "ac0e8acaf51ad4641e56a7a46d87c7b959d249c43f923f03f0de31b6a9840acd",
+    "backend/alembic/versions/0012_ai_cost_gate.py": "d12d6d521d9fffcfe38dd5216a7236d7b7afd88043d6267a3e1764840df01403",
+    "backend/alembic/versions/0012_ai_cost_gate.sql": "1f2b6adc1a2e9bf1159a2bd5adda0edc4131f84ba054ceb288493d3a65acfd03",
+    "backend/scripts/test_infrastructure.py": "8642ab59837fdc975ae7da3f775aaf6e6af78ecdc70911e1958eede423bb349c",
+    "backend/src/yuliang/modules/aikernel/cost_gate.py": "752d854b7fb0f1ac9cd20af9b0b72b9e187098efb56481f83aaf5eb55ab55bc7",
+    "backend/src/yuliang/modules/aikernel/cost_models.py": "05c40b7f932b5787c8c8f7910a509347e4adbce2cbf698992240e4018d8a314b",
+    "backend/tests/integration/test_ai_cost_gate.py": "cba0c98010eac1dc0b5f64b9078f9b5f82dd2723c277cd565dfc7fabf4ff195b",
+    "backend/tests/unit/test_ai_cost_models.py": "a766ddbb427b917784b9dc8115fe9818caac1a76e68cdad0a82bf79b9301b0c9"
+  }
+}

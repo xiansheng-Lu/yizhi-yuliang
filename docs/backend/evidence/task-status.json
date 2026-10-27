@@ -4,7 +4,7 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "currentFocus": "M5-02a",
+  "currentFocus": "M5-03a",
   "tasks": {
     "R00-01": {
       "owner": "BE",
@@ -1029,6 +1029,40 @@
         "frontend": "PENDING_F06"
       },
       "evidence": "tasks/M2-02/README.md"
+    },
+    "M5-02a": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "delivery": "报价确认、原子预占与一次性费用许可后端验证通过；无真实供应商或付费调用",
+      "implementationCommit": "4a10fd5a85481d4d4c18eb05a6f0023c1713db80",
+      "git": "COMMITTED",
+      "technicalVerification": {
+        "result": "PASS",
+        "unitContractPassed": 69,
+        "integrationPassed": 135,
+        "costGateCases": 26,
+        "mutationsRejected": 3,
+        "paidCalls": "NOT_RUN"
+      },
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS"
+        },
+        {
+          "item": 2,
+          "technical": "PASS"
+        },
+        {
+          "item": 3,
+          "technical": "PASS"
+        }
+      ],
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F10"
+      },
+      "evidence": "tasks/M5-02a/README.md"
     }
   },
   "gates": {
@@ -1100,9 +1134,9 @@
     "offline": "离线通过不等于真实依赖、前端联调或平台验收通过"
   },
   "nextTask": {
-    "id": "M5-02a",
+    "id": "M5-03a",
     "status": "TECHNICAL_INPUTS_READY_WAITING_REVIEW",
-    "note": "邮箱验证归档后立即继续首次付费前原子费用许可，不发起真实付费调用"
+    "note": "费用门禁归档后立即推进解析黄金样例/提示词版本；人工确认预期仍需BE/FE具名复核"
   },
   "continuation": {
     "requestedOn": "2026-10-27",

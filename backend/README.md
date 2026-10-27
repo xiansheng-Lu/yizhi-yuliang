@@ -181,3 +181,10 @@ CostGate.quote接收服务端构造的BillableRequest，绑定请求键、载荷
 CostGate.execute先提交IN_FLIGHT，再在事务外调用端口，传入稳定请求键；没有许可、载荷变化、权限/价格/预算失效或重复开始都不能运行回调。LLM报价及发起前均核对已提交STARTED调用、模型键、场景和计费币种；GENERATION复用同一协议保存生成请求键，其真实生成账本接线归M3-19，不假称已接供应商。
 外部异常、进程中断或记账失败保留UNKNOWN/IN_FLIGHT及预算预占，禁止自动重试或按到期退零；只有RESERVED且尚未发出的许可可以取消。带回执摘要的已知账单按实际金额结算，同一回执并发重报仅计一次，明确零元也必须有回执。币种不符保留预占，原始币种/金额进入追加事件，不能折算或相加；实际超报价如实记OVERAGE，并阻止越过当前预算的新许可和未发许可。
 该门禁限制预估许可，无法强制第三方实际扣款上限。后续供应商适配必须将请求中的上限落实为实际输入/输出限制，并按报价与预算取得本次付费验证授权；未配置价格/预算或未确认时拒绝调用。自测全部使用合成价格/账单，不产生付费请求。可运行scripts/test_infrastructure.py --group cost --details验证真实PG边界，F10与BE具名复核仍单列。
+
+## 解析候选集与提示词版本
+
+M5-03a在aikernel/prompts/v1登记28条合成输入/授权上下文/预期动作或拒绝，以及候选模板、参数和SHA256清单。七类动作、元/分与ROI、歧义、混合动作、越权、注入均有覆盖；所有BE/FE人工标注为空，包状态CANDIDATE，不自动登记ACTIVE提示词或接入在线解析。
+uv run --frozen python scripts/check_prompt_bundle.py仅核对冻结内容；加--review输出逐项摘要，加--require-human-labels在缺标注时失败。--predictions接受以样例ID为键的离线预测JSON，缺项保留为失败，越权候选/额外审批字段/错误单位均拒绝。把给定预期自比仅为评估器的健康控制，不代表模型通过。
+模板/样例变化必须升版本并记录理由，validate_successor禁止删除历史失败样例，逐项改标需要case_changes说明，样例摘要变化使旧签署失效。FrozenRoute绑定STARTED账本的配置ID/revision/主备模型/实际选择/提示词摘要与Schema；密钥或不属于原路由的模型不能混入快照。
+真实模型的质量和耗时由M2-01b/M2-03验证；样例确认和F06联调仍由BE/FE具名复核。查看docs/backend/evidence/tasks/M5-03a/review-cases.md逐项确认，不以Agent候选预期代签。

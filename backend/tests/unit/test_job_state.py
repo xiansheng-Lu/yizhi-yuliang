@@ -1,0 +1,139 @@
+"""状态19条合法边/149条非法边及UNKNOWN/safe-retry；事实为明确合成输入。"""
+
+from dataclasses import replace
+from datetime import UTC, datetime, timedelta
+
+import pytest
+from state_cases import APPROVER, REQUESTER, facts_for, state_job
+
+from yuliang.modules.command.jobs import JobStatus, MoneyValue
+from yuliang.modules.command.state import RULES, JobEvent, evolve
+from yuliang.platform.errors import ApiError, ErrorCode
+
+EDGES = [(event, status) for event, rule in RULES.items() for status in sorted(rule.sources)]
+ILLEGAL = [
+    (event, status)
+    for event, rule in RULES.items()
+    for status in JobStatus
+    if status not in rule.sources
+]
+
+
+@pytest.mark.parametrize("event,status", EDGES)
+def test_every_declarative_edge(event: JobEvent, status: JobStatus) -> None:
+    now = datetime.now(UTC)
+    job = state_job(status, now)
+    if event == JobEvent.EXPIRE:
+        now = job.expires_at + timedelta(seconds=1)
+    after = evolve(
+        job,
+        event,
+        facts_for(event, job, now),
+        at=now,
+        actor_id=APPROVER if event in {JobEvent.APPROVE, JobEvent.REJECT} else REQUESTER,
+        requester_id=REQUESTER,
+    )
+    assert after.status == RULES[event].destination and after.version == job.version + 1
+    assert after.job_id == job.job_id and after.history[:-1] == job.history
+    assert after.history[-1].detail == RULES[event].detail
+
+
+@pytest.mark.parametrize("event,status", ILLEGAL)
+def test_every_illegal_pair_is_409(event: JobEvent, status: JobStatus) -> None:
+    now = datetime.now(UTC)
+    job = state_job(status, now)
+    with pytest.raises(ApiError) as denied:
+        evolve(
+            job,
+            event,
+            facts_for(event, job, now),
+            at=now,
+            actor_id=APPROVER,
+            requester_id=REQUESTER,
+        )
+    assert denied.value.code == ErrorCode.ILLEGAL_TRANSITION
+
+
+@pytest.mark.parametrize("event", [JobEvent.SUBMIT_UNKNOWN, JobEvent.READ_UNKNOWN])
+def test_unknown_does_not_become_failure_or_retry(event: JobEvent) -> None:
+    now = datetime.now(UTC)
+    status = JobStatus.EXECUTING if event == JobEvent.SUBMIT_UNKNOWN else JobStatus.VERIFYING
+    job = state_job(status, now)
+    after = evolve(
+        job, event, facts_for(event, job, now), at=now, actor_id=REQUESTER, requester_id=REQUESTER
+    )
+    assert after.status == status and after.execution_receipt is not None
+    assert after.execution_receipt.verification == "UNKNOWN"
+    assert after.execution_receipt.accepted == (None if event == JobEvent.SUBMIT_UNKNOWN else True)
+    if event == JobEvent.SUBMIT_UNKNOWN:
+        assert (
+            after.error is not None
+            and after.error.code == "RESULT_UNKNOWN"
+            and not after.error.retryable
+        )
+
+
+@pytest.mark.parametrize(
+    "reason",
+    [
+        "missing_risk",
+        "old_risk",
+        "policy_changed",
+        "self_approval",
+        "E0_match",
+        "E0_reject",
+        "retry_current",
+        "increase",
+        "retry_expired",
+        "failed_check",
+    ],
+)
+def test_required_facts_cannot_be_omitted_or_overridden(reason: str) -> None:
+    now = datetime.now(UTC)
+    event = (
+        JobEvent.APPROVE
+        if reason in {"missing_risk", "old_risk", "policy_changed", "self_approval"}
+        else JobEvent.MATCH
+        if reason == "E0_match"
+        else JobEvent.REJECT_SEND
+        if reason == "E0_reject"
+        else JobEvent.SAFE_RETRY
+    )
+    job = state_job(next(iter(RULES[event].sources)), now)
+    facts = facts_for(event, job, now)
+    actor = REQUESTER if reason == "self_approval" else APPROVER
+    if reason == "missing_risk":
+        facts = replace(facts, risk=None)
+    elif reason in {"old_risk", "policy_changed"}:
+        assert facts.risk is not None
+        facts = replace(
+            facts,
+            risk=facts.risk.model_copy(
+                update={"checked_at": now - timedelta(seconds=1)}
+                if reason == "old_risk"
+                else {"policy_version": 2}
+            ),
+        )
+    elif reason.startswith("E0"):
+        facts = replace(facts, evidence_level="E0")
+    elif reason == "retry_current":
+        facts = replace(facts, retry_current=None)
+    elif reason == "increase":
+        job = job.model_copy(
+            update={
+                "action_type": "CHANGE_DAILY_BUDGET",
+                "old_value": MoneyValue(amount_minor=100),
+                "new_value": MoneyValue(amount_minor=200),
+            }
+        )
+        facts = replace(
+            facts, retry_current=job.old_value, retry_actions=frozenset({"CHANGE_DAILY_BUDGET"})
+        )
+    elif reason == "retry_expired":
+        job = job.model_copy(update={"expires_at": now - timedelta(seconds=1)})
+    elif reason == "failed_check":
+        assert facts.risk is not None
+        check = facts.risk.checks[0].model_copy(update={"passed": False})
+        facts = replace(facts, risk=facts.risk.model_copy(update={"checks": (check,)}))
+    with pytest.raises(ApiError):
+        evolve(job, event, facts, at=now, actor_id=actor, requester_id=REQUESTER)

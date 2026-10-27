@@ -250,4 +250,21 @@ class CommandJob(StrictJobModel):
             or self.execution_receipt.observed_value.kind != self.new_value.kind
         ):
             raise ValueError("成功必须有平台明确受理和独立匹配回执")
+        if (
+            (self.status == JobStatus.DRAFT and self.approval.state != "NOT_REQUESTED")
+            or (self.status == JobStatus.PENDING_APPROVAL and self.approval.state != "PENDING")
+            or (self.status == JobStatus.REJECTED and self.approval.state != "REJECTED")
+            or (
+                self.target_type == "AD_PLAN"
+                and self.status
+                in {
+                    JobStatus.APPROVED,
+                    JobStatus.EXECUTING,
+                    JobStatus.VERIFYING,
+                    JobStatus.SUCCEEDED,
+                }
+                and self.approval.state != "APPROVED"
+            )
+        ):
+            raise ValueError("任务阶段与审批事实不一致")
         return self

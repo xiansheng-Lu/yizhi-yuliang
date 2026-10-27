@@ -67,6 +67,7 @@ def main() -> int:
             "freshness",
             "connections",
             "applications",
+            "transitions",
         ),
         default="all",
     )
@@ -96,6 +97,7 @@ def main() -> int:
         "freshness": ["tests/integration/test_resource_freshness.py"],
         "connections": ["tests/integration/test_connection_management.py"],
         "applications": ["tests/integration/test_job_applications.py"],
+        "transitions": ["tests/integration/test_job_transitions.py"],
         "parser": [
             "tests/integration/test_command_parse.py",
             "tests/integration/test_workspace.py",

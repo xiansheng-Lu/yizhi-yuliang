@@ -1,0 +1,72 @@
+{
+  "checkedAt": "2026-10-27T20:03:28.129Z",
+  "baseline": "375460d",
+  "implementationCommit": "0fd754c609c202967af09cd36844c8fa8c326b82",
+  "result": "PASS_REAL_PG_INTENT_COMPONENTS",
+  "checks": [
+    {
+      "command": "uv run --frozen ruff check .",
+      "result": "PASS"
+    },
+    {
+      "command": "uv run --frozen ruff format --check .",
+      "result": "PASS",
+      "files": 186
+    },
+    {
+      "command": "uv run --frozen mypy",
+      "result": "PASS",
+      "files": 150
+    },
+    {
+      "command": "uv run --frozen pytest tests/unit tests/contract -q",
+      "result": "PASS",
+      "passed": 502,
+      "intentUnit": 7
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --group intent --details",
+      "result": "PASS",
+      "passed": 14
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --details",
+      "result": "PASS_WITH_EXPLICIT_LIFECYCLE_SKIP",
+      "passed": 419,
+      "skipped": 1
+    },
+    {
+      "command": "uv run --frozen python scripts/migrate_local.py upgrade",
+      "result": "PASS",
+      "head": "0027_intent_qualification"
+    }
+  ],
+  "database": {
+    "head": "0027_intent_qualification",
+    "migrationRoleCanLogin": false,
+    "developmentJobs": 0
+  },
+  "trace": "trace.json",
+  "verified": [
+    "immutable semantic HMAC bound original source proof, requester, policy and validity",
+    "normal versions 1/2/3 and refreshed fetch clocks do not change sealed intent",
+    "old policy confirmation/approval specific 409 business error mapping",
+    "post-approval new/old value, intent, expiry and original proof tamper denial",
+    "current source value and capability revocation effective",
+    "current reviewer role, shop/account scope and active user effective",
+    "runtime seal immutable and stale expected version denied"
+  ],
+  "notCovered": [
+    "actual immutable approval records/revocation orchestration M2-14",
+    "budget producer/reservation M2-10",
+    "public task lifecycle HTTP/Worker and F06/F07 browser",
+    "real platform calls, named human review and G0/E08"
+  ],
+  "stageSetup": "MAINTENANCE_SETUP_NO_BUDGET_OR_APPROVAL_PARTICIPANTS",
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "review": {
+    "backend": "PENDING",
+    "frontend": "PENDING_F06_F07"
+  }
+}

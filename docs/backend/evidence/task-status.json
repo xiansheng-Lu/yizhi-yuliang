@@ -4,7 +4,7 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "currentFocus": "M1-04",
+  "currentFocus": "M1-05",
   "tasks": {
     "R00-01": {
       "owner": "BE",
@@ -1402,6 +1402,40 @@
       },
       "evidence": "tasks/M1-03b/README.md",
       "implementationCommit": "413a13f212021a3cbd0d5286dd00afe724126453"
+    },
+    "M1-04": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "delivery": "真实Redis应用/账户原子配额、429退避、探测栅栏与PG调度租约延期技术验证完成；平台输入合成",
+      "dependencyInput": "M1-03b技术证据与2026-10-27持续授权；正式G0/E08复核保留",
+      "technicalVerification": {
+        "result": "PASS",
+        "unitContractPassed": 233,
+        "governanceIntegrationCases": 15,
+        "allIntegrationPassed": 260,
+        "lifecycleNotRun": 1,
+        "platformCalls": 0
+      },
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS"
+        },
+        {
+          "item": 2,
+          "technical": "PASS"
+        },
+        {
+          "item": 3,
+          "technical": "PASS"
+        }
+      ],
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F03"
+      },
+      "evidence": "tasks/M1-04/README.md",
+      "implementationCommit": "daf54ec376445e36d08951c98e252855f83b784e"
     }
   },
   "gates": {
@@ -1489,9 +1523,9 @@
     "offline": "离线通过不等于真实依赖、前端联调或平台验收通过"
   },
   "nextTask": {
-    "id": "M1-04",
+    "id": "M1-05",
     "status": "READY_FOR_TECHNICAL_PREPARATION",
-    "note": "按M1-03b技术输入继续配额/熔断/延期；正式G0/E08保留"
+    "note": "OAuth基件可依M1-03b/M1-02技术证据继续；E01/E02仅阻塞相应真实平台验收"
   },
   "continuation": {
     "requestedOn": "2026-10-27",
@@ -1500,10 +1534,10 @@
     "environment": "WSL2 Ubuntu Docker; UV_PROJECT_ENVIRONMENT=/home/lenovo/.cache/yuliang-venv",
     "latestUserRequest": "补齐浏览器验收，然后按照后端任务卡继续后续的所有开发，需要资源再找我对接，不阻塞持续开发到完毕",
     "developmentPolicy": "缺人工/外部验收时记录并继续可独立技术准备；正式门禁、平台调用和付费仍按各自证据许可",
-    "lastCompletedTechnicalTask": "M1-03b",
-    "nextTechnicalTask": "M1-04",
+    "lastCompletedTechnicalTask": "M1-04",
+    "nextTechnicalTask": "M1-05",
     "executionRules": "docs/backend/evidence/execution-rules.md",
-    "checkpoint": "浏览器补验完成，M1-01/02技术交付完成；两份原有未提交设计文档保留，后续不得夹带提交"
+    "checkpoint": "浏览器补验、M1-01/02/03a/03b/04技术完成；两份06/12原有未提交文档保留"
   },
   "frontendIntegration": {
     "F01": {

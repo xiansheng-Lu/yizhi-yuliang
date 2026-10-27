@@ -1,0 +1,63 @@
+{
+  "checkedAt": "2026-10-27T14:56:07.710Z",
+  "baseline": "e6e5eeedad97bef5dd1249fdaf72881527977e0f",
+  "implementationCommit": "daf54ec376445e36d08951c98e252855f83b784e",
+  "result": "PASS_TECHNICAL_REAL_REDIS_PG_SYNTHETIC_PLATFORM",
+  "checks": [
+    {
+      "command": "uv run --frozen ruff check .",
+      "result": "PASS"
+    },
+    {
+      "command": "uv run --frozen ruff format --check .",
+      "result": "PASS",
+      "files": 133
+    },
+    {
+      "command": "uv run --frozen mypy",
+      "result": "PASS",
+      "files": 107
+    },
+    {
+      "command": "uv run --frozen pytest tests/unit tests/contract -q",
+      "result": "PASS",
+      "passed": 233
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --group governance --details",
+      "result": "PASS",
+      "passed": 15
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --details",
+      "result": "PASS_WITH_EXPLICIT_NOT_RUN_LIFECYCLE",
+      "passed": 260,
+      "skipped": 1,
+      "skipReason": "--lifecycle not requested"
+    }
+  ],
+  "verified": [
+    "two-level quota atomicity and concurrent upper bound",
+    "sync reservation and separate account scope",
+    "Retry-After cooldown/manual hold and alert dedup",
+    "OPEN denies HTTP and fenced read-only HALF_OPEN probe",
+    "old probe/epoch and duplicate reports ignored",
+    "Redis connection refused fails closed; replay bypasses Redis",
+    "post-response report fault does not overwrite PG fact",
+    "PG lease/state/max-attempt checks and RESCHEDULED/FAILED persistence"
+  ],
+  "scope": "real local Redis/PG; existing test harness disposable database; platform outputs synthetic; no replacement of earlier live acceptance scene",
+  "notCovered": [
+    "real provider quota calibration or platform OAuth",
+    "real platform/money writes",
+    "production Worker sync dispatch",
+    "Redis Cluster or total Redis storage loss recovery",
+    "final BE/FE review"
+  ],
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "review": {
+    "backend": "PENDING",
+    "frontend": "PENDING_F03"
+  }
+}

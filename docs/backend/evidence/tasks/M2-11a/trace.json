@@ -1,0 +1,12 @@
+{
+  "guardId": "15874006-e71a-4df0-aca4-09606175240a",
+  "jobId": "a68b2d85-c1dd-47f4-8c5d-d67a93db0124",
+  "fence": 1,
+  "owner": "02e23249-70e1-4ec1-92ed-9ff2e818a8a7",
+  "leaseUntil": "2026-10-27T20:40:22.403154Z",
+  "jobVersion": 4,
+  "status": "EXECUTING",
+  "stageSetup": "SYNTHETIC_APPROVAL_COMPONENT_NO_EXECUTION_ATTEMPT",
+  "platformCalls": 0,
+  "paidCalls": 0
+}

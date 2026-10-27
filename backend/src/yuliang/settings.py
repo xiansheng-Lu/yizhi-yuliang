@@ -29,6 +29,9 @@ class Settings(BaseSettings):
     admin_api_enabled: bool = False
     admin_allowed_networks: list[str] = Field(default_factory=lambda: ["127.0.0.1/32", "::1/128"])
     worker_queue_prefix: str = Field(default="yuliang", pattern=r"^[a-z0-9][a-z0-9-]{0,63}$")
+    operations_allowed_networks: list[str] = Field(
+        default_factory=lambda: ["127.0.0.1/32", "::1/128"]
+    )
 
     @model_validator(mode="after")
     def auth_rollout_requirements(self) -> "Settings":
@@ -36,7 +39,7 @@ class Settings(BaseSettings):
             not self.identity_api_enabled or not self.admin_allowed_networks
         ):
             raise ValueError("管理入口需要身份接口与明确来源网段")
-        for network in self.admin_allowed_networks:
+        for network in self.admin_allowed_networks + self.operations_allowed_networks:
             ip_network(network)
         if self.identity_api_enabled:
             if not self.auth_audit_secret or len(self.auth_audit_secret.get_secret_value()) < 32:

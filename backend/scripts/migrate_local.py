@@ -11,7 +11,9 @@ import psycopg
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("action", choices=("upgrade", "current"), default="upgrade", nargs="?")
+    parser.add_argument(
+        "action", choices=("upgrade", "current", "audit-partitions"), default="upgrade", nargs="?"
+    )
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
     values = dict(
@@ -37,6 +39,21 @@ def main() -> int:
             raise SystemExit("迁移角色不是默认NOLOGIN，请先确认已有维护窗口")
         control.execute("ALTER ROLE app_migrate LOGIN")
         try:
+            if args.action == "audit-partitions":
+                with psycopg.connect(
+                    migration.replace("postgresql+psycopg://", "postgresql://")
+                ) as maintenance:
+                    maintenance.execute("SET LOCAL ROLE app_owner")
+                    maintenance.execute(
+                        "SELECT access.ensure_audit_partition("
+                        "date_trunc('month',now() AT TIME ZONE 'UTC')::date)"
+                    )
+                    maintenance.execute(
+                        "SELECT access.ensure_audit_partition(("
+                        "date_trunc('month',now() AT TIME ZONE 'UTC')+interval '1 month')::date)"
+                    )
+                print("当月与下月UTC审计分区就绪；迁移窗口关闭")
+                return 0
             command = ["upgrade", "head"] if args.action == "upgrade" else ["current"]
             result = subprocess.run(  # noqa: S603 -- 固定本地Alembic入口。
                 [sys.executable, "-m", "alembic", "-c", str(root / "alembic.ini"), *command],

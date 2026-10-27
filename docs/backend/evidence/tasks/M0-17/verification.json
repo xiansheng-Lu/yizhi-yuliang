@@ -1,0 +1,61 @@
+{
+  "codeCommit": "640e473a323d190f6db56fe190ac49683ed2c36c",
+  "executedOn": "2026-10-27",
+  "environment": {
+    "os": "WSL2 Ubuntu",
+    "python": "3.13.14",
+    "postgres": "17.10"
+  },
+  "checks": [
+    {
+      "command": "uv run --frozen ruff check .; ruff format --check .; mypy",
+      "result": "PASS",
+      "mypySourceFiles": 46
+    },
+    {
+      "command": "uv run --frozen pytest tests/unit tests/contract -q",
+      "result": "PASS",
+      "passed": 33
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --lifecycle --details",
+      "result": "PASS",
+      "passed": 61,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "command": "uv run --frozen python scripts/migrate_local.py upgrade; audit-partitions; audit-partitions; current",
+      "result": "PASS",
+      "head": "0008_audit_log"
+    }
+  ],
+  "assertions": [
+    "真实app_login可追加父表，UPDATE/DELETE/TRUNCATE和分区DDL实际拒绝",
+    "当月和下月UTC分区FORCE RLS，子表所有运行ACL均无授权，直接读实际拒绝",
+    "缺未来分区时同事务店铺写回滚；独立维护补建重复执行后可写",
+    "同一用户双租户的requestId查不到对方审计，伪造成员拒绝",
+    "本人资料HTTP写审计包含实际actor与服务器requestId，前后HMAC不同且无原昵称/密码",
+    "登录失败只在auth_events出现tenant NULL，app_login/app_auth均不能直接读auth_events",
+    "数据库拒绝自由订单PII、未知字段与result NULL"
+  ],
+  "limits": [
+    "当前业务接入为本人资料更新，未来业务用例须逐项接线",
+    "生产分区维护定时器未部署，独立维护窗口说明已交付",
+    "没有对外审计查询或认证事件通用读取接口",
+    "BE人工复核待签"
+  ],
+  "sourceSha256Utf8Lf": {
+    "backend/README.md": "fc66bf8466ba8f333fdc572ebb2cbae5ad82f513a2a4135937e213d64e298c5b",
+    "backend/alembic/README.md": "feb3284fe2f9b6cd4ca336a7ba26f17653aed6fc4ded910cbaef39b58715a613",
+    "backend/alembic/versions/0008_audit_log.py": "1213bdb15b6085eb117f93d04e696ce4607eefb634b80b930804deb1b8a55f1c",
+    "backend/alembic/versions/0008_audit_log.sql": "22a33372b936cdebec46049f86f3fa5aaad2c587a162dea4fc5d4165662e2da0",
+    "backend/scripts/migrate_local.py": "6e3d0dab60d5d33d5b0e3089d86ae87a6a73eed5905202a84deb9312013aeb40",
+    "backend/src/yuliang/modules/audit/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend/src/yuliang/modules/audit/service.py": "c77beb5c0d752f107b3b9577d2eeeabee27d7930c1182b582231d17bcbc522a5",
+    "backend/src/yuliang/modules/identity/workspace_routes.py": "d4787b231cdcb929b7689b41bfe6027610029252390057a5889629481df32880",
+    "backend/tests/integration/test_audit.py": "88333f3cd947cf2a4b79eaba9f475de44e58d23e3fe9d90c5af52ac981ee822b",
+    "backend/tests/integration/test_identity_database.py": "9e4b33d20c078f7ab53b9a22743631731e4021acb590dc1bbb85536c0fb6306d",
+    "backend/tests/unit/test_audit.py": "0a5f63a5d18f991693b8ebbd174439723a7a77a025f51f2ef913a9edf23252c4"
+  }
+}

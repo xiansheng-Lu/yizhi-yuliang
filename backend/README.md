@@ -111,3 +111,12 @@ system.schedule_recovery核对原始持久事件，先持久RECEIVED，再以Inb
 PROCESSED重复直接跳过；过期未完成的内部恢复事件可补投到同一ID，生成唯一DUE恢复记录。该记录不代表外部业务执行成功。
 仅此内部DB幂等任务允许故障重投；平台、资金和AI未知结果不得套用自动补投协议。
 真实崩溃演练和边界见docs/backend/evidence/tasks/M0-16c；运行全部设施测试时，重启演练先于创建Worker连接池。
+
+## 追加审计
+
+0008创建UTC月份分区的audit_logs，初始化当月和下月；应用账号只有父表SELECT/INSERT，无子表直接权限或分区DDL权限。
+每月由独立维护窗口运行`uv run python scripts/migrate_local.py audit-partitions`，幂等补齐当月和下月。当前未部署生产维护定时器；部署方须设置月前维护与失败告警。
+缺分区时写入明确失败，同事务业务回滚，不能跳过审计继续写。维护和归档保留在独立账号，不向运行应用放开DDL、UPDATE、DELETE或TRUNCATE。
+业务用例调用modules.audit.service.record，同事务记录actor、服务器requestId、对象UUID及摘要；当前本人资料更新已接入，其他未来业务须显式接线。
+详情只允许字段名与APPLIED/DENIED枚举；昵称前后值使用带独立密钥的HMAC摘要，不存原值。订单/凭据/原始平台载荷不进入审计。
+by_request保持租户事务和RLS；尚无对外审计查询HTTP接口。登录前失败仅记受限auth_events、tenant=NULL，不创建tenant=0业务审计行。

@@ -1,7 +1,7 @@
 """原出站键只查档；新请求先准入，调度层接管退避，不在HTTP层重试。"""
 
 from collections.abc import Callable
-from typing import Any, Literal, cast
+from typing import Any, Literal, Protocol, cast
 from uuid import UUID
 
 from pydantic import SecretStr
@@ -19,13 +19,29 @@ from yuliang.modules.connectors.governance import (
 )
 from yuliang.modules.connectors.http import OperationSpec
 from yuliang.modules.connectors.outcomes import Outcome
+from yuliang.platform.errors import ApiError, ErrorCode
+
+
+class WriteValidity(Protocol):
+    def check(self, session: Session) -> None: ...
 
 
 class GovernedPlatformClient:
     def __init__(
-        self, client: RecordedPlatformClient, governance: PlatformGovernance, application_id: UUID
+        self,
+        client: RecordedPlatformClient,
+        governance: PlatformGovernance,
+        application_id: UUID,
+        *,
+        write_preflight: Callable[
+            [Session, GatewayContext, OperationSpec, ObjectRef | None], WriteValidity | None
+        ]
+        | None = None,
     ) -> None:
         self.client, self.governance, self.application_id = client, governance, application_id
+        if getattr(write_preflight, "application_id", application_id) != application_id:
+            raise ValueError("写守卫与平台配额的应用范围不匹配")
+        self.write_preflight = write_preflight
 
     async def send(
         self,
@@ -46,12 +62,26 @@ class GovernedPlatformClient:
         if (lane == "EXECUTE") != (spec.effect == "WRITE") or spec.effect not in {"READ", "WRITE"}:
             raise ValueError("业务通道必须匹配操作类型；探测只能只读")
         ticket: Admission | None = None
+        validity: WriteValidity | None = None
+        admission_session: Session | None = None
 
         def acquire() -> None:
             nonlocal ticket
             ticket = self.governance.admit(QuotaScope(self.application_id, ctx), lane)
             if not ticket.allowed:
                 raise CallDeferred(ticket)
+            if validity is not None and admission_session is not None:
+                validity.check(admission_session)
+
+        def preflight(session: Session) -> None:
+            nonlocal validity, admission_session
+            admission_session = session
+            if spec.effect == "WRITE":
+                if self.write_preflight is None:
+                    raise ApiError(ErrorCode.CAPABILITY_UNAVAILABLE, "服务端写前置守卫尚未配置")
+                validity = self.write_preflight(session, ctx, spec, target)
+            if before_persist is not None:
+                before_persist(session)
 
         result = await self.client.send(
             ctx,
@@ -63,7 +93,7 @@ class GovernedPlatformClient:
             execution_id=execution_id,
             attempt_id=attempt_id,
             before_create=acquire,
-            before_persist=before_persist,
+            before_persist=preflight,
         )
         if ticket is None:
             return result  # 原档案不再消耗配额，也不重复报告旧结果。

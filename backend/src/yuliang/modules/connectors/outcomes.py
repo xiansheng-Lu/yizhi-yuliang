@@ -8,6 +8,26 @@ from typing import Literal
 
 from yuliang.modules.connectors.http import ConnectorTransportError, HttpExchange
 
+HEALTH_CATEGORIES = frozenset(
+    {
+        "ACCEPTED",
+        "READ_SUCCEEDED",
+        "PREFLIGHT_ERROR",
+        "TIMEOUT",
+        "UPSTREAM_ERROR",
+        "RESPONSE_TOO_LARGE",
+        "SIGNING_ERROR",
+        "INVALID_RESPONSE",
+        "UNCONFIRMED",
+        "REDIRECT_REFUSED",
+        "RATE_LIMITED",
+        "PARAMETER_REJECTED",
+        "AUTH_REQUIRED",
+        "FORBIDDEN",
+        "PLATFORM_REJECTED",
+    }
+)
+
 
 @dataclass(frozen=True)
 class BusinessVerdict:

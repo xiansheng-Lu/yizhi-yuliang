@@ -20,7 +20,12 @@ from yuliang.modules.connectors.http import (
     OperationSpec,
     PlatformHttpClient,
 )
-from yuliang.modules.connectors.outcomes import BusinessVerdict, Outcome, classify
+from yuliang.modules.connectors.outcomes import (
+    HEALTH_CATEGORIES,
+    BusinessVerdict,
+    Outcome,
+    classify,
+)
 from yuliang.modules.connectors.redaction import ArchivePolicy, canonical, fingerprint, project
 from yuliang.platform.db import business_transaction
 from yuliang.platform.errors import ApiError, ErrorCode
@@ -251,6 +256,22 @@ class PlatformArchive:
                     "digest": response_digest,
                     "trace": trace_digest,
                     "payload": json.dumps(payload, ensure_ascii=False),
+                },
+            )
+            # 同步健康只共享受控观察码，不共享用户私有请求、原文或PII。
+            session.execute(
+                text("""UPDATE sync_page_intents SET last_phase=:phase,last_category=:category,
+                last_dispatch=:dispatch,last_observed_at=clock_timestamp()
+                WHERE outbound_id=:id"""),
+                {
+                    "id": outbound_id,
+                    "phase": phase,
+                    "category": (
+                        outcome.category if outcome.category in HEALTH_CATEGORIES else "UNCONFIRMED"
+                    )
+                    if outcome
+                    else None,
+                    "dispatch": dispatch,
                 },
             )
 

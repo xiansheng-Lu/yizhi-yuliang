@@ -90,8 +90,21 @@ class OperationSpec:
     max_read_attempts: int = 1
     max_response_bytes: int = 1024 * 1024
     cursor_parameter: str | None = None
+    preflight_resources: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
+        if (
+            type(self.preflight_resources) is not tuple
+            or len(self.preflight_resources) > 16
+            or len(set(self.preflight_resources)) != len(self.preflight_resources)
+            or any(
+                not isinstance(key, str) or not re.fullmatch(r"[a-z][a-z0-9_.]{0,59}", key)
+                for key in self.preflight_resources
+            )
+            or self.preflight_resources
+            and self.effect != "WRITE"
+        ):
+            raise ValueError("写前置资源必须由服务器明确声明")
         if (
             not re.fullmatch(r"[a-z][a-z0-9_.]{0,79}", self.key)
             or not re.fullmatch(r"[0-9a-f]{20}", self.catalog_id)

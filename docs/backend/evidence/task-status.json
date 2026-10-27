@@ -4,7 +4,7 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "currentFocus": "M1-02",
+  "currentFocus": "M1-03a",
   "tasks": {
     "R00-01": {
       "owner": "BE",
@@ -1300,6 +1300,40 @@
       },
       "evidence": "tasks/M1-01/README.md",
       "implementationCommit": "135923bf2bc7076a32f9c118d0778a8dc5735e8d"
+    },
+    "M1-02": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "delivery": "六阶段/六态、读写隔离与受限单次灰度许可技术通过；无真实平台证据或写调用；待F03/F11与具名复核",
+      "dependencyInput": "M1-01技术验证及用户2026-10-27持续开发授权；G0/E08不代签，仅本地技术准备",
+      "technicalVerification": {
+        "result": "PASS",
+        "unitContractPassed": 186,
+        "capabilityCases": 27,
+        "allIntegrationPassed": 233,
+        "lifecycleNotRun": 1,
+        "platformCalls": 0
+      },
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS"
+        },
+        {
+          "item": 2,
+          "technical": "PASS"
+        },
+        {
+          "item": 3,
+          "technical": "PASS"
+        }
+      ],
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F03_F11"
+      },
+      "evidence": "tasks/M1-02/README.md",
+      "implementationCommit": "8e1f18cbfab80b1cc11ecdb64b552f2f7a69cc00"
     }
   },
   "gates": {
@@ -1387,10 +1421,10 @@
     "offline": "离线通过不等于真实依赖、前端联调或平台验收通过"
   },
   "nextTask": {
-    "id": "M1-02",
+    "id": "M1-03a",
     "status": "READY_FOR_TECHNICAL_PREPARATION",
-    "formalGate": "G0/E08 pending",
-    "note": "采用M1-01技术验证输入，继续能力证据模型，不自动启用真实流量"
+    "formalGate": "G0/E08 remains pending; technical preparation authorized by latest user request",
+    "note": "继续六方法连接器端口与HTTP边界；随后M1-03b/04/05/15a等已就绪技术卡。外部真实验收单列，不空等。"
   },
   "continuation": {
     "requestedOn": "2026-10-27",
@@ -1398,7 +1432,11 @@
     "heartbeat": "已在本聊天设置5分钟中断/空闲恢复；卡间立即推进",
     "environment": "WSL2 Ubuntu Docker; UV_PROJECT_ENVIRONMENT=/home/lenovo/.cache/yuliang-venv",
     "latestUserRequest": "补齐浏览器验收，然后按照后端任务卡继续后续的所有开发，需要资源再找我对接，不阻塞持续开发到完毕",
-    "developmentPolicy": "缺人工/外部验收时记录并继续可独立技术准备；正式门禁、平台调用和付费仍按各自证据许可"
+    "developmentPolicy": "缺人工/外部验收时记录并继续可独立技术准备；正式门禁、平台调用和付费仍按各自证据许可",
+    "lastCompletedTechnicalTask": "M1-02",
+    "nextTechnicalTask": "M1-03a",
+    "executionRules": "docs/backend/evidence/execution-rules.md",
+    "checkpoint": "浏览器补验完成，M1-01/02技术交付完成；两份原有未提交设计文档保留，后续不得夹带提交"
   },
   "frontendIntegration": {
     "F01": {

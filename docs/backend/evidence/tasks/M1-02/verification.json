@@ -1,0 +1,90 @@
+{
+  "checkedAt": "2026-10-27T21:10:41.788487+08:00",
+  "baseline": "c69be32",
+  "result": "PASS_TECHNICAL",
+  "environment": "WSL2 Ubuntu; Python3.13; disposable real PostgreSQL per test module; synthetic evidence/approvers only",
+  "checks": [
+    {
+      "command": "uv run --frozen ruff check .",
+      "result": "PASS"
+    },
+    {
+      "command": "uv run --frozen ruff format --check .",
+      "result": "PASS",
+      "files": 116
+    },
+    {
+      "command": "uv run --frozen mypy",
+      "result": "PASS",
+      "files": 91
+    },
+    {
+      "command": "uv run --frozen pytest tests/unit tests/contract -q",
+      "result": "PASS",
+      "passed": 186,
+      "newCapabilityCases": 29
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --group capability --details",
+      "result": "PASS",
+      "passedAtLastStandaloneRun": 26,
+      "note": "one additional different-key concurrency case subsequently included in final full integration run"
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --details",
+      "result": "PASS_WITH_EXPLICIT_NOT_RUN_LIFECYCLE",
+      "passed": 233,
+      "capabilityCases": 27,
+      "skipped": 1,
+      "skipReason": "--lifecycle not requested; restart case not counted as passed"
+    },
+    {
+      "command": "uv run --frozen python scripts/migrate_local.py upgrade",
+      "result": "PASS",
+      "head": "0016_capability_evidence"
+    }
+  ],
+  "database": {
+    "head": "0016_capability_evidence",
+    "developmentRows": {
+      "capability_bindings": 0,
+      "capability_assertions": 0,
+      "capability_validation_permits": 0
+    },
+    "migrationRoleCanLogin": false,
+    "consumeFunction": {
+      "securityDefiner": true,
+      "owner": "app_owner",
+      "configuration": [
+        "search_path=pg_catalog, pg_temp"
+      ],
+      "runtimeCanExecute": true,
+      "authRoleCanExecute": false,
+      "publicExecutionGrants": 0
+    }
+  },
+  "verifiedScenarios": [
+    "six-stage prefix, expiry and temporal renewal invalidation",
+    "read/write proof separation; tenant/product/account/version binding",
+    "current actor and approver role/scope/revocation checks",
+    "single request key/digest/amount/window binding",
+    "same-key and different-key consumption races each allow only one unresolved bootstrap attempt",
+    "UNKNOWN does not create new first-write permission",
+    "runtime cannot insert/update evidence or reset permit",
+    "account state/identity changes invalidate old binding",
+    "ocean/xhs/beans remain closed"
+  ],
+  "notCovered": [
+    "actual account/platform assertions",
+    "automatic connector probe/ingestion",
+    "F03/F11 frontend integration",
+    "final BE/FE review; formal G0/E08"
+  ],
+  "platformCalls": 0,
+  "paidModelCalls": 0,
+  "review": {
+    "backend": "PENDING",
+    "frontend": "PENDING_F03_F11"
+  },
+  "implementationCommit": "8e1f18cbfab80b1cc11ecdb64b552f2f7a69cc00"
+}

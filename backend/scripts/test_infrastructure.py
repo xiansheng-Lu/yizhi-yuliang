@@ -58,6 +58,7 @@ def main() -> int:
             "gateway",
             "parser",
             "catalog",
+            "capability",
         ),
         default="all",
     )
@@ -78,6 +79,7 @@ def main() -> int:
         "cost": ["tests/integration/test_ai_cost_gate.py"],
         "gateway": ["tests/integration/test_deepseek_gateway.py"],
         "catalog": ["tests/integration/test_platform_catalog.py"],
+        "capability": ["tests/integration/test_capability_evidence.py"],
         "parser": [
             "tests/integration/test_command_parse.py",
             "tests/integration/test_workspace.py",

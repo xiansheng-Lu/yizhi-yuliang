@@ -76,6 +76,7 @@ def main() -> int:
             "guards",
             "idempotency",
             "attempts",
+            "receipts",
         ),
         default="all",
     )
@@ -114,6 +115,7 @@ def main() -> int:
         "guards": ["tests/integration/test_target_guards.py"],
         "idempotency": ["tests/integration/test_api_idempotency.py"],
         "attempts": ["tests/integration/test_execution_attempts.py"],
+        "receipts": ["tests/integration/test_execution_receipts.py"],
         "parser": [
             "tests/integration/test_command_parse.py",
             "tests/integration/test_workspace.py",

@@ -1,0 +1,10 @@
+{
+  "head": "0033_execution_receipts",
+  "migrationRoleCanLogin": false,
+  "developmentRows": {
+    "execution_receipts": 0,
+    "execution_orders": 0,
+    "execution_attempts": 0,
+    "command_jobs": 0
+  }
+}

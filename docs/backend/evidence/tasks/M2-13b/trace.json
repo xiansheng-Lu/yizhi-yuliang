@@ -1,0 +1,18 @@
+{
+  "receipt_id": "8bd337e5-747b-5286-8a5f-dcfd20863dd6",
+  "execution_id": "622ad8cb-793f-4532-8efe-4441dec70b04",
+  "attempt_id": "6d74e55d-9986-4046-a502-d00c8e5426d4",
+  "raw_id": 8,
+  "source": "PLATFORM",
+  "accepted": true,
+  "evidence_level": "E0",
+  "applied": true,
+  "disposition": "APPLIED",
+  "execution_status": "VERIFYING",
+  "execution_version": 2,
+  "job_status": "VERIFYING",
+  "job_version": 5,
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "input": "EXPLICIT_MOCK_RESPONSE_REAL_PG_AND_KERNEL"
+}

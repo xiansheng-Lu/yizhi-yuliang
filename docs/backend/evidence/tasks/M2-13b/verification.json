@@ -1,0 +1,65 @@
+{
+  "checkedAt": "2026-10-27T21:59:37.587Z",
+  "baseline": "a98902d",
+  "implementationCommit": "f017445d5939bdeaa7621e263e957d06df39fec9",
+  "result": "PASS_REAL_PG_RECEIPTS_EVIDENCE_ORDER_FENCE_AND_ATOMICITY",
+  "checks": [
+    {
+      "command": "uv run --frozen ruff check .",
+      "result": "PASS"
+    },
+    {
+      "command": "uv run --frozen ruff format --check .",
+      "result": "PASS",
+      "count": 209
+    },
+    {
+      "command": "uv run --frozen mypy",
+      "result": "PASS",
+      "count": 167
+    },
+    {
+      "command": "uv run --frozen pytest tests/unit tests/contract -q",
+      "result": "PASS",
+      "count": 503
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --group receipts --details",
+      "result": "PASS",
+      "count": 17
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --details",
+      "result": "PASS_WITH_EXPLICIT_LIFECYCLE_SKIP",
+      "count": 512,
+      "skipped": 1
+    },
+    {
+      "command": "uv run --frozen python scripts/migrate_local.py upgrade",
+      "result": "PASS"
+    }
+  ],
+  "database": {
+    "head": "0033_execution_receipts",
+    "migrationRoleCanLogin": false,
+    "developmentRows": {
+      "execution_receipts": 0,
+      "execution_orders": 0,
+      "execution_attempts": 0,
+      "command_jobs": 0
+    }
+  },
+  "trace": "trace.json",
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "notCovered": [
+    "real vendor protocol/authorization E01",
+    "independent readback producer/scheduling M2-17",
+    "funds settlement M2-10c/recovery M2-11b",
+    "F06 joint browser integration and BE/FE named review G0/E08"
+  ],
+  "review": {
+    "backend": "PENDING",
+    "frontend": "PENDING_F06"
+  }
+}

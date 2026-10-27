@@ -4,7 +4,7 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "currentFocus": "M0-05",
+  "currentFocus": "M2-01a",
   "tasks": {
     "R00-01": {
       "owner": "BE",
@@ -904,9 +904,52 @@
         "frontendReason": "20册此卡无FE协作"
       },
       "evidence": "tasks/M0-03/README.md"
+    },
+    "M0-05": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "delivery": "干净GitHub运行器CI与故障敏感性通过，待BE/FE F00复核",
+      "implementationCommit": "371834a574cfd076abeb527b8601a33bb4727bf6",
+      "git": "COMMITTED",
+      "technicalVerification": {
+        "result": "PASS",
+        "unitContractPassed": 33,
+        "integrationPassed": 68,
+        "sensitivityRejected": 3,
+        "hostedRunId": 40454908715
+      },
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS"
+        },
+        {
+          "item": 2,
+          "technical": "PASS"
+        },
+        {
+          "item": 3,
+          "technical": "PASS"
+        }
+      ],
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F00"
+      },
+      "evidence": "tasks/M0-05/README.md"
     }
   },
-  "gates": {},
+  "gates": {
+    "G0": {
+      "status": "BLOCKED",
+      "blockedBy": [
+        "E06_MAIL",
+        "F01_BROWSER",
+        "E08"
+      ],
+      "note": "邮件真实收件、浏览器接线及适用人工复核仍未齐；不影响无此门禁依赖的内部基础卡"
+    }
+  },
   "blockers": [
     {
       "id": "E08",
@@ -968,9 +1011,9 @@
     "offline": "离线通过不等于真实依赖、前端联调或平台验收通过"
   },
   "nextTask": {
-    "id": "M0-05",
-    "status": "TECHNICAL_INPUTS_READY_WAITING_REVIEW",
-    "note": "就绪探测归档后立即继续CI与空库回归门禁"
+    "id": "M2-01a",
+    "status": "IN_PROGRESS",
+    "note": "直接依赖M0-02/M0-17技术输入就绪，按20册推进，不以G0人工门禁已通过表述"
   },
   "continuation": {
     "requestedOn": "2026-10-27",

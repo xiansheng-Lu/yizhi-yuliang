@@ -9,6 +9,7 @@ from sqlalchemy import text
 from sqlalchemy.exc import DBAPIError
 from sqlalchemy.orm import Session
 
+from yuliang.modules.command.jobs import MoneyValue
 from yuliang.modules.policy.models import CheckEvidence, RiskContext, RiskStage
 from yuliang.modules.policy.service import check
 from yuliang.modules.policy.thresholds import amount_limit, change_bound, frequency_bound
@@ -48,6 +49,7 @@ class AmountLimitRule:
                 self.name, False, "预算核验基数尚未就绪", {"reason": "BUDGET_NOT_INITIALIZED"}
             )
         day = context.checked_at.astimezone(ZoneInfo("Asia/Shanghai")).date()
+        credited = []
         for row in rows:
             ready = (
                 row["policy_version"] == context.policy_version
@@ -85,12 +87,38 @@ class AmountLimitRule:
                     "完整预算来源已变化，需重新核验",
                     {"reason": "BUDGET_COVERAGE_CHANGED", "ledgerId": str(row["id"])},
                 )
+            own = session.execute(
+                text("SELECT access.budget_own_hold(:member,:user,:job,:ledger,:stage)"),
+                {
+                    "member": context.identity.membership_id,
+                    "user": context.identity.user_id,
+                    "job": context.job_id,
+                    "ledger": row["id"],
+                    "stage": context.stage.value,
+                },
+            ).scalar_one()
+            expected_hold = (
+                max(context.request.new_value.amount_minor - context.current_value.amount_minor, 0)
+                if context.request.action_type == "CHANGE_DAILY_BUDGET"
+                and isinstance(context.current_value, MoneyValue)
+                and isinstance(context.request.new_value, MoneyValue)
+                else 0
+            )
+            if own > row["reserved_increase_minor"] or (own > 0 and own != expected_hold):
+                return check(
+                    self.name,
+                    False,
+                    "本申请预占与冻结变更不一致",
+                    {"reason": "OWN_HOLD_INCONSISTENT"},
+                )
+            if own:
+                credited.append({"ledgerId": str(row["id"]), "heldMinor": own})
             result = amount_limit(
                 context.request.action_type,
                 context.current_value,
                 context.request.new_value,
                 confirmed=row["confirmed_total_minor"],
-                reserved=row["reserved_increase_minor"],
+                reserved=row["reserved_increase_minor"] - own,
                 limit=row["limit_minor"],
                 currency=row["currency"],
                 covered_paused=row["coverage_kind"] == "ALL_CONFIGURED_INCLUDING_PAUSED",
@@ -114,6 +142,7 @@ class AmountLimitRule:
                 "reason": "WITHIN_LIMIT",
                 "ledgerIds": [str(row["id"]) for row in rows],
                 "includesPaused": True,
+                "ownHeldMinorByLedger": credited,
             },
         )
 

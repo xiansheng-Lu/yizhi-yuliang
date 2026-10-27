@@ -72,6 +72,7 @@ def main() -> int:
             "rules",
             "intent",
             "budgets",
+            "reservations",
         ),
         default="all",
     )
@@ -106,6 +107,7 @@ def main() -> int:
         "rules": ["tests/integration/test_risk_rules.py"],
         "intent": ["tests/integration/test_intent_binding.py"],
         "budgets": ["tests/integration/test_budget_initialization.py"],
+        "reservations": ["tests/integration/test_budget_reservations.py"],
         "parser": [
             "tests/integration/test_command_parse.py",
             "tests/integration/test_workspace.py",

@@ -4,7 +4,7 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "currentFocus": "M1-17",
+  "currentFocus": "M2-05a",
   "tasks": {
     "R00-01": {
       "owner": "BE",
@@ -1576,6 +1576,41 @@
         "lifecycleNotRun": 1,
         "platformCalls": 0
       }
+    },
+    "M1-17": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "scope": "catalog/API连接查询、受控断开影响/冻结及必要迁移和测试",
+      "dependencyInput": "M1-02/05/16/M0-12实际技术证据；依持续研发授权继续，G0/E08保留",
+      "delivery": "连接元数据/受控本地断开/影响一致性/历史保留已真实PG和HTTP验证；真实重授未装配，供应商撤权未调用",
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS"
+        },
+        {
+          "item": 2,
+          "technical": "PASS"
+        },
+        {
+          "item": 3,
+          "technical": "PASS"
+        }
+      ],
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F03"
+      },
+      "evidence": "tasks/M1-17/README.md",
+      "implementationCommit": "652fda6aabaa9260047fe3cac4f0cdc37f848abb",
+      "technicalVerification": {
+        "result": "PASS",
+        "unitContractPassed": 246,
+        "connectionIntegrationCases": 14,
+        "allIntegrationPassed": 328,
+        "lifecycleNotRun": 1,
+        "platformCalls": 0
+      }
     }
   },
   "gates": {
@@ -1681,9 +1716,9 @@
     "offline": "离线通过不等于真实依赖、前端联调或平台验收通过"
   },
   "nextTask": {
-    "id": "M1-17",
+    "id": "M2-05a",
     "status": "READY_FOR_TECHNICAL_DEVELOPMENT",
-    "note": "M1-02/05/16/M0-12技术输入已验证，连接管理继续；G0/E08和真实资源验收保留"
+    "note": "M0-12/17和M1-02已有实际技术输入；M1-18真实镜像依赖未实现，继续独立就绪申请模型卡"
   },
   "continuation": {
     "requestedOn": "2026-10-27",
@@ -1692,10 +1727,10 @@
     "environment": "WSL2 Ubuntu Docker; UV_PROJECT_ENVIRONMENT=/home/lenovo/.cache/yuliang-venv",
     "latestUserRequest": "补齐浏览器验收，然后按照后端任务卡继续后续的所有开发，需要资源再找我对接，不阻塞持续开发到完毕",
     "developmentPolicy": "缺人工/外部验收时记录并继续可独立技术准备；正式门禁、平台调用和付费仍按各自证据许可",
-    "lastCompletedTechnicalTask": "M1-16",
-    "nextTechnicalTask": "M1-17",
+    "lastCompletedTechnicalTask": "M1-17",
+    "nextTechnicalTask": "M2-05a",
     "executionRules": "docs/backend/evidence/execution-rules.md",
-    "checkpoint": "M1通用目录/能力/OAuth/留档/限流/同步/事实/新鲜度技术完成；继续连接管理，E01/E02和06/12伙伴文档保留"
+    "checkpoint": "M1通用底座及连接管理技术验证并保留复核；E01/E02限制真实平台镜像验收，继续独立申请/执行底座；06/12伙伴文档保留"
   },
   "frontendIntegration": {
     "F01": {

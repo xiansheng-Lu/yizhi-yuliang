@@ -28,6 +28,7 @@ Action = Literal[
     "connection.oauth.exchange",
     "connection.token.rotate",
     "connection.sync.toggle",
+    "connection.disconnect",
 ]
 ObjectType = Literal[
     "user",

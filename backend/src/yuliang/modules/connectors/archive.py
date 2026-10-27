@@ -40,6 +40,28 @@ class ArchiveUnavailable(Exception):
 
 
 def _verify(session: Session, ctx: GatewayContext, spec: OperationSpec) -> None:
+    session.execute(
+        text("SELECT pg_advisory_xact_lock_shared(hashtextextended(:key,760117))"),
+        {"key": f"{ctx.identity.tenant_id}|{ctx.account_id}"},
+    )
+    authorization = (
+        session.execute(
+            text("""SELECT connector_id,provider,product_line,status,
+        expires_at>clock_timestamp() AS current,account_id FROM provider_authorizations
+        WHERE id=:id"""),
+            {"id": ctx.authorization_id},
+        )
+        .mappings()
+        .first()
+    )
+    if authorization is not None and (
+        (authorization["connector_id"], authorization["provider"], authorization["product_line"])
+        != (ctx.connector_id, ctx.provider, ctx.product_line)
+        or authorization["status"] != "ACTIVE"
+        or not authorization["current"]
+        or authorization["account_id"] not in (None, ctx.account_id)
+    ):
+        raise ApiError(ErrorCode.CAPABILITY_UNAVAILABLE, "平台连接已失效或范围不匹配")
     row = (
         session.execute(
             text("""

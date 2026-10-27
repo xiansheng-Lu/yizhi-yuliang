@@ -65,6 +65,7 @@ def main() -> int:
             "sync",
             "facts",
             "freshness",
+            "connections",
         ),
         default="all",
     )
@@ -92,6 +93,7 @@ def main() -> int:
         "sync": ["tests/integration/test_sync_checkpoints.py"],
         "facts": ["tests/integration/test_metric_facts.py"],
         "freshness": ["tests/integration/test_resource_freshness.py"],
+        "connections": ["tests/integration/test_connection_management.py"],
         "parser": [
             "tests/integration/test_command_parse.py",
             "tests/integration/test_workspace.py",

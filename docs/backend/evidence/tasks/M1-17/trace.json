@@ -1,0 +1,21 @@
+{
+  "scope": "synthetic identities and platform HTTP; actual PG/Redis and API",
+  "disconnectRequestId": "d252fddd554747638bf52768c5aea80d",
+  "authorizationId": "354e045b-a3d0-4536-823a-63f01fa48ba2",
+  "writeOutboundId": "5181124b-922f-4cc1-8c4f-4152a94c8d77",
+  "accountIds": [
+    "d45166a2-9dcb-4329-b762-4e442c26ea7f"
+  ],
+  "bindingIds": [
+    "66c37e63-2633-48e6-84e2-f4f1ebae5542",
+    "6c136da6-fa22-4adb-b967-963bd062f78e"
+  ],
+  "sourceIds": [
+    "f0eaeb7b-c57d-4eb7-9401-7695e6f2e3d1"
+  ],
+  "inFlightReadbackIds": [
+    "5181124b-922f-4cc1-8c4f-4152a94c8d77"
+  ],
+  "platformCalls": 0,
+  "paidCalls": 0
+}

@@ -1,0 +1,74 @@
+{
+  "checkedAt": "2026-10-27T17:47:20.929Z",
+  "baseline": "07c6bbb931d114a09e832d3e67fc1a06965a550a",
+  "implementationCommit": "a5c862d467c9d54fc6730a5d1c81d0c2aff841e5",
+  "result": "PASS_TECHNICAL_REAL_PG_REDIS_SYNTHETIC_PLATFORM",
+  "checks": [
+    {
+      "command": "uv run --frozen ruff check .",
+      "result": "PASS"
+    },
+    {
+      "command": "uv run --frozen ruff format --check .",
+      "result": "PASS",
+      "files": 153
+    },
+    {
+      "command": "uv run --frozen mypy",
+      "result": "PASS",
+      "files": 123
+    },
+    {
+      "command": "uv run --frozen pytest tests/unit tests/contract -q",
+      "result": "PASS",
+      "passed": 246
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --group freshness --details",
+      "result": "PASS",
+      "passed": 16
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --details",
+      "result": "PASS_WITH_EXPLICIT_NOT_RUN_LIFECYCLE",
+      "passed": 314,
+      "skipped": 1
+    },
+    {
+      "command": "uv run --frozen python scripts/migrate_local.py upgrade",
+      "result": "PASS",
+      "head": "0021_resource_freshness"
+    }
+  ],
+  "database": {
+    "head": "0021_resource_freshness",
+    "migrationRoleCanLogin": false,
+    "developmentRows": {
+      "resource_freshness_policies": 0,
+      "write_resource_requirements": 0
+    }
+  },
+  "verified": [
+    "last full success values retained across source failure and recovery",
+    "private raw RLS versus safe shared health summary",
+    "source/fetched/query clocks distinct and unknown source NULL",
+    "stale/future/unknown/missing fields/policy/target/application/auth denials before quota and wire",
+    "runtime policy mutation denied",
+    "post-admission 5.1 second injected delay expires data: no wire/root; conservative quota retained",
+    "old-key replay after expiry without resend",
+    "local sync rate limit preserves valid reserved write eligibility"
+  ],
+  "notCovered": [
+    "real supplier I/O or live field/clock contracts",
+    "production policy selection or Worker activation",
+    "frontend integration and named BE/FE review",
+    "funding/approval/six-phase capability acceptance"
+  ],
+  "scope": "real PG/Redis in existing isolated harness; OAuth and vendor transport synthetic; original live scenes retained",
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "review": {
+    "backend": "PENDING",
+    "frontend": "PENDING_F03_F04_F05"
+  }
+}

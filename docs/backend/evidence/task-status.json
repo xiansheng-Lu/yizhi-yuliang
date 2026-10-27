@@ -4,7 +4,7 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "currentFocus": "M1-16",
+  "currentFocus": "M1-17",
   "tasks": {
     "R00-01": {
       "owner": "BE",
@@ -1541,6 +1541,41 @@
       },
       "evidence": "tasks/M1-15b/README.md",
       "implementationCommit": "e3ffef20097849140c99b0de625b76bf153780ed"
+    },
+    "M1-16": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "scope": "连接器/报告资源新鲜度与受控客户端写前置，必要DDL/测试",
+      "dependencyInput": "M1-15b/M1-04技术证据及持续开发授权；G0/E08保留",
+      "delivery": "新鲜度/安全故障摘要/维护策略/授权有效窗写前置已真实PG和Redis验证；无真实平台写入",
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS"
+        },
+        {
+          "item": 2,
+          "technical": "PASS"
+        },
+        {
+          "item": 3,
+          "technical": "PASS"
+        }
+      ],
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F03_F04_F05"
+      },
+      "evidence": "tasks/M1-16/README.md",
+      "implementationCommit": "a5c862d467c9d54fc6730a5d1c81d0c2aff841e5",
+      "technicalVerification": {
+        "result": "PASS",
+        "unitContractPassed": 246,
+        "freshnessIntegrationCases": 16,
+        "allIntegrationPassed": 314,
+        "lifecycleNotRun": 1,
+        "platformCalls": 0
+      }
     }
   },
   "gates": {
@@ -1646,9 +1681,9 @@
     "offline": "离线通过不等于真实依赖、前端联调或平台验收通过"
   },
   "nextTask": {
-    "id": "M1-16",
-    "status": "READY_FOR_TECHNICAL_PREPARATION",
-    "note": "E01/E02仅阻塞相应真实授权/平台验收；继续独立就绪的新鲜度与写资格守卫"
+    "id": "M1-17",
+    "status": "READY_FOR_TECHNICAL_DEVELOPMENT",
+    "note": "M1-02/05/16/M0-12技术输入已验证，连接管理继续；G0/E08和真实资源验收保留"
   },
   "continuation": {
     "requestedOn": "2026-10-27",
@@ -1657,10 +1692,10 @@
     "environment": "WSL2 Ubuntu Docker; UV_PROJECT_ENVIRONMENT=/home/lenovo/.cache/yuliang-venv",
     "latestUserRequest": "补齐浏览器验收，然后按照后端任务卡继续后续的所有开发，需要资源再找我对接，不阻塞持续开发到完毕",
     "developmentPolicy": "缺人工/外部验收时记录并继续可独立技术准备；正式门禁、平台调用和付费仍按各自证据许可",
-    "lastCompletedTechnicalTask": "M1-15b",
-    "nextTechnicalTask": "M1-16",
+    "lastCompletedTechnicalTask": "M1-16",
+    "nextTechnicalTask": "M1-17",
     "executionRules": "docs/backend/evidence/execution-rules.md",
-    "checkpoint": "M1通用底座至15a/15b技术完成并保留正式签字；平台资源单列，继续独立卡；06/12伙伴文档保留"
+    "checkpoint": "M1通用目录/能力/OAuth/留档/限流/同步/事实/新鲜度技术完成；继续连接管理，E01/E02和06/12伙伴文档保留"
   },
   "frontendIntegration": {
     "F01": {

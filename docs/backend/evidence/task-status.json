@@ -1346,6 +1346,15 @@
       "status": "BLOCKED",
       "implementation": "CSRF transport and identity snapshot fencing implemented; 210 automated tests passed",
       "browser": "FRONTEND_RENDER_PASS_AUTH_BLOCKED_SAVED_OR_MANAGED_POLICY",
+      "latestBrowserRecheck": {
+        "checkedAt": "2026-10-27T17:38:05+08:00",
+        "frontendHttpStatus": 200,
+        "backendHealthHttpStatus": 200,
+        "browserBackendAccess": "DENIED_SAVED_PERMISSION_OR_MANAGED_POLICY",
+        "authenticationFlow": "NOT_RUN",
+        "cleanup": "PASS",
+        "evidence": "docs/frontend/acceptance/evidence/f01-csrf/browser-policy.json"
+      },
       "blockedBy": [
         "BROWSER_LOCAL_API_ACCESS"
       ],

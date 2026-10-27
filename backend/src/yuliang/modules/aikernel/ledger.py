@@ -46,7 +46,7 @@ class InvocationLedger:
             changed = session.execute(
                 text("""
               SELECT access.ai_finish(:call,:user,:status,:usage,:cost,:input,:output,
-                :amount,:latency,:external,:dispatch,:currency)
+                :amount,:latency,:external,:dispatch,:currency,:provider_model,:response_hash)
             """),
                 {
                     "call": request.call_id,
@@ -61,6 +61,8 @@ class InvocationLedger:
                     "external": outcome.external_request_id,
                     "dispatch": outcome.dispatch_state,
                     "currency": usage.cost_currency,
+                    "provider_model": outcome.provider_model,
+                    "response_hash": outcome.response_hash,
                 },
             ).scalar_one()
         if not changed:

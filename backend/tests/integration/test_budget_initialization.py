@@ -49,7 +49,12 @@ class FullBudgetParameters(BaseModel):
 
 
 async def full_snapshot(
-    data: dict[str, Any], *, paused: int = 9890, empty: bool = False, active: int = 100
+    data: dict[str, Any],
+    *,
+    paused: int = 9890,
+    empty: bool = False,
+    active: int = 100,
+    source_at: datetime | None = None,
 ) -> UUID:
     ctx = data["readctx"]
     spec = replace(data["readspec"], parameters_model=FullBudgetParameters, target_parameter=None)
@@ -77,7 +82,7 @@ async def full_snapshot(
                 json={
                     "code": 0,
                     "data": {"list": page_rows},
-                    "source_updated_at": datetime.now(UTC).isoformat(),
+                    "source_updated_at": (source_at or datetime.now(UTC)).isoformat(),
                 },
             )
 

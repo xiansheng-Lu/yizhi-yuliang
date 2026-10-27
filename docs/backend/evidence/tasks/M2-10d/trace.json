@@ -1,0 +1,20 @@
+{
+  "finalization_id": "92d0c932-3daf-5e0e-9bbb-945756ed3339",
+  "job_id": "9514e1c2-284a-4071-9f60-f9cd10b94f57",
+  "kind": "RELEASE",
+  "proof_kind": "UNCLAIMED_TERMINAL",
+  "job_version": 4,
+  "buckets": 1,
+  "verified_fact_id": null,
+  "jobStatus": "FAILED",
+  "jobVersion": 4,
+  "B": 10100,
+  "R": 0,
+  "freezeReason": "OVER_LIMIT",
+  "receipt": null,
+  "executionOrders": 0,
+  "platformWrites": 0,
+  "input": "SYNTHETIC_VENDOR_REAL_PG_CURRENT_RISK_AND_UNCLAIMED_PROOF",
+  "platformCalls": 0,
+  "paidCalls": 0
+}

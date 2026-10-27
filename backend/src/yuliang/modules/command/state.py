@@ -36,6 +36,7 @@ class JobEvent(StrEnum):
     READ_UNKNOWN = "READ_UNKNOWN"
     CONFIRMED_NOT_EXECUTED = "CONFIRMED_NOT_EXECUTED"
     SAFE_RETRY = "SAFE_RETRY"
+    UNSENT_REJECT = "UNSENT_REJECT"
 
 
 @dataclass(frozen=True)
@@ -88,6 +89,9 @@ RULES = {
     JobEvent.SAFE_RETRY: Rule(
         frozenset({JobStatus.FAILED}), JobStatus.EXECUTING, "显式安全重试，沿用原申请并新增尝试"
     ),
+    JobEvent.UNSENT_REJECT: Rule(
+        frozenset({JobStatus.APPROVED}), JobStatus.FAILED, "发送前复核未通过，确认未发送"
+    ),
 }
 
 
@@ -125,11 +129,33 @@ def evolve(
         if at < job.expires_at:
             _deny("申请尚未到期")
     elif (
-        event in {JobEvent.CONFIRM, JobEvent.APPROVE, JobEvent.CLAIM, JobEvent.SAFE_RETRY}
+        event
+        in {
+            JobEvent.CONFIRM,
+            JobEvent.APPROVE,
+            JobEvent.CLAIM,
+            JobEvent.SAFE_RETRY,
+            JobEvent.UNSENT_REJECT,
+        }
         and at >= job.expires_at
     ):
         _deny("申请已过期")
     changes: dict[str, object] = {}
+    if event == JobEvent.UNSENT_REJECT:
+        if (
+            facts.risk is None
+            or facts.risk.checked_at != at
+            or facts.risk.result != "BLOCKED"
+            or not any(c.code == "AMOUNT_LIMIT" and not c.passed for c in facts.risk.checks)
+            or facts.evidence_level != "E1"
+            or not facts.proof_ref
+            or facts.receipt is not None
+            or facts.error is None
+            or facts.error.retryable
+            or facts.error.code != "RISK_BLOCKED"
+        ):
+            _deny("未发送终结需要本次额度拒绝、E1未发送证明与不可重试错误")
+        changes.update(risk_summary=facts.risk, error=facts.error, execution_receipt=None)
     if event in {JobEvent.CONFIRM, JobEvent.APPROVE, JobEvent.CLAIM, JobEvent.SAFE_RETRY}:
         if (
             facts.risk is None

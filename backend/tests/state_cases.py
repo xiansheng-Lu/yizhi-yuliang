@@ -127,6 +127,21 @@ def state_job(status: JobStatus, at: datetime, *, base: CommandJob | None = None
 
 
 def facts_for(event: JobEvent, job: CommandJob, at: datetime) -> StateFacts:
+    if event == JobEvent.UNSENT_REJECT:
+        return StateFacts(
+            risk=RiskSummary(
+                result="BLOCKED",
+                level="HIGH",
+                policy_version=1,
+                checked_at=at,
+                checks=(
+                    RiskCheck(code="AMOUNT_LIMIT", passed=False, message="仅状态内核合成额度拒绝"),
+                ),
+            ),
+            error=JobError(code="RISK_BLOCKED", message="合成额度拒绝", retryable=False, at=at),
+            evidence_level="E1",
+            proof_ref="synthetic/state-kernel/UNSENT_REJECT",
+        )
     risk = (
         job.risk_summary.model_copy(update={"checked_at": at})
         if event in {JobEvent.CONFIRM, JobEvent.APPROVE, JobEvent.CLAIM, JobEvent.SAFE_RETRY}

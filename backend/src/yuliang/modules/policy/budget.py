@@ -154,6 +154,19 @@ class BudgetInitialization:
                         "request_id": self.request_id,
                     },
                 )
+                digest = value.get("governanceDigest")
+                if isinstance(digest, str):
+                    record(
+                        session,
+                        self.identity,
+                        {
+                            "action": "budget.observe",
+                            "object_type": "budget_ledger",
+                            "object_id": UUID(str(value["ledgerId"])),
+                            "request_id": self.request_id,
+                            "after_hash": digest,
+                        },
+                    )
                 return value
         except DBAPIError as error:
             code = getattr(error.orig, "sqlstate", None)

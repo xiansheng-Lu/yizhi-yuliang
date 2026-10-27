@@ -104,6 +104,7 @@ class StateFacts:
     proof_ref: str | None = None
     retry_current: JobValue | None = None
     transport_unknown: bool = False
+    transport_not_sent: bool = False
     retry_actions: frozenset[Action] = frozenset({"PAUSE_AD_PLAN", "RESUME_AD_PLAN"})
 
 
@@ -199,7 +200,18 @@ def evolve(
         system_unknown = (
             event == JobEvent.SUBMIT_UNKNOWN and facts.transport_unknown and receipt is None
         )
-        if not facts.proof_ref or (receipt is None and not system_unknown):
+        system_not_sent = (
+            event == JobEvent.CONFIRMED_NOT_EXECUTED
+            and facts.transport_not_sent
+            and job.status == JobStatus.EXECUTING
+            and job.execution_receipt is None
+            and receipt is None
+            and facts.evidence_level == "E1"
+            and facts.error is not None
+            and facts.error.code == "NOT_SENT"
+            and not facts.error.retryable
+        )
+        if not facts.proof_ref or (receipt is None and not system_unknown and not system_not_sent):
             _deny("转移需要已持久化的原请求/回读证据")
         if event in {
             JobEvent.ACCEPT,

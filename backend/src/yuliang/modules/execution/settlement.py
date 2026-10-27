@@ -26,7 +26,9 @@ class FinalizationResult(BaseModel):
     finalization_id: UUID
     job_id: UUID
     kind: Literal["MATCH", "RELEASE"]
-    proof_kind: Literal["VERIFIED_MATCH", "UNCLAIMED_TERMINAL", "PLATFORM_REJECTION"]
+    proof_kind: Literal[
+        "VERIFIED_MATCH", "UNCLAIMED_TERMINAL", "PLATFORM_REJECTION", "RECOVERY_NOT_SENT"
+    ]
     job_version: int = Field(strict=True, gt=0)
     buckets: int = Field(strict=True, ge=0)
     verified_fact_id: UUID | None
@@ -136,6 +138,37 @@ class BudgetSettlement:
                         "user": actor.user_id,
                         "job": job_id,
                         "receipt": receipt_id,
+                        "id": uuid5(NAMESPACE, f"{actor.tenant_id}|{job_id}"),
+                        "request": self.applications.request_id,
+                    },
+                ).scalar_one()
+            )
+            result = FinalizationResult.model_validate(value["result"])
+            if value["created"]:
+                self._audit(session, result)
+            return result
+
+    def release_recovered(
+        self,
+        job_id: UUID,
+        proof_id: UUID,
+        *,
+        unit_of_work: Session | None = None,
+    ) -> FinalizationResult:
+        """仅持久恢复E1可用；保留原claimed/dispatch字段，不能伪装成未领取。"""
+        actor = self.applications.identity
+        with self._transaction(unit_of_work) as session:
+            value = controlled(
+                lambda: session.execute(
+                    text(
+                        "SELECT access.budget_release_recovery"
+                        "(:member,:user,:job,:proof,:id,:request)"
+                    ),
+                    {
+                        "member": actor.membership_id,
+                        "user": actor.user_id,
+                        "job": job_id,
+                        "proof": proof_id,
                         "id": uuid5(NAMESPACE, f"{actor.tenant_id}|{job_id}"),
                         "request": self.applications.request_id,
                     },

@@ -147,7 +147,10 @@ def dispatch_pending(
             {"limit": limit},
         ).all()
         for row in rows:
-            if row.event_type == "yuliang.system.schedule_recovery":
+            if row.event_type in {
+                "yuliang.system.schedule_recovery",
+                "yuliang.system.execution_recovery",
+            }:
                 session.execute(
                     text("SELECT access.outbox_reopen_recovery(:event)"), {"event": row.event_id}
                 )

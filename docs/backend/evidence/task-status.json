@@ -4,7 +4,7 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "currentFocus": "M2-10a",
+  "currentFocus": "M2-10b",
   "tasks": {
     "R00-01": {
       "owner": "BE",
@@ -1854,6 +1854,48 @@
         "platformCalls": 0,
         "paidCalls": 0
       }
+    },
+    "M2-10b": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "scope": "同事务增额预占、稳定额度桶行锁/幂等/冲突拒绝，必要DDL与并发测试",
+      "dependencyInput": "M2-10a真实PG完整预算生产者与M2-09b准入校验技术证据；持续研发授权，G0/E08保留",
+      "delivery": "真实PG同事务正增额HELD/幂等/同桶串行上限与本申请抵扣验证；公开确认/执行装配待后续，未代签",
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS_REAL_PG_COMPONENT",
+          "review": "PENDING_BE_FE"
+        },
+        {
+          "item": 2,
+          "technical": "PASS_REAL_PG_COMPONENT",
+          "review": "PENDING_BE_FE"
+        },
+        {
+          "item": 3,
+          "technical": "PASS_REAL_PG_COMPONENT",
+          "review": "PENDING_BE_FE"
+        }
+      ],
+      "evidence": "tasks/M2-10b/README.md",
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F07"
+      },
+      "implementationCommit": "47d700d4c2c86befa6c6e08d577f463559500c90",
+      "git": "COMMITTED",
+      "syncVerification": "git merge-base --is-ancestor 47d700d4c2c86befa6c6e08d577f463559500c90 origin/main",
+      "technicalVerification": {
+        "result": "PASS_REAL_PG_RESERVATION_PRIMITIVE",
+        "unitContractPassed": 502,
+        "dedicatedIntegration": 14,
+        "integrationPassed": 455,
+        "integrationSkipped": 1,
+        "head": "0029_budget_reservations",
+        "platformCalls": 0,
+        "paidCalls": 0
+      }
     }
   },
   "gates": {
@@ -1970,10 +2012,19 @@
     "environment": "WSL2 Ubuntu Docker; UV_PROJECT_ENVIRONMENT=/home/lenovo/.cache/yuliang-venv",
     "latestUserRequest": "补齐浏览器验收，然后按照后端任务卡继续后续的所有开发，需要资源再找我对接，不阻塞持续开发到完毕",
     "developmentPolicy": "缺人工/外部验收时记录并继续可独立技术准备；正式门禁、平台调用和付费仍按各自证据许可",
-    "lastCompletedTechnicalTask": "M2-10a",
-    "nextTechnicalTask": "M2-10b",
+    "lastCompletedTechnicalTask": "M2-10b",
+    "nextTechnicalTask": "M2-11a",
     "executionRules": "docs/backend/evidence/execution-rules.md",
-    "checkpoint": "完整含暂停预算B真实PG生产者已验证；继续行锁增额预占与并发上限；平台真实输入/具名验收仍保留"
+    "checkpoint": "预占技术验证通过；先补目标守卫、接口幂等、发送前attempt/回执持久映射，再接10c资金结算/释放，避免用FAILED字符串或孤立原文冒充本任务未执行证据",
+    "technicalPreparationQueue": [
+      "M2-11a",
+      "M2-12",
+      "M2-13a",
+      "M2-13b",
+      "M2-10c",
+      "M2-10d"
+    ],
+    "routingReason": "M2-10c的确认未执行/结算需要稳定任务-执行-尝试-原请求证据映射，当前13a/b未实现；依持续开发规则先补就绪技术依赖，非外部资源阻塞"
   },
   "frontendIntegration": {
     "F01": {

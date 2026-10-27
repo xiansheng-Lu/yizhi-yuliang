@@ -1,0 +1,14 @@
+{
+  "state": "HELD",
+  "holdId": "84207ea4-433d-4c92-bef5-aea1bd031054",
+  "replayed": false,
+  "jobId": "4433e361-3d82-4a87-807d-2c5f1841abb6",
+  "ledgerId": "f08254ae-999d-4d51-b765-ca1b6ce8baf2",
+  "reservationId": "5a0f90f7-990a-42b7-9349-0940453c7ca1",
+  "B": 9990,
+  "R": 10,
+  "limit": 10000,
+  "stage": "PRIMITIVE_ONLY_NO_CONFIRM_HTTP_OR_EXECUTION",
+  "platformCalls": 0,
+  "paidCalls": 0
+}

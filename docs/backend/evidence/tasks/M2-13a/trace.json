@@ -1,0 +1,27 @@
+{
+  "execution_id": "7e5b0ea7-18a0-4c34-9a4e-1a9b4ee83e11",
+  "attempt_id": "8ba6f90c-3ce2-4c9c-9e01-4d49f6f5a1a8",
+  "business": {
+    "kind": "COMMAND_JOB",
+    "id": "9287b096-07f3-4c85-a672-5a1685e86731"
+  },
+  "attempt_no": 1,
+  "outbound_id": "2dbaf416-2bda-589a-b631-1213ab82b8fb",
+  "platform_request_key": "c81a06da-4b90-5a87-92ea-7c139ca886f1",
+  "execution_status": "EXECUTING",
+  "attempt_state": "SENT",
+  "execution_version": 1,
+  "guard": {
+    "guardId": "aea9b457-a8b1-4ccf-988d-ab32ae5d1925",
+    "jobId": "9287b096-07f3-4c85-a672-5a1685e86731",
+    "fence": 1,
+    "owner": "9fd1db71-e67f-40a9-b85e-51c6dc558bc9",
+    "leaseUntil": "2026-10-27T21:44:18.478341Z",
+    "jobVersion": 4
+  },
+  "send_allowed": true,
+  "mockHttpCalls": 1,
+  "physicalPlatformCalls": 0,
+  "paidCalls": 0,
+  "stageSetup": "SYNTHETIC_APPROVAL_AND_SERIALIZER_REAL_PG_KERNEL"
+}

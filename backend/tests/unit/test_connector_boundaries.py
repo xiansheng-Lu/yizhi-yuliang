@@ -186,7 +186,10 @@ async def test_six_port_contracts_and_registry_product_separation() -> None:
     )
     assert (await gateway.readback(ctx, ref)).verification == "UNKNOWN"
     auth = AuthorizationRef(
-        **target(ctx).model_dump(), authorization_id=ctx.authorization_id, authorization_version=1
+        **target(ctx).model_dump(),
+        authorization_id=ctx.authorization_id,
+        authorization_version=1,
+        application_id=uuid4(),
     )
     token = await gateway.refresh_token(auth)
     assert "synthetic-access" not in repr(token)

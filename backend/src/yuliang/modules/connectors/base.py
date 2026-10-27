@@ -1,5 +1,6 @@
 """六方法端口及服务端上下文；不把受理回执当作已回读成功。"""
 
+import re
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Any, Literal, Protocol, runtime_checkable
@@ -105,6 +106,31 @@ class ResourceQuery(Frozen):
     target: ObjectRef | None = None
 
 
+@dataclass(frozen=True)
+class AuthorizationGatewayContext:
+    """账户发现之前的应用授权出站，不伪造广告账户或预算能力版本。"""
+
+    identity: VerifiedIdentity
+    application_id: UUID
+    connector_id: str
+    provider: str
+    product_line: str
+    authorization_id: UUID
+    request_id: UUID
+    catalog_id: str
+    catalog_sha256: str
+
+    def __post_init__(self) -> None:
+        if CONNECTOR_CONTEXTS.get(self.connector_id) != (self.provider, self.product_line):
+            raise ValueError("应用授权产品线上下文不匹配")
+        ResourceQuery(operation="authorization", catalog_id=self.catalog_id, parameters={})
+        if not re.fullmatch(r"[0-9a-f]{64}", self.catalog_sha256):
+            raise ValueError("需要核对授权端点目录摘要")
+
+    def assert_ref(self, value: ObjectRef) -> None:
+        raise ValueError("应用授权出站不能访问账户对象")
+
+
 class PlatformChange(ResourceQuery):
     frozen_digest: str = Field(pattern=r"^[0-9a-f]{64}$")
 
@@ -151,9 +177,24 @@ class ReadbackValue(Frozen):
     fetched_at: AwareDatetime
 
 
-class AuthorizationRef(ObjectRef):
+class AuthorizationRef(Frozen):
+    tenant_id: int = Field(strict=True, gt=0)
+    application_id: UUID
+    connector_id: str
+    provider: str
+    product_line: str
     authorization_id: UUID
     authorization_version: int = Field(strict=True, gt=0)
+    account_id: UUID | None = None
+    native_id: str | None = Field(default=None, pattern=r"^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$")
+
+    @model_validator(mode="after")
+    def bound_authorization(self) -> "AuthorizationRef":
+        if CONNECTOR_CONTEXTS.get(self.connector_id) != (self.provider, self.product_line):
+            raise ValueError("授权产品线上下文不匹配")
+        if (self.account_id is None) != (self.native_id is None):
+            raise ValueError("账户级授权必须同时绑定内部与平台账户；应用授权无需伪造账户")
+        return self
 
 
 class TokenSet(Frozen):

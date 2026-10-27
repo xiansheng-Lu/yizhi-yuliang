@@ -1,0 +1,29 @@
+{
+  "jobId": "01a9be0f-ccb9-4ea6-8115-72781fe90669",
+  "retryRequestId": "66646835-859a-4850-ba33-cf751cc3a022",
+  "unknownRequestId": "721ff428-7933-4815-89bf-8fdcdf133f7e",
+  "history": [
+    {
+      "status": "FAILED",
+      "at": "2026-10-27T18:39:45.925280Z",
+      "detail": "合成初始状态"
+    },
+    {
+      "status": "EXECUTING",
+      "at": "2026-10-27T18:39:45.930960Z",
+      "detail": "显式安全重试，沿用原申请并新增尝试"
+    },
+    {
+      "status": "EXECUTING",
+      "at": "2026-10-27T18:39:45.938581Z",
+      "detail": "提交结果未知，仅核对原请求"
+    }
+  ],
+  "receiptId": "2368d996-225c-4721-97e9-64b17148aa84",
+  "stateVersion": 3,
+  "factsSource": "SYNTHETIC_TRANSITION_PARTICIPANTS",
+  "realPgStateEventsAuditOutbox": true,
+  "realExecutionAttemptCreated": false,
+  "platformCalls": 0,
+  "paidCalls": 0
+}

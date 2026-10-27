@@ -4,7 +4,7 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "currentFocus": "M2-06a",
+  "currentFocus": "M2-08",
   "tasks": {
     "R00-01": {
       "owner": "BE",
@@ -1649,6 +1649,45 @@
         "executionReleased": false,
         "platformCalls": 0
       }
+    },
+    "M2-06a": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "scope": "command声明式十二态/版本条件转移与同事务事件，必要DDL/真实并发测试",
+      "dependencyInput": "M2-05a申请模型真实技术验证；R00-03资金恢复冻结规格，依持续研发授权继续；G0/E08保留",
+      "delivery": "十二态19边/非法149组合/版本条件转移与真实PG竞争回滚验证完成；策略/资金/执行参与者仍未生产装配，默认拒绝",
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS"
+        },
+        {
+          "item": 2,
+          "technical": "PASS"
+        },
+        {
+          "item": 3,
+          "technical": "PASS"
+        }
+      ],
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F06"
+      },
+      "evidence": "tasks/M2-06a/README.md",
+      "implementationCommit": "13e21f572ecf9916f884aff67d41e055f9427cb5",
+      "technicalVerification": {
+        "result": "PASS_STATE_KERNEL_REAL_PG_SYNTHETIC_PARTICIPANTS",
+        "unitContractPassed": 461,
+        "stateUnitCases": 180,
+        "legalEdges": 19,
+        "illegalPairs": 149,
+        "transitionIntegrationCases": 29,
+        "allIntegrationPassed": 375,
+        "lifecycleNotRun": 1,
+        "productionParticipantsInstalled": false,
+        "platformCalls": 0
+      }
     }
   },
   "gates": {
@@ -1754,9 +1793,9 @@
     "offline": "离线通过不等于真实依赖、前端联调或平台验收通过"
   },
   "nextTask": {
-    "id": "M2-06a",
+    "id": "M2-08",
     "status": "READY_FOR_TECHNICAL_DEVELOPMENT",
-    "note": "申请模型/仓储已真实技术验证，继续状态机/条件更新，不等待真实平台资源；执行策略尚未放行"
+    "note": "状态内核真实PG技术输入就绪；继续四时点风险检查，实际资金/执行门禁仍关闭"
   },
   "continuation": {
     "requestedOn": "2026-10-27",
@@ -1765,10 +1804,10 @@
     "environment": "WSL2 Ubuntu Docker; UV_PROJECT_ENVIRONMENT=/home/lenovo/.cache/yuliang-venv",
     "latestUserRequest": "补齐浏览器验收，然后按照后端任务卡继续后续的所有开发，需要资源再找我对接，不阻塞持续开发到完毕",
     "developmentPolicy": "缺人工/外部验收时记录并继续可独立技术准备；正式门禁、平台调用和付费仍按各自证据许可",
-    "lastCompletedTechnicalTask": "M2-05a",
-    "nextTechnicalTask": "M2-06a",
+    "lastCompletedTechnicalTask": "M2-06a",
+    "nextTechnicalTask": "M2-08",
     "executionRules": "docs/backend/evidence/execution-rules.md",
-    "checkpoint": "M1通用底座/连接管理与申请模型技术验证已归档；继续状态机与四时点策略，平台E01/E02和具名复核保留，06/12伙伴文档保留"
+    "checkpoint": "M1通用底座/连接管理、申请仓储及状态内核技术验证已归档；继续真实本地风险/额度/审批/执行实现；E01/E02、具名复核和06/12伙伴文档保留"
   },
   "frontendIntegration": {
     "F01": {

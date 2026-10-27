@@ -30,6 +30,7 @@ Action = Literal[
     "connection.sync.toggle",
     "connection.disconnect",
     "job.create",
+    "job.transition",
 ]
 ObjectType = Literal[
     "user",

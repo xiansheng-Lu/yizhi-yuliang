@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-10-27T18:41:28.034Z",
+  "baseline": "79e4300",
+  "implementationCommit": "13e21f572ecf9916f884aff67d41e055f9427cb5",
+  "result": "PASS_STATE_KERNEL_REAL_PG_SYNTHETIC_PARTICIPANTS",
+  "checks": [
+    {
+      "command": "uv run --frozen ruff check .",
+      "result": "PASS"
+    },
+    {
+      "command": "uv run --frozen ruff format --check .",
+      "result": "PASS",
+      "files": 169
+    },
+    {
+      "command": "uv run --frozen mypy",
+      "result": "PASS",
+      "files": 136
+    },
+    {
+      "command": "uv run --frozen pytest tests/unit tests/contract -q",
+      "result": "PASS",
+      "passed": 461,
+      "stateUnitCases": 180,
+      "legalEdges": 19,
+      "illegalPairs": 149
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --group transitions --details",
+      "result": "PASS",
+      "passed": 29
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --details",
+      "result": "PASS_WITH_EXPLICIT_NOT_RUN_LIFECYCLE",
+      "passed": 375,
+      "skipped": 1
+    },
+    {
+      "command": "uv run --frozen python scripts/migrate_local.py upgrade",
+      "result": "PASS",
+      "head": "0024_job_state_machine"
+    }
+  ],
+  "database": {
+    "head": "0024_job_state_machine",
+    "migrationRoleCanLogin": false,
+    "transitionRules": 19,
+    "developmentCompleteApplications": 0,
+    "developmentJobEvents": 0
+  },
+  "trace": "trace.json",
+  "verified": [
+    "SQL rule table equals domain declaration",
+    "19 actual conditional transitions; 149 illegal pair rules",
+    "actual current role/member/shop/account checks and review separation",
+    "status/version conditional update and immutable payload/history prefix",
+    "cancel/expire/claim races in expired and unexpired scenarios one winner",
+    "claim/send marker prevents cancellation and expiry",
+    "state/event/outbox probe/audit same-transaction rollback",
+    "no runtime direct status updates or terminal inserts",
+    "explicit FAILED safe-retry preserves job/failure history",
+    "UNKNOWN stays EXECUTING or VERIFYING; no repeat write or false success",
+    "fresh risk/policy/expiry/whitelist/current value/E1-E2 guards"
+  ],
+  "notCovered": [
+    "actual risk/approval/funds/execution participant implementation and attempt creation",
+    "public lifecycle API or active Worker/SSE consumer",
+    "real platform receipts or supplier calls",
+    "named BE/FE review and G0/E08"
+  ],
+  "participantScope": "SyntheticParticipants emits a real PG identity_probe outbox row only; no MQ publish or platform I/O",
+  "productionParticipantsInstalled": false,
+  "publicTransitionRoute": false,
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "review": {
+    "backend": "PENDING",
+    "frontend": "PENDING_F06"
+  }
+}

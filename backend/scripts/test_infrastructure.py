@@ -31,6 +31,9 @@ def main() -> int:
         YULIANG_TEST_MIGRATION_DATABASE_URL=(
             f"postgresql://app_migrate:{values['YULIANG_MIGRATION_PASSWORD']}@127.0.0.1:15432/yizhi"
         ),
+        YULIANG_TEST_AUTH_DATABASE_URL=(
+            f"postgresql://app_auth:{values['YULIANG_AUTH_PASSWORD']}@127.0.0.1:15432/yizhi"
+        ),
         YULIANG_TEST_REDIS_URL=(f"redis://:{values['YULIANG_REDIS_PASSWORD']}@127.0.0.1:16379/0"),
         YULIANG_TEST_BROKER_URL=(
             f"amqp://yuliang:{values['YULIANG_BROKER_PASSWORD']}@127.0.0.1:15672/yuliang"

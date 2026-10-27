@@ -1,9 +1,10 @@
 """进程启动配置：必填、显式校验、错误和repr隐藏凭据。"""
 
+from ipaddress import ip_network
 from typing import Literal
 from urllib.parse import urlsplit
 
-from pydantic import Field, SecretStr, field_validator
+from pydantic import Field, SecretStr, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -23,6 +24,25 @@ class Settings(BaseSettings):
     broker_url: SecretStr
     session_secret: SecretStr
     allowed_origins: list[str] = Field(default_factory=list)
+    identity_api_enabled: bool = False
+    auth_audit_secret: SecretStr | None = None
+    admin_api_enabled: bool = False
+    admin_allowed_networks: list[str] = Field(default_factory=lambda: ["127.0.0.1/32", "::1/128"])
+
+    @model_validator(mode="after")
+    def auth_rollout_requirements(self) -> "Settings":
+        if self.admin_api_enabled and (
+            not self.identity_api_enabled or not self.admin_allowed_networks
+        ):
+            raise ValueError("管理入口需要身份接口与明确来源网段")
+        for network in self.admin_allowed_networks:
+            ip_network(network)
+        if self.identity_api_enabled:
+            if not self.auth_audit_secret or len(self.auth_audit_secret.get_secret_value()) < 32:
+                raise ValueError("开放身份接口需要独立的至少32字符认证审计密钥")
+            if self.auth_audit_secret == self.session_secret or not self.allowed_origins:
+                raise ValueError("认证审计密钥需独立且需要精确来源白名单")
+        return self
 
     @field_validator("session_secret")
     @classmethod

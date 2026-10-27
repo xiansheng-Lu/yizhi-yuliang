@@ -1,0 +1,116 @@
+{
+  "codeCommit": "7be7404606351c9916cbc15f36dfaf058ede569c",
+  "executedOn": "2026-10-27",
+  "timezone": "Asia/Shanghai",
+  "environment": {
+    "os": "WSL2 Ubuntu",
+    "python": "3.13.14",
+    "postgres": "17.10",
+    "localHead": "0006_admin_directory"
+  },
+  "checks": [
+    {
+      "command": "uv run --frozen ruff check .",
+      "result": "PASS"
+    },
+    {
+      "command": "uv run --frozen mypy",
+      "result": "PASS",
+      "files": 31
+    },
+    {
+      "command": "uv run --frozen pytest tests/unit tests/contract -q",
+      "result": "PASS",
+      "passed": 29
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --lifecycle --details",
+      "result": "PASS",
+      "passed": 29,
+      "skipped": 0,
+      "failed": 0
+    },
+    {
+      "command": "uv run --frozen python scripts/migrate_local.py upgrade; uv run --frozen python scripts/migrate_local.py current",
+      "result": "PASS",
+      "head": "0006_admin_directory"
+    }
+  ],
+  "warning": "TestClient httpx弃用提示1条；不影响本轮断言",
+  "resolvedDefects": [
+    "会话created_at采用事务时间，初次7天上限必须采用同一时间基准，已真实约束验证"
+  ],
+  "notRun": [
+    "F01真实浏览器联合接线",
+    "真实SMTP投递",
+    "真实账户/平台写/供应商费用"
+  ],
+  "rollout": {
+    "identity_api_enabled": false,
+    "admin_api_enabled": false,
+    "reason": "F01/管理开放前显式配置；技术测试仅在独立临时数据库启用"
+  },
+  "sourceSha256Utf8Lf": {
+    "backend/.env.example": "b1543115d3de1bb45d1f9e398df4fd0f8466766935ae320740ea9a8da3516d6f",
+    "backend/.gitattributes": "1d5d71dcc6ccd28ab46a335349ecc74742ca4b81f4fcad212f8d134f70f1f13e",
+    "backend/.gitignore": "13a26f30f8779515d73365d1612b5f7556093d13f9a27a63f2478258565de688",
+    "backend/.python-version": "f8faecf2505680716c6279bf2cdec3d5a5ba2ba852f0d7df45d51ac1ce8d9ade",
+    "backend/README.md": "05a8d492d51d02cf0d29285e18fd45507894a318d2dd936c557f952de60cca9d",
+    "backend/alembic.ini": "c8dff3ed8c5474c2959696e1460714e7dbef8a5e982050a9fb177e08cedf53b3",
+    "backend/alembic/README.md": "6c43978c3ca8bd1275910c736a07e05218ec25ba4996fa37214a1bea86c5676a",
+    "backend/alembic/env.py": "c11ae44cee32eb468a027da9e7101417fb9fef99d1b2b686d86bee7fd3837752",
+    "backend/alembic/versions/0001_access_skeleton.sql": "0b0f8704a1ba31981e8d394e47da896e9dc75ddd5a5e1da0fa465491a816a49d",
+    "backend/alembic/versions/0001_identity_catalog.py": "19253aae7dfa765b940a307a6debb6f7e766cfa877076028d7450fa6591f87c1",
+    "backend/alembic/versions/0001_identity_catalog.sql": "37c29eb282fbefc7dbb9e07d34215c153ef7ee8262950927901de91bf30cfc08",
+    "backend/alembic/versions/0002_tenant_policies.py": "02ce8c1c464497db86f66c5eb987786f91f3293b5d0b120763923aff77117076",
+    "backend/alembic/versions/0003_access_management.py": "d62ca2461e79ed578d84003341d75332f6d2d537888a625f84375cd199d27f35",
+    "backend/alembic/versions/0003_access_management.sql": "42891d95be48d5eabcd8aa895aafeadcc160689b9da2b1702795ee8333e2126d",
+    "backend/alembic/versions/0003_access_seeds.sql": "236f4208fd7944317da0766ab869360a0bc9d8af288fd92a800a14407a2090cf",
+    "backend/alembic/versions/0004_password_sessions.py": "c38431a9c23c56197102443c135621167094b048fffd87aba824a3f8765467fb",
+    "backend/alembic/versions/0004_password_sessions.sql": "05b3ea164fe1ebd20b7d7214308e92085161178238d9bcd719b9f6e3aa1b41d6",
+    "backend/alembic/versions/0005_profile.py": "a33b705b5f199a7bca65ecb60a23d06c85bb7f018dd8dcb02136e2330fa70512",
+    "backend/alembic/versions/0006_admin_directory.py": "a90c20b4a7bd3279239ac57378c661ea13c51709cc01f1f6a5a3e555192fc804",
+    "backend/alembic/versions/0006_admin_directory.sql": "c07298e754523e8931655830e2cf67354a778a4a4957a8bb0fdba7ed8d860cb5",
+    "backend/deployment/postgres/init.sh": "e99be7908a798e0334e648bd93493b464f7eec20dcec261c76bb2ebf8d90d3fe",
+    "backend/docker-compose.yml": "28346d7fab4c0895ed94423388b6d9d4f8b3370ed7c04877d74f0bca079e8124",
+    "backend/pyproject.toml": "31658b293fbdfcf7f7223435c610d36eb3899b9b4ccbb1bb5e2dbc2e79a3a6cf",
+    "backend/scripts/infra.ps1": "70e0ea2fd736d77d7501ec64160ab2eb7791d6ec2445a033365fbadce573fd58",
+    "backend/scripts/infra.sh": "b894b1230f42d80b1ca5de87b4c1e4d7bec857bebf152468f0f31d215a92a051",
+    "backend/scripts/migrate_local.py": "6c16fb726d83c894eaa38bfb8831a655df41ce91bfaa1bb8ece539c258c50887",
+    "backend/scripts/prepare-local.ps1": "737da33bcfc1662300a5c4e12785a7156d6a6e3551663c89aafab1ce0e56df56",
+    "backend/scripts/prepare_local.py": "1568d6fed920ca5d034652494383153aba51f4ddfcbf9771f9e4c31aaaa9a015",
+    "backend/scripts/test_infrastructure.py": "46ab41d617862d74acf228de45912faeea45ed8a42506ede67c6d8be28bd4018",
+    "backend/src/yuliang/__init__.py": "12340ed4dac81a5fb44ae96d1d7c724776975677b94886b29d9c230e7ec05d11",
+    "backend/src/yuliang/admin/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend/src/yuliang/admin/routes.py": "657140251e31bba93a25172624d137335fea1209871d5ac4b6d6e4ab4f557d8b",
+    "backend/src/yuliang/main.py": "6244472bd1ac0ad770f18fbb53252bdc66f3113806efd9d8d939aa8f638c38b4",
+    "backend/src/yuliang/modules/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend/src/yuliang/modules/access/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend/src/yuliang/modules/access/catalog.py": "7f6e47b0fbb8c45d06dd68bfde5e99f5dbc7d8d0f130dd70196dfe494f669b39",
+    "backend/src/yuliang/modules/access/management.py": "09d260f6ca61fa2bdac887727c0b32f8b4c8b7ab3f9fa739a453e95b8379881d",
+    "backend/src/yuliang/modules/access/service.py": "e434fa1966e944f85c205b11fad9f2dc8d776cdadc3a25eb54cb9118e91bbcdf",
+    "backend/src/yuliang/modules/identity/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend/src/yuliang/modules/identity/routes.py": "03cffdea99cb1c023e39f54a598b4a85264c9248d91774c0cc6c10a64d1ee6c3",
+    "backend/src/yuliang/modules/identity/service.py": "e287c6b1495076ddbfcbc7dcc1832302d97897dbf79f704e02de4084e418d82b",
+    "backend/src/yuliang/modules/identity/workspace_routes.py": "85143be24ebbd5fd5397e7653a910055956b307157fddb593056ea454bd87d91",
+    "backend/src/yuliang/platform/__init__.py": "e0534921f4a86eb4a906d025d7923686d57678844115a4487c4988a67ec6f536",
+    "backend/src/yuliang/platform/db.py": "bae8e23ef451135b54b4ceb7af286bbed10a2372afc341dd3e16b9272f0fb469",
+    "backend/src/yuliang/platform/envelope.py": "4ddc5cdf9441f9010e96e58a6585946e01521c5daf54e147c5d33a68079375f9",
+    "backend/src/yuliang/platform/errors.py": "f7f4c3017dbae5c7455b8552819be89d170624275cd7467acce1a2c2a62872b5",
+    "backend/src/yuliang/platform/middleware.py": "f3cca0626cf32b3249e3e5e2cb287a167ab2cd9310a61b88e0e6f55cf9b55d92",
+    "backend/src/yuliang/settings.py": "2ff26220626063e74bccd306ca8fd6042c790d12e0a16519e36cf618efc8ba14",
+    "backend/tests/conftest.py": "d0f95cea1175825ffcf2f6e545d812f6d0617575ac7568c1f92782b43e005481",
+    "backend/tests/contract/test_envelope.py": "ec6e75f0271be17d223c512ceed64925e366fa16331187bb075186374ed85346",
+    "backend/tests/integration/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend/tests/integration/test_identity_database.py": "d704ca9e731fe62ceb0a42747938bcc2e0f62e3f153473cee60daeab9ed27ebb",
+    "backend/tests/integration/test_infrastructure.py": "2ea8f5f9331e9705b62fb154e43bd13eff75f4699ad4c1aca00df295af1b7e21",
+    "backend/tests/integration/test_infrastructure_lifecycle.py": "e8ddbe3c02d0583d0b703eac413b5d0c438f9087ccf89e536874519771598336",
+    "backend/tests/integration/test_password_sessions.py": "2a0e5c102218c824acc7c5ea72a690fd19399297dfb721a4f12166c4bbc7d5c6",
+    "backend/tests/unit/test_identity_boundaries.py": "3c0007ee105f61c09fb70ae344bf1c81e9b220d2c452daa34b0bd9091c2bd8ed",
+    "backend/tests/unit/test_identity_rollout.py": "a06203393877c38b686f6d9f1cf665f13536a91266aa19da1d7d2eee86b727d9",
+    "backend/tests/unit/test_infrastructure_config.py": "fe8b55c1514c82ad8cde89d10cb5b7021b14ae7a2e1bb7af013cbf9c7573fc11",
+    "backend/tests/unit/test_local_environment.py": "3d0e5ac68120afa8caed37566307b1aee1495c472ad0028c40ff2d5b956a3fa8",
+    "backend/tests/unit/test_settings.py": "0ecc6fdd6e1df0ec00dbfb3ba4e7bea3ce9e914287fb43ec373aa2087f8b2837",
+    "backend/uv.lock": "f2a2f75538bfe89eaae9c6afbc08b8a809f175a8aa4780445d59163e16895df0"
+  }
+}

@@ -10,6 +10,8 @@ from uuid import uuid4
 
 import psycopg
 import pytest
+from alembic.config import Config
+from alembic.script import ScriptDirectory
 from psycopg import sql
 from psycopg.conninfo import conninfo_to_dict
 from sqlalchemy import Engine, create_engine, event, text
@@ -91,6 +93,7 @@ def database() -> Iterator[dict[str, str]]:
             "migration": migration,
             "name": name,
             "app": database_url(local_url("YULIANG_TEST_DATABASE_URL"), name, True),
+            "auth": database_url(local_url("YULIANG_TEST_AUTH_DATABASE_URL"), name, True),
         }
     finally:
         with psycopg.connect(source, autocommit=True) as control:
@@ -245,9 +248,8 @@ def test_m0_06_empty_upgrade_repeat_and_safe_rollback(database: dict[str, str]) 
             ).fetchall()
             == before
         )
-        assert db.execute("SELECT version_num FROM alembic_version").fetchone() == (
-            "0003_access_management",
-        )
+        expected = ScriptDirectory.from_config(Config(str(ROOT / "alembic.ini"))).get_current_head()
+        assert db.execute("SELECT version_num FROM alembic_version").fetchone() == (expected,)
 
 
 def test_m0_06_session_identity_fk_and_updates(

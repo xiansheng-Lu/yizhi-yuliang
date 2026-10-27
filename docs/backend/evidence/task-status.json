@@ -4,7 +4,7 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "currentFocus": "M0-09",
+  "currentFocus": "M0-15",
   "tasks": {
     "R00-01": {
       "owner": "BE",
@@ -494,6 +494,208 @@
         "frontend": "PENDING_F02"
       },
       "evidence": "tasks/M0-13/README.md"
+    },
+    "M0-09": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "codeCommit": "7be7404606351c9916cbc15f36dfaf058ede569c",
+      "delivery": "受限认证与密码登录后端交付及真实PG/HTTP技术验证完成",
+      "technicalVerification": {
+        "result": "PASS",
+        "layer": "BACKEND_REAL_PG_HTTP_ONLY",
+        "unitContractPassed": 29,
+        "realIntegrationPassed": 29,
+        "browserJointTest": "NOT_RUN"
+      },
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS"
+        },
+        {
+          "item": 2,
+          "technical": "PASS"
+        },
+        {
+          "item": 3,
+          "technical": "PASS"
+        }
+      ],
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F01_F02"
+      },
+      "evidence": "tasks/M0-09/README.md"
+    },
+    "M0-11a": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "codeCommit": "7be7404606351c9916cbc15f36dfaf058ede569c",
+      "delivery": "会话读取与续期后端交付及真实PG/HTTP技术验证完成",
+      "technicalVerification": {
+        "result": "PASS",
+        "layer": "BACKEND_REAL_PG_HTTP_ONLY",
+        "unitContractPassed": 29,
+        "realIntegrationPassed": 29,
+        "browserJointTest": "NOT_RUN"
+      },
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS"
+        },
+        {
+          "item": 2,
+          "technical": "PASS"
+        },
+        {
+          "item": 3,
+          "technical": "PASS"
+        }
+      ],
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F02"
+      },
+      "evidence": "tasks/M0-11a/README.md"
+    },
+    "M0-11b": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "codeCommit": "7be7404606351c9916cbc15f36dfaf058ede569c",
+      "delivery": "CSRF引导与写请求防护后端交付及真实PG/HTTP技术验证完成",
+      "technicalVerification": {
+        "result": "PASS",
+        "layer": "BACKEND_REAL_PG_HTTP_ONLY",
+        "unitContractPassed": 29,
+        "realIntegrationPassed": 29,
+        "browserJointTest": "NOT_RUN"
+      },
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS"
+        },
+        {
+          "item": 2,
+          "technical": "PASS"
+        },
+        {
+          "item": 3,
+          "technical": "BACKEND_PASS_BROWSER_NOT_RUN"
+        }
+      ],
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F01"
+      },
+      "evidence": "tasks/M0-11b/README.md"
+    },
+    "M0-11c": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "codeCommit": "7be7404606351c9916cbc15f36dfaf058ede569c",
+      "delivery": "退出与即时吊销后端交付及真实PG/HTTP技术验证完成",
+      "technicalVerification": {
+        "result": "PASS",
+        "layer": "BACKEND_REAL_PG_HTTP_ONLY",
+        "unitContractPassed": 29,
+        "realIntegrationPassed": 29,
+        "browserJointTest": "NOT_RUN"
+      },
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS"
+        },
+        {
+          "item": 2,
+          "technical": "PASS"
+        },
+        {
+          "item": 3,
+          "technical": "PASS"
+        }
+      ],
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F02"
+      },
+      "evidence": "tasks/M0-11c/README.md"
+    },
+    "M0-12": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "codeCommit": "7be7404606351c9916cbc15f36dfaf058ede569c",
+      "delivery": "身份资料与合法空快照后端交付及真实PG/HTTP技术验证完成",
+      "technicalVerification": {
+        "result": "PASS",
+        "layer": "BACKEND_REAL_PG_HTTP_ONLY",
+        "unitContractPassed": 29,
+        "realIntegrationPassed": 29,
+        "browserJointTest": "NOT_RUN"
+      },
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS"
+        },
+        {
+          "item": 2,
+          "technical": "PASS"
+        },
+        {
+          "item": 3,
+          "technical": "PASS"
+        }
+      ],
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F02"
+      },
+      "evidence": "tasks/M0-12/README.md"
+    },
+    "M0-14": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "codeCommit": "7be7404606351c9916cbc15f36dfaf058ede569c",
+      "delivery": "独立最小管理入口后端交付及真实PG/HTTP技术验证完成",
+      "technicalVerification": {
+        "result": "PASS",
+        "layer": "BACKEND_REAL_PG_HTTP_ONLY",
+        "unitContractPassed": 29,
+        "realIntegrationPassed": 29,
+        "browserJointTest": "NOT_RUN"
+      },
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS"
+        },
+        {
+          "item": 2,
+          "technical": "PASS"
+        },
+        {
+          "item": 3,
+          "technical": "PASS"
+        }
+      ],
+      "review": {
+        "backend": "PENDING",
+        "frontend": "NOT_APPLICABLE",
+        "frontendReason": "20册此卡为独立后端管理入口，无FE协作"
+      },
+      "evidence": "tasks/M0-14/README.md"
+    },
+    "M0-10": {
+      "owner": "BE",
+      "status": "BLOCKED",
+      "note": "未具备实际SMTP/邮件服务和测试收件地址，已向用户异步请求资源；未实现/未验收投递，不记PASS",
+      "blockedBy": [
+        "E06_MAIL"
+      ],
+      "realDelivery": "NOT_RUN"
     }
   },
   "gates": {},
@@ -524,6 +726,26 @@
       "affects": [
         "先前未执行的Python新增文件检查，R00-01独立规格检查不受影响"
       ]
+    },
+    {
+      "id": "E06_MAIL",
+      "status": "OPEN",
+      "reason": "需要SMTP/邮件服务与实际收件地址；凭据写本地忽略配置，不能发入仓库",
+      "affects": [
+        "M0-10实际收件验证"
+      ],
+      "unblock": "用户提供通道并实际收到测试验证码"
+    },
+    {
+      "id": "F01_BROWSER",
+      "status": "OPEN",
+      "reason": "现有前端ApiClient尚未注入CSRF，F01联合接线/真实浏览器验证未完成",
+      "affects": [
+        "M0-11b第三条DoD",
+        "身份接口正式开放",
+        "G0联合验收"
+      ],
+      "unblock": "FE按冻结契约接线并完成真实浏览器证据"
     }
   ],
   "rules": {
@@ -532,14 +754,14 @@
     "offline": "离线通过不等于真实依赖、前端联调或平台验收通过"
   },
   "nextTask": {
-    "id": "M0-09",
+    "id": "M0-15",
     "status": "TECHNICAL_INPUTS_READY_WAITING_REVIEW",
-    "note": "下一批受限认证与密码登录；工程/RBAC/真实PG技术输入已就绪，人工复核不代填。邮件服务仅在M0-10实际发码卡对接，当前不需要供应商或平台费用。"
+    "note": "上一卡技术完成且无此卡资源阻塞，立即继续Worker/调度；邮件阻塞仅影响M0-10"
   },
   "continuation": {
     "requestedOn": "2026-10-27",
     "authorization": "持续推进后端任务卡，缺资源再找用户对接",
-    "heartbeat": "当前对话每小时继续，资源/人工处理/明确失败/全部完成才提醒",
+    "heartbeat": "执行时卡间立即连续推进；5分钟唤醒仅用于中断/空闲恢复，不作为卡间等待",
     "environment": "WSL2 Ubuntu Docker; UV_PROJECT_ENVIRONMENT=/home/lenovo/.cache/yuliang-venv"
   }
 }

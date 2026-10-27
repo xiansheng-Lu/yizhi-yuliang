@@ -1,0 +1,79 @@
+{
+  "checkedAt": "2026-10-27T22:32:01.500260+08:00",
+  "baseline": "9b046cd232ad7e7a2a9d12190d3d76e23f1e636c",
+  "result": "PASS_TECHNICAL_REAL_PG_SYNTHETIC_PLATFORM",
+  "checks": [
+    {
+      "command": "uv run --frozen ruff check .",
+      "result": "PASS"
+    },
+    {
+      "command": "uv run --frozen ruff format --check .",
+      "result": "PASS",
+      "files": 129
+    },
+    {
+      "command": "uv run --frozen mypy",
+      "result": "PASS",
+      "files": 103
+    },
+    {
+      "command": "uv run --frozen pytest tests/unit tests/contract -q",
+      "result": "PASS",
+      "passed": 233
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --group payload --details",
+      "result": "PASS",
+      "lastStandalonePassed": 11,
+      "note": "one subsequent in-flight revocation case included in final full run"
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --details",
+      "result": "PASS_WITH_EXPLICIT_NOT_RUN_LIFECYCLE",
+      "passed": 245,
+      "payloadCases": 12,
+      "skipped": 1,
+      "skipReason": "--lifecycle not requested"
+    },
+    {
+      "command": "uv run --frozen python scripts/migrate_local.py upgrade",
+      "result": "PASS",
+      "head": "0017_platform_payloads"
+    }
+  ],
+  "database": {
+    "head": "0017_platform_payloads",
+    "developmentRows": {
+      "platform_requests": 0,
+      "platform_raw_payloads": 0
+    },
+    "migrationRoleCanLogin": false
+  },
+  "scope": "real PostgreSQL transactions/privileges/RLS; MockTransport synthetic platform outputs; no real platform or paid calls",
+  "verified": [
+    "request/audit atomic persistence before HTTP",
+    "each read retry has separate attempt/response record",
+    "same key replay and mismatch guard",
+    "no 200 success without adapter business proof",
+    "write 5xx and response loss UNKNOWN",
+    "request insert privilege failure rolls back audit before send",
+    "response insert failure preserves ATTEMPT and prevents replay",
+    "in-flight member revocation preserves reply; new calls refused",
+    "private tenant/actor RLS and no runtime mutation",
+    "PII/credential/unknown-field projection suppression and HMAC trace linkage"
+  ],
+  "notCovered": [
+    "real platform/OAuth integration",
+    "real Worker crash rehearsal for money flow",
+    "final BE/FE review",
+    "OAuth authorization-level archive context; to be implemented in M1-05"
+  ],
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "review": {
+    "backend": "PENDING",
+    "frontend": "PENDING_F01"
+  },
+  "implementationCommit": "413a13f212021a3cbd0d5286dd00afe724126453"
+}

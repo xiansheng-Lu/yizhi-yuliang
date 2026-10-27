@@ -23,8 +23,19 @@ Action = Literal[
     "message.send",
     "conversation.attach",
     "task.project",
+    "platform.request",
 ]
-ObjectType = Literal["user", "shop", "member", "role", "project", "conversation", "message", "job"]
+ObjectType = Literal[
+    "user",
+    "shop",
+    "member",
+    "role",
+    "project",
+    "conversation",
+    "message",
+    "job",
+    "platform_request",
+]
 ChangedField = Literal["displayName", "name", "status", "permissions", "scope"]
 
 

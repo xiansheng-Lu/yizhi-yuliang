@@ -59,6 +59,7 @@ def main() -> int:
             "parser",
             "catalog",
             "capability",
+            "payload",
         ),
         default="all",
     )
@@ -80,6 +81,7 @@ def main() -> int:
         "gateway": ["tests/integration/test_deepseek_gateway.py"],
         "catalog": ["tests/integration/test_platform_catalog.py"],
         "capability": ["tests/integration/test_capability_evidence.py"],
+        "payload": ["tests/integration/test_platform_payloads.py"],
         "parser": [
             "tests/integration/test_command_parse.py",
             "tests/integration/test_workspace.py",

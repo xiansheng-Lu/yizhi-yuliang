@@ -1,0 +1,67 @@
+{
+  "codeCommit": "3b45a7345cf8fb92b961f4a38234783a4cf5415c",
+  "executedOn": "2026-10-27",
+  "environment": {
+    "os": "WSL2 Ubuntu",
+    "python": "3.13.14",
+    "postgres": "17.10"
+  },
+  "checks": [
+    {
+      "command": "uv run --frozen ruff check .; ruff format --check .; mypy",
+      "result": "PASS",
+      "mypySourceFiles": 55
+    },
+    {
+      "command": "uv run --frozen pytest tests/unit tests/contract -q",
+      "result": "PASS",
+      "passed": 49
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --lifecycle --details",
+      "result": "PASS",
+      "passed": 86,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "command": "uv run --frozen python scripts/check_ci_sensitivity.py",
+      "result": "PASS",
+      "healthyControls": 3,
+      "mutationsRejected": 3
+    },
+    {
+      "command": "uv run --frozen python scripts/migrate_local.py upgrade; current",
+      "result": "PASS",
+      "head": "0009_ai_ledger"
+    }
+  ],
+  "assertions": [
+    "模型快照只有服务端端点/密钥引用，原密钥字段被Python和SQL拒绝",
+    "调用STARTED先独立提交；同call_id不重复建账，未知用量/费用均NULL",
+    "失败/超时/限流/降级保留UNKNOWN事实，显式确认零值才可记0",
+    "主调用失败后备调用关联同requestId、场景、用户和提示词，并沿用原模型配置版本",
+    "主调用在途不允许启动备调用；禁用提示词不能调用",
+    "已确认费用要求匹配所选模型币种，完成事实CAS不可覆盖",
+    "真实双租户同用户读取隔离，伪造成员拒绝，运行账号不能改配置/账本",
+    "默认统一网关返回RULES/UNAVAILABLE/NOT_SENT，需要人工复核，不产生模型结果或平台动作"
+  ],
+  "limits": [
+    "本卡是模型/提示词/账本与网关协议，真实适配/出站/限额与耗时验收仍归M2-01b/M5-02a",
+    "所有供应商费用/用量测试均为离线或数据库夹具，不是实际模型响应",
+    "真实平台/付费模型调用NOT_RUN",
+    "13册旧示意默认0与20册/04册UNKNOWN规则的实现差异，待BE复核",
+    "BE具名复核PENDING"
+  ],
+  "sourceSha256Utf8Lf": {
+    "backend/README.md": "6cae9cd1bcc7704762dee42c841f3230ed5e53491b3dc666c0022e1b49e1925a",
+    "backend/alembic/README.md": "d66f4a43157a97cd895a97e50efa696be4e44d83f9d124716df9b70e8c9e82fa",
+    "backend/alembic/versions/0009_ai_ledger.py": "5d41934a1c6abc3154936f421ef2ffa92703fec62553a358c4d39ee222c8894f",
+    "backend/alembic/versions/0009_ai_ledger.sql": "dba4926b49cf08a7bfd5b89693c2ccd69fb99cf1970ea92b2e38841b99bd3262",
+    "backend/src/yuliang/modules/aikernel/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend/src/yuliang/modules/aikernel/ledger.py": "5cc18dec9c6b0d6d95645779ce76875b4bf47407d1e6370f47ae61d3a8347514",
+    "backend/src/yuliang/modules/aikernel/models.py": "e25a2eb5d933d72f56c2a471248ffa471b4ae4840857f0a3f39249e4c7059bb6",
+    "backend/tests/integration/test_ai_ledger.py": "5f6bb9813b02b9e9535ae6cac715dc2c67342b3bb5ed3069a24da54d0d7f5097",
+    "backend/tests/unit/test_aikernel.py": "2fb18866b233bd0e3df6acced0b262cc964b53dfc7f72a80224b620f8a78e99d"
+  }
+}

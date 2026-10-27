@@ -146,3 +146,12 @@ bash scripts/infra.sh start
 ```
 
 该候选仅用于本地/CI的真实S3兼容验证，生产存储替代与维护仍归M5。
+
+## AI模型与调用账本底座
+
+0009增加租户隔离的model_configs、prompt_versions与ai_invocations。配置由独立维护身份按版本登记，运行账号只读；仅存服务端endpoint_ref/secret_ref，不接受API密钥、凭据URL或用户任意环境变量名。
+ServerSecrets仅解析服务端显式注入的SecretStr映射，密钥不入库、不进入模型配置快照。主/备模型、配置版本、提示词内容摘要和输出Schema引用在调用前固定。
+InvocationLedger先独立提交STARTED事实，费用/用量默认UNKNOWN且NULL；完成由受限函数CAS一次写入，不能由应用直接改账。已知费用必须明确币种且与所选模型计价币种一致，不跨币种相加。
+备用调用须关联同请求/场景/用户的失败主调用并沿用原路由版本，不能在主调用仍在途时启动。该底座不自动重试或切备，结果未知的调用保留待核对事实。
+ModelGateway是场景统一端口；当前UnavailableGateway明确返回RULES/UNAVAILABLE、NOT_SENT和待复核标志，不产生AI正文或执行动作。真实供应商适配、出站保护、限额与耗时验收仍归M2-01b/M5-02a，当前没有真实或付费模型调用。
+13册旧示意DDL的token/cost默认0未沿用；按20册M2-01a和04册UNKNOWN规则落实NULL及独立已知状态，差异随本卡由BE复核。

@@ -4,7 +4,7 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "currentFocus": "M2-01a",
+  "currentFocus": "M2-02",
   "tasks": {
     "R00-01": {
       "owner": "BE",
@@ -937,6 +937,40 @@
         "frontend": "PENDING_F00"
       },
       "evidence": "tasks/M0-05/README.md"
+    },
+    "M2-01a": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "delivery": "模型/提示词版本与调用账本、统一网关协议技术通过；无供应商适配或付费调用",
+      "implementationCommit": "3b45a7345cf8fb92b961f4a38234783a4cf5415c",
+      "git": "COMMITTED",
+      "technicalVerification": {
+        "result": "PASS",
+        "unitContractPassed": 49,
+        "integrationPassed": 86,
+        "mutationsRejected": 3,
+        "liveCalls": "NOT_RUN"
+      },
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS"
+        },
+        {
+          "item": 2,
+          "technical": "PASS"
+        },
+        {
+          "item": 3,
+          "technical": "PASS"
+        }
+      ],
+      "review": {
+        "backend": "PENDING",
+        "frontend": "NOT_APPLICABLE",
+        "frontendReason": "20册此卡无FE协作"
+      },
+      "evidence": "tasks/M2-01a/README.md"
     }
   },
   "gates": {
@@ -1011,9 +1045,9 @@
     "offline": "离线通过不等于真实依赖、前端联调或平台验收通过"
   },
   "nextTask": {
-    "id": "M2-01a",
-    "status": "IN_PROGRESS",
-    "note": "直接依赖M0-02/M0-17技术输入就绪，按20册推进，不以G0人工门禁已通过表述"
+    "id": "M2-02",
+    "status": "TECHNICAL_INPUTS_READY_WAITING_REVIEW",
+    "note": "AI账本归档后立即继续项目/对话持久化，F06联合验收单列"
   },
   "continuation": {
     "requestedOn": "2026-10-27",

@@ -1,0 +1,70 @@
+{
+  "checkedAt": "2026-10-27T20:44:14.200508+08:00",
+  "baseline": "855ee35253494b969b21147994ee7a706b153245",
+  "result": "PASS_TECHNICAL",
+  "environment": "WSL2 Ubuntu; Python3.13; real local PostgreSQL/Redis/RabbitMQ/MinIO",
+  "checks": [
+    {
+      "command": "uv run --frozen ruff check .",
+      "result": "PASS"
+    },
+    {
+      "command": "uv run --frozen ruff format --check .",
+      "result": "PASS",
+      "files": 111
+    },
+    {
+      "command": "uv run --frozen mypy",
+      "result": "PASS",
+      "files": 87
+    },
+    {
+      "command": "uv run --frozen pytest tests/unit tests/contract -q",
+      "result": "PASS",
+      "passed": 157
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --group catalog --details",
+      "result": "PASS",
+      "passed": 8
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --details",
+      "result": "PASS_WITH_EXPLICIT_NOT_RUN_LIFECYCLE",
+      "passed": 206,
+      "skipped": 1,
+      "skipReason": "--lifecycle not requested; restart case is not counted as passed"
+    },
+    {
+      "command": "uv run --frozen python scripts/migrate_local.py upgrade",
+      "result": "PASS",
+      "head": "0015_platform_catalog"
+    },
+    {
+      "command": "uv run --frozen python scripts/migrate_local.py catalog-import (twice)",
+      "result": "PASS",
+      "created": [
+        true,
+        false
+      ]
+    }
+  ],
+  "database": {
+    "sha256": "e67b23b908814808158d42e10c43a4ff302d825cd432eb9dfb92baf46bfd1b77",
+    "records": 1818,
+    "enabledRoutes": 0,
+    "emptyPaths": 50,
+    "duplicateRouteGroups": 1,
+    "imports": 1,
+    "connectors": 8,
+    "migrationRoleCanLogin": false
+  },
+  "sourceCorruptionCasesRejected": 13,
+  "paidCalls": 0,
+  "platformCalls": 0,
+  "review": {
+    "backend": "PENDING",
+    "frontend": "PENDING_F03"
+  },
+  "formalGate": "G0 remains BLOCKED by E08"
+}

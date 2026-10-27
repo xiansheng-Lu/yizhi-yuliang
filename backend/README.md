@@ -2,6 +2,14 @@
 
 当前已交付工程、身份/目录迁移、租户隔离、权限管理、密码会话、最小管理接口及Worker骨架；身份与管理HTTP默认关闭，尚无平台写能力。执行状态和未通过依赖以 [任务台账](../docs/backend/evidence/task-status.json) 为准。
 
+## 平台资料目录
+
+M1-01核对并导入仓库既有1818条目录，按原始HTML、规范化JSON和生成目录逐条匹配，保存来源版本、摘要和不可混写的导入批次。50条空路径和1组重复路由保留为资料事实，未知HTTP方法存UNKNOWN；原资料的SOURCE_VERIFIED标记不等于真实平台取证。八连接器仅作资料索引，均不产生执行权限，微信豆无正式API目录绑定。
+
+WSL中运行`uv run python scripts/import_platform_catalog.py`只做本地核对。先运行`uv run python scripts/migrate_local.py upgrade`，再以`uv run python scripts/migrate_local.py catalog-import`在受控维护窗口导入；重复导入同摘要不重复建记录，运行账号只有带租户上下文的读取权限。普通应用身份不能导入、改目录或把route_enabled设为true。回退应用时保留0015来源历史，不删表降级；关闭真实平台操作的现有守卫仍保持。
+
+验证入口为`uv run python scripts/test_infrastructure.py --group catalog --details`。本卡以已验证底座进行技术准备，G0的BE/FE具名复核独立保留，目录导入不放行正式平台流量。
+
 ## Python与离线验证
 
 基线Python 3.13.14、uv，Windows PowerShell。依赖由uv.lock锁定；当前网络无法连接pypi.org，项目使用清华PyPI镜像，未更改全局包源。Python安装行为见[uv官方说明](https://docs.astral.sh/uv/guides/install-python/)。在backend目录执行：

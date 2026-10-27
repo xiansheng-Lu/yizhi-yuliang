@@ -4,7 +4,7 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "currentFocus": "G0",
+  "currentFocus": "M1-02",
   "tasks": {
     "R00-01": {
       "owner": "BE",
@@ -1264,6 +1264,41 @@
         "frontend": "PENDING_F06"
       },
       "evidence": "tasks/M2-04/README.md"
+    },
+    "M1-01": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "delivery": "1818条目录逐项来源核对、版本化幂等导入和八连接器资料索引技术通过；无可执行路由；BE/FE复核待完成",
+      "dependencyInput": "用户2026-10-27明确要求持续开发，以M0实际技术证据作本地准备；G0/E08不代签、不放行真实平台流量",
+      "technicalVerification": {
+        "result": "PASS",
+        "unitContractPassed": 157,
+        "catalogIntegrationPassed": 8,
+        "allIntegrationPassed": 206,
+        "lifecycleNotRun": 1,
+        "records": 1818,
+        "connectors": 8,
+        "enabledRoutes": 0
+      },
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS"
+        },
+        {
+          "item": 2,
+          "technical": "PASS"
+        },
+        {
+          "item": 3,
+          "technical": "PASS"
+        }
+      ],
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F03"
+      },
+      "evidence": "tasks/M1-01/README.md"
     }
   },
   "gates": {
@@ -1351,10 +1386,10 @@
     "offline": "离线通过不等于真实依赖、前端联调或平台验收通过"
   },
   "nextTask": {
-    "id": "M1-01",
+    "id": "M1-02",
     "status": "READY_FOR_TECHNICAL_PREPARATION",
-    "formalGate": "G0 still BLOCKED by E08",
-    "note": "用户2026-10-27明确要求资源不阻塞持续开发；按已技术验证底座进行本地实现和验证，人工门禁不代签，不开放真实平台流量。"
+    "formalGate": "G0/E08 pending",
+    "note": "采用M1-01技术验证输入，继续能力证据模型，不自动启用真实流量"
   },
   "continuation": {
     "requestedOn": "2026-10-27",

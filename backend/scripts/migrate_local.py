@@ -12,7 +12,10 @@ import psycopg
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "action", choices=("upgrade", "current", "audit-partitions"), default="upgrade", nargs="?"
+        "action",
+        choices=("upgrade", "current", "audit-partitions", "catalog-import"),
+        default="upgrade",
+        nargs="?",
     )
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
@@ -55,8 +58,13 @@ def main() -> int:
                 print("当月与下月UTC审计分区就绪；迁移窗口关闭")
                 return 0
             command = ["upgrade", "head"] if args.action == "upgrade" else ["current"]
+            entry = (
+                [sys.executable, str(root / "scripts/import_platform_catalog.py"), "--apply"]
+                if args.action == "catalog-import"
+                else [sys.executable, "-m", "alembic", "-c", str(root / "alembic.ini"), *command]
+            )
             result = subprocess.run(  # noqa: S603 -- 固定本地Alembic入口。
-                [sys.executable, "-m", "alembic", "-c", str(root / "alembic.ini"), *command],
+                entry,
                 cwd=root,
                 env=env,
                 capture_output=True,

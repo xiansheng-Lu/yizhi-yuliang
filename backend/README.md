@@ -136,3 +136,13 @@ BE维护.github/workflows/backend-ci.yml，托管Ubuntu运行器使用固定Acti
 检查包括ruff/格式/mypy、unit/contract、冻结源码/规格/任务状态、四设施重启、UUID临时空库迁移/重复升级、租户隔离和真实Worker消息故障回归。默认不运行live，不存在真实平台或付费凭据。
 scripts/check_ci_sensitivity.py只在独立临时源码副本故意破坏契约版本、迁移SQL和租户策略；每项健康控制测试必须先通过，注入后必须实际失败且命中对应诊断，不能用环境故障冒充有效门禁。
 敏感性测试复用本地设施但仅创建唯一临时测试库，结束恢复app_migrate NOLOGIN；不改开发源码或业务库。CI托管运行器使用临时随机配置，末尾仅清理该运行器设施，不上传.env或容器日志。
+
+上游MinIO预构建仓库已无法匿名拉取；CI从官方签名发布对应源码07c3a429构建测试镜像，保留AGPL许可证。已有本地缓存可继续复用；新环境先构建并指定镜像：
+
+```bash
+docker build --tag yuliang-ci-minio:07c3a429 deployment/minio
+export YULIANG_MINIO_IMAGE=yuliang-ci-minio:07c3a429
+bash scripts/infra.sh start
+```
+
+该候选仅用于本地/CI的真实S3兼容验证，生产存储替代与维护仍归M5。

@@ -22,6 +22,7 @@ jobs:
     timeout-minutes: 25
     env:
       UV_PYTHON_DOWNLOADS: never
+      YULIANG_MINIO_IMAGE: yuliang-ci-minio:07c3a429
     defaults:
       run:
         shell: bash
@@ -54,6 +55,8 @@ jobs:
           uv run --frozen python ../docs/backend/tools/check_funds_recovery.py --self-test
           uv run --frozen python ../docs/backend/tools/check_plan.py
           uv run --frozen python ../docs/backend/tools/check_task_status.py --self-test
+      - name: 从官方固定源码构建对象存储测试镜像
+        run: docker build --tag yuliang-ci-minio:07c3a429 deployment/minio
       - name: 启动四设施
         run: |
           bash scripts/infra.sh check

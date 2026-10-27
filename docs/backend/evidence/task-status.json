@@ -4,7 +4,7 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "currentFocus": "M0-17",
+  "currentFocus": "M0-03",
   "tasks": {
     "R00-01": {
       "owner": "BE",
@@ -734,7 +734,7 @@
       "status": "WAITING_REVIEW",
       "delivery": "Outbox持久化与发布确认技术验证通过，人工复核待签",
       "implementationCommit": "75cb1ef170ce328b3d259cb3775f7aa17362e109",
-      "git": "LOCAL_COMMITTED_PENDING_NETWORK_SYNC",
+      "git": "COMMITTED",
       "dependencyInput": "使用已验证技术输入继续开发，不替代前置人工验收",
       "technicalVerification": {
         "result": "PASS",
@@ -762,14 +762,15 @@
         "frontend": "NOT_APPLICABLE",
         "frontendReason": "20册此卡无FE协作"
       },
-      "evidence": "tasks/M0-16a/README.md"
+      "evidence": "tasks/M0-16a/README.md",
+      "syncVerification": "代码提交为远端main 708b507的祖先，ls-remote已核对"
     },
     "M0-16b": {
       "owner": "BE",
       "status": "WAITING_REVIEW",
       "delivery": "Inbox未完成任务恢复技术验证通过，人工复核待签",
       "implementationCommit": "75cb1ef170ce328b3d259cb3775f7aa17362e109",
-      "git": "LOCAL_COMMITTED_PENDING_NETWORK_SYNC",
+      "git": "COMMITTED",
       "dependencyInput": "使用已验证技术输入继续开发，不替代前置人工验收",
       "technicalVerification": {
         "result": "PASS",
@@ -797,14 +798,15 @@
         "frontend": "NOT_APPLICABLE",
         "frontendReason": "20册此卡无FE协作"
       },
-      "evidence": "tasks/M0-16b/README.md"
+      "evidence": "tasks/M0-16b/README.md",
+      "syncVerification": "代码提交为远端main 708b507的祖先，ls-remote已核对"
     },
     "M0-16c": {
       "owner": "BE",
       "status": "WAITING_REVIEW",
       "delivery": "基础消息故障演练技术验证通过，人工复核待签",
       "implementationCommit": "75cb1ef170ce328b3d259cb3775f7aa17362e109",
-      "git": "LOCAL_COMMITTED_PENDING_NETWORK_SYNC",
+      "git": "COMMITTED",
       "dependencyInput": "使用已验证技术输入继续开发，不替代前置人工验收",
       "technicalVerification": {
         "result": "PASS",
@@ -832,7 +834,42 @@
         "frontend": "NOT_APPLICABLE",
         "frontendReason": "20册此卡无FE协作"
       },
-      "evidence": "tasks/M0-16c/README.md"
+      "evidence": "tasks/M0-16c/README.md",
+      "syncVerification": "代码提交为远端main 708b507的祖先，ls-remote已核对"
+    },
+    "M0-17": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "delivery": "分区追加审计与本人资料写接入技术通过；待BE复核",
+      "implementationCommit": "640e473a323d190f6db56fe190ac49683ed2c36c",
+      "git": "COMMITTED",
+      "technicalVerification": {
+        "result": "PASS",
+        "unitContractPassed": 33,
+        "integrationPassed": 61,
+        "failed": 0,
+        "skipped": 0
+      },
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS"
+        },
+        {
+          "item": 2,
+          "technical": "PASS"
+        },
+        {
+          "item": 3,
+          "technical": "PASS"
+        }
+      ],
+      "review": {
+        "backend": "PENDING",
+        "frontend": "NOT_APPLICABLE",
+        "frontendReason": "20册此卡无FE协作"
+      },
+      "evidence": "tasks/M0-17/README.md"
     }
   },
   "gates": {},
@@ -886,11 +923,9 @@
     },
     {
       "id": "GIT_NETWORK",
-      "status": "OPEN",
-      "reason": "2026-10-27本轮GitHub HTTPS直连和原代理连接超时，本地成果保留，尚未推送M0-16",
-      "affects": [
-        "M0-16远程同步"
-      ]
+      "status": "RESOLVED",
+      "reason": "本机代理实际监听7897，按命令覆盖旧7890配置后fetch/push成功，M0-16远端main已核对708b507",
+      "affects": []
     }
   ],
   "rules": {
@@ -899,9 +934,9 @@
     "offline": "离线通过不等于真实依赖、前端联调或平台验收通过"
   },
   "nextTask": {
-    "id": "M0-17",
+    "id": "M0-03",
     "status": "TECHNICAL_INPUTS_READY_WAITING_REVIEW",
-    "note": "消息技术验证完成即继续审计横切，不等待心跳"
+    "note": "审计卡归档后立即继续存活/就绪/指标"
   },
   "continuation": {
     "requestedOn": "2026-10-27",

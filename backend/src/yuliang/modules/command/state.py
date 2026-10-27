@@ -99,6 +99,7 @@ class StateFacts:
     evidence_level: Literal["E0", "E1", "E2"] = "E0"
     proof_ref: str | None = None
     retry_current: JobValue | None = None
+    transport_unknown: bool = False
     retry_actions: frozenset[Action] = frozenset({"PAUSE_AD_PLAN", "RESUME_AD_PLAN"})
 
 
@@ -169,27 +170,38 @@ def evolve(
         JobEvent.CONFIRMED_NOT_EXECUTED,
     }:
         receipt = facts.receipt
-        if receipt is None or not facts.proof_ref:
+        system_unknown = (
+            event == JobEvent.SUBMIT_UNKNOWN and facts.transport_unknown and receipt is None
+        )
+        if not facts.proof_ref or (receipt is None and not system_unknown):
             _deny("转移需要已持久化的原请求/回读证据")
-        if (
-            event in {JobEvent.ACCEPT, JobEvent.MATCH, JobEvent.MISMATCH, JobEvent.READ_UNKNOWN}
-            and receipt.accepted is not True
-        ):
+        if event in {
+            JobEvent.ACCEPT,
+            JobEvent.MATCH,
+            JobEvent.MISMATCH,
+            JobEvent.READ_UNKNOWN,
+        } and (receipt is None or receipt.accepted is not True):
             _deny("缺少平台明确受理证据")
         if event == JobEvent.MATCH and (
-            receipt.verification != "MATCHED" or facts.evidence_level != "E2"
+            receipt is None or receipt.verification != "MATCHED" or facts.evidence_level != "E2"
         ):
             _deny("成功需要E2独立匹配证据")
-        if event == JobEvent.MISMATCH and receipt.verification != "MISMATCH":
+        if event == JobEvent.MISMATCH and (receipt is None or receipt.verification != "MISMATCH"):
             _deny("核验不匹配事实不足")
-        if event == JobEvent.READ_UNKNOWN and receipt.verification != "UNKNOWN":
+        if event == JobEvent.READ_UNKNOWN and (
+            receipt is None or receipt.verification != "UNKNOWN"
+        ):
             _deny("缺少回读未知事实")
-        if event == JobEvent.SUBMIT_UNKNOWN and (
-            receipt.accepted is not None or receipt.verification != "UNKNOWN"
+        if (
+            event == JobEvent.SUBMIT_UNKNOWN
+            and not system_unknown
+            and (
+                receipt is None or receipt.accepted is not None or receipt.verification != "UNKNOWN"
+            )
         ):
             _deny("提交未知不能声明平台已受理")
         if event == JobEvent.REJECT_SEND and (
-            receipt.accepted is not False or facts.evidence_level != "E1"
+            receipt is None or receipt.accepted is not False or facts.evidence_level != "E1"
         ):
             _deny("明确拒绝需要E1未执行证据")
         if event == JobEvent.CONFIRMED_NOT_EXECUTED and facts.evidence_level != "E1":

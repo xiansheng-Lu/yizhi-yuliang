@@ -7,7 +7,7 @@ import pytest
 from state_cases import APPROVER, REQUESTER, facts_for, state_job
 
 from yuliang.modules.command.jobs import JobStatus, MoneyValue
-from yuliang.modules.command.state import RULES, JobEvent, evolve
+from yuliang.modules.command.state import RULES, JobEvent, StateFacts, evolve
 from yuliang.platform.errors import ApiError, ErrorCode
 
 EDGES = [(event, status) for event, rule in RULES.items() for status in sorted(rule.sources)]
@@ -71,6 +71,31 @@ def test_unknown_does_not_become_failure_or_retry(event: JobEvent) -> None:
             and after.error.code == "RESULT_UNKNOWN"
             and not after.error.retryable
         )
+
+
+def test_transport_unknown_keeps_platform_receipt_absent_and_requires_explicit_fact() -> None:
+    now = datetime.now(UTC)
+    job = state_job(JobStatus.EXECUTING, now)
+    facts = StateFacts(proof_ref="execution-raw/synthetic/1", transport_unknown=True)
+    after = evolve(
+        job, JobEvent.SUBMIT_UNKNOWN, facts, at=now, actor_id=REQUESTER, requester_id=REQUESTER
+    )
+    assert after.execution_receipt is None and after.status == JobStatus.EXECUTING
+    assert (
+        after.error is not None
+        and after.error.code == "RESULT_UNKNOWN"
+        and not after.error.retryable
+    )
+    for missing in (replace(facts, proof_ref=None), replace(facts, transport_unknown=False)):
+        with pytest.raises(ApiError):
+            evolve(
+                job,
+                JobEvent.SUBMIT_UNKNOWN,
+                missing,
+                at=now,
+                actor_id=REQUESTER,
+                requester_id=REQUESTER,
+            )
 
 
 @pytest.mark.parametrize(

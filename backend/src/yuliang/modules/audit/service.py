@@ -33,6 +33,7 @@ Action = Literal[
     "job.transition",
     "risk.assess",
     "budget.initialize",
+    "budget.reserve",
 ]
 ObjectType = Literal[
     "user",

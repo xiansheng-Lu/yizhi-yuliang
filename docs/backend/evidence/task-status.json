@@ -4,7 +4,7 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "currentFocus": "M0-10",
+  "currentFocus": "M5-02a",
   "tasks": {
     "R00-01": {
       "owner": "BE",
@@ -690,10 +690,37 @@
     },
     "M0-10": {
       "owner": "BE",
-      "status": "IN_PROGRESS",
-      "note": "未具备实际SMTP/邮件服务和测试收件地址，已向用户异步请求资源；未实现/未验收投递，不记PASS",
-      "realDelivery": "NOT_RUN",
-      "delivery": "新收发件资源已配置并通过TLS登录探测，未发送邮件；开始闭环实现"
+      "status": "WAITING_REVIEW",
+      "delivery": "真实SMTP/用户收件码登录及PG原子消费验证通过，待BE/FE F01/F02复核",
+      "implementationCommit": "86f0ca19e7b7a3f9d4154fb873928e8e05691a3f",
+      "git": "COMMITTED",
+      "technicalVerification": {
+        "result": "PASS",
+        "unitContractPassed": 63,
+        "integrationPassed": 109,
+        "realMailReceipt": "PASS_USER_ENTERED_CODE",
+        "sessionsCreated": 1,
+        "browserIntegration": "NOT_RUN"
+      },
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS"
+        },
+        {
+          "item": 2,
+          "technical": "PASS"
+        },
+        {
+          "item": 3,
+          "technical": "PASS"
+        }
+      ],
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F01_F02"
+      },
+      "evidence": "tasks/M0-10/README.md"
     },
     "M0-15": {
       "owner": "BE",
@@ -1008,11 +1035,10 @@
     "G0": {
       "status": "BLOCKED",
       "blockedBy": [
-        "E06_MAIL",
         "F01_BROWSER",
         "E08"
       ],
-      "note": "邮件真实收件、浏览器接线及适用人工复核仍未齐；不影响无此门禁依赖的内部基础卡"
+      "note": "邮件真实收件已通过，仍待真实浏览器接线及适用人工复核；未放行"
     }
   },
   "blockers": [
@@ -1045,12 +1071,10 @@
     },
     {
       "id": "E06_MAIL",
-      "status": "IN_VERIFICATION",
-      "reason": "新SMTP配置已写本地忽略文件，TLS登录通过；待验证码投递与实际收件验证",
-      "affects": [
-        "M0-10实际收件验证"
-      ],
-      "unblock": "实际收到测试邮件并完成邮箱码登录验证"
+      "status": "RESOLVED",
+      "reason": "新SMTP配置实际投递，用户从邮件返回的码登录200，PG只创建一会话且码已消费；测试库已清理",
+      "affects": [],
+      "unblock": "实际收件与邮箱码登录已验证"
     },
     {
       "id": "F01_BROWSER",
@@ -1076,9 +1100,9 @@
     "offline": "离线通过不等于真实依赖、前端联调或平台验收通过"
   },
   "nextTask": {
-    "id": "M0-10",
-    "status": "RESOURCES_READY",
-    "note": "新SMTP资源TLS登录实测成功，继续实现/验证真实收件；凭据仅本地忽略文件"
+    "id": "M5-02a",
+    "status": "TECHNICAL_INPUTS_READY_WAITING_REVIEW",
+    "note": "邮箱验证归档后立即继续首次付费前原子费用许可，不发起真实付费调用"
   },
   "continuation": {
     "requestedOn": "2026-10-27",

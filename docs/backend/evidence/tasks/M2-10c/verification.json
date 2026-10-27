@@ -1,0 +1,66 @@
+{
+  "checkedAt": "2026-10-27T22:18:07.205Z",
+  "baseline": "29b353c",
+  "implementationCommit": "7f7f1ce6d941b719a20b9db7661724137521bd3e",
+  "result": "PASS_REAL_PG_ATOMIC_MATCH_SETTLEMENT_E1_RELEASE_AND_REDUCTION",
+  "checks": [
+    {
+      "command": "uv run --frozen ruff check .",
+      "result": "PASS"
+    },
+    {
+      "command": "uv run --frozen ruff format --check .",
+      "result": "PASS",
+      "count": 212
+    },
+    {
+      "command": "uv run --frozen mypy",
+      "result": "PASS",
+      "count": 169
+    },
+    {
+      "command": "uv run --frozen pytest tests/unit tests/contract -q",
+      "result": "PASS",
+      "count": 503
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --group settlement --details",
+      "result": "PASS",
+      "count": 22
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --details",
+      "result": "PASS_WITH_EXPLICIT_LIFECYCLE_SKIP",
+      "count": 534,
+      "skipped": 1
+    },
+    {
+      "command": "uv run --frozen python scripts/migrate_local.py upgrade",
+      "result": "PASS"
+    }
+  ],
+  "database": {
+    "head": "0034_budget_settlement",
+    "migrationRoleCanLogin": false,
+    "developmentRows": {
+      "budget_job_finalizations": 0,
+      "budget_adjustments": 0,
+      "execution_orders": 0,
+      "command_jobs": 0
+    }
+  },
+  "trace": "trace.json",
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "resolvedFailure": "FAILED label fault fixture initially violated ck_job_complete; synchronized document/history then reran 22 dedicated and final full 534 PASS",
+  "notCovered": [
+    "M2-17 runtime readback producer; E2 test input uses existing maintenance validator on archived synthetic write/read",
+    "real vendor E01",
+    "full drift governance M2-10d and recovery M2-11b",
+    "HTTP lifecycle/F07 browser and BE/FE named review G0/E08"
+  ],
+  "review": {
+    "backend": "PENDING",
+    "frontend": "PENDING_F07"
+  }
+}

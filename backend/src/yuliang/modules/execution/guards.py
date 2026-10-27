@@ -31,6 +31,7 @@ def controlled[T](operation: Callable[[], T]) -> T:
             "P0211": ErrorCode.TARGET_QUARANTINED,
             "55P03": ErrorCode.LOCKED,
             "22023": ErrorCode.INVALID_INPUT,
+            "23505": ErrorCode.IDEMPOTENCY_MISMATCH,
         }
         code = getattr(error.orig, "sqlstate", None)
         if code in mapping:

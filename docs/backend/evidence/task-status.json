@@ -1346,6 +1346,15 @@
       "status": "BLOCKED",
       "implementation": "CSRF transport and identity snapshot fencing implemented; 210 automated tests passed",
       "browser": "FRONTEND_RENDER_PASS_AUTH_BLOCKED_SAVED_OR_MANAGED_POLICY",
+      "latestPermissionDiagnosis": {
+        "checkedAt": "2026-10-27T18:58:58+08:00",
+        "desktopBundledCli": "0.164.0-alpha.11.1",
+        "diagnosticProcessOrigins": "ALLOW_FROM_USER_CONFIG",
+        "diagnosticProcessRequirements": null,
+        "activeBrowserAuthority": "DENIED_OBSERVE_EXISTING_PAGE",
+        "denyingRuleSource": "UNKNOWN_REQUIRES_APPLICATION_SIDE_DIAGNOSIS",
+        "evidence": "docs/frontend/acceptance/evidence/f01-csrf/permission-diagnosis.json"
+      },
       "latestBrowserRecheck": {
         "checkedAt": "2026-10-27T17:38:05+08:00",
         "frontendHttpStatus": 200,

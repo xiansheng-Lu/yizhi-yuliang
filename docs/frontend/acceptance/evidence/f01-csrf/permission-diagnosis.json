@@ -1,0 +1,73 @@
+{
+  "checked_at": "2026-10-27T18:58:58+08:00",
+  "result": "BLOCKED_UNRESOLVED_EFFECTIVE_BROWSER_AUTHORITY",
+  "target": "http://127.0.0.1:18000/healthz",
+  "runtime_comparison": {
+    "previous_standalone_cli": "0.163.0",
+    "desktop_browser_bundled_cli": "0.164.0-alpha.11.1",
+    "desktop_app": "26.1021.3705.0",
+    "browser_runtime_source": "desktop log BrowserUseThreadConfig browser_use_runtime_paths_selected"
+  },
+  "documented_readonly_rpc": {
+    "process": "new diagnostic process using the same desktop bundled executable, not the active browser process",
+    "methods": ["initialize", "initialized", "config/read", "configRequirements/read"],
+    "cwd": "PROJECT_WORKSPACE",
+    "include_layers": true,
+    "effective_browser_origins": {
+      "http://127.0.0.1:3000": {"access": "allow"},
+      "http://127.0.0.1:18000": {"access": "allow"}
+    },
+    "browser_origin_source": "USER_CONFIG",
+    "user_config_last_modified": "2026-10-27T18:46:09+08:00",
+    "system_config_layer": "EMPTY",
+    "requirements_response": null,
+    "active_chat_overrides": "NOT_INSPECTED",
+    "active_browser_saved_approvals": "NOT_INSPECTED"
+  },
+  "local_source_audit": {
+    "user_legacy_managed_config": "ABSENT",
+    "checked_local_requirements_files": "ABSENT",
+    "project_and_parent_config_files": "ABSENT",
+    "config_home_or_profile_environment_override": "NOT_FOUND",
+    "browser_related_process_flags": "NOT_FOUND",
+    "file_based_matching_deny": "NOT_FOUND_IN_CHECKED_SOURCES"
+  },
+  "browser_recheck": {
+    "browser": "ORIGINAL_IN_APP_BROWSER",
+    "operation": "OBSERVE_EXISTING_USER_OPENED_HEALTH_PAGE",
+    "result": "DENIED_BEFORE_PAGE_CONTENT_ACCESS",
+    "reason": "A saved user permission setting blocks this action. A saved permission or managed policy denies access.",
+    "rule_source": "UNKNOWN",
+    "workarounds_attempted": false
+  },
+  "desktop_log_audit": {
+    "scope": "CURRENT_DAY_RECENT_DESKTOP_LOGS",
+    "matching_current_denial_rule_event": "NOT_FOUND",
+    "user_side_dom_ready": "OBSERVED_DOES_NOT_PROVE_AGENT_ACCESS",
+    "old_data_url_error_page": "EXCLUDED_FROM_CURRENT_ORIGIN_RULE_DIAGNOSIS"
+  },
+  "service_checks": {
+    "frontend_login_http_status": 200,
+    "backend_ready_http_status": 200,
+    "ready": true,
+    "degraded": false,
+    "postgres_app": "UP",
+    "postgres_auth": "UP",
+    "redis": "UP",
+    "rabbitmq": "UP",
+    "service_lifecycle": "RUNNING_AS_USER_REQUESTED"
+  },
+  "limits": [
+    "A null requirements result in the diagnostic process does not prove that the active browser or chat has no additional restrictions.",
+    "No matching desktop log event does not prove that no policy exists.",
+    "No successful browser authentication, write or logout flow was performed."
+  ],
+  "security_or_application_code_changes": "NONE",
+  "next_required_action": "APPLICATION_SIDE_DIAGNOSIS_OF_CURRENT_CHAT_ORIGIN_AUTHORITY_REJECTION",
+  "support_draft": "permission-support-request.md",
+  "official_references": [
+    "https://learn.chatgpt.com/docs/app-server",
+    "https://learn.chatgpt.com/docs/chrome-extension#troubleshooting",
+    "https://learn.chatgpt.com/docs/enterprise/managed-configuration"
+  ]
+}

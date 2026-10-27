@@ -9,6 +9,8 @@
   "workarounds_attempted": false,
   "real_authentication_browser_result": "NOT_RUN",
   "screenshot": "browser-blocked.png",
+  "latest_diagnosis": "permission-diagnosis.json",
+  "latest_diagnosis_at": "2026-10-27T18:58:58+08:00",
   "latest_recheck": {
     "checked_at": "2026-10-27T17:38:05+08:00",
     "trigger": "User requested continuation after the application restart diagnostic was suggested; full application restart was not independently confirmed",

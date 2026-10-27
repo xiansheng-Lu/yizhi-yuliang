@@ -4,7 +4,7 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "currentFocus": "M0-06",
+  "currentFocus": "M0-09",
   "tasks": {
     "R00-01": {
       "owner": "BE",
@@ -317,16 +317,192 @@
         "frontend": "PENDING_F00_F13"
       },
       "evidence": "tasks/R00-04/README.md"
+    },
+    "M0-06": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "codeCommit": "8f16d40a41f1cda5db9af5c5e73821a5c5cccb5f",
+      "delivery": "迁移与最小身份数据模型已实现并完成真实技术验证",
+      "dependencyInput": "按20册依赖链使用已验证技术层输入；前置人工复核继续保留",
+      "technicalVerification": {
+        "result": "PASS",
+        "layer": "I_REAL_LOCAL_POSTGRES",
+        "unitContractPassed": 27,
+        "realIntegrationPassed": 19
+      },
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS",
+          "evidence": "tasks/M0-06/README.md"
+        },
+        {
+          "item": 2,
+          "technical": "PASS",
+          "evidence": "tasks/M0-06/README.md"
+        },
+        {
+          "item": 3,
+          "technical": "PASS",
+          "evidence": "tasks/M0-06/README.md"
+        }
+      ],
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F00"
+      },
+      "evidence": "tasks/M0-06/README.md"
+    },
+    "M0-07": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "codeCommit": "8f16d40a41f1cda5db9af5c5e73821a5c5cccb5f",
+      "delivery": "事务级租户上下文已实现并完成真实技术验证",
+      "dependencyInput": "按20册依赖链使用已验证技术层输入；前置人工复核继续保留",
+      "technicalVerification": {
+        "result": "PASS",
+        "layer": "I_REAL_LOCAL_POSTGRES",
+        "unitContractPassed": 27,
+        "realIntegrationPassed": 19
+      },
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS",
+          "evidence": "tasks/M0-07/README.md"
+        },
+        {
+          "item": 2,
+          "technical": "PASS",
+          "evidence": "tasks/M0-07/README.md"
+        },
+        {
+          "item": 3,
+          "technical": "PASS",
+          "evidence": "tasks/M0-07/README.md"
+        }
+      ],
+      "review": {
+        "backend": "PENDING",
+        "frontend": "NOT_APPLICABLE",
+        "frontendReason": "按20册此卡无前端协作；业务联调另留后续F卡证据"
+      },
+      "evidence": "tasks/M0-07/README.md"
+    },
+    "M0-08a": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "codeCommit": "8f16d40a41f1cda5db9af5c5e73821a5c5cccb5f",
+      "delivery": "RLS与系统共享行策略已实现并完成真实技术验证",
+      "dependencyInput": "按20册依赖链使用已验证技术层输入；前置人工复核继续保留",
+      "technicalVerification": {
+        "result": "PASS",
+        "layer": "I_REAL_LOCAL_POSTGRES",
+        "unitContractPassed": 27,
+        "realIntegrationPassed": 19
+      },
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS",
+          "evidence": "tasks/M0-08a/README.md"
+        },
+        {
+          "item": 2,
+          "technical": "PASS",
+          "evidence": "tasks/M0-08a/README.md"
+        },
+        {
+          "item": 3,
+          "technical": "PASS",
+          "evidence": "tasks/M0-08a/README.md"
+        }
+      ],
+      "review": {
+        "backend": "PENDING",
+        "frontend": "NOT_APPLICABLE",
+        "frontendReason": "按20册此卡无前端协作；业务联调另留后续F卡证据"
+      },
+      "evidence": "tasks/M0-08a/README.md"
+    },
+    "M0-08b": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "codeCommit": "8f16d40a41f1cda5db9af5c5e73821a5c5cccb5f",
+      "delivery": "复合外键与范围越权验证已实现并完成真实技术验证",
+      "dependencyInput": "按20册依赖链使用已验证技术层输入；前置人工复核继续保留",
+      "technicalVerification": {
+        "result": "PASS",
+        "layer": "I_REAL_LOCAL_POSTGRES",
+        "unitContractPassed": 27,
+        "realIntegrationPassed": 19
+      },
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS",
+          "evidence": "tasks/M0-08b/README.md"
+        },
+        {
+          "item": 2,
+          "technical": "PASS",
+          "evidence": "tasks/M0-08b/README.md"
+        },
+        {
+          "item": 3,
+          "technical": "PASS",
+          "evidence": "tasks/M0-08b/README.md"
+        }
+      ],
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F02"
+      },
+      "evidence": "tasks/M0-08b/README.md"
+    },
+    "M0-13": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "codeCommit": "8f16d40a41f1cda5db9af5c5e73821a5c5cccb5f",
+      "delivery": "组织权限与角色种子已实现并完成真实技术验证",
+      "dependencyInput": "按20册依赖链使用已验证技术层输入；前置人工复核继续保留",
+      "technicalVerification": {
+        "result": "PASS",
+        "layer": "I_REAL_LOCAL_POSTGRES",
+        "unitContractPassed": 27,
+        "realIntegrationPassed": 19
+      },
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS",
+          "evidence": "tasks/M0-13/README.md"
+        },
+        {
+          "item": 2,
+          "technical": "PASS",
+          "evidence": "tasks/M0-13/README.md"
+        },
+        {
+          "item": 3,
+          "technical": "PASS",
+          "evidence": "tasks/M0-13/README.md"
+        }
+      ],
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F02"
+      },
+      "evidence": "tasks/M0-13/README.md"
     }
   },
   "gates": {},
   "blockers": [
     {
       "id": "E08",
-      "reason": "R00-01～04及工程技术交付待对应BE/FE人工复核，技术通过不代签",
+      "reason": "规格与已交付工程/隔离/RBAC仍待适用BE/FE具名复核；技术推进不代签",
       "affects": [
-        "R00-01/02/03/04最终DONE",
-        "M0-01/02/04最终复核"
+        "所有已交付卡最终DONE"
       ]
     },
     {
@@ -356,8 +532,14 @@
     "offline": "离线通过不等于真实依赖、前端联调或平台验收通过"
   },
   "nextTask": {
-    "id": "M0-06",
+    "id": "M0-09",
     "status": "TECHNICAL_INPUTS_READY_WAITING_REVIEW",
-    "note": "工程与真实PG技术输入已就绪，按授权可准备最小身份迁移；前置卡人工复核及门禁状态不提前关闭"
+    "note": "下一批受限认证与密码登录；工程/RBAC/真实PG技术输入已就绪，人工复核不代填。邮件服务仅在M0-10实际发码卡对接，当前不需要供应商或平台费用。"
+  },
+  "continuation": {
+    "requestedOn": "2026-10-27",
+    "authorization": "持续推进后端任务卡，缺资源再找用户对接",
+    "heartbeat": "当前对话每小时继续，资源/人工处理/明确失败/全部完成才提醒",
+    "environment": "WSL2 Ubuntu Docker; UV_PROJECT_ENVIRONMENT=/home/lenovo/.cache/yuliang-venv"
   }
 }

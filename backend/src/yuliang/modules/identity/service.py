@@ -12,6 +12,7 @@ from argon2 import PasswordHasher
 from argon2.exceptions import InvalidHashError, VerificationError
 from sqlalchemy import Connection, create_engine, text
 
+from yuliang.infrastructure.mail import MailSender, SMTPMailer, SMTPSettings
 from yuliang.modules.access.catalog import workspace_pages
 from yuliang.platform.db import VerifiedIdentity, business_transaction
 from yuliang.platform.errors import ApiError, ErrorCode
@@ -26,7 +27,7 @@ def digest(value: str) -> str:
 
 
 class IdentityService:
-    def __init__(self, settings: Settings) -> None:
+    def __init__(self, settings: Settings, mail_sender: MailSender | None = None) -> None:
         self.auth = create_engine(
             settings.auth_database_url.get_secret_value(), hide_parameters=True
         )
@@ -34,6 +35,14 @@ class IdentityService:
         if settings.auth_audit_secret is None:
             raise ValueError("缺少独立认证审计密钥")
         self.audit_key = settings.auth_audit_secret.get_secret_value().encode()
+        self.mail: MailSender | None = None
+        self.email_pepper: bytes | None = None
+        self.email_daily_limit = settings.email_daily_limit
+        if settings.email_login_enabled:
+            if settings.email_code_secret is None:
+                raise ValueError("邮件验证码密钥未配置")
+            self.email_pepper = settings.email_code_secret.get_secret_value().encode()
+            self.mail = mail_sender if mail_sender is not None else SMTPMailer(SMTPSettings())
         self.cache = redis.Redis.from_url(
             settings.redis_url.get_secret_value(), socket_connect_timeout=0.2, socket_timeout=0.2
         )

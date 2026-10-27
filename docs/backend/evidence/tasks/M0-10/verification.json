@@ -1,0 +1,89 @@
+{
+  "codeCommit": "86f0ca19e7b7a3f9d4154fb873928e8e05691a3f",
+  "executedOn": "2026-10-27",
+  "environment": {
+    "os": "WSL2 Ubuntu",
+    "python": "3.13.14",
+    "postgres": "17.10"
+  },
+  "checks": [
+    {
+      "command": "uv run --frozen ruff check .; ruff format --check .; mypy",
+      "result": "PASS",
+      "mypySourceFiles": 65
+    },
+    {
+      "command": "uv run --frozen pytest tests/unit tests/contract -q",
+      "result": "PASS",
+      "passed": 63
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --lifecycle --details",
+      "result": "PASS",
+      "passed": 109,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "command": "uv run --frozen python scripts/check_ci_sensitivity.py",
+      "result": "PASS",
+      "healthyControls": 3,
+      "mutationsRejected": 3
+    },
+    {
+      "command": "uv run --frozen python scripts/migrate_local.py upgrade; current",
+      "result": "PASS",
+      "head": "0011_email_codes"
+    }
+  ],
+  "realReceiptVerification": {
+    "verificationKind": "REAL_SMTP_AND_USER_ENTERED_CODE",
+    "recipient": "configured_self_mailbox",
+    "database": "yuliang_mail_verify_0e9401f1e600437a93b46a7d02d7764b",
+    "sendHttpStatus": 200,
+    "sendRequestId": "c3b753d1ac054e9da8386a0e05131927",
+    "deliveryAccepted": true,
+    "challengeId": "37e9d3e5-f4da-487f-9d29-7e8e2c4342d2",
+    "expiresAt": "2026-10-27T06:35:21.947723+00:00",
+    "result": "PASS",
+    "userEnteredCodeVerified": true,
+    "loginHttpStatus": 200,
+    "loginRequestId": "48bb4cdaae5b40248459fa17640d30aa",
+    "codeConsumed": true,
+    "attempts": 1,
+    "storedHashLength": 64,
+    "sessions": 1,
+    "temporaryDatabaseDropped": true
+  },
+  "liveVerificationNote": "真实SMTP发送与用户返回邮件码登录通过；随后仅将EMAIL_SEND细化为滑动60秒并完成全量PG回归，SMTP/HMAC/消费链路未改，不重复发送邮件。",
+  "assertions": [
+    "验证码仅HMAC-SHA256，绑定服务器挑战ID与LOGIN用途，独立pepper，不返回明码",
+    "错误次数已提交、五次/过期/重发/重复消费拒绝，成功消费与会话插入原子提交",
+    "真实PG双并发只有一会话；会话插入故障回滚消费和预认证撤销后可正常验证",
+    "未知系统邮箱挑战字段和失败文案相同，邮件故障不冒充投递成功",
+    "邮箱/IP滑动60秒重发、验证5次/5分钟、服务端UTC日上限及Retry-After",
+    "app_login/app_auth都不能直读email_codes；邮件函数精确授权"
+  ],
+  "limits": [
+    "CI发送端口为捕获夹具，实际SMTP与用户收件验证单列，不混为供应商验收",
+    "默认身份与邮件API仍关闭，F01/F02真实浏览器接线待完成",
+    "BE/FE具名复核仍PENDING，不以用户协助收件代签架构/联合验收"
+  ],
+  "sourceSha256Utf8Lf": {
+    "backend/.env.example": "4cf47e481e9823a43cf5762ae34160cb5736db49fa64c9593dcb7b9fd8a0b99c",
+    "backend/README.md": "b76817f23e11da03cf1437251e00063e764cffaa8e49c57b2ee2ad6081b19faa",
+    "backend/alembic/README.md": "21b029fede897ac3f5163791e63bc49a4ab1a9243c57fec949d91c4bec8b1468",
+    "backend/alembic/versions/0011_email_codes.py": "0feb91e2ed1cc50ea66cf7d7685a9f19de8188207c2f5e40c09895c05906d43f",
+    "backend/alembic/versions/0011_email_codes.sql": "ae6b4eff2c537ae7890bcf8ade4c15a1b45610804833d2762fb8d31cd4637d98",
+    "backend/deployment/.env.smtp.example": "e1bcf5c00a903cb83b9714597c1a239e92a0531ea8c612daafcb602a299e939e",
+    "backend/scripts/test_infrastructure.py": "ffc43d4c3d1d25e3220dc22cd2eeecedeab49f0b4d220f62f6f86b508c7af0f7",
+    "backend/src/yuliang/infrastructure/mail.py": "b18a1758e25cc03ba5dea8a607a62f728bcd33fb9b4705c5bda92f3b0da7be27",
+    "backend/src/yuliang/main.py": "500db9a53b6c0a80ca23c7d5439fb756916dd392c12041ef413b40d7119e53c1",
+    "backend/src/yuliang/modules/identity/email_login.py": "b3193fb1eda282c3781fcc001bb99b4ccd5fac6de801188b0a32a499559fe11a",
+    "backend/src/yuliang/modules/identity/routes.py": "8573d82bf972bac4a1cecb4d01f2f1d17a445f8bf58e440161af99d46e3f5dc4",
+    "backend/src/yuliang/modules/identity/service.py": "5286368cece0e0b060893c1c029a725ea18684c6ae4342bea4e1be2aec793ab7",
+    "backend/src/yuliang/settings.py": "f02717138ad4ca5d77def2931e5b6845bc5d4ef353454a905d7cb578131fc74b",
+    "backend/tests/integration/test_email_codes.py": "e60c540009ab9b21d9c3c7599858f2b0d3d25e2c1147a94ab51805a8c02e262a",
+    "backend/tests/unit/test_mail.py": "b99053b20a033263f7138c0486063a8b83e3c3f510a9a1de27a366c7e2ca19f5"
+  }
+}

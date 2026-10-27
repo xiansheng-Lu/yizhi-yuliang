@@ -46,7 +46,9 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--lifecycle", action="store_true", help="包含本项目服务重启与持久化验证")
     parser.add_argument("--details", action="store_true", help="输出已遮蔽本地凭据的短失败诊断")
-    parser.add_argument("--group", choices=("all", "messages", "worker", "identity"), default="all")
+    parser.add_argument(
+        "--group", choices=("all", "messages", "worker", "identity", "mail"), default="all"
+    )
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
     lifecycle = "tests/integration/test_infrastructure_lifecycle.py"
@@ -60,6 +62,7 @@ def main() -> int:
         ],
         "messages": ["tests/integration/test_durable_messaging.py"],
         "worker": ["tests/integration/test_worker.py"],
+        "mail": ["tests/integration/test_email_codes.py"],
         "identity": [
             "tests/integration/test_identity_database.py",
             "tests/integration/test_password_sessions.py",

@@ -4,7 +4,7 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "currentFocus": "M2-11a",
+  "currentFocus": "M2-12",
   "tasks": {
     "R00-01": {
       "owner": "BE",
@@ -1938,6 +1938,48 @@
         "platformCalls": 0,
         "paidCalls": 0
       }
+    },
+    "M2-12": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "scope": "调用者/操作/键/载荷绑定的持久接口幂等账、结果快照与DB事务原子恢复，command必要会话复用",
+      "dependencyInput": "M2-06a真实状态内核与M2-11a目标守卫技术证据；持续研发授权G0/E08保留",
+      "delivery": "真实PG接口幂等/首次快照/保存点4xx与真实子进程中断恢复技术验证；仅同PG事务操作，HTTP联调另卡，未代签",
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS_REAL_PG_COMPONENT",
+          "review": "PENDING_BE_FE"
+        },
+        {
+          "item": 2,
+          "technical": "PASS_REAL_PG_COMPONENT",
+          "review": "PENDING_BE_FE"
+        },
+        {
+          "item": 3,
+          "technical": "PASS_REAL_PG_COMPONENT",
+          "review": "PENDING_BE_FE"
+        }
+      ],
+      "evidence": "tasks/M2-12/README.md",
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F06_F11"
+      },
+      "implementationCommit": "3db86597ab355d0e337307f8ad6d3819ee0e067e",
+      "git": "COMMITTED",
+      "syncVerification": "git merge-base --is-ancestor 3db86597ab355d0e337307f8ad6d3819ee0e067e origin/main",
+      "technicalVerification": {
+        "result": "PASS_REAL_PG_API_IDEMPOTENCY_WITH_REAL_PROCESS_EXIT",
+        "unitContractPassed": 502,
+        "dedicatedIntegration": 11,
+        "integrationPassed": 475,
+        "integrationSkipped": 1,
+        "head": "0031_api_idempotency",
+        "platformCalls": 0,
+        "paidCalls": 0
+      }
     }
   },
   "gates": {
@@ -2054,12 +2096,11 @@
     "environment": "WSL2 Ubuntu Docker; UV_PROJECT_ENVIRONMENT=/home/lenovo/.cache/yuliang-venv",
     "latestUserRequest": "补齐浏览器验收，然后按照后端任务卡继续后续的所有开发，需要资源再找我对接，不阻塞持续开发到完毕",
     "developmentPolicy": "缺人工/外部验收时记录并继续可独立技术准备；正式门禁、平台调用和付费仍按各自证据许可",
-    "lastCompletedTechnicalTask": "M2-11a",
-    "nextTechnicalTask": "M2-12",
+    "lastCompletedTechnicalTask": "M2-12",
+    "nextTechnicalTask": "M2-13a",
     "executionRules": "docs/backend/evidence/execution-rules.md",
-    "checkpoint": "完整目标守卫技术验证通过；继续接口幂等与13a/b原请求映射后回到10c/d，不伪造真实审批/执行",
+    "checkpoint": "接口幂等与真实进程中断恢复技术验证通过；继续发送前执行单/attempt/平台键持久化，之后回执映射并回到资金结算",
     "technicalPreparationQueue": [
-      "M2-12",
       "M2-13a",
       "M2-13b",
       "M2-10c",

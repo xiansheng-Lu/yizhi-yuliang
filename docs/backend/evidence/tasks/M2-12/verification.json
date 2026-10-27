@@ -1,0 +1,74 @@
+{
+  "checkedAt": "2026-10-27T21:02:29.451Z",
+  "baseline": "495321d",
+  "implementationCommit": "3db86597ab355d0e337307f8ad6d3819ee0e067e",
+  "result": "PASS_REAL_PG_API_IDEMPOTENCY_WITH_REAL_PROCESS_EXIT",
+  "checks": [
+    {
+      "command": "uv run --frozen ruff check .",
+      "result": "PASS"
+    },
+    {
+      "command": "uv run --frozen ruff format --check .",
+      "result": "PASS",
+      "files": 202
+    },
+    {
+      "command": "uv run --frozen mypy",
+      "result": "PASS",
+      "files": 162
+    },
+    {
+      "command": "uv run --frozen pytest tests/unit tests/contract -q",
+      "result": "PASS",
+      "passed": 502
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --group idempotency --details",
+      "result": "PASS",
+      "passed": 11
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --details",
+      "result": "PASS_WITH_EXPLICIT_LIFECYCLE_SKIP",
+      "passed": 475,
+      "skipped": 1
+    },
+    {
+      "command": "uv run --frozen python scripts/migrate_local.py upgrade",
+      "result": "PASS",
+      "head": "0031_api_idempotency"
+    }
+  ],
+  "database": {
+    "head": "0031_api_idempotency",
+    "migrationRoleCanLogin": false,
+    "developmentRows": {
+      "api_idempotency": 0,
+      "command_jobs": 0
+    }
+  },
+  "trace": "trace.json",
+  "verified": [
+    "stable namespace/key/normalized payload binding and original business snapshot",
+    "four begin contenders one owner, in-flight lookup and NOWAIT conflict",
+    "same transaction actual application/event/risk/audit/result with reusable Session",
+    "real process os._exit(17) after uncommitted business write: no committed job, original key survives, recovery one job",
+    "owner rotation rejects old owner and active row lock prevents recovery",
+    "deterministic 4xx savepoint and completion audit rollback",
+    "permission revoked prevents result replay; key retained with simulated two-year age",
+    "operation/caller/tenant isolation and cross-tenant ticket denial",
+    "runtime cannot update/delete records; missing authorizer closed; ownership secret excluded from serialization"
+  ],
+  "notCovered": [
+    "public lifecycle HTTP/F06/F11 browser integration",
+    "external I/O idempotency and execution attempts M2-13",
+    "named BE/FE review and G0/E08"
+  ],
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "review": {
+    "backend": "PENDING",
+    "frontend": "PENDING_F06_F11"
+  }
+}

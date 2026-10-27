@@ -97,7 +97,17 @@ uv run celery -A yuliang.worker.app:app beat --loglevel=WARNING
 默认四队列为yuliang.execute/platform/ai-media/system，JSON消息只携event/job/member/user ID及正租户标识。
 逐任务重新建立事务上下文、复核成员，连接池在实际子进程按PID创建，不继承父进程连接。
 当前只有system.identity_probe为真实只读诊断；三个副作用队列的guard明确失败，不调用平台或供应商。
-默认副作用任务acks_late但worker丢失不自动重投、无自动retry；恢复事实由后续Outbox/Inbox卡提供。
+默认副作用任务acks_late但worker丢失不自动重投、无自动retry；外部动作恢复仍归后续执行内核。
 只读探针允许Worker丢失后重投，真实测试已验证SIGKILL子进程后由新子进程消费同一消息。
 Beat使用Redis比较令牌租约，失去租约或Redis不可用时不派发；默认尚无周期业务任务。
-租约不等于业务恰好一次，消息/业务幂等仍归后续Outbox/Inbox及执行内核。
+租约不等于业务恰好一次。
+
+## Outbox与内部恢复
+
+0007增加租户Outbox、系统Inbox与scheduled_tasks。业务用例在同一business_transaction内emit，提交后调用publish_one或dispatch_pending；派发阶段不跨MQ持有数据库事务。
+发布需真实confirm和mandatory路由确认，失败保留PENDING，崩溃租约30秒后可补投，始终沿用event_id。
+dispatch_pending只扫描已验证租户，每批最多100条；调用方负责租户分片与周期调度，本轮没有启用跨租户扫描或自动业务Beat任务。
+system.schedule_recovery核对原始持久事件，先持久RECEIVED，再以Inbox行锁把内部DB副作用与PROCESSED原子提交。
+PROCESSED重复直接跳过；过期未完成的内部恢复事件可补投到同一ID，生成唯一DUE恢复记录。该记录不代表外部业务执行成功。
+仅此内部DB幂等任务允许故障重投；平台、资金和AI未知结果不得套用自动补投协议。
+真实崩溃演练和边界见docs/backend/evidence/tasks/M0-16c；运行全部设施测试时，重启演练先于创建Worker连接池。

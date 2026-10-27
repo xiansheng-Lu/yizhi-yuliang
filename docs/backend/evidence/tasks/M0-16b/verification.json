@@ -1,0 +1,149 @@
+{
+  "codeCommit": "75cb1ef170ce328b3d259cb3775f7aa17362e109",
+  "executedOn": "2026-10-27",
+  "environment": {
+    "os": "WSL2 Ubuntu",
+    "python": "3.13.14",
+    "postgres": "17.10",
+    "rabbitmq": "4.1.6",
+    "redis": "7.4.7",
+    "workerPool": "prefork"
+  },
+  "checks": [
+    {
+      "command": "uv run --frozen ruff check .; uv run --frozen ruff format --check .; uv run --frozen mypy",
+      "result": "PASS",
+      "mypySourceFiles": 42
+    },
+    {
+      "command": "uv run --frozen pytest tests/unit tests/contract -q",
+      "result": "PASS",
+      "passed": 30
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --lifecycle --details",
+      "result": "PASS",
+      "passed": 46,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "command": "uv run --frozen python scripts/migrate_local.py upgrade; current",
+      "result": "PASS",
+      "head": "0007_reliable_messages"
+    }
+  ],
+  "faultProof": [
+    {
+      "pid": 145705,
+      "eventId": "0727fbce-a325-4581-83a5-9ec98288a6ba",
+      "phase": "before_publish",
+      "exitCode": 71,
+      "afterCrash": {
+        "outboxState": "PENDING",
+        "leaseOwner": "99c429fd-5b74-498d-aafb-3684e167325c"
+      },
+      "processedAt": "2026-10-27T04:49:22.194009+00:00",
+      "internalEffectCount": 1
+    },
+    {
+      "pid": 145711,
+      "eventId": "23c09d71-41df-4e87-a8eb-4055efebf886",
+      "phase": "before_confirm",
+      "exitCode": 72,
+      "afterCrash": {
+        "outboxState": "PENDING",
+        "leaseOwner": "94f63e8f-941c-49dd-8831-b35dc6086cee"
+      },
+      "processedAt": "2026-10-27T04:49:22.820568+00:00",
+      "internalEffectCount": 1
+    },
+    {
+      "pid": 145718,
+      "eventId": "1e4ad5db-f065-4b9d-aec2-d2fcf9d876d1",
+      "phase": "after_confirm",
+      "exitCode": 72,
+      "afterCrash": {
+        "outboxState": "PENDING",
+        "leaseOwner": "9056bd8c-a31b-4202-9fd0-7017179a3c39"
+      },
+      "processedAt": "2026-10-27T04:49:23.513676+00:00",
+      "internalEffectCount": 1
+    },
+    {
+      "pid": 145785,
+      "eventId": "b0b6dca6-0873-40f8-b872-b0bd6638a641",
+      "phase": "before_processing",
+      "exitCode": 73,
+      "afterCrash": {
+        "outboxState": "PUBLISHED",
+        "leaseOwner": null
+      },
+      "processedAt": "2026-10-27T04:49:24.366939+00:00",
+      "internalEffectCount": 1
+    },
+    {
+      "pid": 145846,
+      "eventId": "fd8cbc4a-dbbe-40f2-9509-faa28cf658b5",
+      "phase": "during_processing",
+      "exitCode": 74,
+      "afterCrash": {
+        "outboxState": "PUBLISHED",
+        "leaseOwner": null
+      },
+      "processedAt": "2026-10-27T04:49:25.091795+00:00",
+      "internalEffectCount": 1
+    },
+    {
+      "pid": 145854,
+      "eventId": "b3f411ec-5207-441b-ad64-141da2bf9378",
+      "phase": "before_ack",
+      "exitCode": 75,
+      "afterCrash": {
+        "outboxState": "PUBLISHED",
+        "leaseOwner": null
+      },
+      "processedAt": "2026-10-27T04:49:25.841993+00:00",
+      "internalEffectCount": 1
+    },
+    {
+      "pid": 145860,
+      "eventId": "ac342558-ab21-4e00-84c7-9b475579533d",
+      "phase": "after_ack",
+      "exitCode": 76,
+      "afterCrash": {
+        "outboxState": "PUBLISHED",
+        "leaseOwner": null
+      },
+      "processedAt": "2026-10-27T04:49:26.462118+00:00",
+      "internalEffectCount": 1
+    }
+  ],
+  "additionalProof": [
+    "真实MQ断连与mandatory不可路由保留PENDING后恢复",
+    "双消费者行锁只执行一次内部DB更新",
+    "真实Celery恢复任务持久写入唯一DUE记录",
+    "消息已丢弃但RECEIVED未完成时扫描重新派发",
+    "历史PROCESSED事件不占满扫描批次",
+    "业务回滚和Outbox回滚一致"
+  ],
+  "limits": [
+    "内部数据库副作用验证，不代表平台或资金外部动作已验收",
+    "dispatch_pending按可信租户调用，周期调度与部署分片尚未启用",
+    "BE人工复核PENDING"
+  ],
+  "sourceSha256Utf8Lf": {
+    "backend/README.md": "0b76919ae4963816db6d84d00da83a61d027fccab03fb3fb786b4222f81e09e6",
+    "backend/alembic/README.md": "d778a93898b8f98fda6656541e928d50b96f7e5a15a83f58342a6ed51be2de6c",
+    "backend/alembic/versions/0007_reliable_messages.py": "9625c44b48082cf8577a0ec8ec57aeaed7dd2868337fff9e742c2de8cf7ede9b",
+    "backend/alembic/versions/0007_reliable_messages.sql": "c98326b53d2a6fd830f070a104f67b9e9003271560967dd048f8cee4458612a7",
+    "backend/scripts/test_infrastructure.py": "2a7cdceff4cc7884a174932d05aebc056a2eff928b7f6961bf564b4123511927",
+    "backend/src/yuliang/infrastructure/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend/src/yuliang/infrastructure/outbox.py": "1340231c1e928f33595286a1d43e4fbaf7990533fc5cbbf624ea223c0a7e0737",
+    "backend/src/yuliang/platform/messages.py": "1e03012487e96b8e5b8fbfaebcaf2088850a577a6ee6660a656cf826dacfec8b",
+    "backend/src/yuliang/worker/tasks.py": "ed20d08862eb6968e392475ce948599ae1bc919177d107dac58ec14e7d6f5acb",
+    "backend/tests/integration/messaging_fault_process.py": "4fb94e4f1995ca4abad035bd9691a9cfd06b03d8e4e44467ec999099b9a1bb53",
+    "backend/tests/integration/test_durable_messaging.py": "ce56b307dcf644724d9bce6f4050146d682dc4dcf7bf4c2d3e14048e904cc269",
+    "backend/tests/unit/test_messages.py": "03ec626977c629ff00704e8015269437fa0235724b18e2c04c477de07152213f"
+  }
+}

@@ -15,7 +15,7 @@ import httpx
 from pydantic import BaseModel, SecretStr, ValidationError
 
 from yuliang.modules.capability.models import CONNECTOR_CONTEXTS
-from yuliang.modules.connectors.base import GatewayContext, ObjectRef
+from yuliang.modules.connectors.base import AuthorizationGatewayContext, GatewayContext, ObjectRef
 from yuliang.platform.security.egress import private_http_logs, validate_destination
 
 _FORBIDDEN_FIELDS = frozenset(
@@ -237,7 +237,7 @@ class PlatformHttpClient:
 
     async def send(
         self,
-        ctx: GatewayContext,
+        ctx: GatewayContext | AuthorizationGatewayContext,
         spec: OperationSpec,
         parameters: dict[str, Any],
         credential: SecretStr,
@@ -245,6 +245,13 @@ class PlatformHttpClient:
         target: ObjectRef | None = None,
         observer: ExchangeObserver | None = None,
     ) -> HttpExchange:
+        if isinstance(ctx, AuthorizationGatewayContext) and (
+            spec.effect != "TOKEN_REFRESH"
+            or spec.account_parameter is not None
+            or spec.target_parameter is not None
+            or target is not None
+        ):
+            raise ValueError("账户发现前的授权上下文只允许无账户令牌操作")
         if (
             spec.connector_id,
             spec.provider,
@@ -270,6 +277,7 @@ class PlatformHttpClient:
             raise ValueError("平台请求超出大小界限")
         if (
             spec.account_parameter is not None
+            and isinstance(ctx, GatewayContext)
             and str(payload.get(spec.account_parameter)) != ctx.native_account_id
         ):
             raise ValueError("参数账户与服务端账户不一致")

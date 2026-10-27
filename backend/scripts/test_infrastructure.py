@@ -61,6 +61,7 @@ def main() -> int:
             "capability",
             "payload",
             "governance",
+            "oauth",
         ),
         default="all",
     )
@@ -84,6 +85,7 @@ def main() -> int:
         "capability": ["tests/integration/test_capability_evidence.py"],
         "payload": ["tests/integration/test_platform_payloads.py"],
         "governance": ["tests/integration/test_platform_governance.py"],
+        "oauth": ["tests/integration/test_oauth_vault.py"],
         "parser": [
             "tests/integration/test_command_parse.py",
             "tests/integration/test_workspace.py",

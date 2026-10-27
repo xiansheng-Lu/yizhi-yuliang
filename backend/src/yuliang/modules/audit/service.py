@@ -24,6 +24,9 @@ Action = Literal[
     "conversation.attach",
     "task.project",
     "platform.request",
+    "connection.oauth.start",
+    "connection.oauth.exchange",
+    "connection.token.rotate",
 ]
 ObjectType = Literal[
     "user",
@@ -35,6 +38,8 @@ ObjectType = Literal[
     "message",
     "job",
     "platform_request",
+    "oauth_state",
+    "authorization",
 ]
 ChangedField = Literal["displayName", "name", "status", "permissions", "scope"]
 

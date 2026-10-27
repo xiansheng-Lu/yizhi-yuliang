@@ -1,0 +1,77 @@
+{
+  "checkedAt": "2026-10-27T15:13:43.314Z",
+  "baseline": "42884315da504335646a15ca3c43f406a2e4bfc0",
+  "implementationCommit": "0674bec19d850afd5c8fc40eedcff9d995995316",
+  "result": "PASS_TECHNICAL_REAL_PG_SYNTHETIC_EXCHANGE",
+  "checks": [
+    {
+      "command": "uv run --frozen ruff check .",
+      "result": "PASS"
+    },
+    {
+      "command": "uv run --frozen ruff format --check .",
+      "result": "PASS",
+      "files": 138
+    },
+    {
+      "command": "uv run --frozen mypy",
+      "result": "PASS",
+      "files": 111
+    },
+    {
+      "command": "uv run --frozen pytest tests/unit tests/contract -q",
+      "result": "PASS",
+      "passed": 237
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --group oauth --details",
+      "result": "PASS",
+      "passed": 15
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --details",
+      "result": "PASS_WITH_EXPLICIT_NOT_RUN_LIFECYCLE",
+      "passed": 275,
+      "skipped": 1
+    },
+    {
+      "command": "uv run --frozen python scripts/migrate_local.py upgrade",
+      "result": "PASS",
+      "head": "0018_oauth_vault"
+    }
+  ],
+  "database": {
+    "head": "0018_oauth_vault",
+    "migrationRoleCanLogin": false,
+    "developmentRows": {
+      "oauth_states": 0,
+      "provider_authorizations": 0,
+      "authorization_exchange_events": 0
+    }
+  },
+  "verified": [
+    "one-time HMAC state and concurrent replay prevention",
+    "original actor/session and fixed application/redirect binding",
+    "cookie-free completion; six revocation classes refused",
+    "exchange outside DB transaction with persisted start record",
+    "failure/cancellation/token insert fault leave no active partial grant",
+    "AEAD nonce/tamper/tenant/app/product/kind/version binding",
+    "old-key retention, rotation and audit rollback atomicity",
+    "tenant RLS, immutable authorization context, restricted definer execution",
+    "accountless token HTTP boundary with no business object access"
+  ],
+  "scope": "real PG transactions and cryptography; synthetic exchange port and HTTP MockTransport; no live provider scene replacement",
+  "notCovered": [
+    "actual OAuth browser redirect/provider code exchange",
+    "real scope/account discovery and refresh concurrency",
+    "real platform writes/paid calls",
+    "Worker kill-process or lifecycle rehearsal",
+    "final BE/FE review"
+  ],
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "review": {
+    "backend": "PENDING",
+    "frontend": "PENDING_F03"
+  }
+}

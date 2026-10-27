@@ -1,0 +1,80 @@
+{
+  "checkedAt": "2026-10-27T15:41:23.440Z",
+  "baseline": "4133637b6e248bdddde2049d07d8a02f93825736",
+  "implementationCommit": "651a6e1c09abdbe003aa28a678e58e94df4ecfaf",
+  "result": "PASS_TECHNICAL_REAL_PG_SYNTHETIC_PLATFORM",
+  "checks": [
+    {
+      "command": "uv run --frozen ruff check .",
+      "result": "PASS"
+    },
+    {
+      "command": "uv run --frozen ruff format --check .",
+      "result": "PASS",
+      "files": 143
+    },
+    {
+      "command": "uv run --frozen mypy",
+      "result": "PASS",
+      "files": 115
+    },
+    {
+      "command": "uv run --frozen pytest tests/unit tests/contract -q",
+      "result": "PASS",
+      "passed": 238
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --group sync --details",
+      "result": "PASS",
+      "lastStandalonePassed": 11,
+      "note": "one additional binding-account FK case included in final full run"
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --details",
+      "result": "PASS_WITH_EXPLICIT_NOT_RUN_LIFECYCLE",
+      "passed": 287,
+      "skipped": 1,
+      "syncCases": 12
+    },
+    {
+      "command": "uv run --frozen python scripts/migrate_local.py upgrade",
+      "result": "PASS",
+      "head": "0019_sync_checkpoints"
+    }
+  ],
+  "database": {
+    "head": "0019_sync_checkpoints",
+    "migrationRoleCanLogin": false,
+    "developmentRows": {
+      "sync_sources": 0,
+      "sync_runs": 0,
+      "sync_pages": 0,
+      "sync_resource_mirrors": 0
+    }
+  },
+  "verified": [
+    "page/mirror/cursor/count atomic commit and three real PG privilege faults",
+    "request parameters and opaque cursor bound at dispatch transaction",
+    "idempotent batch/page and concurrent batch claims",
+    "confirmed cursor restart checkpoint; stale lease rejected",
+    "pause before dispatch creates no platform request or wire call",
+    "accepted in-flight page may finish; paused batch cannot create next call",
+    "HTTP200 without business proof and 429/500 cannot confirm page",
+    "tenant/query/filter isolation and account-binding composite FK",
+    "encrypted cursors with source-bound AEAD and versioned keys"
+  ],
+  "notCovered": [
+    "real platform sync/credentials",
+    "production Beat/Worker activation",
+    "actual Worker kill-process rehearsal",
+    "platform-specific asset schemas/deletion and plan history",
+    "complete metric facts/history; next M1-15b",
+    "final BE review"
+  ],
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "review": {
+    "backend": "PENDING",
+    "frontend": "NOT_APPLICABLE"
+  }
+}

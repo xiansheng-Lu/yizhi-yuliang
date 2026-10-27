@@ -89,6 +89,7 @@ class OperationSpec:
     idempotent_read: bool = False
     max_read_attempts: int = 1
     max_response_bytes: int = 1024 * 1024
+    cursor_parameter: str | None = None
 
     def __post_init__(self) -> None:
         if (
@@ -133,7 +134,7 @@ class OperationSpec:
         if self.parameters_model.model_config.get("extra") != "forbid":
             raise ValueError("操作参数必须使用拒绝额外字段的Schema")
         properties = self.parameters_model.model_json_schema().get("properties", {})
-        for field_name in (self.account_parameter, self.target_parameter):
+        for field_name in (self.account_parameter, self.target_parameter, self.cursor_parameter):
             if field_name is not None and field_name not in properties:
                 raise ValueError("上下文字段必须由操作Schema明确声明")
         if self.effect == "WRITE" and (

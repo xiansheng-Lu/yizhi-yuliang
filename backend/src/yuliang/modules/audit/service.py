@@ -27,6 +27,7 @@ Action = Literal[
     "connection.oauth.start",
     "connection.oauth.exchange",
     "connection.token.rotate",
+    "connection.sync.toggle",
 ]
 ObjectType = Literal[
     "user",
@@ -40,6 +41,7 @@ ObjectType = Literal[
     "platform_request",
     "oauth_state",
     "authorization",
+    "sync_source",
 ]
 ChangedField = Literal["displayName", "name", "status", "permissions", "scope"]
 

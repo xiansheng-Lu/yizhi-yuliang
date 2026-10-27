@@ -1,9 +1,11 @@
 """原出站键只查档；新请求先准入，调度层接管退避，不在HTTP层重试。"""
 
+from collections.abc import Callable
 from typing import Any, Literal, cast
 from uuid import UUID
 
 from pydantic import SecretStr
+from sqlalchemy.orm import Session
 
 from yuliang.modules.connectors.archive import RecordedPlatformClient, RecordedResult
 from yuliang.modules.connectors.base import GatewayContext, ObjectRef
@@ -37,6 +39,7 @@ class GovernedPlatformClient:
         target: ObjectRef | None = None,
         execution_id: UUID | None = None,
         attempt_id: UUID | None = None,
+        before_persist: Callable[[Session], None] | None = None,
     ) -> RecordedResult:
         if spec.max_read_attempts != 1:
             raise ValueError("受控调用每次只能有一个网络尝试，退避交给持久调度")
@@ -60,6 +63,7 @@ class GovernedPlatformClient:
             execution_id=execution_id,
             attempt_id=attempt_id,
             before_create=acquire,
+            before_persist=before_persist,
         )
         if ticket is None:
             return result  # 原档案不再消耗配额，也不重复报告旧结果。

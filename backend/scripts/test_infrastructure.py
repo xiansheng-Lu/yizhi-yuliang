@@ -62,6 +62,7 @@ def main() -> int:
             "payload",
             "governance",
             "oauth",
+            "sync",
         ),
         default="all",
     )
@@ -86,6 +87,7 @@ def main() -> int:
         "payload": ["tests/integration/test_platform_payloads.py"],
         "governance": ["tests/integration/test_platform_governance.py"],
         "oauth": ["tests/integration/test_oauth_vault.py"],
+        "sync": ["tests/integration/test_sync_checkpoints.py"],
         "parser": [
             "tests/integration/test_command_parse.py",
             "tests/integration/test_workspace.py",

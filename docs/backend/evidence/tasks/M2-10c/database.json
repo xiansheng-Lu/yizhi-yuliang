@@ -1,0 +1,10 @@
+{
+  "head": "0034_budget_settlement",
+  "migrationRoleCanLogin": false,
+  "developmentRows": {
+    "budget_job_finalizations": 0,
+    "budget_adjustments": 0,
+    "execution_orders": 0,
+    "command_jobs": 0
+  }
+}

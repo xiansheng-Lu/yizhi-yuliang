@@ -4,7 +4,7 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "currentFocus": "M2-13b",
+  "currentFocus": "M2-10c",
   "tasks": {
     "R00-01": {
       "owner": "BE",
@@ -2064,6 +2064,48 @@
       "implementationCommit": "f017445d5939bdeaa7621e263e957d06df39fec9",
       "git": "COMMITTED",
       "syncVerification": "git merge-base --is-ancestor f017445d5939bdeaa7621e263e957d06df39fec9 origin/main"
+    },
+    "M2-10c": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "scope": "有原执行/尝试/E1/E2证据的结算、释放与减额；完整快照已计入新值时避免B重复增加",
+      "dependencyInput": "M2-10a/b实际预算与HELD，M2-13a/b原执行尝试及回执，M2-09a维护核验E2导入合同；M2-17运行核验生产者尚未完成",
+      "delivery": "实际E2关联MATCHED/B/R/守卫原子结算、完整同步已含新值去重、E1/未领取终态释放与减额无负预占技术验证",
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS",
+          "review": "PENDING_BE_F07"
+        },
+        {
+          "item": 2,
+          "technical": "PASS",
+          "review": "PENDING_BE_F07"
+        },
+        {
+          "item": 3,
+          "technical": "PASS",
+          "review": "PENDING_BE_F07"
+        }
+      ],
+      "evidence": "tasks/M2-10c/README.md",
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F07"
+      },
+      "technicalVerification": {
+        "result": "PASS",
+        "dedicatedTests": 22,
+        "unitContractTests": 503,
+        "integrationTests": 534,
+        "skipped": 1,
+        "head": "0034_budget_settlement",
+        "platformCalls": 0,
+        "paidCalls": 0
+      },
+      "implementationCommit": "7f7f1ce6d941b719a20b9db7661724137521bd3e",
+      "git": "COMMITTED",
+      "syncVerification": "git merge-base --is-ancestor 7f7f1ce6d941b719a20b9db7661724137521bd3e origin/main"
     }
   },
   "gates": {
@@ -2169,7 +2211,7 @@
     "offline": "离线通过不等于真实依赖、前端联调或平台验收通过"
   },
   "nextTask": {
-    "id": "M2-10c",
+    "id": "M2-10d",
     "status": "NOT_STARTED"
   },
   "continuation": {
@@ -2179,12 +2221,11 @@
     "environment": "WSL2 Ubuntu Docker; UV_PROJECT_ENVIRONMENT=/home/lenovo/.cache/yuliang-venv",
     "latestUserRequest": "补齐浏览器验收，然后按照后端任务卡继续后续的所有开发，需要资源再找我对接，不阻塞持续开发到完毕",
     "developmentPolicy": "缺人工/外部验收时记录并继续可独立技术准备；正式门禁、平台调用和付费仍按各自证据许可",
-    "lastCompletedTechnicalTask": "M2-13b",
-    "nextTechnicalTask": "M2-10c",
+    "lastCompletedTechnicalTask": "M2-10c",
+    "nextTechnicalTask": "M2-10d",
     "executionRules": "docs/backend/evidence/execution-rules.md",
-    "checkpoint": "原请求-尝试-回执证据关联已验证；回到MATCHED结算、未发送/E1释放与减额路径",
+    "checkpoint": "原尝试关联的MATCHED结算/E1释放/减额技术通过；继续外部漂移与超限治理",
     "technicalPreparationQueue": [
-      "M2-10c",
       "M2-10d",
       "M2-11b",
       "M2-06b",

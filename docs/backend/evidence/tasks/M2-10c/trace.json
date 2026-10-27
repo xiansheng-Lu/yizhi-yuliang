@@ -1,0 +1,14 @@
+{
+  "finalization_id": "dade6ecf-e19d-5228-b542-91e23f3852d9",
+  "job_id": "8d5d48c8-b5a9-49ad-9d7e-1ec2f963c0bf",
+  "kind": "MATCH",
+  "proof_kind": "VERIFIED_MATCH",
+  "job_version": 6,
+  "buckets": 1,
+  "verified_fact_id": "7dbbbe16-82cd-477b-a3b5-b5922e897066",
+  "B": 10000,
+  "R": 0,
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "proof": "MAINTENANCE_VALIDATED_MOCK_ARCHIVE_E2_REAL_PG_KERNEL"
+}

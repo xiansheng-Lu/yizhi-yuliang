@@ -4,7 +4,7 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "currentFocus": "M2-01b",
+  "currentFocus": "M2-03",
   "tasks": {
     "R00-01": {
       "owner": "BE",
@@ -1097,6 +1097,54 @@
         "frontend": "PENDING_F06"
       },
       "evidence": "tasks/M5-03a/README.md"
+    },
+    "M2-01b": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "delivery": "DeepSeek受控结构通道、降级与请求溯源通过；本次6次真实验证已使用，费用未知待账单核对",
+      "implementationCommit": "1c07a2082eb310ed5fc32aad4ccb19c88f7990c6",
+      "git": "COMMITTED",
+      "technicalVerification": {
+        "result": "PASS",
+        "unitContractPassed": 80,
+        "integrationPassed": 150,
+        "gatewayCases": 15,
+        "mutationsRejected": 3,
+        "liveTestsPassed": 1,
+        "actualModelCalls": 6,
+        "estimatedCostCnyAtVerifiedPeak": "0.011394",
+        "actualBillReconciled": false
+      },
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS"
+        },
+        {
+          "item": 2,
+          "technical": "PASS"
+        },
+        {
+          "item": 3,
+          "technical": "PASS"
+        }
+      ],
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F06"
+      },
+      "evidence": "tasks/M2-01b/README.md"
+    },
+    "M2-03": {
+      "owner": "BE",
+      "status": "BLOCKED",
+      "delivery": "未开始在线解析接线；前置候选集缺BE/FE人工预期，未把Agent自比或6次结构验证当作签字",
+      "blockedBy": [
+        "M5-03a_LABELS"
+      ],
+      "technicalVerification": {
+        "result": "NOT_RUN"
+      }
     }
   },
   "gates": {
@@ -1160,6 +1208,26 @@
       "status": "RESOLVED",
       "reason": "本机代理实际监听7897，按命令覆盖旧7890配置后fetch/push成功，M0-16远端main已核对708b507",
       "affects": []
+    },
+    {
+      "id": "M5-03a_LABELS",
+      "status": "OPEN",
+      "reason": "28条候选预期已具象归档，但DoD1要求的BE/FE人工确认尚缺；样例守卫实际拒绝发布",
+      "affects": [
+        "M5-03a DoD1",
+        "M2-03",
+        "M2-04"
+      ],
+      "unblock": "具名复核review-cases.md，注明通过/修改ID及代码基线；有变更升版本并重新校验"
+    },
+    {
+      "id": "E04",
+      "status": "LIMITED_VERIFICATION_COMPLETE",
+      "reason": "DeepSeek通道已实际验证，用户授权人民币0.20元/6次，6次全部使用；后续真实回归预算需另行核对",
+      "affects": [
+        "M2-04真实回归预算"
+      ],
+      "unblock": "人工样例确认后根据固定回归集另做报价，不自动重复调用"
     }
   ],
   "rules": {
@@ -1168,9 +1236,12 @@
     "offline": "离线通过不等于真实依赖、前端联调或平台验收通过"
   },
   "nextTask": {
-    "id": "M2-01b",
-    "status": "TECHNICAL_INPUTS_READY_WAITING_REVIEW",
-    "note": "DeepSeek通道已提供；用户授权本次人民币0.20元/最多6次，先适配自测后真实验证，不扩为长期许可"
+    "id": "M2-03",
+    "status": "BLOCKED",
+    "blockedBy": [
+      "M5-03a_LABELS"
+    ],
+    "note": "当前其余未启动任务没有全部技术前置就绪者；等待可核对人工预期，不按固定间隔空跑或跳G0"
   },
   "continuation": {
     "requestedOn": "2026-10-27",

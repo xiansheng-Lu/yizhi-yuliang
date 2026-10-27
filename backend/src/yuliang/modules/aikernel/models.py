@@ -49,9 +49,15 @@ class Completion(BaseModel):
     usage: Usage = Field(default_factory=Usage)
     latency_ms: int = Field(strict=True, ge=0, le=2147483647)
     external_request_id: str | None = Field(default=None, pattern=r"^[a-zA-Z0-9._:/-]{1,128}$")
+    provider_model: str | None = Field(
+        default=None, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,119}$"
+    )
+    response_hash: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
 
     @model_validator(mode="after")
     def success_has_response(self) -> "Completion":
+        if (self.provider_model is None) != (self.response_hash is None):
+            raise ValueError("响应模型标识和摘要需同时存在")
         if self.status == "OK" and self.dispatch_state != "RESPONDED":
             raise ValueError("成功状态需要已收到供应商响应的事实")
         return self

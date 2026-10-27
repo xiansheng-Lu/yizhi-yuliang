@@ -35,6 +35,7 @@ from yuliang.platform.errors import ApiError, ErrorCode
 
 if TYPE_CHECKING:
     from yuliang.modules.command.applications import JobApplications
+    from yuliang.modules.execution.guards import GuardLease
 
 REQUIRED_RULES = frozenset({"AMOUNT_LIMIT", "CHANGE_BOUND", "FREQUENCY", "INTENT_BINDING"})
 
@@ -102,6 +103,26 @@ class RiskFramework:
         *,
         at: datetime | None = None,
         expected_version: int | None = None,
+    ) -> RiskDecision:
+        return self._assess_job(session, job_id, stage, at=at, expected_version=expected_version)
+
+    def assess_dispatch(self, session: Session, lease: "GuardLease") -> RiskDecision:
+        from yuliang.modules.execution.guards import TargetGuards
+
+        TargetGuards(self.applications).assert_current(session, lease)
+        return self._assess_job(
+            session, lease.jobId, RiskStage.EXECUTE, expected_version=lease.jobVersion, claimed=True
+        )
+
+    def _assess_job(
+        self,
+        session: Session,
+        job_id: UUID,
+        stage: RiskStage,
+        *,
+        at: datetime | None = None,
+        expected_version: int | None = None,
+        claimed: bool = False,
     ) -> RiskDecision:
         if stage not in {RiskStage.CONFIRM, RiskStage.APPROVE, RiskStage.EXECUTE}:
             raise ValueError("既有申请需要明确的生命周期检查时点")
@@ -180,6 +201,7 @@ class RiskFramework:
             stamp,
             current_error=error_code,
             stored=row,
+            claimed=claimed,
         )
 
     def require_job(
@@ -210,6 +232,7 @@ class RiskFramework:
         *,
         current_error: str | None = None,
         stored: dict[str, Any] | None = None,
+        claimed: bool = False,
     ) -> RiskDecision:
         from yuliang.modules.command.applications import ACTION_CAPABILITIES
 
@@ -236,7 +259,7 @@ class RiskFramework:
         expected = {
             RiskStage.CONFIRM: "DRAFT",
             RiskStage.APPROVE: "PENDING_APPROVAL",
-            RiskStage.EXECUTE: "APPROVED",
+            RiskStage.EXECUTE: "EXECUTING" if claimed else "APPROVED",
         }
         checks = [
             check("TARGET_SCOPE", True, "已重新核对当前动作与目标范围", {"stage": stage.value}),
@@ -328,6 +351,28 @@ class RiskFramework:
                         job is None or current == job.old_value,
                         "核对平台现值与原申请是否一致",
                         {"unchanged": job is None or current == job.old_value},
+                    ),
+                    check(
+                        "CURRENT_VALUE_CONTRACT",
+                        job is None
+                        or (
+                            stored is not None
+                            and all(
+                                proof.get(key) == stored["target_proof"].get(key)
+                                for key in ("sourceId", "field", "policyRevision")
+                            )
+                        ),
+                        "核对批准前后稳定的数据来源合同",
+                        {
+                            "contractMatched": job is None
+                            or (
+                                stored is not None
+                                and all(
+                                    proof.get(key) == stored["target_proof"].get(key)
+                                    for key in ("sourceId", "field", "policyRevision")
+                                )
+                            )
+                        },
                     ),
                 ]
             )

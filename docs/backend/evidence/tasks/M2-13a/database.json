@@ -1,0 +1,9 @@
+{
+  "head": "0032_execution_attempts",
+  "migrationRoleCanLogin": false,
+  "developmentRows": {
+    "execution_orders": 0,
+    "execution_attempts": 0,
+    "command_jobs": 0
+  }
+}

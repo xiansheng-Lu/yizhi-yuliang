@@ -56,6 +56,8 @@ class GovernedPlatformClient:
         execution_id: UUID | None = None,
         attempt_id: UUID | None = None,
         before_persist: Callable[[Session], None] | None = None,
+        before_verify: Callable[[Session], None] | None = None,
+        after_admission: Callable[[Session], None] | None = None,
     ) -> RecordedResult:
         if spec.max_read_attempts != 1:
             raise ValueError("受控调用每次只能有一个网络尝试，退避交给持久调度")
@@ -94,6 +96,8 @@ class GovernedPlatformClient:
             attempt_id=attempt_id,
             before_create=acquire,
             before_persist=preflight,
+            before_verify=before_verify,
+            after_admission=after_admission,
         )
         if ticket is None:
             return result  # 原档案不再消耗配额，也不重复报告旧结果。

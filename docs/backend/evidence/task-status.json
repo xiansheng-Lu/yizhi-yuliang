@@ -4,7 +4,7 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "currentFocus": "M2-12",
+  "currentFocus": "M2-13a",
   "tasks": {
     "R00-01": {
       "owner": "BE",
@@ -1980,6 +1980,48 @@
         "platformCalls": 0,
         "paidCalls": 0
       }
+    },
+    "M2-13a": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "scope": "通用执行载体、发送前SENT/attempt/稳定平台键、原请求关联与重复投递只查；当前COMMAND源实际接入",
+      "dependencyInput": "M2-11a守卫与M2-12持久幂等实际技术证据；持续研发授权G0/E08保留",
+      "delivery": "实际发送前SENT/稳定键/一次性准入、四并发重投与根提交后fence拦截技术验证；当前仅COMMAND生产者",
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS",
+          "review": "PENDING_BE"
+        },
+        {
+          "item": 2,
+          "technical": "PASS",
+          "review": "PENDING_BE"
+        },
+        {
+          "item": 3,
+          "technical": "PASS",
+          "review": "PENDING_BE"
+        }
+      ],
+      "evidence": "tasks/M2-13a/README.md",
+      "review": {
+        "backend": "PENDING",
+        "frontend": "NOT_APPLICABLE"
+      },
+      "technicalVerification": {
+        "result": "PASS",
+        "dedicatedTests": 20,
+        "unitContractTests": 502,
+        "integrationTests": 495,
+        "skipped": 1,
+        "head": "0032_execution_attempts",
+        "platformCalls": 0,
+        "paidCalls": 0
+      },
+      "implementationCommit": "35c20d1fb64a0614317805f1ebc5c59c76424d28",
+      "git": "COMMITTED",
+      "syncVerification": "git merge-base --is-ancestor 35c20d1fb64a0614317805f1ebc5c59c76424d28 origin/main"
     }
   },
   "gates": {
@@ -2085,9 +2127,9 @@
     "offline": "离线通过不等于真实依赖、前端联调或平台验收通过"
   },
   "nextTask": {
-    "id": "M2-09a",
-    "status": "IN_PROGRESS",
-    "note": "先补必需预算/成功事实读模型和来源约束，再验证阈值/冷却/日次数；M210初始化与M217真实核验未完成不假称已验"
+    "id": "M2-13b",
+    "status": "NOT_STARTED",
+    "note": "先接持久响应回执与顺序/fence隔离，再回到M2-10c/d"
   },
   "continuation": {
     "requestedOn": "2026-10-27",
@@ -2096,10 +2138,10 @@
     "environment": "WSL2 Ubuntu Docker; UV_PROJECT_ENVIRONMENT=/home/lenovo/.cache/yuliang-venv",
     "latestUserRequest": "补齐浏览器验收，然后按照后端任务卡继续后续的所有开发，需要资源再找我对接，不阻塞持续开发到完毕",
     "developmentPolicy": "缺人工/外部验收时记录并继续可独立技术准备；正式门禁、平台调用和付费仍按各自证据许可",
-    "lastCompletedTechnicalTask": "M2-12",
-    "nextTechnicalTask": "M2-13a",
+    "lastCompletedTechnicalTask": "M2-13a",
+    "nextTechnicalTask": "M2-13b",
     "executionRules": "docs/backend/evidence/execution-rules.md",
-    "checkpoint": "接口幂等与真实进程中断恢复技术验证通过；继续发送前执行单/attempt/平台键持久化，之后回执映射并回到资金结算",
+    "checkpoint": "发送前SENT与两道fence/参数门禁验证；继续原始响应到受理/拒绝/未知回执的持久映射",
     "technicalPreparationQueue": [
       "M2-13a",
       "M2-13b",

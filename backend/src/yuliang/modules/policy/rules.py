@@ -1,8 +1,10 @@
 """确定性规则消费PG真值；初始化或核验依据缺失时拒绝，不临时补0。"""
 
 from datetime import datetime
+from typing import TYPE_CHECKING
 from zoneinfo import ZoneInfo
 
+from pydantic import SecretStr
 from sqlalchemy import text
 from sqlalchemy.exc import DBAPIError
 from sqlalchemy.orm import Session
@@ -11,6 +13,9 @@ from yuliang.modules.policy.models import CheckEvidence, RiskContext, RiskStage
 from yuliang.modules.policy.service import check
 from yuliang.modules.policy.thresholds import amount_limit, change_bound, frequency_bound
 from yuliang.platform.errors import ApiError, ErrorCode
+
+if TYPE_CHECKING:
+    from yuliang.modules.policy.intent import IntentBindingRule
 
 STAGES = frozenset(RiskStage)
 
@@ -174,5 +179,9 @@ class FrequencyRule:
         )
 
 
-def deterministic_rules() -> tuple[AmountLimitRule, ChangeBoundRule, FrequencyRule]:
-    return AmountLimitRule(), ChangeBoundRule(), FrequencyRule()
+def deterministic_rules(
+    key: SecretStr,
+) -> tuple[AmountLimitRule, ChangeBoundRule, FrequencyRule, "IntentBindingRule"]:
+    from yuliang.modules.policy.intent import IntentBindingRule
+
+    return AmountLimitRule(), ChangeBoundRule(), FrequencyRule(), IntentBindingRule(key)

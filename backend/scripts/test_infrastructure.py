@@ -70,6 +70,7 @@ def main() -> int:
             "transitions",
             "risk",
             "rules",
+            "intent",
         ),
         default="all",
     )
@@ -102,6 +103,7 @@ def main() -> int:
         "transitions": ["tests/integration/test_job_transitions.py"],
         "risk": ["tests/integration/test_risk_framework.py"],
         "rules": ["tests/integration/test_risk_rules.py"],
+        "intent": ["tests/integration/test_intent_binding.py"],
         "parser": [
             "tests/integration/test_command_parse.py",
             "tests/integration/test_workspace.py",

@@ -29,6 +29,8 @@ WorkspaceProvider在owner变化、空身份、401与退出边界使共享snapsho
 
 用户已授权两个本地地址并多次报告调整站点设置。实际工具先拒绝两个地址；3000随后可访问，但对18000的独立导航仍返回“saved user permission setting / managed policy denies access”。没有使用换端口、代理、其他浏览器或CDP绕过限制。参见[策略记录](evidence/f01-csrf/browser-policy.json)和[实际页面](evidence/f01-csrf/browser-blocked.png)。浏览器认证闭环没有执行，不能由Node fetch桩、页面200或后端既有测试替代。
 
+2026-10-27 17:38（Asia/Shanghai）按用户“继续验证”恢复请求重启临时服务复测：前端/login与后端/healthz本机HTTP均200；同一内置浏览器直接访问18000/healthz仍被origin approval gate以保存权限或受管策略拒绝。此前用户截图中两条浏览权限均为“始终允许”，本次无法确定拒绝来自哪条规则，也未独立确认应用进程是否完整重启。没有浏览器登录提交或业务写入，未生成新的页面截图；原截图仅代表此前页面。临时服务与数据库再次清理，app_migrate为NOLOGIN。该复测不解除F01_BROWSER/G0阻塞，不要求用户重复已经给出的聊天授权或相同设置操作。
+
 测试后端为本轮独立UUID数据库，使用临时OPERATOR/OWNER/AGENCY_OPERATOR/AUDITOR身份，邮件仅CaptureMail端口、无外发、无平台写。未在浏览器提交任何登录凭据；测试库及本轮服务已清理，app_migrate恢复NOLOGIN，见[cleanup.json](evidence/f01-csrf/cleanup.json)。实际配置、测试口令、Cookie和令牌不入Git。
 
 解除条件：应用/受管环境真正允许浏览器访问127.0.0.1:18000后，在同样临时真实PG环境执行密码/邮箱码登录、会话CSRF轮换、昵称/项目写入、刷新与第二身份、缺失/伪造CSRF、权限拒绝和退出失效；PC1440及移动390留证。生产TLS/Cookie、真实邮件收件与平台授权分别引用适用证据，不用本地HTTP冒充正式环境。

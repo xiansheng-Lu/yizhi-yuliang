@@ -1,0 +1,74 @@
+{
+  "checkedAt": "2026-10-27T20:41:33.420Z",
+  "baseline": "7046673",
+  "implementationCommit": "18848e64e6a7a68ea1b7cb3337a4cb4b85adee00",
+  "result": "PASS_REAL_PG_TARGET_GUARD_COMPONENT",
+  "checks": [
+    {
+      "command": "uv run --frozen ruff check .",
+      "result": "PASS"
+    },
+    {
+      "command": "uv run --frozen ruff format --check .",
+      "result": "PASS",
+      "files": 196
+    },
+    {
+      "command": "uv run --frozen mypy",
+      "result": "PASS",
+      "files": 157
+    },
+    {
+      "command": "uv run --frozen pytest tests/unit tests/contract -q",
+      "result": "PASS",
+      "passed": 502
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --group guards --details",
+      "result": "PASS",
+      "passed": 9
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --details",
+      "result": "PASS_WITH_EXPLICIT_LIFECYCLE_SKIP",
+      "passed": 464,
+      "skipped": 1
+    },
+    {
+      "command": "uv run --frozen python scripts/migrate_local.py upgrade",
+      "result": "PASS",
+      "head": "0030_target_guards"
+    }
+  ],
+  "database": {
+    "head": "0030_target_guards",
+    "migrationRoleCanLogin": false,
+    "developmentRows": {
+      "target_execution_guards": 0,
+      "target_guard_claims": 0,
+      "command_jobs": 0
+    }
+  },
+  "trace": "trace.json",
+  "verified": [
+    "actual current risk, state/event and guard/claim/audit transaction",
+    "two workers one winner, two accounts same native isolated",
+    "old fence/owner denial under PG shared-lock lease assertion",
+    "quarantined refusal, expired lease remains blocked for recovery",
+    "Redis read failure does not change PG correctness",
+    "state/claim rollback on audit failure and runtime mutation denial",
+    "cancel and claim share state/version/unclaimed predicate"
+  ],
+  "notCovered": [
+    "actual immutable human approval records M2-14",
+    "execution/attempt and mandatory result-write integration M2-13a/b",
+    "lease recovery and quarantine classification M2-11b",
+    "public lifecycle/Worker, real platform and named BE review/G0/E08"
+  ],
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "review": {
+    "backend": "PENDING",
+    "frontend": "NOT_APPLICABLE"
+  }
+}

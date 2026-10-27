@@ -32,6 +32,7 @@ Action = Literal[
     "job.create",
     "job.transition",
     "risk.assess",
+    "budget.initialize",
 ]
 ObjectType = Literal[
     "user",
@@ -46,6 +47,7 @@ ObjectType = Literal[
     "oauth_state",
     "authorization",
     "sync_source",
+    "budget_ledger",
 ]
 ChangedField = Literal["displayName", "name", "status", "permissions", "scope"]
 

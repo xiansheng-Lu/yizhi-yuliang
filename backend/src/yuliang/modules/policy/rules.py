@@ -73,6 +73,18 @@ class AmountLimitRule:
                     "预算来源、周期或币种需要重新核验",
                     {"reason": "BUDGET_BASIS_NOT_CURRENT", "ledgerId": str(row["id"])},
                 )
+            if (
+                row["source_ref"].startswith("budget-observation/")
+                and not session.execute(
+                    text("SELECT access.budget_basis_current(:id)"), {"id": row["id"]}
+                ).scalar_one()
+            ):
+                return check(
+                    self.name,
+                    False,
+                    "完整预算来源已变化，需重新核验",
+                    {"reason": "BUDGET_COVERAGE_CHANGED", "ledgerId": str(row["id"])},
+                )
             result = amount_limit(
                 context.request.action_type,
                 context.current_value,

@@ -26,6 +26,16 @@ M1-03a提供read/preview/submit/readback/refresh_token/capability_probe六方法
 
 客户端trust_env=false、不跟随重定向、有总超时与响应大小上限；只允许显式幂等读取最多三次，写和令牌轮换不自动重试。发送后超时/丢响应保留UNKNOWN；较长Retry-After留给后续调度。平台调用上下文内抑制HTTP库原始请求细节，其他调用日志不改。`uv run pytest tests/unit/test_connector_boundaries.py -q`使用合成端口/MockTransport验证上述边界，只计U层，不计平台验收；M1-03b继续载荷留档与业务错误分类。
 
+## 平台载荷留档与错误分类
+
+M1-03b的0017迁移增加请求意图和逐次网络观察的追加档案。RecordedPlatformClient先以真实PG事务保存请求/审计，再在每次发送前核对当前成员、账户/目标、读写类型、方法、路径和版本，持久化ATTEMPT后才发送；响应或丢失错误逐次追加。同outbound_id只查询原记录，内容改变拒绝，已有NOT_SENT或UNKNOWN不自动重新发送。响应落档失败保留已开始事实，业务侧须核对原单；在途回复不因发起人随后撤权而丢失，但撤权后禁止新发送。
+
+档案保存代码白名单业务字段投影及带域隔离的HMAC，未知字段、凭据、订单PII和自由文本默认丢弃；投影条目/深度上限显式标记truncated，不用投影冒充完整事实来源。完整原文不在数据库重建，平台trace只存HMAC关联引用。对外摘要只有档案ID、requestId、分类和核对状态，不返回原始载荷；运行角色无UPDATE/DELETE，按租户及发起人隔离。
+
+HTTP200需适配器明确核对业务Schema后才算读取成功或写受理，ACCEPTED仍不等于MATCHED。参数明确拒绝、429、5xx、发送后丢响应独立分类；写5xx/丢响应保留UNKNOWN，未经确认不标失败或重发。Retry-After数值/日期可解析，无法确认的等待显式记录，不偷偷缩短。当前存档器用于已有账户能力绑定的业务操作；OAuth授权上下文由M1-05另行接入，不能借业务预算绑定取得令牌权限。
+
+`uv run python scripts/test_infrastructure.py --group payload --details`使用真实临时PG验证追加/隔离/事务故障；平台响应来自合成MockTransport，仍无真实平台验收。回退保留0017核对事实与审计，不删表或清空已发送记录。
+
 ## Python与离线验证
 
 基线Python 3.13.14、uv，Windows PowerShell。依赖由uv.lock锁定；当前网络无法连接pypi.org，项目使用清华PyPI镜像，未更改全局包源。Python安装行为见[uv官方说明](https://docs.astral.sh/uv/guides/install-python/)。在backend目录执行：

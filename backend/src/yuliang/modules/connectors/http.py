@@ -175,6 +175,12 @@ class RequestSigner(Protocol):
     def __call__(self, request: httpx.Request, credential: SecretStr) -> httpx.Request: ...
 
 
+class ExchangeObserver(Protocol):
+    def started(self, attempt: int) -> None: ...
+    def responded(self, response: HttpExchange) -> None: ...
+    def failed(self, error: ConnectorTransportError) -> None: ...
+
+
 def _check_fields(value: Any, depth: int = 0) -> None:
     if depth > 12:
         raise ValueError("平台参数嵌套过深")
@@ -237,6 +243,7 @@ class PlatformHttpClient:
         credential: SecretStr,
         *,
         target: ObjectRef | None = None,
+        observer: ExchangeObserver | None = None,
     ) -> HttpExchange:
         if (
             spec.connector_id,
@@ -306,6 +313,7 @@ class PlatformHttpClient:
         ):
             raise ValueError("签名器不能改写业务方法、载荷或出口Host")
         attempts = 0
+        active = False
         try:
             with private_http_logs():
                 async with asyncio.timeout(self.total_timeout):
@@ -316,6 +324,9 @@ class PlatformHttpClient:
                         timeout=httpx.Timeout(30, connect=5, read=30, write=30, pool=5),
                     ) as client:
                         for attempts in range(1, spec.max_read_attempts + 1):
+                            if observer is not None:
+                                observer.started(attempts)
+                            active = True
                             try:
                                 async with client.stream(
                                     request.method,
@@ -348,6 +359,9 @@ class PlatformHttpClient:
                                         headers,
                                         bytes(body),
                                     )
+                                if observer is not None:
+                                    observer.responded(exchange)
+                                active = False
                                 if (
                                     response.status_code not in {429, 500, 502, 503, 504}
                                     or attempts >= spec.max_read_attempts
@@ -358,16 +372,21 @@ class PlatformHttpClient:
                                     return exchange
                                 await self.sleep(delay)
                             except (httpx.TimeoutException, httpx.HTTPError) as error:
+                                code = (
+                                    "TIMEOUT"
+                                    if isinstance(error, httpx.TimeoutException)
+                                    else "UPSTREAM_ERROR"
+                                )
+                                failure = ConnectorTransportError(code, ctx.request_id, attempts)
+                                if observer is not None:
+                                    observer.failed(failure)
+                                active = False
                                 if attempts >= spec.max_read_attempts:
-                                    code = (
-                                        "TIMEOUT"
-                                        if isinstance(error, httpx.TimeoutException)
-                                        else "UPSTREAM_ERROR"
-                                    )
-                                    raise ConnectorTransportError(
-                                        code, ctx.request_id, attempts
-                                    ) from None
+                                    raise failure from None
                                 await self.sleep(_delay(None, attempts) or 0.25)
         except TimeoutError:
-            raise ConnectorTransportError("TIMEOUT", ctx.request_id, attempts) from None
+            failure = ConnectorTransportError("TIMEOUT", ctx.request_id, attempts)
+            if active and observer is not None:
+                observer.failed(failure)
+            raise failure from None
         raise ConnectorTransportError("UPSTREAM_ERROR", ctx.request_id, attempts)

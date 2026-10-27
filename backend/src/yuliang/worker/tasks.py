@@ -1,33 +1,19 @@
 """任务只接收必要ID；没有平台/AI执行器时明确失败，不假报业务成功。"""
 
 import os
+import time
 from typing import Any
-from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field, ValidationError
+from celery.exceptions import Reject  # type: ignore[import-untyped]
 from sqlalchemy import Engine, create_engine, text
+from sqlalchemy.exc import DBAPIError
 
 from yuliang.platform.db import VerifiedIdentity, business_transaction
+from yuliang.platform.messages import parse_message as message
 from yuliang.worker.app import app
 
 _engine: Engine | None = None
 _pid: int | None = None
-
-
-class WorkMessage(BaseModel):
-    model_config = ConfigDict(extra="forbid", hide_input_in_errors=True)
-    event_id: UUID
-    tenant_id: int = Field(strict=True, gt=0, le=9223372036854775807)
-    job_id: UUID
-    membership_id: UUID
-    user_id: UUID
-
-
-def message(value: dict[str, Any]) -> WorkMessage:
-    try:
-        return WorkMessage.model_validate(value)
-    except ValidationError:
-        raise ValueError("消息结构不合法，仅允许必要ID字段") from None
 
 
 def engine() -> Engine:
@@ -101,3 +87,43 @@ def platform_guard(payload: dict[str, Any]) -> None:
 )  # type: ignore[untyped-decorator]
 def ai_media_guard(payload: dict[str, Any]) -> None:
     unavailable(payload)
+
+
+@app.task(
+    name="yuliang.system.schedule_recovery",
+    reject_on_worker_lost=True,
+    autoretry_for=(),
+    max_retries=0,
+)  # type: ignore[untyped-decorator]
+def recover_internal_event(payload: dict[str, Any]) -> dict[str, Any]:
+    from yuliang.infrastructure.outbox import consume, schedule_recovery
+
+    item = message(payload)
+    identity = VerifiedIdentity(item.tenant_id, item.membership_id, item.user_id)
+    try:
+        with business_transaction(engine(), identity) as session:
+            stored = session.execute(
+                text(
+                    "SELECT payload FROM outbox_events WHERE event_id=:id "
+                    "AND event_type='yuliang.system.schedule_recovery'"
+                ),
+                {"id": item.event_id},
+            ).scalar_one_or_none()
+    except DBAPIError:
+        time.sleep(1)
+        raise Reject("数据库事实未就绪，内部任务不ACK", requeue=True) from None
+    if stored != item.model_dump(mode="json"):
+        raise ValueError("消息与持久事件不一致")
+    try:
+        changed = consume(
+            engine(),
+            identity,
+            "system.recovery",
+            item.event_id,
+            lambda session: schedule_recovery(session, item),
+        )
+    except Exception:
+        # 仅此内部DB幂等任务可重投；平台/AI guard保持不自动重试。
+        time.sleep(1)
+        raise Reject("恢复事实未提交，内部任务不ACK", requeue=True) from None
+    return {"eventId": str(item.event_id), "processed": changed, "state": "PROCESSED"}

@@ -11,8 +11,25 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--lifecycle", action="store_true", help="包含本项目服务重启与持久化验证")
     parser.add_argument("--details", action="store_true", help="输出已遮蔽本地凭据的短失败诊断")
+    parser.add_argument("--group", choices=("all", "messages", "worker", "identity"), default="all")
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
+    lifecycle = "tests/integration/test_infrastructure_lifecycle.py"
+    paths = {
+        # 重启演练先运行，避免后续Worker复用在演练前建立的进程级MQ连接池。
+        "all": [lifecycle]
+        + [
+            str(path.relative_to(root))
+            for path in sorted((root / "tests/integration").glob("test_*.py"))
+            if path.name != "test_infrastructure_lifecycle.py"
+        ],
+        "messages": ["tests/integration/test_durable_messaging.py"],
+        "worker": ["tests/integration/test_worker.py"],
+        "identity": [
+            "tests/integration/test_identity_database.py",
+            "tests/integration/test_password_sessions.py",
+        ],
+    }[args.group]
     values = dict(
         line.split("=", 1)
         for line in (root / "deployment/.env.infrastructure")
@@ -48,7 +65,7 @@ def main() -> int:
             sys.executable,
             "-m",
             "pytest",
-            "tests/integration",
+            *paths,
             "-m",
             "integration",
             "-q",

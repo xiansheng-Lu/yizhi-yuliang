@@ -7,29 +7,9 @@ import sys
 from pathlib import Path
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--lifecycle", action="store_true", help="包含本项目服务重启与持久化验证")
-    parser.add_argument("--details", action="store_true", help="输出已遮蔽本地凭据的短失败诊断")
-    parser.add_argument("--group", choices=("all", "messages", "worker", "identity"), default="all")
-    args = parser.parse_args()
-    root = Path(__file__).resolve().parents[1]
-    lifecycle = "tests/integration/test_infrastructure_lifecycle.py"
-    paths = {
-        # 重启演练先运行，避免后续Worker复用在演练前建立的进程级MQ连接池。
-        "all": [lifecycle]
-        + [
-            str(path.relative_to(root))
-            for path in sorted((root / "tests/integration").glob("test_*.py"))
-            if path.name != "test_infrastructure_lifecycle.py"
-        ],
-        "messages": ["tests/integration/test_durable_messaging.py"],
-        "worker": ["tests/integration/test_worker.py"],
-        "identity": [
-            "tests/integration/test_identity_database.py",
-            "tests/integration/test_password_sessions.py",
-        ],
-    }[args.group]
+def infrastructure_environment(
+    root: Path, lifecycle: bool = False
+) -> tuple[dict[str, str], list[str]]:
     values = dict(
         line.split("=", 1)
         for line in (root / "deployment/.env.infrastructure")
@@ -57,8 +37,35 @@ def main() -> int:
         ),
         YULIANG_TEST_S3_URL="http://127.0.0.1:19000",
         YULIANG_TEST_S3_SECRET=values["YULIANG_MINIO_PASSWORD"],
-        YULIANG_TEST_LIFECYCLE="1" if args.lifecycle else "0",
+        YULIANG_TEST_LIFECYCLE="1" if lifecycle else "0",
     )
+    return env, list(values.values())
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--lifecycle", action="store_true", help="包含本项目服务重启与持久化验证")
+    parser.add_argument("--details", action="store_true", help="输出已遮蔽本地凭据的短失败诊断")
+    parser.add_argument("--group", choices=("all", "messages", "worker", "identity"), default="all")
+    args = parser.parse_args()
+    root = Path(__file__).resolve().parents[1]
+    lifecycle = "tests/integration/test_infrastructure_lifecycle.py"
+    paths = {
+        # 重启演练先运行，避免后续Worker复用在演练前建立的进程级MQ连接池。
+        "all": [lifecycle]
+        + [
+            str(path.relative_to(root))
+            for path in sorted((root / "tests/integration").glob("test_*.py"))
+            if path.name != "test_infrastructure_lifecycle.py"
+        ],
+        "messages": ["tests/integration/test_durable_messaging.py"],
+        "worker": ["tests/integration/test_worker.py"],
+        "identity": [
+            "tests/integration/test_identity_database.py",
+            "tests/integration/test_password_sessions.py",
+        ],
+    }[args.group]
+    env, secret_values = infrastructure_environment(root, args.lifecycle)
     # --tb=no避免第三方库在失败栈中展开凭据；失败仍保留测试名与状态。
     result = subprocess.run(  # noqa: S603 -- 固定测试入口，禁止任意命令。
         [
@@ -80,7 +87,7 @@ def main() -> int:
         text=True,
     )
     output = result.stdout + result.stderr
-    for value in values.values():
+    for value in secret_values:
         output = output.replace(value, "[REDACTED]")
     print(output, end="")
     return result.returncode

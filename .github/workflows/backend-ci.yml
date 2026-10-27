@@ -1,0 +1,71 @@
+# 本工作流由BE维护，仅验证后端与冻结契约；不包含真实平台/付费调用。
+name: 后端基础门禁
+
+on:
+  push:
+    branches: [main]
+    paths: ["backend/**", "docs/backend/**", "src/**", ".github/workflows/backend-ci.yml"]
+  pull_request:
+    paths: ["backend/**", "docs/backend/**", "src/**", ".github/workflows/backend-ci.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: backend-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      UV_PYTHON_DOWNLOADS: never
+    defaults:
+      run:
+        shell: bash
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.13.14"
+      - uses: astral-sh/setup-uv@94527f2e458b27549849d47d273a16bec83a01e9 # v7
+        with:
+          version: "0.12.13"
+          enable-cache: false
+      - name: 安装锁定依赖
+        run: uv sync --frozen --all-groups
+      - name: 生成仅本次运行使用的随机配置
+        run: python scripts/prepare_local.py
+      - name: 静态检查与单元契约
+        run: |
+          uv run --frozen ruff check .
+          uv run --frozen ruff format --check .
+          uv run --frozen mypy
+          uv run --frozen pytest tests/unit tests/contract -q
+      - name: 冻结规格与任务状态守卫
+        run: |
+          uv run --frozen python ../docs/backend/tools/check_contracts.py
+          uv run --frozen python ../docs/backend/tools/check_database_auth.py --self-test
+          uv run --frozen python ../docs/backend/tools/check_funds_recovery.py --self-test
+          uv run --frozen python ../docs/backend/tools/check_plan.py
+          uv run --frozen python ../docs/backend/tools/check_task_status.py --self-test
+      - name: 启动四设施
+        run: |
+          bash scripts/infra.sh check
+          bash scripts/infra.sh start
+      - name: 空库迁移与真实隔离消息回归
+        run: |
+          uv run --frozen python scripts/test_infrastructure.py --lifecycle
+      - name: 确认破坏契约迁移隔离会失败
+        run: uv run --frozen python scripts/check_ci_sensitivity.py
+      - name: 清理本次托管运行器设施
+        if: always()
+        run: |
+          if test -f deployment/.env.infrastructure; then
+            docker compose --project-name yuliang-local --env-file deployment/.env.infrastructure --file docker-compose.yml down --volumes
+          fi

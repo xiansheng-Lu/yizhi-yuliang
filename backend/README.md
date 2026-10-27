@@ -129,3 +129,10 @@ by_request保持租户事务和RLS；尚无对外审计查询HTTP接口。登录
 MQ失败保留已提交Outbox申请，首次传输失败暂停本批，后续健康派发恢复。Redis不作为会话事实源，身份仍回查PG；Beat失去Redis租约时停止派发。
 dispatchTransportReady只表示PG/MQ运输连通，Worker标为UNOBSERVED、业务执行器仍关闭；不证明外部执行已就绪。
 Prometheus文本指标仅含固定依赖状态、API/运输就绪和采样时间，无租户标签或原始异常；尚未接入的任务在途/资金指标不以固定零占位。
+
+## CI基础门禁
+
+BE维护.github/workflows/backend-ci.yml，托管Ubuntu运行器使用固定Action提交、Python 3.13.14与uv 0.12.13，uv sync --frozen安装锁定依赖。后端、冻结规格或前端源码变化会触发检查。
+检查包括ruff/格式/mypy、unit/contract、冻结源码/规格/任务状态、四设施重启、UUID临时空库迁移/重复升级、租户隔离和真实Worker消息故障回归。默认不运行live，不存在真实平台或付费凭据。
+scripts/check_ci_sensitivity.py只在独立临时源码副本故意破坏契约版本、迁移SQL和租户策略；每项健康控制测试必须先通过，注入后必须实际失败且命中对应诊断，不能用环境故障冒充有效门禁。
+敏感性测试复用本地设施但仅创建唯一临时测试库，结束恢复app_migrate NOLOGIN；不改开发源码或业务库。CI托管运行器使用临时随机配置，末尾仅清理该运行器设施，不上传.env或容器日志。

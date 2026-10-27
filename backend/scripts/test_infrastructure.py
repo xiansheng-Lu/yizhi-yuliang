@@ -64,6 +64,7 @@ def main() -> int:
             "oauth",
             "sync",
             "facts",
+            "freshness",
         ),
         default="all",
     )
@@ -90,6 +91,7 @@ def main() -> int:
         "oauth": ["tests/integration/test_oauth_vault.py"],
         "sync": ["tests/integration/test_sync_checkpoints.py"],
         "facts": ["tests/integration/test_metric_facts.py"],
+        "freshness": ["tests/integration/test_resource_freshness.py"],
         "parser": [
             "tests/integration/test_command_parse.py",
             "tests/integration/test_workspace.py",

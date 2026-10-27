@@ -452,8 +452,9 @@ class SyncStore:
                 raise SyncConflict("NO_CONFIRMED_READ")
             session.execute(
                 text("""INSERT INTO sync_pages(tenant_id,run_id,page_no,outbound_id,
-                input_cursor_digest,output_cursor_digest,page_digest,terminal,records_count)
-                VALUES(:tenant,:run,:page,:outbound,:input,:output,:digest,:terminal,:count)"""),
+                input_cursor_digest,output_cursor_digest,page_digest,terminal,records_count,
+                source_updated_at,fetched_at) VALUES(:tenant,:run,:page,:outbound,:input,:output,
+                :digest,:terminal,:count,:source_at,:fetched_at)"""),
                 {
                     "tenant": ctx.identity.tenant_id,
                     "run": lease.run_id,
@@ -464,6 +465,8 @@ class SyncStore:
                     "digest": digest,
                     "terminal": page.terminal,
                     "count": count,
+                    "source_at": page.source_at,
+                    "fetched_at": page.fetched_at,
                 },
             )
             for row, projection in zip(page.records, projections, strict=True):

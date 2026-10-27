@@ -13,10 +13,11 @@ import pytest
 import redis
 from pydantic import SecretStr
 from sqlalchemy import text
+from sqlalchemy.orm import Session
 
 from yuliang.modules.capability.service import register_binding
-from yuliang.modules.connectors.archive import RecordedPlatformClient
-from yuliang.modules.connectors.base import GatewayContext
+from yuliang.modules.connectors.archive import RecordedPlatformClient, _verify
+from yuliang.modules.connectors.base import GatewayContext, ObjectRef
 from yuliang.modules.connectors.governance import (
     CallDeferred,
     GovernanceUnavailable,
@@ -25,7 +26,7 @@ from yuliang.modules.connectors.governance import (
     QuotaScope,
 )
 from yuliang.modules.connectors.governed import GovernedPlatformClient
-from yuliang.modules.connectors.http import PlatformHttpClient
+from yuliang.modules.connectors.http import OperationSpec, PlatformHttpClient
 from yuliang.modules.connectors.outcomes import Outcome
 from yuliang.platform.db import business_transaction
 from yuliang.worker.connector_schedule import reschedule_connector_task
@@ -37,6 +38,15 @@ from .test_password_sessions import login_api as login_api
 from .test_platform_payloads import decoder, parameters, setup, signer
 
 pytestmark = pytest.mark.integration
+
+
+def quota_only_preflight(
+    session: Session, ctx: GatewayContext, spec: OperationSpec, target: ObjectRef | None
+) -> None:
+    """本文件只测配额边界；真实数据写资格使用test_resource_freshness验证，不以此替代。"""
+    _verify(session, ctx, spec)
+    if target:
+        ctx.assert_ref(target)
 
 
 @pytest.fixture
@@ -225,6 +235,7 @@ async def test_governed_wire_single_attempt_denial_and_replay(
         ),
         governance,
         uuid4(),
+        write_preflight=quota_only_preflight,
     )
     outbound = uuid4()
     result = await client.send(
@@ -280,6 +291,7 @@ async def test_open_circuit_prevents_wire_then_only_read_probe_recovers(
         ),
         governance,
         uuid4(),
+        write_preflight=quota_only_preflight,
     )
     for _ in range(3):
         result = await client.send(
@@ -372,6 +384,7 @@ async def test_recorded_response_preserved_on_reporting_failure_and_replay_skips
         ),
         governance,
         uuid4(),
+        write_preflight=quota_only_preflight,
     )
     outbound = uuid4()
     result = await client.send(

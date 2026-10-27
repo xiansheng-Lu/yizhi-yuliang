@@ -1,0 +1,95 @@
+{
+  "result": "PASS",
+  "identity": {
+    "mode": "API",
+    "workspacePages": [
+      "analytics",
+      "assets",
+      "budgets",
+      "command",
+      "decisions",
+      "editing",
+      "executions",
+      "experiments",
+      "goals",
+      "graphics",
+      "monitor",
+      "overview",
+      "planning",
+      "plans",
+      "products",
+      "reports",
+      "scripts",
+      "tasks",
+      "videos"
+    ]
+  },
+  "collections": [
+    {
+      "name": "tenants",
+      "count": 1
+    },
+    {
+      "name": "shops",
+      "count": 0
+    },
+    {
+      "name": "adAccounts",
+      "count": 0
+    },
+    {
+      "name": "liveSessions",
+      "count": 0
+    },
+    {
+      "name": "plans",
+      "count": 0
+    },
+    {
+      "name": "products",
+      "count": 0
+    },
+    {
+      "name": "materials",
+      "count": 0
+    },
+    {
+      "name": "tasks",
+      "count": 0
+    },
+    {
+      "name": "riskPolicies",
+      "count": 0
+    },
+    {
+      "name": "replaySegments",
+      "count": 0
+    },
+    {
+      "name": "replayReports",
+      "count": 0
+    },
+    {
+      "name": "connectors",
+      "count": 0
+    }
+  ],
+  "csrf": {
+    "missing": 403,
+    "forged": 403,
+    "rotatedOld": 403,
+    "current": 200
+  },
+  "profileUnchanged": true,
+  "requestIds": [
+    "23c8c1d6746240e8911bd9638b29a215",
+    "03e3015960df4155a7fe15c95e2d2b33",
+    "a14980bf5b1f42639352474d77f07d59",
+    "6111c2f97a2447d396dc3b91dff686a4"
+  ],
+  "viewport": {
+    "width": 390,
+    "height": 844,
+    "dpr": 1.0000000298023224
+  }
+}

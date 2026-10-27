@@ -1,0 +1,16 @@
+{
+  "result": "PASS",
+  "projectWrite": 403,
+  "error": {
+    "code": "FORBIDDEN",
+    "message": "没有中枢工作区权限",
+    "details": [],
+    "retryable": false
+  },
+  "historyReadStatuses": [
+    403,
+    403
+  ],
+  "historyComparison": "NOT_READABLE_CHECK_DATABASE_SEPARATELY",
+  "requestId": "b880ab12360e4bdab752c47bfb7689d7"
+}

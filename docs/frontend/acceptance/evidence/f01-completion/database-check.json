@@ -1,0 +1,8 @@
+{
+  "result": "PASS",
+  "createdProjectRows": 1,
+  "forbiddenProjectRows": 0,
+  "ownerProfilePersisted": true,
+  "migrationRoleCanLogin": false,
+  "realPostgres": true
+}

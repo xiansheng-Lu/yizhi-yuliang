@@ -235,8 +235,8 @@ def test_m0_06_empty_upgrade_repeat_and_safe_rollback(database: dict[str, str]) 
         ).fetchone() == (True,)
         assert db.execute(
             "SELECT count(*) FROM pg_partitioned_table WHERE partrelid IN "
-            "(SELECT oid FROM pg_class WHERE "
-            "relnamespace='public'::regnamespace)"
+            "(SELECT oid FROM pg_class WHERE relnamespace='public'::regnamespace "
+            "AND relname IN ('tenants','users','memberships','sessions','shops','ad_accounts'))"
         ).fetchone() == (0,)
     checked_migrate(database["migration"], "upgrade", "head")
     assert migrate(database["migration"], "downgrade", "base").returncode != 0

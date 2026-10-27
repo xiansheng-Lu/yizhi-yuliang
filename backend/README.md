@@ -18,6 +18,14 @@ M1-02的0016迁移按租户、账户、连接器、产品线、动作、目录�
 
 `uv run python scripts/test_infrastructure.py --group capability --details`覆盖真实PG隔离和消费竞争。当前没有实际账户证据或许可，没有平台请求；自动探测与证据回写由后续连接器任务接入。F03/F11接线、BE/FE复核和真实平台验收分别留证。
 
+## 连接器端口与出站约束
+
+M1-03a提供read/preview/submit/readback/refresh_token/capability_probe六方法异步端口，以及显式产品线注册表、固定操作描述和平台HTTP客户端。默认注册表为空，没有因此新增真实平台适配器、路由或调用。上下文来自服务端核验，仍须经过能力、额度、审批与执行守卫；端口的ACCEPTED回执与MATCHED回读分开建模。
+
+操作描述由代码绑定目录ID/摘要、连接器/产品线、固定HTTPS Host/路径及extra=forbid参数Schema；账户、既有目标字段须与已核对上下文一致，签名器不能改业务方法/载荷/查询或Host。V9真实传输枚举shop在适配器注册边界显式映射wxpromo，ADQ不复用该注册项。巨量、小红书、微信豆仍不能注册本轮适配器。
+
+客户端trust_env=false、不跟随重定向、有总超时与响应大小上限；只允许显式幂等读取最多三次，写和令牌轮换不自动重试。发送后超时/丢响应保留UNKNOWN；较长Retry-After留给后续调度。平台调用上下文内抑制HTTP库原始请求细节，其他调用日志不改。`uv run pytest tests/unit/test_connector_boundaries.py -q`使用合成端口/MockTransport验证上述边界，只计U层，不计平台验收；M1-03b继续载荷留档与业务错误分类。
+
 ## Python与离线验证
 
 基线Python 3.13.14、uv，Windows PowerShell。依赖由uv.lock锁定；当前网络无法连接pypi.org，项目使用清华PyPI镜像，未更改全局包源。Python安装行为见[uv官方说明](https://docs.astral.sh/uv/guides/install-python/)。在backend目录执行：

@@ -1,4 +1,4 @@
-"""离线核对冻结内容/结果；不会调用模型，默认展示人工标签仍待确认。"""
+"""离线核对冻结内容、用户确认来源及预测；不调用模型或启用平台执行。"""
 
 import argparse
 import json
@@ -20,6 +20,8 @@ def main() -> int:
         "status": bundle.manifest.status,
         "cases": len(bundle.cases),
         "pending_review_ids": bundle.pending_review_ids(),
+        "confirmation_source": bundle.confirmation_source(),
+        "confirmation_baseline": bundle.confirmation.baseline if bundle.confirmation else None,
         "template_sha256": bundle.manifest.template_sha256,
         "cases_sha256": bundle.manifest.cases_sha256,
         "release_allowed": False,

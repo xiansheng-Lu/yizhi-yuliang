@@ -1,4 +1,4 @@
-"""固定样例是待人审的测试资产；不把给定预期自比当作真实模型质量通过。"""
+"""冻结预期确认可溯源；用户确认不代造BE/FE签名或真实模型质量结论。"""
 
 import json
 import shutil
@@ -21,14 +21,79 @@ ROOT = Path(__file__).parents[2] / "src/yuliang/modules/aikernel/prompts/v1"
 
 def test_m5_03a_frozen_cases_cover_categories_and_require_human_labels() -> None:
     bundle = load_bundle()
-    assert len(bundle.cases) == 28 and len(bundle.pending_review_ids()) == 28
-    with pytest.raises(ValueError, match="人工"):
-        bundle.require_human_labels()
+    assert len(bundle.cases) == 28 and not bundle.pending_review_ids()
+    assert bundle.confirmation_source() == "USER"
+    assert bundle.confirmation is not None
+    assert bundle.confirmation.confirmed_by == "USER"
+    assert all(not case.reviews for case in bundle.cases)
+    bundle.require_human_labels()
     result = bundle.compare(
         {case.id: case.expected.model_dump(mode="json") for case in bundle.cases}
     )
-    assert result["matched"] == 28 and not result["human_labels_confirmed"]
+    assert result["matched"] == 28 and result["human_labels_confirmed"]
+    assert result["confirmation_source"] == "USER"
     assert not result["release_allowed"]
+
+
+def test_m5_03a_confirmation_absent_keeps_original_review_guard(tmp_path: Path) -> None:
+    directory = tmp_path / "candidate"
+    shutil.copytree(ROOT, directory)
+    (directory / "confirmation.json").unlink()
+    bundle = load_bundle(directory)
+    assert len(bundle.pending_review_ids()) == 28
+    assert bundle.confirmation_source() == "PENDING"
+    with pytest.raises(ValueError, match="人工"):
+        bundle.require_human_labels()
+
+
+@pytest.mark.parametrize(
+    "mutation", ["case_hash", "missing_case", "extra_case", "cases_digest", "template", "version"]
+)
+def test_m5_03a_stale_user_confirmation_fails_closed(tmp_path: Path, mutation: str) -> None:
+    directory = tmp_path / "candidate"
+    shutil.copytree(ROOT, directory)
+    path = directory / "confirmation.json"
+    confirmation = json.loads(path.read_text(encoding="utf-8"))
+    if mutation == "case_hash":
+        confirmation["case_hashes"]["CP-001"] = "0" * 64
+    elif mutation == "missing_case":
+        del confirmation["case_hashes"]["CP-028"]
+    elif mutation == "extra_case":
+        confirmation["case_hashes"]["CP-029"] = "0" * 64
+    elif mutation == "cases_digest":
+        confirmation["cases_sha256"] = "0" * 64
+    elif mutation == "template":
+        confirmation["template_sha256"] = "0" * 64
+    else:
+        confirmation["prompt_version"] += 1
+    path.write_text(json.dumps(confirmation), encoding="utf-8")
+    with pytest.raises(ValueError, match="用户确认失效"):
+        load_bundle(directory)
+
+
+def test_m5_03a_confirmation_rechecks_changed_in_memory_case() -> None:
+    bundle = load_bundle()
+    changed = bundle.cases[0].model_copy(update={"input": "新的未确认输入"})
+    changed_bundle = bundle.model_copy(update={"cases": (changed, *bundle.cases[1:])})
+    with pytest.raises(ValueError, match="用户确认失效"):
+        changed_bundle.require_human_labels()
+
+
+@pytest.mark.parametrize("mutation", ["baseline", "role", "unknown_field"])
+def test_m5_03a_confirmation_requires_real_record_shape(tmp_path: Path, mutation: str) -> None:
+    directory = tmp_path / "candidate"
+    shutil.copytree(ROOT, directory)
+    path = directory / "confirmation.json"
+    confirmation = json.loads(path.read_text(encoding="utf-8"))
+    if mutation == "baseline":
+        confirmation["baseline"] = "not-a-code-baseline"
+    elif mutation == "role":
+        confirmation["confirmed_by"] = "BE_FE"
+    else:
+        confirmation["platform_execution_approved"] = True
+    path.write_text(json.dumps(confirmation), encoding="utf-8")
+    with pytest.raises(ValidationError):
+        load_bundle(directory)
 
 
 @pytest.mark.parametrize("filename", ["template.txt", "cases.json"])

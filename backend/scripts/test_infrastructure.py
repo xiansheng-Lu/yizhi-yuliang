@@ -48,7 +48,7 @@ def main() -> int:
     parser.add_argument("--details", action="store_true", help="输出已遮蔽本地凭据的短失败诊断")
     parser.add_argument(
         "--group",
-        choices=("all", "messages", "worker", "identity", "mail", "cost", "gateway"),
+        choices=("all", "messages", "worker", "identity", "mail", "cost", "gateway", "parser"),
         default="all",
     )
     args = parser.parse_args()
@@ -67,6 +67,11 @@ def main() -> int:
         "mail": ["tests/integration/test_email_codes.py"],
         "cost": ["tests/integration/test_ai_cost_gate.py"],
         "gateway": ["tests/integration/test_deepseek_gateway.py"],
+        "parser": [
+            "tests/integration/test_command_parse.py",
+            "tests/integration/test_workspace.py",
+            "tests/integration/test_deepseek_gateway.py",
+        ],
         "identity": [
             "tests/integration/test_identity_database.py",
             "tests/integration/test_password_sessions.py",

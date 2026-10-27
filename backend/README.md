@@ -184,8 +184,8 @@ CostGate.execute先提交IN_FLIGHT，再在事务外调用端口，传入稳定�
 
 ## 解析候选集与提示词版本
 
-M5-03a在aikernel/prompts/v1登记28条合成输入/授权上下文/预期动作或拒绝，以及候选模板、参数和SHA256清单。七类动作、元/分与ROI、歧义、混合动作、越权、注入均有覆盖；所有BE/FE人工标注为空，包状态CANDIDATE，不自动登记ACTIVE提示词或接入在线解析。
-uv run --frozen python scripts/check_prompt_bundle.py仅核对冻结内容；加--review输出逐项摘要，加--require-human-labels在缺标注时失败。--predictions接受以样例ID为键的离线预测JSON，缺项保留为失败，越权候选/额外审批字段/错误单位均拒绝。把给定预期自比仅为评估器的健康控制，不代表模型通过。
+M5-03a在aikernel/prompts/v1登记28条合成输入/授权上下文/预期动作或拒绝，以及候选模板、参数和SHA256清单。2026-10-27用户已直接确认28条预期，独立confirmation.json绑定代码基线、模板/样例总摘要和逐项摘要；确认来源为USER，BE/FE角色签署不代填。包状态仍为CANDIDATE，不自动登记生产ACTIVE提示词。
+uv run --frozen python scripts/check_prompt_bundle.py仅核对冻结内容；加--review输出逐项摘要，加--require-human-labels在缺少有效用户确认或BE/FE标注时失败。--predictions接受以样例ID为键的离线预测JSON，缺项保留为失败，越权候选/额外审批字段/错误单位均拒绝。把给定预期自比仅为评估器的健康控制，不代表模型通过。
 模板/样例变化必须升版本并记录理由，validate_successor禁止删除历史失败样例，逐项改标需要case_changes说明，样例摘要变化使旧签署失效。FrozenRoute绑定STARTED账本的配置ID/revision/主备模型/实际选择/提示词摘要与Schema；密钥或不属于原路由的模型不能混入快照。
 真实模型的质量和耗时由M2-01b/M2-03验证；样例确认和F06联调仍由BE/FE具名复核。查看docs/backend/evidence/tasks/M5-03a/review-cases.md逐项确认，不以Agent候选预期代签。
 
@@ -197,3 +197,13 @@ M2-01b增加显式注入的AuthorizedGateway，符合ModelGateway协议；默认
 0013同事务CAS写入服务商返回的实际模型标识和响应SHA256，用量从响应usage核对；账本保留请求的配置/模型键，两者不混同。服务商未返回实际扣费回执时，费用保持UNKNOWN并持有原报价预占，token乘价格只能作为推算，不能写KNOWN。
 本次用户授权人民币0.20元、最多6次合成样例验证已全部使用：6次受控结构通过，0.878～1.315秒，输入4009/输出422 token；按核验高峰价推算0.011394元，实际账单未核对。临时库已清理，脱敏请求/响应摘要与本地额度记录保留在证据，不自动重置或重跑。
 参考deployment/.env.llm.example配置本地忽略文件；只有独立live测试显式读取它。真实验证默认排除，需YULIANG_LLM_LIVE_APPROVED和本地持久额度记录共同允许；测试先扣减次数和预占，失败也不自动退次数。生产价格、预算和ACTIVE路由未登记，F06接线与人工预期确认仍待完成。
+
+## 指令解析与消歧
+
+M2-03同时接入POST /v1/command-interpretations与会话消息入口。身份/CSRF、task.create及店铺/场次范围核验后，服务端规则输出QUERY/ACTION/UNRECOGNIZED；七类动作仅生成候选，金额使用人民币整数分、ROI保持正比值、开关播为人工交接。混合/多目标/相对金额/未知单位/注入/未知对象均澄清，同名歧义保留完整候选。
+
+默认HTTP路径只运行规则，不加载DeepSeek密钥或产生费用。现有live_sessions只在connector_id=all时提供经过权限核对的场次目录；具体连接器缺少归属事实，不能假装已按连接器绑定。广告计划尚无M1同步读模型，默认目录为空，不把合成测试对象作为真实计划。查询只表明意图，不宣称已读取经营指标。
+
+0014增加私有、只追加的interpretations，存输入摘要、范围、结果、规则/提示词版本和关联调用ID。规则路径无模型ID；模型后置守卫必须核对冻结输入/上下文、已报价载荷、本人/成员/请求/场景/提示词与已结束调用事实，失败通道只能记录MODEL_UNAVAILABLE拒绝。模型不能改动作/数值、选掉歧义对象或把自由文本中的“已执行”投影成事实。消息同键回放复用持久结果，不新增解析记录。
+
+uv run python scripts/test_infrastructure.py --group parser --details验证真实PG/HTTP解析、私有隔离、消息幂等与网关回归；unit/contract另跑pytest。解析不创建command_jobs、审批、执行尝试或平台写调用。F06真实浏览器、G0人工联合验收仍单列；应用回退保留0014留痕及安全策略，不执行删表降级。

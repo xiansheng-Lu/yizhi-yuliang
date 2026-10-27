@@ -1,0 +1,121 @@
+{
+  "task_id": "M2-03",
+  "recorded_on": "2026-10-27T16:29:46.710184+08:00",
+  "baseline": "877e9a2af83aac0ea604e175516a8b33a9e5197a",
+  "operator": "coding agent",
+  "reviewers": {
+    "BE": "PENDING",
+    "FE_F06": "PENDING"
+  },
+  "environment": "WSL2 Ubuntu / Python3.13.14 / uv / real local PostgreSQL17 Redis RabbitMQ MinIO",
+  "result": "PASS_BACKEND_PENDING_BROWSER_AND_REVIEW",
+  "commands": [
+    {
+      "command": "uv run ruff check .",
+      "result": "PASS"
+    },
+    {
+      "command": "uv run ruff format --check .",
+      "result": "PASS",
+      "files": 105
+    },
+    {
+      "command": "uv run mypy",
+      "result": "PASS",
+      "sources": 83
+    },
+    {
+      "command": "uv run pytest tests/unit tests/contract -q",
+      "result": "PASS",
+      "passed": 138
+    },
+    {
+      "command": "uv run python scripts/check_prompt_bundle.py --require-human-labels",
+      "result": "PASS",
+      "cases": 28,
+      "confirmation_source": "USER"
+    },
+    {
+      "command": "uv run python scripts/test_infrastructure.py --details",
+      "result": "PASS_PRE_REVIEW_FIX_BASELINE",
+      "passed": 183,
+      "skipped": 1,
+      "skip_reason": "lifecycle not requested; prior card owns lifecycle test"
+    },
+    {
+      "command": "uv run python scripts/test_infrastructure.py --group parser --details",
+      "result": "PASS_AFTER_REVIEW_FIXES",
+      "passed": 75
+    },
+    {
+      "command": "uv run python scripts/migrate_local.py upgrade/current",
+      "result": "PASS",
+      "head": "0014_command_interpretations",
+      "note": "local unreleased0014 CHECK aligned after final constraint hardening; no data deletion"
+    },
+    {
+      "command": "python docs/backend/tools/check_contracts.py",
+      "result": "PASS"
+    },
+    {
+      "command": "python docs/backend/tools/check_database_auth.py",
+      "result": "PASS"
+    },
+    {
+      "command": "python docs/backend/tools/check_funds_recovery.py",
+      "result": "PASS"
+    },
+    {
+      "command": "python docs/backend/tools/check_plan.py",
+      "result": "PASS",
+      "cards": 149,
+      "queue_nodes": 156
+    },
+    {
+      "command": "python docs/backend/tools/check_task_status.py --self-test",
+      "result": "PASS",
+      "invalid_variants_rejected": 13
+    }
+  ],
+  "confirmed_case_count": 28,
+  "parser_integration_count": 49,
+  "external_calls": 0,
+  "platform_write_calls": 0,
+  "browser": "NOT_RUN_F06",
+  "defects": [
+    {
+      "id": "M2-03-TRACE",
+      "status": "CLOSED",
+      "resolution": "freeze input/context/quote payload and verify own completed invocation, separate unavailable source"
+    },
+    {
+      "id": "M2-03-CONNECTOR",
+      "status": "CLOSED",
+      "resolution": "only all provides live catalog; no invented connector mapping"
+    },
+    {
+      "id": "M2-03-QUERY",
+      "status": "CLOSED",
+      "resolution": "unknown named session never replaced by only visible session"
+    }
+  ],
+  "limitations": [
+    "AD_PLAN live catalog awaits M1 synchronization; synthetic catalog is test-only",
+    "HTTP default is rules-only; no implicit paid gateway",
+    "user confirmation does not sign BE/FE release reviews",
+    "live model regression belongs to M2-04"
+  ],
+  "sha256_utf8_lf": {
+    "backend/src/yuliang/modules/command/parser.py": "7dd9af3edff9ea9c96415368e7711665dac4c5f77af54b9438b7b9c50bca7e70",
+    "backend/src/yuliang/modules/command/service.py": "360f6c1882237a165f52a66dcb92594780ff04766bce7f2c4a6284a98b7e9b77",
+    "backend/src/yuliang/modules/command/models.py": "122954b325fd0587452fbb274666a55f96ec11eb200dc540507f53adca0605d7",
+    "backend/src/yuliang/modules/workspace/service.py": "1d1099e736e02165cbbfa06807a6b5645ee9aa7eeec95ad250a6ff1f27bf2433",
+    "backend/src/yuliang/modules/workspace/routes.py": "8e9f6fcc6d4e95dc2f272fd9c18702a1e2bfdc739bacede4bf6d4031bb166b44",
+    "backend/src/yuliang/modules/aikernel/prompts/registry.py": "1dd87d67eb69b844dfcd6531970427e6d12aa0f4809c99d48fe8b84d664313be",
+    "backend/src/yuliang/modules/aikernel/prompts/v1/confirmation.json": "1cf18c78f45e55d84ccc523c4e13d6384b4f259ff44c7d7f8b1cf6e1a6e3a8e1",
+    "backend/alembic/versions/0014_command_interpretations.sql": "d4fda2015dd17568f03c36379448e983f141fd2c69621c797335c125aca2a912",
+    "backend/tests/unit/test_command_parser.py": "70c2380ed52bcb0077fc2067aaa612d0dcc7958d635ccef0a78fec1c2f7748b0",
+    "backend/tests/unit/test_prompt_registry.py": "aa921fe0c44d0cc7b8ddfc27b600ecd24069fcf218d9a8d698732e82c1a76c16",
+    "backend/tests/integration/test_command_parse.py": "9bd91f5944b5a55eefc63e7b806c2b2f400547c83e3bb618fa7435a067eefdc9"
+  }
+}

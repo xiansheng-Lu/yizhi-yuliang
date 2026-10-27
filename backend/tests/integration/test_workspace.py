@@ -118,10 +118,7 @@ def test_m2_02_project_message_and_cross_device_persistence(login_api: dict[str,
         assistant["id"] == turn["messageId"]
         and assistant["interpretation"] == turn["interpretation"]
     )
-    assert (
-        assistant["scope"] == message()["scope"]
-        and turn["interpretation"]["kind"] == "UNRECOGNIZED"
-    )
+    assert assistant["scope"] == message()["scope"] and turn["interpretation"]["kind"] == "QUERY"
     # 独立客户端重新实际登录，不能靠原进程内存或复用原Cookie冒充跨设备。
     with TestClient(create_app(login_api["settings"]), raise_server_exceptions=False) as second:
         sign_in(login_api | {"client": second})

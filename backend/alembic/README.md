@@ -45,3 +45,5 @@ OWNER初始模板不默认给可配置的投放写权限；OPERATOR含内容写�
 0012增加AI预算/价格/报价/许可/追加事件，不登记生产价格或预算。运行账号仅SELECT，各费用函数固定search_path并精确授权app_login；所有费用增减先锁预算、再锁报价或许可。未知费用持有预占，已发送许可不能取消；已知回执重复结算幂等，跨币种保留UNKNOWN，超额如实记账并阻止后续许可。旧应用可继续运行，无自动删除账本的downgrade。
 
 0013为AI调用增加provider_model和response_hash，保留原请求路由快照。新增15参数ai_finish在同一事务复用原13参数CAS并记录成对响应标识/摘要，旧入口兼容；不给运行角色直接UPDATE。未知实际扣费仍NULL，不用token推算金额冒充账单。
+
+0014增加tenant+actor私有的interpretations，记录输入摘要、范围、候选、规则/提示词版本与模型调用关联；运行账号仅SELECT/INSERT，无UPDATE/DELETE。模型关联使用tenant/user/call复合FK，服务层另核对本人/成员/请求/场景、冻结输入和报价指纹。只追加模型调用唯一索引，不改既有业务字段；旧应用可继续运行，回退保留留痕，不删表。

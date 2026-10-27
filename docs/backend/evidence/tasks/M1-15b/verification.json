@@ -1,0 +1,80 @@
+{
+  "checkedAt": "2026-10-27T16:26:00.236Z",
+  "baseline": "a1714776bd5d28bc4df903246eb5e089b7a92232",
+  "implementationCommit": "e3ffef20097849140c99b0de625b76bf153780ed",
+  "result": "PASS_TECHNICAL_REAL_PG_SYNTHETIC_PLATFORM",
+  "checks": [
+    {
+      "command": "uv run --frozen ruff check .",
+      "result": "PASS"
+    },
+    {
+      "command": "uv run --frozen ruff format --check .",
+      "result": "PASS",
+      "files": 150
+    },
+    {
+      "command": "uv run --frozen mypy",
+      "result": "PASS",
+      "files": 121
+    },
+    {
+      "command": "uv run --frozen pytest tests/unit tests/contract -q",
+      "result": "PASS",
+      "passed": 246
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --group facts --details",
+      "result": "PASS",
+      "passed": 11
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --details",
+      "result": "PASS_WITH_EXPLICIT_NOT_RUN_LIFECYCLE",
+      "passed": 298,
+      "skipped": 1,
+      "factCases": 11
+    },
+    {
+      "command": "uv run --frozen python scripts/migrate_local.py upgrade",
+      "result": "PASS",
+      "head": "0020_metric_facts"
+    }
+  ],
+  "database": {
+    "head": "0020_metric_facts",
+    "migrationRoleCanLogin": false,
+    "developmentRows": {
+      "metric_facts": 0,
+      "metric_fact_revisions": 0,
+      "skus": 0,
+      "campaigns": 0
+    }
+  },
+  "verified": [
+    "full dimension business key and generated comparable key",
+    "actual NULL business-key duplicate INSERT rejected with 23505",
+    "scope/native/source proof and account/tenant isolation",
+    "SKU/live/hour/currency/attribution/refund synthetic dimension separation",
+    "old provider version/time rejection and same-source confirmed sequence fallback",
+    "source time unknown remains NULL; fetched time not used for ordering",
+    "zero/missing/exact integer and weighted ratio behavior",
+    "idempotent Decimal representation and version-zero semantics",
+    "eight concurrent confirmed batches preserve newest provider version",
+    "fact/revision failure rolls back page/mirror/cursor; raw read retained",
+    "append-only history privileges"
+  ],
+  "scope": "real PG and standard isolated test harness; synthetic supplier DTO/HTTP inputs, no live scene replacement",
+  "notCovered": [
+    "real provider field/currency/schema mapping or account authorization",
+    "real platform/funding/paid calls",
+    "production Worker/Beat activation or partition migration rehearsal",
+    "final BE/FE review"
+  ],
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "review": {
+    "backend": "PENDING",
+    "frontend": "PENDING_F04_F05_F08"
+  }
+}

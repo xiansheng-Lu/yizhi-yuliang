@@ -48,6 +48,16 @@
         "command": "python docs/backend/tools/check_contracts.py",
         "result": "PASS",
         "note": "本机补装Python后本地复跑，结论与原归档一致"
+      },
+      "csrfTechnicalRefresh": {
+        "date": "2026-10-27",
+        "routes": 53,
+        "callSites": 56,
+        "exportedTypes": 133,
+        "frozenSources": 15,
+        "goldenChecks": 45,
+        "browser": "BLOCKED",
+        "note": "existing backend CSRF GET now called by frontend; no domain body/version change; human review pending"
       }
     },
     "R00-02": {
@@ -589,7 +599,12 @@
         "backend": "PENDING",
         "frontend": "PENDING_F01"
       },
-      "evidence": "tasks/M0-11b/README.md"
+      "evidence": "tasks/M0-11b/README.md",
+      "browserIntegration": {
+        "csrfFrontend": "IMPLEMENTED_AUTOMATED_PASS",
+        "realBrowser": "BLOCKED_POLICY_NOT_RUN",
+        "evidence": "docs/frontend/acceptance/F01-CSRF接线与浏览器验证.md"
+      }
     },
     "M0-11c": {
       "owner": "BE",
@@ -1223,7 +1238,7 @@
         "F01_BROWSER",
         "E08"
       ],
-      "note": "邮件真实收件已通过，仍待真实浏览器接线及适用人工复核；未放行"
+      "note": "前端CSRF代码/自动验证通过；真实浏览器API18000访问受策略阻塞，认证闭环及人工复核仍缺，未放行"
     }
   },
   "blockers": [
@@ -1264,13 +1279,13 @@
     {
       "id": "F01_BROWSER",
       "status": "OPEN",
-      "reason": "现有前端ApiClient尚未注入CSRF，F01联合接线/真实浏览器验证未完成",
+      "reason": "前端CSRF接线/并发/认证边界已实现，210项自动测试与build通过；真实浏览器3000登录页可渲染，但API18000被保存权限/受管策略拒绝，登录写入退出闭环未执行",
       "affects": [
         "M0-11b第三条DoD",
         "身份接口正式开放",
         "G0联合验收"
       ],
-      "unblock": "FE按冻结契约接线并完成真实浏览器证据"
+      "unblock": "浏览器实际允许18000后补真实登录/CSRF/写入/退出及适用PC/手机证据，不以fetch桩替代"
     },
     {
       "id": "GIT_NETWORK",
@@ -1291,6 +1306,18 @@
       "reason": "用户允许任务需要时直接调用DeepSeek；本轮28条首测+3条修后复验共31次，独立持久许可保留93分预占，实际账单未知；历史6次许可未重置",
       "affects": [],
       "unblock": "供应商已可用于授权范围开发验证；后续调用继续独立限量留痕，不自动清零本轮许可"
+    },
+    {
+      "id": "BROWSER_LOCAL_API_ACCESS",
+      "status": "OPEN",
+      "reason": "用户已批准并报告修改站点权限，Browser工具仍拒绝127.0.0.1:18000，不能绕过",
+      "affects": [
+        "F01真实浏览器认证闭环",
+        "M0-11b DoD3",
+        "G0",
+        "M1-01后续领取"
+      ],
+      "unblock": "由实际站点设置/受管策略解除18000浏览器访问拒绝后复验"
     }
   ],
   "rules": {
@@ -1302,14 +1329,27 @@
     "id": "M1-01",
     "status": "BLOCKED",
     "blockedBy": [
-      "G0"
+      "G0",
+      "BROWSER_LOCAL_API_ACCESS"
     ],
-    "note": "M2-04后端通过后重审149叶卡依赖，无其他未启动且技术前置全部就绪的卡；等待F01浏览器CSRF接线与G0联合复核，不能代签或跳门禁"
+    "note": "按用户要求先完成前端真实浏览器验证再继续后端；当前只读整理下一卡输入，未绕过G0领取实现"
   },
   "continuation": {
     "requestedOn": "2026-10-27",
     "authorization": "持续推进后端任务卡，缺资源再找用户对接",
     "heartbeat": "执行时卡间立即连续推进；5分钟唤醒仅用于中断/空闲恢复，不作为卡间等待",
     "environment": "WSL2 Ubuntu Docker; UV_PROJECT_ENVIRONMENT=/home/lenovo/.cache/yuliang-venv"
+  },
+  "frontendIntegration": {
+    "F01": {
+      "owner": "FE",
+      "status": "BLOCKED",
+      "implementation": "CSRF transport and identity snapshot fencing implemented; 210 automated tests passed",
+      "browser": "FRONTEND_RENDER_PASS_AUTH_BLOCKED_SAVED_OR_MANAGED_POLICY",
+      "blockedBy": [
+        "BROWSER_LOCAL_API_ACCESS"
+      ],
+      "evidence": "docs/frontend/acceptance/F01-CSRF接线与浏览器验证.md"
+    }
   }
 }

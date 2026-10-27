@@ -92,8 +92,8 @@ assert(calls.some(call => call.class === "AdvertisingService" && call.method ===
 assert(calls.some(call => call.class === "ApiAnalysisAdapter" && call.method === "listResults"));
 assert(calls.some(call => call.class === "DeliveryService" && call.method === "changePlan"));
 const expectedRoutes = new Set(Object.values(matrix.routes).flat().map(([method, url]) => canonical(method, url)));
-assert.deepEqual([...actualRoutes].sort(), [...expectedRoutes].sort(), "52条人工矩阵与实际调用不一致");
-const result = { baseline: "4405ebc", extraction: "TypeScript AST and type checker; no HTTP/platform execution",
+assert.deepEqual([...actualRoutes].sort(), [...expectedRoutes].sort(), "人工矩阵与实际调用不一致");
+const result = { baseline: matrix.technicalRefresh?.baseline ?? "4405ebc", extraction: "TypeScript AST and type checker; no HTTP/platform execution",
   calls, exportedTypes: types };
 const target = path.join(contracts, "frontend-surface.json");
 const serialized = JSON.stringify(result,

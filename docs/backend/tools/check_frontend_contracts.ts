@@ -10,8 +10,15 @@ import type { CommandJob } from "../../../src/lib/command-job";
 
 const golden = JSON.parse(readFileSync(new URL("../contracts/golden.json", import.meta.url), "utf8"));
 let checks = 0;
+function csrfResponse(url: RequestInfo | URL): Response | undefined {
+  if (new URL(String(url)).pathname !== "/v1/auth/csrf") return undefined;
+  return Response.json({
+    schemaVersion: "command-job-v1.0", requestId: "golden-csrf",
+    data: { token: "golden-csrf-token", expiresAt: new Date(Date.now() + 600000).toISOString() },
+  });
+}
 function client(data: unknown, outerVersion = "command-job-v1.0") {
-  return new ApiClient("https://api.example.invalid", async () => new Response(
+  return new ApiClient("https://api.example.invalid", async (url) => csrfResponse(url) ?? new Response(
     JSON.stringify({ schemaVersion: outerVersion, requestId: "golden-request", data }),
     { status: 200, headers: { "Content-Type": "application/json" } },
   ));
@@ -19,6 +26,8 @@ function client(data: unknown, outerVersion = "command-job-v1.0") {
 function recording(data: unknown, status = 200) {
   const requests: { path: string; options?: RequestInit }[] = [];
   const service = new ApiClient("https://api.example.invalid", async (url, options) => {
+    const csrf = csrfResponse(url);
+    if (csrf) return csrf;
     requests.push({ path: new URL(String(url)).pathname, options });
     return new Response(JSON.stringify({ schemaVersion: "command-job-v1.0", requestId: "golden", data }),
       { status, headers: { "Content-Type": "application/json" } });
@@ -38,7 +47,7 @@ async function run() {
   }
   await assert.rejects(client({ ...golden.emptySnapshot, source: "MOCK" }).getSnapshot()); checks++;
   await assert.rejects(client({ ...golden.emptySnapshot, scope: { timezone: "UTC" } }).getSnapshot()); checks++;
-  const logout204 = new ApiClient("https://api.example.invalid", async () => new Response(null, { status: 204 }));
+  const logout204 = new ApiClient("https://api.example.invalid", async (url) => csrfResponse(url) ?? new Response(null, { status: 204 }));
   await assert.rejects(logout204.logout()); checks++;
   const v1 = recording(golden.job);
   await v1.service.reviewJob(golden.approval);
@@ -100,7 +109,7 @@ async function run() {
   await assert.rejects(new ApiAnalysisAdapter(client({ ...golden.analysisTask, status: "succeeded" }), snapshot).getTask("analysis_contract", signal)); checks++;
   assert.deepEqual(await new ApiAnalysisAdapter(client([]), snapshot).listResults(signal), []); checks++;
   await assert.rejects(new ApiAnalysisAdapter(client({ items: [] }), snapshot).listResults(signal)); checks++;
-  const conflict = new ApiClient("https://api.example.invalid", async () => new Response(JSON.stringify({
+  const conflict = new ApiClient("https://api.example.invalid", async (url) => csrfResponse(url) ?? new Response(JSON.stringify({
     requestId: "golden", error: { code: "VERSION_CONFLICT", message: "样例", details: [{ current: 2 }] },
   }), { status: 409 }));
   await assert.rejects(conflict.logout(), error => Boolean(error && typeof error === "object" && "code" in error && error.code === "CONFLICT")); checks++;

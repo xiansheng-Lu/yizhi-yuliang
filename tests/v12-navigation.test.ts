@@ -5,7 +5,7 @@ import { createHash } from "node:crypto";
 import { customerPageIds, isPageId, legacyContentTarget, loginTarget, navigationGroups, pageName, pages } from "../src/lib/routes";
 import { canAccessPage } from "../src/lib/access";
 import type { Identity } from "../src/lib/domain";
-import { ApiClient } from "../src/services/api-client";
+import { CsrfApiClient as ApiClient } from "./helpers/csrf-fetch";
 
 test("six customer navigation entries exclude administration and preserve legacy routes", () => {
   assert.deepEqual(navigationGroups.map((group) => group.name), ["AI驭量中枢", "经营概况", "直播运营", "投放管理", "内容中心", "数据复盘"]);
@@ -58,7 +58,7 @@ test("V12 default and frozen homepage CTA open command while explicit overview d
   assert.equal(loginTarget("mobile"), "/mobile");
 });
 
-test("approved logo exception leaves every other homepage byte and original CSS/JS unchanged", () => {
+test("approved logo and heading spacing exceptions preserve the recorded homepage baseline", () => {
   const originalBrand = '<span class="brand-emblem">✦</span><span class="brand-text"><strong>易致·驭量</strong><small>YULIANG INTELLIGENCE</small></span>';
   const html = readFileSync("public/index.html", "utf8");
   assert.equal((html.match(/<img class="brand-logo"/g) ?? []).length, 2);
@@ -68,7 +68,8 @@ test("approved logo exception leaves every other homepage byte and original CSS/
     .replace(/<img class="brand-logo" src="\/assets\/yuliang-logo(?:-white)?\.png"[^>]*>/g, originalBrand);
   const sha = (content: string | Buffer) => createHash("sha256").update(content).digest("hex");
   assert.equal(sha(normalized), "5841a01138fa82ab6d9b018409f7fe23c81053f8a916c07290e6a2c1ddd92c88");
-  assert.equal(sha(readFileSync("public/assets/styles.css")), "6281438a8b2c363c4a9fe5486727f3f996fa4fc7de95f351ea792e083263a5ed");
+  const baseline = JSON.parse(readFileSync("docs/shared/baselines/homepage-baseline.json", "utf8")) as { files: Record<string, string> };
+  assert.equal(sha(readFileSync("public/assets/styles.css")), baseline.files["assets/styles.css"]);
   assert.equal(sha(readFileSync("public/assets/site.js")), "c03c34b14868d84acaac3038b62a45f532c3e47d0d29862a677cbf4d664f230e");
 });
 

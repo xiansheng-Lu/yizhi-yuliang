@@ -1,7 +1,7 @@
 {
   "outerSchemaVersion": "command-job-v1.0",
   "sourceSha256": {
-    "src/services/api-client.ts": "dacc38f1bb2549cd82379ddf270096a81176cc99bd471cc3798bc46ca35851ca",
+    "src/services/api-client.ts": "9d2f13481caaf312158f099131e289dcf18567334f938370a0085412cd8bf12e",
     "src/services/contracts.ts": "c4997eb06cac8d5f60df2b3056edaa34434e763394fb3db91f90ec77dda24fc3",
     "src/services/delivery-service.ts": "bc2b2b5522e0b04a70caf71575e719e98f46e059f2b1cbb2e27727df05819905",
     "src/services/advertising-service.ts": "6018a3f300d1b83c339686e83ea8dda761fb1cc50d2d3e4fb34c17897347ebb7",
@@ -19,6 +19,10 @@
   },
   "routes": {
     "V1": [
+      [
+        "GET",
+        "/v1/auth/csrf"
+      ],
       [
         "GET",
         "/v1/auth/session"
@@ -237,10 +241,6 @@
   },
   "newRoutesPendingFrontendReview": [
     [
-      "GET",
-      "/v1/auth/csrf"
-    ],
-    [
       "POST",
       "/v1/delivery/configuration/material-upload-tasks"
     ],
@@ -253,5 +253,12 @@
       "/v1/delivery/configuration/material-upload-tasks/{taskId}"
     ]
   ],
-  "sourceHashMode": "sha256-utf8-lf"
+  "sourceHashMode": "sha256-utf8-lf",
+  "technicalRefresh": {
+    "date": "2026-10-27",
+    "baseline": "a1d67c7cd15acb38da9ef3a56c7954d997eccc4d",
+    "scope": "F01 CSRF transport wired to existing backend route; domain request bodies and schema versions unchanged",
+    "browser": "BLOCKED_BY_SAVED_OR_MANAGED_ORIGIN_POLICY",
+    "human_review": "PENDING"
+  }
 }

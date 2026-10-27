@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { ApiClient } from "../src/services/api-client";
+import { CsrfApiClient as ApiClient } from "./helpers/csrf-fetch";
 import { canAccessPage, authorizedLoginTarget } from "../src/lib/access";
 import type { Identity } from "../src/lib/domain";
 

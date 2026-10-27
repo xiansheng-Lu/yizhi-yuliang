@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { MockAdapter } from "../src/services/mock-adapter";
 import { MockHistoryStore, historyKey } from "../src/services/mock-history";
-import { ApiClient } from "../src/services/api-client";
+import { CsrfApiClient as ApiClient } from "./helpers/csrf-fetch";
 import { taskProjectId, type SendMessageRequest } from "../src/lib/workspace-history";
 import type { Identity } from "../src/lib/domain";
 

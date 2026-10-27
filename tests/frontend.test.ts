@@ -23,7 +23,7 @@ import {
   MockIdentityAdapter,
   identityKey,
 } from "../src/services/mock-identity";
-import { ApiClient } from "../src/services/api-client";
+import { CsrfApiClient as ApiClient } from "./helpers/csrf-fetch";
 import { createMockSnapshot } from "../src/services/mock-data";
 const storage = () => {
   const items = new Map<string, string>();

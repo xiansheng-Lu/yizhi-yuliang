@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { createMockSnapshot } from "../src/services/mock-data";
 import { MockAnalysisAdapter, ApiAnalysisAdapter, validateAnalysisResult } from "../src/services/analysis-service";
-import { ApiClient } from "../src/services/api-client";
+import { CsrfApiClient as ApiClient } from "./helpers/csrf-fetch";
 import { buildMockAnalysis } from "../src/services/analysis-mock";
 import { analysisMetricDefinitions, analysisShops, defaultAnalysisRules, diagnoseAnalysis, dimensions, groupAnalysisPoints, pointValue, selectDimension, sumPoints, validateAnalysisQuery, type AnalysisQuery } from "../src/lib/business-analysis";
 import { createReportDraft, exportReportHtml, moveReportModule, reportPeriodIssue, queryForReviewPeriod } from "../src/lib/analysis-draft";

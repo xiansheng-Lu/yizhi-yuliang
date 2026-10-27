@@ -1,0 +1,113 @@
+{
+  "executedAt": "2026-10-27T11:29:10.423518+08:00",
+  "codeCommit": "c95a4f85ac095f38fea2d28afd4ab4eb3d98f998",
+  "environment": {
+    "os": "WSL2 Ubuntu",
+    "kernel": "6.18.33.2-microsoft-standard-WSL2",
+    "python": "3.13.14",
+    "uv": "0.12.13",
+    "docker": "29.1.3",
+    "compose": "2.40.3+ds1-0ubuntu1",
+    "postgres": "17.10",
+    "pgvector": "0.8.2",
+    "pgcrypto": "1.3",
+    "redis": "7.4.7",
+    "rabbitmq": "4.1.6",
+    "minio": "RELEASE.2025-09-07T16-13-09Z",
+    "virtualenv": "/home/lenovo/.cache/yuliang-venv"
+  },
+  "checks": [
+    {
+      "command": "uv sync --frozen --python /home/lenovo/.local/share/yuliang-python313/python/bin/python3.13",
+      "result": "PASS",
+      "detail": "fresh Linux virtualenv; lock unchanged"
+    },
+    {
+      "command": "uv run --frozen ruff check .",
+      "result": "PASS"
+    },
+    {
+      "command": "uv run --frozen ruff format --check .",
+      "result": "PASS",
+      "formattedFiles": 18
+    },
+    {
+      "command": "uv run --frozen mypy",
+      "result": "PASS",
+      "checkedSourceFiles": 15
+    },
+    {
+      "command": "uv run --frozen pytest tests/unit tests/contract -q",
+      "result": "PASS",
+      "passed": 17,
+      "failed": 0,
+      "warnings": 1
+    },
+    {
+      "command": "bash scripts/infra.sh check; bash scripts/infra.sh start",
+      "result": "PASS",
+      "healthyServices": 4
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --lifecycle",
+      "result": "PASS",
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "warnings": 1
+    }
+  ],
+  "warning": "Starlette TestClient httpx弃用提示；未影响本次验证，未为消除提示更改锁定依赖",
+  "realLifecycle": {
+    "postgresValuePreserved": true,
+    "redisValuePreserved": true,
+    "durableMqMessagePreserved": true,
+    "s3ObjectDigestPreserved": true,
+    "reinitializations": 2,
+    "roleListUnchanged": true,
+    "probeCleanup": "PASS",
+    "tenantSeed": "NOT_APPLICABLE: no tenant schema/seed until M0-06/M0-13"
+  },
+  "resolvedFailures": [
+    "镜像代理403/Quay401：本机同版本MinIO镜像已核对并固定摘要",
+    "Docker29 internal网络下实际PortBindings为空：改独立桥接并严格回环绑定",
+    "Windows访问WSL localhost失败：全部真实验收改在WSL内执行"
+  ],
+  "notRun": [
+    "真实平台与供应商调用",
+    "资金或付费操作",
+    "前后端浏览器联调",
+    "业务数据库迁移及租户/RLS实测"
+  ],
+  "sourceSha256Utf8Lf": {
+    "backend/.env.example": "cb62cc735b4d214a9bb69b2dfc8116914ac4cccf2394d75ae723cd18db006035",
+    "backend/.gitattributes": "1d5d71dcc6ccd28ab46a335349ecc74742ca4b81f4fcad212f8d134f70f1f13e",
+    "backend/.gitignore": "13a26f30f8779515d73365d1612b5f7556093d13f9a27a63f2478258565de688",
+    "backend/.python-version": "f8faecf2505680716c6279bf2cdec3d5a5ba2ba852f0d7df45d51ac1ce8d9ade",
+    "backend/README.md": "288a29c6504826b39c8a316dc82188121945774c4e19de1275b469f4a24b6b7b",
+    "backend/deployment/postgres/init.sh": "32f29b150191e641db1174d7345737f4b0fc72698a5b4e6ccdf9af7feb1edaa4",
+    "backend/docker-compose.yml": "28346d7fab4c0895ed94423388b6d9d4f8b3370ed7c04877d74f0bca079e8124",
+    "backend/pyproject.toml": "31658b293fbdfcf7f7223435c610d36eb3899b9b4ccbb1bb5e2dbc2e79a3a6cf",
+    "backend/scripts/infra.ps1": "70e0ea2fd736d77d7501ec64160ab2eb7791d6ec2445a033365fbadce573fd58",
+    "backend/scripts/infra.sh": "b894b1230f42d80b1ca5de87b4c1e4d7bec857bebf152468f0f31d215a92a051",
+    "backend/scripts/prepare-local.ps1": "737da33bcfc1662300a5c4e12785a7156d6a6e3551663c89aafab1ce0e56df56",
+    "backend/scripts/prepare_local.py": "1568d6fed920ca5d034652494383153aba51f4ddfcbf9771f9e4c31aaaa9a015",
+    "backend/scripts/test_infrastructure.py": "041d1fa993070333ebf3fffb9bc7c189b802b7a70e2e9d2ca232f3ed39d6f60c",
+    "backend/src/yuliang/__init__.py": "12340ed4dac81a5fb44ae96d1d7c724776975677b94886b29d9c230e7ec05d11",
+    "backend/src/yuliang/main.py": "2381e6f2d97c32297be5625eafdfe6be54b6730ba371362e3b75af45fecd4c2c",
+    "backend/src/yuliang/platform/__init__.py": "e0534921f4a86eb4a906d025d7923686d57678844115a4487c4988a67ec6f536",
+    "backend/src/yuliang/platform/envelope.py": "4ddc5cdf9441f9010e96e58a6585946e01521c5daf54e147c5d33a68079375f9",
+    "backend/src/yuliang/platform/errors.py": "f7f4c3017dbae5c7455b8552819be89d170624275cd7467acce1a2c2a62872b5",
+    "backend/src/yuliang/platform/middleware.py": "f3cca0626cf32b3249e3e5e2cb287a167ab2cd9310a61b88e0e6f55cf9b55d92",
+    "backend/src/yuliang/settings.py": "d4757c226ff919ed2ce31e5e4f9e1a2ecc6543bed3a4b9e3155114c6053d41fb",
+    "backend/tests/conftest.py": "d0f95cea1175825ffcf2f6e545d812f6d0617575ac7568c1f92782b43e005481",
+    "backend/tests/contract/test_envelope.py": "ec6e75f0271be17d223c512ceed64925e366fa16331187bb075186374ed85346",
+    "backend/tests/integration/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend/tests/integration/test_infrastructure.py": "2ea8f5f9331e9705b62fb154e43bd13eff75f4699ad4c1aca00df295af1b7e21",
+    "backend/tests/integration/test_infrastructure_lifecycle.py": "e8ddbe3c02d0583d0b703eac413b5d0c438f9087ccf89e536874519771598336",
+    "backend/tests/unit/test_infrastructure_config.py": "fe8b55c1514c82ad8cde89d10cb5b7021b14ae7a2e1bb7af013cbf9c7573fc11",
+    "backend/tests/unit/test_local_environment.py": "3d0e5ac68120afa8caed37566307b1aee1495c472ad0028c40ff2d5b956a3fa8",
+    "backend/tests/unit/test_settings.py": "0ecc6fdd6e1df0ec00dbfb3ba4e7bea3ce9e914287fb43ec373aa2087f8b2837",
+    "backend/uv.lock": "f2a2f75538bfe89eaae9c6afbc08b8a809f175a8aa4780445d59163e16895df0"
+  }
+}

@@ -41,3 +41,5 @@ OWNER初始模板不默认给可配置的投放写权限；OPERATOR含内容写�
 
 0011实现auth.issue_challenge/email_session及内部email_delivery布尔守卫，声明与授权同一事务。服务端预分配challengeId经本事务GUC传入，以便在数据库外计算独立pepper的HMAC；HTTP不接受GUC或摘要参数。
 邮件函数统一按预认证行→邮件码行加锁，成功消费与会话插入原子提交。无成员候选时，在邮件摘要验证后从该邮箱真实活跃成员中选择，不能由客户端任意user/tenant创建会话。
+
+0012增加AI预算/价格/报价/许可/追加事件，不登记生产价格或预算。运行账号仅SELECT，各费用函数固定search_path并精确授权app_login；所有费用增减先锁预算、再锁报价或许可。未知费用持有预占，已发送许可不能取消；已知回执重复结算幂等，跨币种保留UNKNOWN，超额如实记账并阻止后续许可。旧应用可继续运行，无自动删除账本的downgrade。

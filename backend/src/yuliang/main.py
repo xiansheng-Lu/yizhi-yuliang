@@ -62,9 +62,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     if settings.identity_api_enabled:
         from yuliang.modules.identity.routes import router
         from yuliang.modules.identity.workspace_routes import router as workspace_router
+        from yuliang.modules.workspace.routes import router as history_router
 
         app.include_router(router)
         app.include_router(workspace_router)
+        app.include_router(history_router)
     if settings.admin_api_enabled:
         from yuliang.admin.routes import router as admin_router
 

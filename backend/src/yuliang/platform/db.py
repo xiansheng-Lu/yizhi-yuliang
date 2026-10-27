@@ -9,7 +9,10 @@ from sqlalchemy import Engine, text
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
 from sqlalchemy.orm import Session
 
-TENANT_SQL = text("SELECT set_config('app.current_tenant', :tenant_id, true)")
+TENANT_SQL = text(
+    "SELECT set_config('app.current_tenant', :tenant_id, true), "
+    "set_config('app.current_actor', :user_id, true)"
+)
 
 
 @dataclass(frozen=True)
@@ -28,7 +31,9 @@ class VerifiedIdentity:
 @contextmanager
 def business_transaction(engine: Engine, identity: VerifiedIdentity) -> Iterator[Session]:
     with Session(engine, expire_on_commit=False) as session, session.begin():
-        session.execute(TENANT_SQL, {"tenant_id": str(identity.tenant_id)})
+        session.execute(
+            TENANT_SQL, {"tenant_id": str(identity.tenant_id), "user_id": str(identity.user_id)}
+        )
         yield session
 
 
@@ -37,5 +42,7 @@ async def async_business_transaction(
     engine: AsyncEngine, identity: VerifiedIdentity
 ) -> AsyncIterator[AsyncSession]:
     async with AsyncSession(engine, expire_on_commit=False) as session, session.begin():
-        await session.execute(TENANT_SQL, {"tenant_id": str(identity.tenant_id)})
+        await session.execute(
+            TENANT_SQL, {"tenant_id": str(identity.tenant_id), "user_id": str(identity.user_id)}
+        )
         yield session

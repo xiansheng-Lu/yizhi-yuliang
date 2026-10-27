@@ -1,5 +1,8 @@
 """应用装配入口。uvicorn yuliang.main:create_app --factory。"""
 
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
+
 import structlog
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
@@ -28,15 +31,39 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             fields = sorted({str(item["loc"][0]) for item in error.errors()})
             raise RuntimeError("后端配置缺失或不合法：" + ", ".join(fields)) from None
     structlog.configure(processors=[structlog.processors.JSONRenderer(ensure_ascii=False)])
+
+    @asynccontextmanager
+    async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+        if app.state.settings.identity_api_enabled:
+            from yuliang.modules.identity.service import IdentityService
+
+            app.state.identity_service = IdentityService(app.state.settings)
+        try:
+            yield
+        finally:
+            if app.state.settings.identity_api_enabled:
+                app.state.identity_service.close()
+
     app = FastAPI(
         title="易致驭量后端",
         version="0.1.0",
         debug=False,
+        lifespan=lifespan,
         docs_url=None if settings.environment == "prod" else "/docs",
         redoc_url=None,
         openapi_url=None if settings.environment == "prod" else "/openapi.json",
     )
     app.state.settings = settings
+    if settings.identity_api_enabled:
+        from yuliang.modules.identity.routes import router
+        from yuliang.modules.identity.workspace_routes import router as workspace_router
+
+        app.include_router(router)
+        app.include_router(workspace_router)
+    if settings.admin_api_enabled:
+        from yuliang.admin.routes import router as admin_router
+
+        app.include_router(admin_router)
     app.add_exception_handler(ApiError, api_error_handler)  # type: ignore[arg-type]
     app.add_exception_handler(RequestValidationError, validation_error_handler)  # type: ignore[arg-type]
     app.add_exception_handler(HTTPException, http_error_handler)  # type: ignore[arg-type]

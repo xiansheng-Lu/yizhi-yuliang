@@ -1,6 +1,6 @@
 # 后端开发入口
 
-当前已交付工程、配置、响应信封、最小身份/目录迁移、事务租户上下文、RLS与受控范围管理；尚无登录HTTP接口、Worker或平台写能力。执行状态和未通过依赖以 [任务台账](../docs/backend/evidence/task-status.json) 为准。
+当前已交付工程、身份/目录迁移、租户隔离、权限管理、密码登录/会话/CSRF、本人资料与最小管理接口；身份与管理HTTP入口默认关闭，尚无Worker或平台写能力。执行状态和未通过依赖以 [任务台账](../docs/backend/evidence/task-status.json) 为准。
 
 ## Python与离线验证
 
@@ -49,7 +49,7 @@ Windows仍可用`scripts/prepare-local.ps1`和`scripts/infra.ps1`，后者要求
 `prepare-local.ps1`生成的.env只供本地。也可复制.env.example后自行填写；缺必填配置或无效配置会拒绝启动，错误只列字段，不回显凭据。
 
 ```powershell
-uv run uvicorn yuliang.main:create_app --factory --host 127.0.0.1 --port 8000
+uv run uvicorn yuliang.main:create_app --factory --host 127.0.0.1 --port 8000 --no-proxy-headers
 ```
 
 GET /healthz只表示进程存活；不代表数据库/队列就绪，完整readyz/metrics属于M0-03。本轮没有开放业务接口，也没有授权真实账户写入。
@@ -67,5 +67,20 @@ uv run python scripts/migrate_local.py current
 迁移后默认app_migrate为NOLOGIN，运行应用不持所有者/迁移连接。兼容及回滚见[迁移说明](alembic/README.md)。
 真实隔离/权限测试在UUID命名临时数据库中进行，不会清空本地开发库。
 五角色为初始模板，重复种子不覆盖租户已调整的权限；数据范围必须显式授予，平台管理员没有默认业务权限。
-范围管理目前为受控数据库函数与Python用例，尚未开放HTTP管理入口。
+范围管理目前为受控数据库函数与Python用例，尚未开放HTTP范围编辑入口。
 内容workflow模板与实际平台字段分别归后续M3/M1，不提前创建。
+
+## 身份接口接线与资源
+
+F01尚未完成浏览器联合接线，因此IDENTITY_API_ENABLED默认false。
+确认接线后才显式开启，并配置独立于SESSION_SECRET的AUTH_AUDIT_SECRET（至少32字符）及精确ALLOWED_ORIGINS。
+登录前先GET /v1/auth/csrf取得JSON令牌与HttpOnly预认证Cookie，POST /v1/auth/login带X-CSRF-Token。
+登录后预认证Cookie撤销，重新GET csrf取得会话绑定令牌；每次获取会轮换，旧页403后只刷新令牌，不自动重放原写请求。
+生产Cookie为Secure/HttpOnly/SameSite=Lax、host-only；分域不要求JS读取Cookie。
+密码尝试按邮箱/IP的独立HMAC摘要各5次/5分钟持久节流，成功尝试也计入防爆破桶。
+会话初始2小时、滑动续期且绝对7天上限，逐请求查PG；Redis只参与最佳努力缓存失效，不能覆盖PG身份状态。
+
+ADMIN_API_ENABLED另行默认false，只有实际内部PLATFORM_ADMIN成员可读/internal/admin/directory；OWNER不会隐式取得权限。
+管理入口默认仅回环网段，最多投影100条用户/租户，排除哈希/令牌并追加读取审计；不提供业务数据通用查询或资金写接口。
+默认启动关闭代理头解析，反代部署需另行确认可信代理范围，不能用客户端X-Forwarded-For作为来源许可依据。
+邮箱验证码M0-10需要实际SMTP/邮件服务和收件地址，目前未接入，密码流程不能冒充邮件投递已验收。

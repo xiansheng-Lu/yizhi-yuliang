@@ -2,6 +2,7 @@
 
 import json
 import re
+from contextlib import nullcontext
 from datetime import timedelta
 from typing import Any
 from uuid import UUID, uuid4
@@ -253,14 +254,19 @@ class JobApplications:
             "fetchedAt": health["fetchedAt"].isoformat(),
         }
 
-    def create(self, value: CreateJobRequest) -> CommandJob:
+    def create(self, value: CreateJobRequest, *, unit_of_work: Session | None = None) -> CommandJob:
         payload = value.model_dump(mode="json") | {
             "creator": str(self.identity.user_id),
             "tenant": self.identity.tenant_id,
         }
         digest = fingerprint(self.key, "job-request-v1", canonical(payload))
         try:
-            with business_transaction(self.engine, self.identity) as session:
+            transaction = (
+                nullcontext(unit_of_work)
+                if unit_of_work is not None
+                else business_transaction(self.engine, self.identity)
+            )
+            with transaction as session:
                 target = self.target(session, value)
                 session.execute(
                     text("SELECT pg_advisory_xact_lock(hashtextextended(:key,760205))"),

@@ -74,6 +74,7 @@ def main() -> int:
             "budgets",
             "reservations",
             "guards",
+            "idempotency",
         ),
         default="all",
     )
@@ -110,6 +111,7 @@ def main() -> int:
         "budgets": ["tests/integration/test_budget_initialization.py"],
         "reservations": ["tests/integration/test_budget_reservations.py"],
         "guards": ["tests/integration/test_target_guards.py"],
+        "idempotency": ["tests/integration/test_api_idempotency.py"],
         "parser": [
             "tests/integration/test_command_parse.py",
             "tests/integration/test_workspace.py",

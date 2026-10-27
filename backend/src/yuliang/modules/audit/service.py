@@ -34,6 +34,9 @@ Action = Literal[
     "risk.assess",
     "budget.initialize",
     "budget.reserve",
+    "idempotency.start",
+    "idempotency.complete",
+    "idempotency.recover",
 ]
 ObjectType = Literal[
     "user",
@@ -49,6 +52,7 @@ ObjectType = Literal[
     "authorization",
     "sync_source",
     "budget_ledger",
+    "idempotency_request",
 ]
 ChangedField = Literal["displayName", "name", "status", "permissions", "scope"]
 

@@ -171,7 +171,7 @@ def test_rule_amount_boundary_includes_paused_basis(risk_ready: dict[str, Any]) 
     assert values(exact)["AMOUNT_LIMIT"] and values(exact)["CHANGE_BOUND"]
     extra = application(data, 111)
     assert not values(extra)["AMOUNT_LIMIT"] and not values(extra)["CHANGE_BOUND"]
-    assert not values(exact)["INTENT_BINDING"] and exact.status.value == "BLOCKED"
+    assert values(exact)["INTENT_BINDING"] and exact.status.value == "DRAFT"
 
 
 @pytest.mark.parametrize(

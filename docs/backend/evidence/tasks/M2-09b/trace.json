@@ -1,0 +1,29 @@
+{
+  "jobId": "af757b3a-2b56-4dcf-8455-7421430d806f",
+  "assessmentId": "538319b4-16e6-40de-bcf5-a102f3d07e7f",
+  "jobVersion": 3,
+  "approvedVersion": 2,
+  "intentHash": "77bdc309464e475dc1c36be1937fdb41886b0439766a92d0c58c19fc1806d0d2",
+  "policyVersion": 1,
+  "checks": {
+    "TARGET_SCOPE": true,
+    "POLICY_CONFIGURED": true,
+    "POLICY_VERSION": true,
+    "STAGE_STATUS": true,
+    "JOB_WINDOW": true,
+    "REQUESTER_AUTHORIZATION": true,
+    "ACTION_CAPABILITY": true,
+    "CURRENT_VALUE_CONFIRMED": true,
+    "CURRENT_VALUE_UNCHANGED": true,
+    "APPROVAL_CURRENT": true,
+    "AMOUNT_LIMIT": true,
+    "CHANGE_BOUND": true,
+    "FREQUENCY": true,
+    "INTENT_BINDING": true,
+    "ASSESSMENT_WINDOW": true,
+    "POLICY_ENGINE_READY": true
+  },
+  "stageSetup": "MAINTENANCE_SETUP_NO_BUDGET_OR_APPROVAL_PARTICIPANTS",
+  "platformCalls": 0,
+  "paidCalls": 0
+}

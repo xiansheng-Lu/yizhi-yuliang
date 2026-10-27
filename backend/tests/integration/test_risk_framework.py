@@ -174,8 +174,8 @@ def test_four_entries_actual_basis_and_append_audit(
         "CURRENT_VALUE_UNCHANGED",
     ):
         assert values[code], code
-    assert not values["AMOUNT_LIMIT"] and not values["INTENT_BINDING"]
-    assert not values["POLICY_ENGINE_READY"]
+    assert not values["AMOUNT_LIMIT"] and values["INTENT_BINDING"]
+    assert values["POLICY_ENGINE_READY"]  # 规则齐全与事实条件已通过分别校验。
     with data["maintenance"].begin() as owner:
         owner.execute(text("SET LOCAL ROLE app_owner"))
         row = (

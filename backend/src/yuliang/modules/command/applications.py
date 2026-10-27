@@ -331,18 +331,9 @@ class JobApplications:
                         ),
                     ),
                 )
-                intent = {
-                    "tenant": job.tenant_id,
-                    "shop": job.shop_id,
-                    "account": job.account_id,
-                    "targetType": job.target_type,
-                    "target": job.target_id,
-                    "action": job.action_type,
-                    "old": job.old_value.model_dump() if job.old_value else None,
-                    "new": job.new_value.model_dump(),
-                    "proof": proof,
-                }
-                intent_hash = fingerprint(self.key, "job-intent-v1", canonical(intent))
+                from yuliang.modules.policy.intent import seal_intent
+
+                intent_hash = seal_intent(self.key, job, self.identity.user_id, proof)
                 session.execute(
                     text("""INSERT INTO command_jobs(id,tenant_id,created_by,shop_id,account_id,
                 live_session_id,status,created_at,updated_at,document,target_type,target_id,campaign_id,

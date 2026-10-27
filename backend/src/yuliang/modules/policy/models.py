@@ -51,6 +51,7 @@ class RiskContext(BaseModel):
     policy_version: int
     config: PolicyConfig | None
     checked_at: AwareDatetime
+    stored: dict[str, Any] | None = None
 
 
 class CheckEvidence(BaseModel):
@@ -65,3 +66,15 @@ class RiskDecision(BaseModel):
     assessment_id: UUID
     summary: RiskSummary
     expires_at: AwareDatetime
+
+    def require_allowed(self) -> None:
+        """组件准入错误供后续HTTP/同事务参与者使用，不把失败总结当执行资格。"""
+        from yuliang.platform.errors import ApiError, ErrorCode
+
+        failures = {item.code for item in self.summary.checks if not item.passed}
+        if "POLICY_VERSION" in failures:
+            raise ApiError(ErrorCode.POLICY_VERSION_CHANGED, "策略已变化，需要重新创建并确认")
+        if "INTENT_BINDING" in failures:
+            raise ApiError(ErrorCode.VERSION_CONFLICT, "冻结指令不一致，需要重新创建并确认")
+        if self.summary.result != "REVIEW_REQUIRED" or failures:
+            raise ApiError(ErrorCode.RISK_BLOCKED, "当前条件不允许推进申请")

@@ -59,7 +59,7 @@ class RiskFramework:
         if rules is None:
             from yuliang.modules.policy.rules import deterministic_rules
 
-            rules = deterministic_rules()
+            rules = deterministic_rules(applications.key)
         self.applications = applications
         implementations = tuple(rules)
         self.rules = {rule.name: rule for rule in implementations}
@@ -101,6 +101,7 @@ class RiskFramework:
         stage: RiskStage,
         *,
         at: datetime | None = None,
+        expected_version: int | None = None,
     ) -> RiskDecision:
         if stage not in {RiskStage.CONFIRM, RiskStage.APPROVE, RiskStage.EXECUTE}:
             raise ValueError("既有申请需要明确的生命周期检查时点")
@@ -130,6 +131,12 @@ class RiskFramework:
                     "当前范围内的任务不可核验",
                 ) from None
             raise
+        if expected_version is not None and (
+            type(expected_version) is not int or expected_version < 1
+        ):
+            raise ApiError(ErrorCode.INVALID_INPUT, "需要有效申请版本")
+        if expected_version is not None and row["version"] != expected_version:
+            raise ApiError(ErrorCode.VERSION_CONFLICT, "申请版本已变化")
         job = CommandJob.model_validate(row["document"])
         value = CreateJobRequest.model_validate(
             {key: row["document"][key] for key in CreateJobRequest.model_fields}
@@ -172,7 +179,21 @@ class RiskFramework:
             job,
             stamp,
             current_error=error_code,
+            stored=row,
         )
+
+    def require_job(
+        self,
+        session: Session,
+        job_id: UUID,
+        stage: RiskStage,
+        expected_version: int,
+        *,
+        at: datetime | None = None,
+    ) -> RiskDecision:
+        decision = self.assess_job(session, job_id, stage, expected_version=expected_version, at=at)
+        decision.require_allowed()
+        return decision
 
     def _assess(
         self,
@@ -188,6 +209,7 @@ class RiskFramework:
         at: datetime,
         *,
         current_error: str | None = None,
+        stored: dict[str, Any] | None = None,
     ) -> RiskDecision:
         from yuliang.modules.command.applications import ACTION_CAPABILITIES
 
@@ -323,8 +345,13 @@ class RiskFramework:
             policy_version=version,
             config=config,
             checked_at=at,
+            stored=stored,
         )
         installed = set()
+        if stage == RiskStage.EXECUTE and not manual:
+            from yuliang.modules.policy.intent import approval_current
+
+            checks.append(approval_current(session, context))
         if not manual:
             for name in sorted(REQUIRED_RULES):
                 rule = self.rules.get(name)

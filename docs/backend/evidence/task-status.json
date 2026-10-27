@@ -1400,7 +1400,8 @@
         "backend": "PENDING",
         "frontend": "PENDING_F01"
       },
-      "evidence": "tasks/M1-03b/README.md"
+      "evidence": "tasks/M1-03b/README.md",
+      "implementationCommit": "413a13f212021a3cbd0d5286dd00afe724126453"
     }
   },
   "gates": {

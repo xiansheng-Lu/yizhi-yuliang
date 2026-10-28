@@ -131,3 +131,9 @@ main0c613c4远程核对同步后，新本地codex/backend-ai-content-generation�
 main bf2b2f6已合并推送，1009集成/1跳过及952单元通过。新本地codex/backend-topic-adgroup-queries立即启动：commerce独占0073/topic提示与生产链，beans独占M1-19 ADGROUP查询及最小READ接线，reports只做独立契约/真实TS消费证据。root仍独占runner、公共台账和Git；当前未授予任何DB窗口，冻结后串行。只选已有冻结FE目录与真实profile的ADGROUP，CAMPAIGN缺入口维持关闭；不把旧1009或历史付费许可作为新批次通过。06/12伙伴各2新增保留，不夹带。
 
 本批最终收口：本批独立topic6/10.11s+旧AI17/17.55s、ADGROUP14/14.61s+context15/10.05s、相关36/35.59s与975单元/契约10.73s通过，241源码mypy/Ruff通过。实际PlatformService消费3响应/8行、6非法响应拒绝，浏览器未验。默认开发库0073、48相关表仅5系统模板其余0，NOLOGIN；全部DB释放。准备中文提交合并main推送后继续。本批使用专项及相关回归；上批1009全量仅为bf2b2f6基线证据，未重复声称新分支full通过。
+
+## 稳定分页与独立证据读取下一批
+
+main30ec5f5已实际合并推送；新本地codex/backend-query-continuation正式领取M1-19分页/0074和M2-18b本人job脱敏readservice/0075。复用当前snapshot.read/RBAC与双scope，不扩跨actor，不借CLAIM/EXECUTE，不造未冻结FE端点；随机cursor selector仅DB私有定位，每页重验当前scope和同一完整来源，禁止借OAuth/费用/会话签名密钥。三个Agent边界已明确，当前无DB授权。每组冻结后串行0074→0075，真实平台/paid0；06/12伙伴改动保留。
+
+本批最终收口：本批分页13/53.67s+旧查询14/15.37s、独立执行证据16/16.01s、相关25/24.53s与989单元/契约10.83s通过，244源码mypy/Ruff通过。真实TS消费12页1101条无重漏/排序及重放一致。默认开发库0075、50相关表仅5系统模板其余0，迁移角色NOLOGIN，DB已释放。准备中文提交合并main推送后继续可靠批准producer/worker本地技术切片，真实平台/paid0。迁移标识先查≤32/唯一/父链，补快速静态守卫；旧空集合断言现在同时核真实SUCCESS/0行/完整批次，不删除新来源元数据来迁就旧测试。

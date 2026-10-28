@@ -1,0 +1,125 @@
+{
+  "date": "2026-10-29",
+  "verifiedAtUtc": "2026-10-28T16:12:10.573002+00:00",
+  "baseline": "30ec5f50e8fe546b6652a2a7b4a3219594e97335",
+  "branch": "codex/backend-query-continuation",
+  "result": "PASS_TARGETED_AND_RELATED_REGRESSION",
+  "checks": [
+    {
+      "command": "ruff check src tests scripts alembic/versions/0074_resource_query_continuations.py alembic/versions/0075_execution_evidence_reads.py",
+      "result": "PASS"
+    },
+    {
+      "command": "mypy src",
+      "result": "PASS",
+      "sourceFiles": 244
+    },
+    {
+      "command": "pytest -m \"unit or contract\" -q",
+      "passed": 989,
+      "deselected": 1061,
+      "seconds": 10.83
+    },
+    {
+      "command": "python scripts/test_infrastructure.py --group query-evidence-regression --details",
+      "passed": 25,
+      "seconds": 24.53
+    }
+  ],
+  "dedicated": {
+    "pagination": {
+      "passed": 13,
+      "seconds": 53.67,
+      "oldQueryRegressionPassed": 14,
+      "oldQueryRegressionSeconds": 15.37,
+      "evidence": "tasks/M1-19/adgroups/pagination/verification.json"
+    },
+    "executionEvidenceReads": {
+      "passed": 16,
+      "seconds": 16.01,
+      "unitPassed": 8,
+      "unitSeconds": 0.29,
+      "evidence": "tasks/M2-18b/verification.json"
+    },
+    "frontendPagination": {
+      "pages": 12,
+      "rows": 1101,
+      "uniqueNativeIds": 1101,
+      "injectedFetches": 15,
+      "realNetworkCalls": 0,
+      "evidence": "tasks/M1-19/adgroups/pagination/frontend/consumer-verification.json"
+    },
+    "migrationIdentifierGuard": {
+      "passed": 1,
+      "seconds": 0.32,
+      "scope": "all revision identifiers fit varchar32, unique, parents resolve"
+    }
+  },
+  "earlierRelatedRegression": {
+    "passed": 24,
+    "failed": 1,
+    "seconds": 27.48,
+    "cause": "Old exact empty-result assertion omitted intentionally added snapshot lineage",
+    "fix": "Retain empty/gaps assertions and positively verify complete SUCCESS zero-row persisted snapshot; production code unchanged"
+  },
+  "sourceFreeze": {
+    "backendFiles": 19,
+    "unchangedAtFinalRelatedRerun": true,
+    "sha256LfNormalized": {
+      "backend/alembic/versions/0074_resource_query_continuations.py": "f3a2368656828a786235c574bfce415c3c426d28da0c34ca8d78c05482eee2bd",
+      "backend/alembic/versions/0074_resource_query_continuations.sql": "9f5fb2b56ddaa6eb4ff97a4ea04400db2efbdbdb48f3aaf471ea5f67c5039bd1",
+      "backend/alembic/versions/0075_execution_evidence_reads.py": "6f8f9f82ea6d3c9e76028c5535cb557ce8c2d47b64c44e4d9b30e088639286fd",
+      "backend/alembic/versions/0075_execution_evidence_reads.sql": "206036727a97dd64ee441ed4fb246f00738136f2c47fde3108524a9b4e1303a3",
+      "backend/src/yuliang/modules/execution/evidence_read_models.py": "78c041e9ca8e11e8d0778572239350bf5c49b606b7c3bda49e66816b77a16329",
+      "backend/src/yuliang/modules/execution/evidence_read_service.py": "d6996b9f809d41742e8c1a16b43f67f1df9ff8f669a2d892fda8715eadba39e0",
+      "backend/src/yuliang/modules/reporting/query_adgroup_cursor.py": "f02bdb20e78ef0936cdf68c74fffe6dcd6c4615a9aeedf518d0b11a5b8d879bf",
+      "backend/tests/integration/test_adgroup_query_pagination.py": "c3add3ec8659708ef62c6ba91fa6cd0d7bc7762ba5fd00453add24e7f4164f6c",
+      "backend/tests/integration/test_execution_evidence_reads.py": "1b8f90bf36b5cbcb7c156949873cce863e26da9c0138e7f1a2f285523bf78d8e",
+      "backend/tests/unit/test_adgroup_query_pagination.py": "8870474351df1963d7a3208b058974abc234f6e36f579b3f4fea844df338d971",
+      "backend/tests/unit/test_execution_evidence_models.py": "559ab7a88d51b09bc96e4ff3b54631ec241f883984c5acb4db65493a0b89f8fc",
+      "backend/tests/unit/test_migration_identifiers.py": "5521c9508ae9c8017344b317d727c29a9316b5ce9831ac168656a492e2af0dc6",
+      "backend/scripts/test_infrastructure.py": "715aeb596977b4e16777a08af0fbe7bfcc82810ce33de772b69b81a2a40f8771",
+      "backend/src/yuliang/modules/delivery/plan_reads.py": "15a50d8e86d715c841ae74ce6c3bd13b17b432c62bd73265920dafb332e80b28",
+      "backend/src/yuliang/modules/reporting/query_plans.py": "d96468c28112b3e91917ed4cbc6c6784669d35d768a669bfba412cd440710309",
+      "backend/src/yuliang/modules/reporting/query_service.py": "a24ef1f18f6d6133dbc9c2ae6d65486d54dc50862a058b9a4033eb34f65620cf",
+      "backend/tests/integration/test_resource_query_plans.py": "54ddcbe6b62f2e71a4ce8726ec954e4fdfa29d2c66d746ed895b84d97bb26bf5",
+      "backend/tests/unit/test_query_plans.py": "e0ace1aae2b65cef6b09c1e553fc8403aee57715f8089768b01c06361d3fa1de",
+      "backend/tests/integration/test_plan_read_projections.py": "e7457eefbfe86bdc453cb59f7b78f70eab892e37efef9dd03c8cce9b78b8747e"
+    }
+  },
+  "whitespaceCleanup": {
+    "path": "backend/alembic/versions/0074_resource_query_continuations.py",
+    "onlyTrailingWhitespaceChanged": true,
+    "astUnchanged": true,
+    "beforeSha256": "db40e783fefc8c46f02a809bceff91f3dc23d96179e1c1eb3c242c164e0cfd18",
+    "afterSha256": "f3a2368656828a786235c574bfce415c3c426d28da0c34ca8d78c05482eee2bd"
+  },
+  "reviewFixes": [
+    "Whole expired chains cleaned within bounded rows, actor tuple included in next-position FK",
+    "True integer native-ID order, immutable source/proof/permission snapshots and same-cursor replay",
+    "Three serialization failures return fixed409, other database failures are not retried",
+    "Alembic revision shortened; new fast metadata guard prevents overlength or unresolved parents",
+    "Execution evidence uses existing own-job snapshot.read only; no CLAIM, role grant or cross-actor expansion",
+    "SQL recovery outcomes allowlisted, unknown free text replaced; malformed historical model returns fixed coverage error"
+  ],
+  "migrationHead": "0075_execution_evidence_reads",
+  "cursorRevision": "0074_resource_query_cursors",
+  "development": "query-evidence-development.json",
+  "paidCalls": 0,
+  "realModelCalls": 0,
+  "realSupplierCalls": 0,
+  "livePlatformCalls": 0,
+  "originalTokenServiceChanges": 0,
+  "notClaimed": [
+    "current full integration suite rerun",
+    "real platform or commercial model acceptance",
+    "production writes or paid generation",
+    "browser or named BE FE acceptance",
+    "new execution attempts HTTP contract",
+    "manual reconciliation write or arbitrary success/budget release",
+    "complete M1-19 or M2-18b cards"
+  ],
+  "nextReady": [
+    "M2-15 approved execution outbox and worker local durable dispatch; production WRITE serializer/source remains closed"
+  ]
+}

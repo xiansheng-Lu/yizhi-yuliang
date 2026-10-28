@@ -1,10 +1,10 @@
 # 最新恢复入口
 
-2026-10-28：上一批已合并推送main **bf2b2f6a071a53e716ba9e8560fccfe45991e179**，远程哈希实查一致；1009集成通过、1可选重启跳过（953.14s），952单元/契约及240源码mypy/Ruff通过。开发库0072，48相关表仅5系统模板，其余0，迁移角色NOLOGIN；见ai-content-generation-verification.json。三卡整卡仍有真实生成/上传审核/全内容事件/UI等缺口，未宣布整体完成。
+2026-10-28：最新main **30ec5f50e8fe546b6652a2a7b4a3219594e97335**已合并推送且远程核对一致，topic-adgroup-verification.json有实际专项/相关回归与975单元证据；上批1009仅是bf2b2f6全量基线，不冒新分支结果。默认库0073、48相关表仅5系统模板其余0，迁移角色NOLOGIN。
 
-**codex/backend-topic-adgroup-queries**已完成本批技术验证：本批独立topic6/10.11s+旧AI17/17.55s、ADGROUP14/14.61s+context15/10.05s、相关36/35.59s与975单元/契约10.73s通过，241源码mypy/Ruff通过。实际PlatformService消费3响应/8行、6非法响应拒绝，浏览器未验。默认开发库0073、48相关表仅5系统模板其余0，NOLOGIN；全部DB释放。准备中文提交合并main推送后继续。
+**codex/backend-query-continuation**本批技术通过：本批分页13/53.67s+旧查询14/15.37s、独立执行证据16/16.01s、相关25/24.53s与989单元/契约10.83s通过，244源码mypy/Ruff通过。真实TS消费12页1101条无重漏/排序及重放一致。默认开发库0075、50相关表仅5系统模板其余0，迁移角色NOLOGIN，DB已释放。准备中文提交合并main推送后继续可靠批准producer/worker本地技术切片，真实平台/paid0。
 
-ADGROUP当前上限1000完整匹配行，超限明确422/收窄，nextCursor=null；尚未实现服务端分页，不声称5000展示。CAMPAIGN无冻结FE目录入口且后端明确关闭；当前观察非历史配置，未知预算/源时间保持未知。下一切片先核稳定跨页或执行内核实际缺口，不能因台账无ID推断已有内核未实现。直播/回放还缺可靠语义/场次映射/媒体转录，不能用SDK类型、UV或空数组补投影。
+稳定分页固定100/完整源最多10000，当前private selector每页重验身份/来源；执行证据严格本人snapshot.read/当前scope，内部service无新HTTP/人工改成功。下一技术输入已核：真实审批/执行内核存在，缺稳定APPROVE来源→可靠outbox→正式worker编排；可在默认生产WRITE关闭下用真实Rabbit与loopback验证，不能重写内核或把synthetic serializer冒官方WRITE协议。
 
 用户的V8只读可空契约问题仍待答复，具体reviewable方案见resource-handoff/v8-plan-contract-gap.md。当前前端冻结契约未改，不默认选项被确认；该缺口只影响完整M1-18/V8 workspace，不阻塞上列任务。M1-18/M1-19/M3-16未实现项继续IN_PROGRESS，M3-14已技术通过待人工。
 

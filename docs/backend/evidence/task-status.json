@@ -3140,19 +3140,26 @@
         "livePlatformCalls": 0
       },
       "activeSlice": {
-        "name": "V9 adgroups readonly query actual consumer chain",
+        "name": "ADGROUP stable complete bounded pages",
         "status": "TECH_VERIFIED_WAITING_REVIEW",
         "owner": "BE",
-        "agent": "beans",
-        "scope": "existing actual frontend directory adgroups only; CAMPAIGN closed; no V8 contract change",
-        "evidence": "tasks/M1-19/adgroups/verification.json",
-        "combinedRegression": "topic-adgroup-verification.json"
+        "agent": "commerce",
+        "migration": "0074_resource_query_continuations",
+        "evidence": "tasks/M1-19/adgroups/pagination/verification.json",
+        "combinedRegression": "query-evidence-verification.json"
       },
       "adgroupQueryIntegration": {
         "passed": 14,
         "seconds": 14.61,
         "evidence": "tasks/M1-19/adgroups/verification.json",
         "frontend": "PASS_RECORDED_HTTP_CONSUMER_NOT_BROWSER"
+      },
+      "paginationIntegration": {
+        "passed": 13,
+        "seconds": 53.67,
+        "frontendPages": 12,
+        "frontendRows": 1101,
+        "evidence": "tasks/M1-19/adgroups/pagination/verification.json"
       }
     },
     "M3-14": {
@@ -3376,6 +3383,38 @@
         "livePlatformCalls": 0,
         "combinedRegression": "ai-content-generation-verification.json"
       }
+    },
+    "M2-18b": {
+      "owner": "BE",
+      "status": "IN_PROGRESS",
+      "delivery": "独立snapshot.read本人AD_PLAN任务脱敏内部执行证据服务已实现，0075窄读函数/模型/真实旧生产者测试；PG待串行窗口，不宣称HTTP/前端或人工定性已接",
+      "dependencyInput": "M2-18a对应既有M2-11b恢复及M2-17a回执真实技术证据、现有ExecutionOrders/Receipts/Recovery/Readback持久生产者和snapshot.read本人job可见性；不因细卡未登记否认旧代码",
+      "evidence": "tasks/M2-18b/README.md",
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F06_F13"
+      },
+      "technicalVerification": {
+        "result": "PASS_INTERNAL_READ_SLICE_TARGETED_AND_RELATED",
+        "unitPassed": 8,
+        "unitSeconds": 0.29,
+        "ruff": "PASS",
+        "mypyFiles": 5,
+        "integration": "NOT_RUN_THIS_BRANCH",
+        "paidCalls": 0,
+        "livePlatformCalls": 0,
+        "integrationPassed": 16,
+        "seconds": 16.01,
+        "head": "0075_execution_evidence_reads",
+        "evidence": "tasks/M2-18b/verification.json",
+        "combinedRegression": "query-evidence-verification.json"
+      },
+      "scopeLimits": [
+        "own job only; no cross actor visibility expansion",
+        "current snapshot.read and existing dual scope, no CLAIM or EXECUTE",
+        "no new HTTP or frozen frontend attempts contract",
+        "no manual success, budget release or quarantine bypass"
+      ]
     }
   },
   "gates": {
@@ -3487,7 +3526,7 @@
     "done": "全部适用DoD与复核通过后才记DONE",
     "offline": "离线通过不等于真实依赖、前端联调或平台验收通过"
   },
-  "nextTask": "本批已技术验证；提交合并main推送后直接继续下一实际依赖就绪卡，不代签整卡DONE",
+  "nextTask": "本批技术通过后合并main推送，紧接新本地分支做可靠批准producer/worker，不等待继续授权",
   "continuation": {
     "requestedOn": "2026-10-27",
     "authorization": "持续推进后端任务卡，缺资源再找用户对接",
@@ -3495,13 +3534,12 @@
     "environment": "WSL2 Ubuntu Docker; UV_PROJECT_ENVIRONMENT=/home/lenovo/.cache/yuliang-venv",
     "latestUserRequest": "继续采用多agent模式持续开发，当前任务结束直接开启下一个任务，需要资源再找用户",
     "developmentPolicy": "缺人工/外部验收时记录并继续可独立技术准备；正式门禁、平台调用和付费仍按各自证据许可",
-    "lastCompletedTechnicalTask": "M3-18 independent content_topic/system template chain and M1-19 V9 ADGROUP read query slices",
-    "nextTechnicalTask": "Read-only evaluation of bounded ADGROUP continuation and actual M2-15/M2-18b technical gaps; implement next evidence-ready task after main sync",
+    "lastCompletedTechnicalTask": "M1-19 stable ADGROUP continuation and M2-18b own-job sanitized evidence internal reader",
+    "nextTechnicalTask": "M2-15 approval outbox plus durable single-send worker on existing kernel; default production registry closed, synthetic loopback only",
     "executionRules": "docs/backend/evidence/execution-rules.md",
-    "checkpoint": "本批独立topic6/10.11s+旧AI17/17.55s、ADGROUP14/14.61s+context15/10.05s、相关36/35.59s与975单元/契约10.73s通过，241源码mypy/Ruff通过。实际PlatformService消费3响应/8行、6非法响应拒绝，浏览器未验。默认开发库0073、48相关表仅5系统模板其余0，NOLOGIN；全部DB释放。准备中文提交合并main推送后继续。",
+    "checkpoint": "本批分页13/53.67s+旧查询14/15.37s、独立执行证据16/16.01s、相关25/24.53s与989单元/契约10.83s通过，244源码mypy/Ruff通过。真实TS消费12页1101条无重漏/排序及重放一致。默认开发库0075、50相关表仅5系统模板其余0，迁移角色NOLOGIN，DB已释放。准备中文提交合并main推送后继续可靠批准producer/worker本地技术切片，真实平台/paid0。",
     "technicalPreparationQueue": [
-      "M3-18:content_topic",
-      "M1-19:adgroups query"
+      "M2-15:local reliable approval outbox and worker dispatch"
     ],
     "routingReason": "重新核对149卡，M1-06/07原生适配已有实际技术证据，M1-08与后续镜像可做本地实现与合成端口/真实PG集成；按持续授权不等待实际租户/店铺绑定，但P验收必须保留E01/E02，不能把合成测试当真平台",
     "deferredTechnicalDependencies": [
@@ -3524,19 +3562,18 @@
     "integrationCheckpoint": "已整合前端frontend目录重构和M1-06/07原生适配；SSE迁移改为0040，保留0039令牌续期与资源未绑定门禁",
     "multiAgentAuthorization": "2026-10-28用户明确授权多Agent持续开发，资源阻塞单列；BE负责人不变",
     "nextReadyQueue": [
-      "M3-18:content_topic",
-      "M1-19:adgroups query"
+      "M2-15:local reliable approval outbox and worker dispatch"
     ],
-    "latestVerification": "topic-adgroup-verification.json",
-    "combinedRegression": "topic-adgroup-verification.json",
-    "activeBranch": "codex/backend-topic-adgroup-queries",
-    "lastRemoteMain": "bf2b2f6a071a53e716ba9e8560fccfe45991e179",
+    "latestVerification": "query-evidence-verification.json",
+    "combinedRegression": "query-evidence-verification.json",
+    "activeBranch": "codex/backend-query-continuation",
+    "lastRemoteMain": "30ec5f50e8fe546b6652a2a7b4a3219594e97335",
     "activeAgents": {
-      "commerce": "topic verified/frozen; read-only ADGROUP cursor dependency evaluation",
-      "beans": "adgroup verified/frozen; read-only execution card evidence audit",
-      "reports": "actual recorded HTTP TS consumer PASS; frozen no DB"
+      "commerce": "pagination frozen/pass; read-only next dispatch design complete",
+      "beans": "reader frozen/pass; read-only approval producer design complete",
+      "reports": "frontend pagination actual consumer PASS/frozen; no DB"
     },
-    "databaseWindow": "RELEASED_AFTER_ROOT_RELATED_REGRESSION_AND_DEFAULT_DEV0073; no active DB owner",
+    "databaseWindow": "RELEASED_AFTER_ROOT_RELATED25_AND_DEFAULT_DEV0075; no active DB owner",
     "lastAbortedCombinedRegression": {
       "passedBeforeInterrupt": 117,
       "skipped": 1,
@@ -3545,7 +3582,8 @@
       "finalResultClaimed": false
     },
     "migrationReservations": {
-      "0073": "content_topic; commerce; down0072_ai_ledger_actor_guard; forward check extension only"
+      "0074": "resource_query_cursors exact short revision; filename0074_resource_query_continuations; commerce; down0073_content_topic",
+      "0075": "execution_evidence_reads; beans; root corrected down0074_resource_query_cursors"
     },
     "previousBatchTargetedVerification": {
       "rootCostAndUow": {
@@ -3599,7 +3637,35 @@
         "seconds": 9.86
       }
     },
-    "currentTargetedVerification": {
+    "previousBatchReviewFixes": {
+      "aiCrossActorKey": "PASS_AI17_ACTUAL_PG_409_AND_ROLLBACK",
+      "aiReplyLockOrder": "PASS_AI17_ACTUAL_SHARED_ASSET_BUDGET_BARRIER",
+      "generationLockOrder": "PASS_GEN31_ACTUAL_RUN_JOB_SORTED_ASSETS_BUDGET_BARRIER",
+      "dispatchActorRls": "PASS_GEN31_ACTUAL_SQL_CROSS_ACTOR_REJECTION",
+      "ledgerActor": "PASS_LEDGER21_0072_PUBLIC_BEGIN_FINISH_12_14_AND_PRIVATE_DENIED"
+    },
+    "currentReviewFixes": {
+      "paginationCleanup": "PASS_PG_THREE_CHAINS_297_EXPIRED_ROWS",
+      "paginationNextActorFk": "PASS_PG_CROSS_ACTOR_REFERENCE_REJECTED",
+      "evidenceFreeTextOutcome": "PASS_READER16_SQL_OUTCOME_WHITELIST_AND_SAFE_VALIDATION_ERROR",
+      "paginationNumericSort": "PASS_PG_AND_ACTUAL_FRONTEND_BIGINT_ORDER",
+      "paginationSerializationExhaustion": "UNIT_FIXED_409_AFTER_THREE_40001",
+      "migrationRevisionLength": "FIXED_SHORT_0074_RESOURCE_QUERY_CURSORS_AND_FAST_STATIC_UNIT_GUARD_PASS"
+    },
+    "previousCombinedRegression": {
+      "branch": "codex/backend-ai-content-generation",
+      "baseline": "0c613c4f9dc40b87e65383844f799e59403e64ab",
+      "result": "PASS_COMBINED_FULL",
+      "previousCompletedEvidence": "workflow-execution-links-verification.json",
+      "migrationHeadInTests": "0072_ai_ledger_actor_guard",
+      "developmentHead": "0072_ai_ledger_actor_guard",
+      "session": 65184,
+      "sourceFreeze": ".runtime/ai-content-generation-source-freeze.json",
+      "passed": 1009,
+      "skipped": 1,
+      "seconds": 953.14
+    },
+    "previousTargetedVerificationTopicAdgroup": {
       "topic": {
         "passed": 6,
         "seconds": 10.11
@@ -3632,34 +3698,59 @@
         "seconds": 10.73
       }
     },
-    "previousBatchReviewFixes": {
-      "aiCrossActorKey": "PASS_AI17_ACTUAL_PG_409_AND_ROLLBACK",
-      "aiReplyLockOrder": "PASS_AI17_ACTUAL_SHARED_ASSET_BUDGET_BARRIER",
-      "generationLockOrder": "PASS_GEN31_ACTUAL_RUN_JOB_SORTED_ASSETS_BUDGET_BARRIER",
-      "dispatchActorRls": "PASS_GEN31_ACTUAL_SQL_CROSS_ACTOR_REJECTION",
-      "ledgerActor": "PASS_LEDGER21_0072_PUBLIC_BEGIN_FINISH_12_14_AND_PRIVATE_DENIED"
+    "currentTargetedVerification": {
+      "adgroupPagination": {
+        "static": "ruff/mypy4 PASS",
+        "unitPassed": 19,
+        "seconds": 53.67,
+        "firstIntegration": "13_SETUP_ERRORS_OVERLONG_REVISION",
+        "finalIntegration": "PASS",
+        "finalIntegrationPassed": 13,
+        "head": "0075_execution_evidence_reads"
+      },
+      "executionEvidenceReads": {
+        "passed": 16,
+        "seconds": 16.01
+      },
+      "frontendPagination": {
+        "result": "PASS_ACTUAL_RECORDED_HTTP_TS_CONSUMPTION",
+        "pages": 12,
+        "rows": 1101,
+        "distinctNativeIds": 1101,
+        "realNetworkCalls": 0,
+        "evidence": "tasks/M1-19/adgroups/pagination/frontend/consumer-verification.json"
+      },
+      "adgroupQueryRegression": {
+        "passed": 14,
+        "seconds": 15.37
+      },
+      "finalStatic": {
+        "ruff": "PASS",
+        "mypySourceFiles": 244,
+        "unitPassed": 989,
+        "seconds": 10.83
+      },
+      "combined": {
+        "passed": 25,
+        "seconds": 24.53,
+        "scope": "RELATED_NOT_FULL"
+      }
     },
-    "currentReviewFixes": {},
-    "previousCombinedRegression": {
-      "branch": "codex/backend-ai-content-generation",
-      "baseline": "0c613c4f9dc40b87e65383844f799e59403e64ab",
-      "result": "PASS_COMBINED_FULL",
-      "previousCompletedEvidence": "workflow-execution-links-verification.json",
-      "migrationHeadInTests": "0072_ai_ledger_actor_guard",
-      "developmentHead": "0072_ai_ledger_actor_guard",
-      "session": 65184,
-      "sourceFreeze": ".runtime/ai-content-generation-source-freeze.json",
-      "passed": 1009,
-      "skipped": 1,
-      "seconds": 953.14
-    },
-    "pendingCombinedRegression": {
+    "previousRelatedRegressionTopicAdgroup": {
       "branch": "codex/backend-topic-adgroup-queries",
       "baseline": "bf2b2f6a071a53e716ba9e8560fccfe45991e179",
       "result": "PASS_TARGETED_AND_RELATED_REGRESSION",
       "previousCompletedEvidence": "ai-content-generation-verification.json",
       "developmentHead": "0073_content_topic",
       "evidence": "topic-adgroup-verification.json"
+    },
+    "pendingCombinedRegression": {
+      "branch": "codex/backend-query-continuation",
+      "baseline": "30ec5f50e8fe546b6652a2a7b4a3219594e97335",
+      "result": "PASS_TARGETED_AND_RELATED_REGRESSION",
+      "developmentHead": "0075_execution_evidence_reads",
+      "previousCompletedEvidence": "topic-adgroup-verification.json",
+      "evidence": "query-evidence-verification.json"
     }
   },
   "frontendIntegration": {

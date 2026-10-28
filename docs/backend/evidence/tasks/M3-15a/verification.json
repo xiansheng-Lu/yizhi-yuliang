@@ -1,0 +1,54 @@
+{
+  "task": "M3-15a",
+  "date": "2026-10-28",
+  "status": "WAITING_REVIEW",
+  "baseline": "a58882e",
+  "technicalResult": "PASS_REAL_PG_MINIO_IMAGE_TEXT_UPLOAD_CONFIRMATION",
+  "scope": [
+    "PNG JPEG WebP verified image",
+    "UTF8 text",
+    "private versioned objects",
+    "bounded full SHA256 and actual media decode",
+    "completion token fencing and idempotency"
+  ],
+  "unsupportedScope": [
+    "video audio until media probe card",
+    "ContentDocument asset references until M3-15b",
+    "public download and asset list/delete until M3-15b"
+  ],
+  "integration": {
+    "passed": 7,
+    "seconds": 10.26,
+    "exclusiveWindow": true,
+    "realCreateApp": true,
+    "realS3": true,
+    "realPostgres": true
+  },
+  "unit": {
+    "passed": 17
+  },
+  "ruff": "PASS",
+  "mypy": "PASS_7_FILES",
+  "migration": "0054_content_uploads",
+  "dependencies": {
+    "boto3": "1.43.120",
+    "botocore": "1.43.120",
+    "pillow": "12.3.0",
+    "pyav": "NOT_INSTALLED_NOT_IN_LOCK"
+  },
+  "commands": [
+    "python scripts/test_infrastructure.py --group content-uploads --details",
+    "pytest tests/unit/test_content_uploads.py -q",
+    "python scripts/init_blob_local.py"
+  ],
+  "bucketSetup": "PRIVATE_LOCAL_VERSIONING_ENABLED_NO_POLICY",
+  "bucketCorsApi": "NOT_IMPLEMENTED_BY_LOCAL_MINIO",
+  "browserCors": "PASS_LOCAL_OPTIONS_EXACT_ORIGIN_ONLY_NOT_F09_UI",
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "review": {
+    "backend": "PENDING",
+    "frontend": "PENDING_F09"
+  },
+  "nextTechnicalTask": "M3-15b"
+}

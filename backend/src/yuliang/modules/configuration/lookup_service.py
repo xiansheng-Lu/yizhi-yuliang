@@ -61,10 +61,10 @@ class LookupService:
         parent_id: str = "",
         page_size: int = 50,
     ) -> dict[str, Any]:
-        if kind != "audiences" or context.product != "adq":
+        if kind != self.reader.kind or context.product != "adq":
             raise ApiError(ErrorCode.CAPABILITY_UNAVAILABLE, "该资源类别尚无正式只读来源实现")
         if category or parent_id:
-            raise ApiError(ErrorCode.CAPABILITY_UNAVAILABLE, "自定义人群来源未定义该分类或父级过滤")
+            raise ApiError(ErrorCode.CAPABILITY_UNAVAILABLE, "自定义资源来源未定义该分类或父级过滤")
         if (
             len(q) > 100
             or any(ord(c) < 32 for c in q)
@@ -84,20 +84,20 @@ class LookupService:
                 dict(
                     binding=ctx.binding_id,
                     account=ctx.account_id,
-                    resource="lookup.audiences." + proof.id.hex,
+                    resource="lookup." + kind + "." + proof.id.hex,
                 ),
             ).first()
             if latest is None:
-                raise ApiError(ErrorCode.CAPABILITY_UNAVAILABLE, "人群来源尚未完成实际同步")
+                raise ApiError(ErrorCode.CAPABILITY_UNAVAILABLE, "资源来源尚未完成实际同步")
             if latest.state != "SUCCESS":
                 raise ApiError(
-                    ErrorCode.UPSTREAM_ERROR, "人群来源同步未完整成功，保留历史但禁止选择"
+                    ErrorCode.UPSTREAM_ERROR, "资源来源同步未完整成功，保留历史但禁止选择"
                 )
             if (
                 latest.fetched is None
                 or latest.fetched + timedelta(seconds=proof.max_age_seconds) <= now
             ):
-                raise ApiError(ErrorCode.CAPABILITY_UNAVAILABLE, "人群快照已过期，需要重新同步")
+                raise ApiError(ErrorCode.CAPABILITY_UNAVAILABLE, "资源快照已过期，需要重新同步")
             identity = dict(
                 tenant=ctx.identity.tenant_id,
                 member=str(ctx.identity.membership_id),
@@ -132,22 +132,12 @@ class LookupService:
             items = []
             for page in rows:
                 for item in page:
-                    if q.casefold() not in item["name"].casefold() and q not in item["audience_id"]:
+                    if (
+                        q.casefold() not in item[self.reader.resource_name].casefold()
+                        and q not in item[self.reader.resource_id]
+                    ):
                         continue
-                    eligible = item["status"] == "SUCCESS" and item["online_status"] == "ONLINE"
-                    items.append(
-                        dict(
-                            id=item["audience_id"],
-                            platformId=item["audience_id"],
-                            name=item["name"],
-                            kind="audiences",
-                            status=item["status"] + "/" + item["online_status"],
-                            eligible=eligible,
-                            reason="当前来源和上下文适用依据有效"
-                            if eligible
-                            else "人群未处理完成或已离线，不可选择",
-                        )
-                    )
+                    items.append(self.reader.selected(item, proof))
             items.sort(key=lambda i: int(i["platformId"]))
             selected = items[offset : offset + page_size]
             next_cursor = (
@@ -163,9 +153,9 @@ class LookupService:
                 kind=kind,
                 items=selected,
                 nextCursor=next_cursor,
-                reason="完整授权人群来源快照；搜索仅过滤真实资源"
+                reason="完整授权资源来源快照；搜索仅过滤真实资源"
                 if selected
-                else "完整授权来源在当前筛选下无匹配人群",
+                else "完整授权来源在当前筛选下无匹配资源",
             )
 
     def options(
@@ -186,7 +176,7 @@ class LookupService:
         with business_transaction(self.reader.store.engine, identity) as session:
             if not ConfigurationService._allowed(session, context, "snapshot.read"):
                 raise ApiError(ErrorCode.FORBIDDEN, "无当前资源上下文权限")
-            proof = lookup_source(session, context)
+            proof = lookup_source(session, context, kind)
             if proof is None:
                 raise ApiError(ErrorCode.CAPABILITY_UNAVAILABLE, "该上下文尚无正式资源来源")
             row = session.execute(

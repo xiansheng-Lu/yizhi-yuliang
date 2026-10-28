@@ -34,8 +34,13 @@ from yuliang.modules.connectors.external_tokens import ExternalTokenConfig, Exte
 from yuliang.modules.connectors.governance import PlatformGovernance, QuotaLimits
 from yuliang.modules.connectors.governed import GovernedPlatformClient
 from yuliang.modules.connectors.http import PlatformHttpClient
-from yuliang.modules.connectors.lookup_protocol import LOOKUP_ARCHIVE, LOOKUP_POLICY
-from yuliang.modules.connectors.lookup_sync import AudienceLookupSync
+from yuliang.modules.connectors.lookup_protocol import (
+    LOOKUP_ARCHIVE,
+    LOOKUP_POLICY,
+    TARGET_ARCHIVE,
+    TARGET_POLICY,
+)
+from yuliang.modules.connectors.lookup_sync import AudienceLookupSync, TargetLookupSync
 from yuliang.modules.connectors.native_auth import NativeAuthorization
 from yuliang.modules.connectors.native_reads import (
     ReadOnlyNativeAdapter,
@@ -80,13 +85,15 @@ class PlatformRuntime:
         self.shop_compass: dict[UUID, ShopCompassSync] = {}
         self.shop_orders: dict[UUID, ShopOrderSync] = {}
         self.audience_lookups: dict[UUID, AudienceLookupSync] = {}
+        self.target_lookups: dict[UUID, TargetLookupSync] = {}
         self.ports = {
             item.id: NativeAuthorization(item) for item in bundle.applications if item.enabled
         }
         if not self.ports:
             return
         for port in self.ports.values():
-            port.application()
+            if port.resource.external_token_service is None:
+                port.application()
         if bundle.keyring_file is None or bundle.state_secret_file is None:
             raise ValueError("启用平台接入需要独立令牌密钥环和state密钥")
         ring = json.loads(bundle.keyring_file.read_text(encoding="utf-8"))
@@ -213,6 +220,25 @@ class PlatformRuntime:
                             PlatformHttpClient(native_signer),
                             PlatformArchive(engine, audit_secret),
                             policy=LOOKUP_ARCHIVE,
+                            decoder=decode_verdict,
+                        ),
+                        governance,
+                        item.id,
+                    ),
+                    self.token_for_read,
+                    item.readonly_interfaces,
+                )
+                self.target_lookups[item.id] = TargetLookupSync(
+                    SyncStore(
+                        engine,
+                        CursorCodec(keys, bundle.key_version, audit_secret),
+                        policy=TARGET_POLICY,
+                    ),
+                    GovernedPlatformClient(
+                        RecordedPlatformClient(
+                            PlatformHttpClient(native_signer),
+                            PlatformArchive(engine, audit_secret),
+                            policy=TARGET_ARCHIVE,
                             decoder=decode_verdict,
                         ),
                         governance,
@@ -447,15 +473,20 @@ class PlatformRuntime:
     ) -> dict[str, Any]:
         from yuliang.platform.errors import ApiError, ErrorCode
 
+        if kind not in {"audiences", "targets"}:
+            raise ApiError(ErrorCode.CAPABILITY_UNAVAILABLE, "该资源类别尚无正式只读来源实现")
+        readers: dict[UUID, AudienceLookupSync] = (
+            self.audience_lookups if kind == "audiences" else dict(self.target_lookups)
+        )
         candidates = [
-            self.audience_lookups[item.id]
+            readers[item.id]
             for item in self.bundle.applications
             if item.enabled
             and item.tenant_id == identity.tenant_id
             and item.connector_id == context.product
             and item.account_id == context.account_id
             and str(item.shop_id) == context.shop_id
-            and item.id in self.audience_lookups
+            and item.id in readers
         ]
         if len(candidates) != 1 or self.lookup_key is None:
             raise ApiError(ErrorCode.CAPABILITY_UNAVAILABLE, "该资源范围尚未接入")
@@ -479,6 +510,19 @@ class PlatformRuntime:
         page_size: int = 100,
     ) -> dict[str, Any]:
         reader = self.audience_lookups.get(self._application_for_read(ctx))
+        if reader is None:
+            raise OAuthRejected()
+        return await reader.sync(ctx, context, run_id, page_size=page_size)
+
+    async def sync_lookup_targets(
+        self,
+        ctx: GatewayContext,
+        context: ConfigurationContext,
+        run_id: UUID,
+        *,
+        page_size: int = 100,
+    ) -> dict[str, Any]:
+        reader = self.target_lookups.get(self._application_for_read(ctx))
         if reader is None:
             raise OAuthRejected()
         return await reader.sync(ctx, context, run_id, page_size=page_size)

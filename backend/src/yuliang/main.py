@@ -46,7 +46,12 @@ def create_app(settings: Settings | None = None, mail_sender: MailSender | None 
                 app.state.settings, mail_sender=mail_sender
             )
         app.state.platform_runtime = None
+        app.state.blob_store = None
         try:
+            if app.state.settings.blob_enabled:
+                from yuliang.infrastructure.blob import BlobStore
+
+                app.state.blob_store = BlobStore.from_settings(app.state.settings)
             if app.state.settings.platform_resources_file is not None:
                 from yuliang.modules.connectors.runtime import PlatformRuntime
 
@@ -57,6 +62,8 @@ def create_app(settings: Settings | None = None, mail_sender: MailSender | None 
                 )
             yield
         finally:
+            if app.state.blob_store is not None:
+                app.state.blob_store.close()
             if app.state.platform_runtime is not None:
                 app.state.platform_runtime.close()
             app.state.probes.close()
@@ -82,6 +89,7 @@ def create_app(settings: Settings | None = None, mail_sender: MailSender | None 
         from yuliang.api.platform_authorization import router as platform_router
         from yuliang.modules.analysis.routes import router as analysis_router
         from yuliang.modules.content.routes import router as content_router
+        from yuliang.modules.content.uploads_routes import router as content_uploads_router
         from yuliang.modules.identity.routes import router
         from yuliang.modules.identity.workspace_routes import router as workspace_router
         from yuliang.modules.workspace.routes import router as history_router
@@ -96,6 +104,7 @@ def create_app(settings: Settings | None = None, mail_sender: MailSender | None 
         app.include_router(event_router)
         app.include_router(analysis_router)
         app.include_router(content_router)
+        app.include_router(content_uploads_router)
     if settings.admin_api_enabled:
         from yuliang.admin.routes import router as admin_router
 

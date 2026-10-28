@@ -1,0 +1,71 @@
+{
+  "date": "2026-10-28",
+  "baseline": "a58882e",
+  "result": "PASS_COMBINED_FULL_AND_POST_HARDENING_TARGETED",
+  "environment": "WSL Ubuntu Python3.13; real PG Redis RabbitMQ MinIO; synthetic upstream for integration",
+  "checks": [
+    {
+      "command": "ruff check src tests scripts",
+      "result": "PASS"
+    },
+    {
+      "result": "PASS",
+      "command": "mypy src",
+      "sourceFiles": 187
+    },
+    {
+      "seconds": 11.51,
+      "command": "pytest -m 'unit or contract' -q",
+      "passed": 796,
+      "deselected": 833
+    },
+    {
+      "seconds": 703.49,
+      "command": "python scripts/test_infrastructure.py --group all --details",
+      "passed": 827,
+      "skipped": 1,
+      "scope": "full snapshot before final NULL/ratio metadata hardening"
+    },
+    {
+      "seconds": 48.85,
+      "command": "python scripts/test_infrastructure.py --group analysis --details",
+      "passed": 26,
+      "scope": "after NULL fence rejection and frontend weighted-ratio hardening"
+    },
+    {
+      "seconds": 10.4,
+      "command": "python scripts/test_infrastructure.py --group report-drafts --details",
+      "passed": 4,
+      "scope": "after direct app-role missing/null identity rejection"
+    }
+  ],
+  "dedicated": {
+    "targetLookups": 4,
+    "audienceRegression": 7,
+    "externalTokenRuntime": 5,
+    "nativeHandoff": 8,
+    "contentUploads": 7
+  },
+  "frontendConsumer": {
+    "weightedWeeklyCtr": 0.25,
+    "browserAcceptance": "NOT_RUN",
+    "evidence": "tasks/M4-01b/verification.json",
+    "actualTsModules": true,
+    "weightedWeeklyRoi": 1.9,
+    "missingCpa": null
+  },
+  "independentLiveReadonly": {
+    "runtimeBusinessAcceptance": "NOT_RUN",
+    "calls": 10,
+    "forceRefresh": 0,
+    "evidence": "resource-handoff/live-readonly/security-initialization-result.md",
+    "businessWrites": 0
+  },
+  "development": "assets-analysis-development.json",
+  "review": "PENDING_BE_FE",
+  "openImplementation": [
+    "M4-01b comparison periods NOT_IMPLEMENTED",
+    "M3-08a resource kinds beyond audiences/targets",
+    "M3-15b asset references/download not implemented; audio/video uploads closed"
+  ]
+}

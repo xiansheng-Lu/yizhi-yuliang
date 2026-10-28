@@ -1,0 +1,22 @@
+{
+  "integration": {
+    "seconds": 40.34,
+    "command": "uv run --frozen python scripts/test_infrastructure.py --group analysis --details",
+    "passed": 24
+  },
+  "review": "PENDING_BE_F08",
+  "date": "2026-10-28",
+  "mypySourceFiles": 9,
+  "ruff": "PASS",
+  "result": "PASS_REAL_LOCAL_IMMUTABLE_RULES_EVIDENCE",
+  "paidCalls": 0,
+  "livePlatformCalls": 0,
+  "citation": "real frozen fact ID/revision/run/page; mismatched value refused; current scope removal hides historical result",
+  "unit": {
+    "seconds": 0.57,
+    "command": "uv run --frozen pytest tests/unit/test_analysis_calculator.py tests/unit/test_analysis_narrative.py -q",
+    "passed": 7
+  },
+  "modelCalls": 0,
+  "insightSource": "rules"
+}

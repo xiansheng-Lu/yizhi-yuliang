@@ -1,5 +1,6 @@
 """进程启动配置：必填、显式校验、错误和repr隐藏凭据。"""
 
+import re
 from ipaddress import ip_network
 from pathlib import Path
 from typing import Literal
@@ -32,6 +33,14 @@ class Settings(BaseSettings):
     email_daily_limit: int = Field(default=10, ge=1, le=100)
     admin_api_enabled: bool = False
     platform_resources_file: Path | None = None
+    blob_enabled: bool = False
+    blob_endpoint_url: str | None = None
+    blob_bucket: str | None = None
+    blob_access_key: SecretStr | None = None
+    blob_secret_key: SecretStr | None = None
+    blob_region: str = Field(default="us-east-1", pattern=r"^[a-z0-9][a-z0-9-]{0,62}$")
+    blob_upload_ttl_seconds: int = Field(default=300, ge=1, le=900)
+    blob_download_ttl_seconds: int = Field(default=60, ge=1, le=300)
     admin_allowed_networks: list[str] = Field(default_factory=lambda: ["127.0.0.1/32", "::1/128"])
     worker_queue_prefix: str = Field(default="yuliang", pattern=r"^[a-z0-9][a-z0-9-]{0,63}$")
     operations_allowed_networks: list[str] = Field(
@@ -40,6 +49,34 @@ class Settings(BaseSettings):
 
     @model_validator(mode="after")
     def auth_rollout_requirements(self) -> "Settings":
+        if self.blob_enabled:
+            if not (
+                self.identity_api_enabled
+                and self.blob_endpoint_url
+                and self.blob_bucket
+                and self.blob_access_key
+                and self.blob_access_key.get_secret_value().strip()
+                and self.blob_secret_key
+                and self.blob_secret_key.get_secret_value().strip()
+            ):
+                raise ValueError("私有素材需要身份接口、明确存储地址、私有桶及独立存储凭据")
+            endpoint = urlsplit(self.blob_endpoint_url)
+            if (
+                endpoint.scheme not in {"http", "https"}
+                or not endpoint.hostname
+                or endpoint.username
+                or endpoint.password
+                or endpoint.query
+                or endpoint.fragment
+                or endpoint.path not in {"", "/"}
+                or endpoint.scheme == "http"
+                and (
+                    self.environment not in {"local", "test"}
+                    or endpoint.hostname not in {"127.0.0.1", "::1", "localhost"}
+                )
+                or re.fullmatch(r"[a-z0-9][a-z0-9-]{1,61}[a-z0-9]", self.blob_bucket) is None
+            ):
+                raise ValueError("私有存储需固定源与合法桶名；明文仅允许本地测试回环")
         if self.admin_api_enabled and (
             not self.identity_api_enabled or not self.admin_allowed_networks
         ):

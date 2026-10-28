@@ -325,7 +325,7 @@ def test_http_csrf_origin_body_overrides_and_cookie_rejected(
     assert client.get(PREFIX + "/results").status_code == 401
 
 
-def test_real_rabbitmq_prefork_delivery_and_duplicate_keep_original_queued_task(
+def test_real_rabbitmq_prefork_delivery_computes_once_and_freezes_result(
     analysis_worker: dict[str, Any],
 ) -> None:
     data = analysis_worker
@@ -343,7 +343,10 @@ def test_real_rabbitmq_prefork_delivery_and_duplicate_keep_original_queued_task(
     data["worker_results"].append(duplicate)
     duplicate_result = duplicate.get(timeout=15)
     assert duplicate_result["deliveryRecorded"] is False
-    assert data["analysis"].get(task.id) == task and counts(data) == (1, 0, 1, 1)
+    completed = data["analysis"].get(task.id)
+    assert completed.status == "succeeded" and completed.progress == 100
+    assert completed.result_id is not None and counts(data) == (1, 1, 1, 1)
+    assert first_result["computed"] is True and duplicate_result["computed"] is False
     forged = client.send_task(
         "yuliang.system.analysis_accept",
         kwargs={"payload": payload | {"job_id": str(uuid4())}},
@@ -352,7 +355,7 @@ def test_real_rabbitmq_prefork_delivery_and_duplicate_keep_original_queued_task(
     data["worker_results"].append(forged)
     with pytest.raises(ValueError):
         forged.get(timeout=15)
-    assert counts(data) == (1, 0, 1, 1)
+    assert counts(data) == (1, 1, 1, 1)
     if target := os.getenv("YULIANG_ANALYSIS_QUEUE_EVIDENCE"):
         Path(target).write_text(
             json.dumps(
@@ -558,3 +561,266 @@ def test_coverage_rejects_incomplete_or_unconfirmed_source(
         d["analysis"].create(d["input"])
     assert error.value.code == ErrorCode.DATA_COVERAGE_INSUFFICIENT
     assert not d["analysis"].tasks()
+
+
+def test_actual_calculation_snapshot_result_and_no_direct_writer(
+    analysis_ready: dict[str, Any],
+) -> None:
+    from yuliang.modules.analysis.repository import execute_analysis
+
+    d = analysis_ready
+    task = d["analysis"].create(d["input"])
+    assert execute_analysis(d["engine"], d["identity"], task.id)
+    assert not execute_analysis(d["engine"], d["identity"], task.id)
+    done = d["analysis"].get(task.id)
+    assert done.status == "succeeded" and done.progress == 100
+    result = d["analysis"].results(done.result_id)[0]
+    assert result["taskId"] == str(task.id) and result["source"] == "API"
+    assert result["completeness"] == "partial" and result["comparison"]["previous"] is None
+    metrics = {m["id"]: m for m in result["metrics"]}
+    assert metrics["ads.spend"]["value"] == 0 and metrics["ads.roi"]["value"] is None
+    assert metrics["ads.cpa"]["value"] is None
+    assert all(m["dimension"] == "ads" for m in result["metrics"])
+    with business_transaction(d["engine"], d["identity"]) as s:
+        with pytest.raises(DBAPIError):
+            s.execute(text("UPDATE analysis_tasks SET progress=45"))
+    with business_transaction(d["engine"], d["identity"]) as s:
+        with pytest.raises(DBAPIError):
+            s.execute(text("UPDATE analysis_results SET payload='{}'::jsonb"))
+
+
+def test_execution_lease_fences_and_recovers_original_task(analysis_ready: dict[str, Any]) -> None:
+    from yuliang.modules.analysis.repository import execute_analysis
+
+    d = analysis_ready
+    task = d["analysis"].create(d["input"])
+    with business_transaction(d["engine"], d["identity"]) as s:
+        old = s.execute(
+            text("SELECT access.analysis_execute(:id,NULL,10)"), dict(id=task.id)
+        ).scalar_one()
+    from yuliang.modules.analysis.repository import AnalysisLeaseBusy
+
+    with pytest.raises(AnalysisLeaseBusy):
+        execute_analysis(d["engine"], d["identity"], task.id)
+    with d["maintenance"].begin() as owner:
+        owner.execute(text("SET LOCAL ROLE app_owner"))
+        owner.execute(
+            text("UPDATE analysis_executions SET lease_until=clock_timestamp()-interval '1 second'")
+        )
+    assert execute_analysis(d["engine"], d["identity"], task.id)
+    assert len(d["analysis"].results()) == 1
+    assert d["analysis"].get(task.id).status == "succeeded"
+    assert old is not None
+
+
+@pytest.mark.asyncio
+async def test_production_report_roi_recomputed_and_raw_ratio_ignored(
+    analysis_ready: dict[str, Any],
+) -> None:
+    from yuliang.modules.analysis.repository import execute_analysis
+
+    d = analysis_ready
+    d["state"].update(cost=100, gmv=300)
+    await d["reader"].sync(
+        d["contexts"]["DAILY"], uuid4(), query(start_date="2026-10-01", end_date="2026-10-07")
+    )
+    task = d["analysis"].create(d["input"])
+    assert execute_analysis(d["engine"], d["identity"], task.id)
+    done = d["analysis"].get(task.id)
+    metrics = {m["id"]: m for m in d["analysis"].results(done.result_id)[0]["metrics"]}
+    assert metrics["ads.spend"]["value"] == 700
+    assert metrics["ads.gmv"]["value"] == 2100 and metrics["ads.roi"]["value"] == 3
+    with business_transaction(d["engine"], d["identity"]) as s:
+        snapshot = s.execute(
+            text("SELECT snapshot FROM analysis_executions WHERE task_id=:id"), dict(id=task.id)
+        ).scalar_one()
+        assert all(row["metric_name"] != "roi" for row in snapshot)
+
+
+def test_stage_progress_crash_snapshot_recovery_and_old_fence(
+    analysis_ready: dict[str, Any],
+    monkeypatch: Any,
+) -> None:
+    from yuliang.modules.analysis import repository
+
+    d = analysis_ready
+    task = d["analysis"].create(d["input"])
+    calculate_original = repository.calculate
+
+    def crash(*args: Any, **kwargs: Any) -> Any:
+        assert d["analysis"].get(task.id).progress == 40
+        raise SystemExit("synthetic worker crash")
+
+    monkeypatch.setattr(repository, "calculate", crash)
+    with pytest.raises(SystemExit):
+        repository.execute_analysis(d["engine"], d["identity"], task.id)
+    with business_transaction(d["engine"], d["identity"]) as s:
+        old = s.execute(
+            text("SELECT token FROM analysis_executions WHERE task_id=:id"), dict(id=task.id)
+        ).scalar_one()
+    with d["maintenance"].begin() as owner:
+        owner.execute(text("SET LOCAL ROLE app_owner"))
+        owner.execute(text("UPDATE adq_report_contracts SET active=false"))
+        owner.execute(text("UPDATE metric_facts SET value_num=999 WHERE unit='MINOR'"))
+        owner.execute(
+            text("UPDATE analysis_executions SET lease_until=clock_timestamp()-interval '1 second'")
+        )
+    with business_transaction(d["engine"], d["identity"]) as s:
+        fresh = s.execute(
+            text("SELECT access.analysis_execute(:id,NULL,10)"), dict(id=task.id)
+        ).scalar_one()
+    assert fresh != old
+    with business_transaction(d["engine"], d["identity"]) as s:
+        with pytest.raises(DBAPIError):
+            s.execute(
+                text("SELECT access.analysis_execute(:id,:old,40)"), dict(id=task.id, old=old)
+            )
+    with d["maintenance"].begin() as owner:
+        owner.execute(text("SET LOCAL ROLE app_owner"))
+        owner.execute(
+            text("UPDATE analysis_executions SET lease_until=clock_timestamp()-interval '1 second'")
+        )
+    monkeypatch.setattr(repository, "calculate", calculate_original)
+    assert repository.execute_analysis(d["engine"], d["identity"], task.id)
+    assert d["analysis"].get(task.id).status == "succeeded"
+    assert len(d["analysis"].results()) == 1
+
+
+def test_calculation_exception_persists_safe_failed_reason(
+    analysis_ready: dict[str, Any],
+    monkeypatch: Any,
+) -> None:
+    from yuliang.modules.analysis import repository
+
+    d = analysis_ready
+    task = d["analysis"].create(d["input"])
+
+    def invalid(*args: Any, **kwargs: Any) -> Any:
+        raise RuntimeError("PRIVATE_PROVIDER_PAYLOAD")
+
+    monkeypatch.setattr(repository, "calculate", invalid)
+    assert repository.execute_analysis(d["engine"], d["identity"], task.id) is False
+    failed = d["analysis"].get(task.id)
+    assert failed.status == "failed" and failed.progress == 40
+    assert "PRIVATE" not in str(failed.error)
+    assert not d["analysis"].results()
+
+
+def test_concurrent_claim_has_one_actual_owner(analysis_ready: dict[str, Any]) -> None:
+    d = analysis_ready
+    task = d["analysis"].create(d["input"])
+
+    def claim(_: int) -> Any:
+        with business_transaction(d["engine"], d["identity"]) as s:
+            return s.execute(
+                text("SELECT access.analysis_execute(:id,NULL,10)"), dict(id=task.id)
+            ).scalar_one_or_none()
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        tokens = list(pool.map(claim, range(2)))
+    assert sum(value is not None for value in tokens) == 1
+    assert d["analysis"].get(task.id).progress == 10
+
+
+def test_frozen_rules_evidence_immutable_and_current_scope_filtered(
+    analysis_ready: dict[str, Any],
+) -> None:
+    from yuliang.modules.analysis.repository import execute_analysis
+
+    d = analysis_ready
+    task = d["analysis"].create(d["input"])
+    assert execute_analysis(d["engine"], d["identity"], task.id)
+    done = d["analysis"].get(task.id)
+    first = d["analysis"].results(done.result_id)[0]
+    assert first["insightSource"] == "rules" and first["insights"]
+    assert all(i["metricId"] in {m["id"] for m in first["metrics"]} for i in first["insights"])
+    assert all("fact:" in i["evidence"] and "run:" in i["evidence"] for i in first["insights"])
+    with d["maintenance"].begin() as owner:
+        owner.execute(text("SET LOCAL ROLE app_owner"))
+        owner.execute(text("UPDATE adq_report_contracts SET active=false"))
+        owner.execute(text("UPDATE metric_facts SET value_num=999 WHERE unit='MINOR'"))
+    assert d["analysis"].results(done.result_id)[0] == first
+    assert not execute_analysis(d["engine"], d["identity"], task.id)
+    with d["maintenance"].begin() as owner:
+        owner.execute(text("SET LOCAL ROLE app_owner"))
+        owner.execute(
+            text("DELETE FROM data_scopes WHERE membership_id=:id"),
+            dict(id=d["identity"].membership_id),
+        )
+    with pytest.raises(ApiError) as error:
+        d["analysis"].results(done.result_id)
+    assert error.value.code == ErrorCode.NO_DATA
+
+
+def test_unclaimed_or_null_execution_fence_cannot_change_stage(
+    analysis_ready: dict[str, Any],
+) -> None:
+    d = analysis_ready
+    task = d["analysis"].create(d["input"])
+    for token in (None, uuid4()):
+        for stage in (-1, 40, 75, 90, 100):
+            with business_transaction(d["engine"], d["identity"]) as session:
+                assert session.execute(text("SELECT current_user")).scalar_one() == "app_login"
+                with pytest.raises(DBAPIError) as error:
+                    session.execute(
+                        text("SELECT access.analysis_execute(:id,:token,:stage)"),
+                        dict(id=task.id, token=token, stage=stage),
+                    )
+                assert getattr(error.value.orig, "sqlstate", None) == "P0409"
+    assert d["analysis"].get(task.id).status == "queued"
+    with business_transaction(d["engine"], d["identity"]) as session:
+        claimed = session.execute(
+            text("SELECT access.analysis_execute(:id,NULL,10)"), dict(id=task.id)
+        ).scalar_one()
+    assert claimed is not None
+    with business_transaction(d["engine"], d["identity"]) as session:
+        with pytest.raises(DBAPIError) as error:
+            session.execute(text("SELECT access.analysis_execute(:id,NULL,-1)"), dict(id=task.id))
+        assert getattr(error.value.orig, "sqlstate", None) == "P0409"
+    assert d["analysis"].get(task.id).status == "running"
+
+
+@pytest.mark.asyncio
+async def test_weighted_frontend_result_uses_actual_report_bases(
+    analysis_ready: dict[str, Any],
+) -> None:
+    from yuliang.modules.analysis.repository import execute_analysis
+
+    d = analysis_ready
+
+    def unequal(body: Any, request: Any) -> None:
+        day = json.loads(request.url.params["date_range"])["start_date"]
+        cost, gmv = {"2026-10-05": (100, 1000), "2026-10-06": (900, 900)}.get(day, (0, 0))
+        for row in body["data"]["list"]:
+            row.update(cost=cost, order_amount=gmv)
+
+    d["state"]["mutate"] = unequal
+    await d["reader"].sync(
+        d["contexts"]["DAILY"], uuid4(), query(start_date="2026-10-05", end_date="2026-10-11")
+    )
+    value = AnalysisCreate.model_validate(
+        d["input"].model_dump()
+        | dict(
+            query=d["input"].query.model_dump()
+            | dict(start_date="2026-10-05", end_date="2026-10-11")
+        )
+    )
+    task = d["analysis"].create(value)
+    assert execute_analysis(d["engine"], d["identity"], task.id)
+    done = d["analysis"].get(task.id)
+    result = d["analysis"].results(done.result_id)[0]
+    metrics = {m["id"]: m for m in result["metrics"]}
+    assert metrics["ads.roi"]["value"] == 1.9
+    assert (metrics["ads.roi"]["numerator"], metrics["ads.roi"]["denominator"]) == (
+        "ads.gmv",
+        "ads.spend",
+    )
+    assert all(
+        p["values"]["ads.impressions"] == 20 and p["values"]["ads.clicks"] == 5
+        for p in result["points"]
+    )
+    assert all(p["values"]["ads.orders"] is None for p in result["points"])
+    if destination := os.getenv("YULIANG_ANALYSIS_RESULT_CAPTURE"):
+        Path(destination).write_text(
+            json.dumps(dict(result=result), ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+        )

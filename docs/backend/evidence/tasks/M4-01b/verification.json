@@ -1,0 +1,49 @@
+{
+  "integration": {
+    "seconds": 48.85,
+    "passed": 26,
+    "command": "uv run --frozen python scripts/test_infrastructure.py --group analysis --details"
+  },
+  "ruff": "PASS",
+  "review": "PENDING_BE_F08",
+  "unit": {
+    "seconds": 0.35,
+    "passed": 3,
+    "command": "uv run --frozen pytest tests/unit/test_analysis_calculator.py -q"
+  },
+  "limitations": [
+    "comparison period reads/snapshots/calculation NOT_IMPLEMENTED; no comparison coverage lookup performed",
+    "full M4-01b not complete; prioritize comparison continuation",
+    "SQL NULL fence and draft identity rejection need direct app-role regression",
+    "CPA missing attributed_order_count; no profit facts"
+  ],
+  "result": "PASS_CURRENT_PERIOD_AND_EXECUTION_SLICE_ONLY",
+  "mypySourceFiles": 8,
+  "paidCalls": 0,
+  "date": "2026-10-28",
+  "recovery": "frozen snapshot survives new fact changes; prior stage requires current coverage; stale fence refused",
+  "migration": "0055_analysis_execution",
+  "livePlatformCalls": 0,
+  "comparisonStatus": "NOT_IMPLEMENTED",
+  "taskStatus": "IN_PROGRESS",
+  "finalSqlNegative": {
+    "unclaimedAndNullFence": "REJECTED_P0409",
+    "statusUnchanged": true,
+    "runtimeRole": "app_login"
+  },
+  "frontendConsumer": {
+    "weeklyCTR": 0.25,
+    "result": "PASS",
+    "command": "node node_modules/tsx/dist/cli.mjs --tsconfig frontend/tsconfig.json backend/scripts/check_analysis_result_frontend.mts docs/backend/evidence/tasks/M4-01b/frontend-result.json",
+    "actualPointValue": true,
+    "weeklyCPC": 28.571428571428573,
+    "weeklyROI": 1.9,
+    "actualGroupAnalysisPoints": true,
+    "missingCPA": null,
+    "source": "ACTUAL_PG_RESULT_WITH_SYNTHETIC_UPSTREAM"
+  },
+  "finalStatic": {
+    "ruff": "PASS_ALL_SRC_TESTS_SCRIPTS",
+    "mypy": 187
+  }
+}

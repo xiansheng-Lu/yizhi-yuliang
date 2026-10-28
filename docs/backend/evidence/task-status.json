@@ -4,7 +4,7 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "currentFocus": "M3-15a",
+  "currentFocus": "M4-01b",
   "tasks": {
     "R00-01": {
       "owner": "BE",
@@ -2910,7 +2910,84 @@
         "E08",
         "M3-08a_OTHER_LOOKUP_KINDS"
       ],
-      "delivery": "仅自定义人群受控完整来源分页/搜索/上下文签名游标与options HTTP切片通过；其他LookupKind未实现，不关闭整卡"
+      "delivery": "audiences与targets切片PG/HTTP通过，其他LookupKind未实现；整卡保持IN_PROGRESS"
+    },
+    "M4-01b": {
+      "owner": "BE",
+      "status": "IN_PROGRESS",
+      "delivery": "本期计算、阶段fence与原快照恢复通过；比较期未实现，最高优先续卡，不将未查询当缺覆盖",
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F08"
+      },
+      "evidence": "tasks/M4-01b/README.md",
+      "comparisonStatus": "NOT_IMPLEMENTED",
+      "technicalVerification": {
+        "result": "PASS_CURRENT_PERIOD_SLICE_ONLY",
+        "combinedRegression": "assets-analysis-verification.json",
+        "comparison": "NOT_IMPLEMENTED",
+        "evidence": "tasks/M4-01b/verification.json"
+      }
+    },
+    "M3-15a": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "evidence": "tasks/M3-15a/README.md",
+      "review": {
+        "frontend": "PENDING",
+        "backend": "PENDING"
+      },
+      "technicalVerification": {
+        "paidCalls": 0,
+        "evidence": "tasks/M3-15a/verification.json",
+        "result": "PASS_LOCAL_VERIFIED_SCOPE",
+        "livePlatformCalls": 0,
+        "combinedRegression": "assets-analysis-verification.json"
+      },
+      "blockedBy": [
+        "E08"
+      ],
+      "delivery": "私有图片/UTF8文本上传计划、实际字节/摘要验证、版本固定与完成确认通过；音视频未开放，引用下载15b另卡"
+    },
+    "M4-03": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "evidence": "tasks/M4-03/README.md",
+      "review": {
+        "frontend": "PENDING",
+        "backend": "PENDING"
+      },
+      "technicalVerification": {
+        "paidCalls": 0,
+        "evidence": "tasks/M4-03/verification.json",
+        "result": "PASS_LOCAL_VERIFIED_SCOPE",
+        "livePlatformCalls": 0,
+        "combinedRegression": "assets-analysis-verification.json"
+      },
+      "blockedBy": [
+        "E08"
+      ],
+      "delivery": "不可变结果与真实冻结事实引用的确定性规则叙述通过；insightSource为rules，无模型调用"
+    },
+    "M4-05": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "evidence": "tasks/M4-05/README.md",
+      "review": {
+        "frontend": "PENDING",
+        "backend": "PENDING"
+      },
+      "technicalVerification": {
+        "paidCalls": 0,
+        "evidence": "tasks/M4-05/verification.json",
+        "result": "PASS_LOCAL_VERIFIED_SCOPE",
+        "livePlatformCalls": 0,
+        "combinedRegression": "assets-analysis-verification.json"
+      },
+      "blockedBy": [
+        "E08"
+      ],
+      "delivery": "报告草稿版本/CAS/不可变分析证据/历史与转义预览通过；公开发布另卡"
     }
   },
   "gates": {
@@ -2993,8 +3070,8 @@
     },
     {
       "id": "E01",
-      "status": "WAITING_RESOURCE",
-      "reason": "用户确认yizhi租户与两个项目现有token/API实现，并明确允许只读接口调用；正在复用原SDK/唯一服务核验。驭量内部店铺/账户映射、批准scope细目和财务口径仍逐项核对，不因此伪造平台全验收。",
+      "status": "WAITING_YULIANG_MAPPING_AND_SEMANTIC_ACCEPTANCE",
+      "reason": "原项目服务与已取样接口真实只读已通过；仍需驭量实际tenant_id/shop/account映射与口径证明/适用真实验收，不能由原SDK成功代替G1。",
       "affects": [
         "M1-06及相应真实ADQ验收"
       ],
@@ -3002,12 +3079,19 @@
     },
     {
       "id": "E02",
-      "status": "WAITING_RESOURCE",
-      "reason": "用户确认yizhi租户与两个项目现有token/API实现，并明确允许只读接口调用；正在复用原SDK/唯一服务核验。驭量内部店铺/账户映射、批准scope细目和财务口径仍逐项核对，不因此伪造平台全验收。",
+      "status": "WAITING_YULIANG_MAPPING_AND_SEMANTIC_ACCEPTANCE",
+      "reason": "原项目服务与已取样接口真实只读已通过；仍需驭量实际tenant_id/shop/account映射与口径证明/适用真实验收，不能由原SDK成功代替G1。",
       "affects": [
         "M1-07及相应真实小店验收"
       ],
       "unblock": "建立另一家实际店铺与租户/主体/小店AppID映射，核对自研模式与实际允许接口并完成单一刷新者交接；自研模式不额外要求不存在的外部OAuth回调，真实只读验收单列"
+    },
+    {
+      "id": "TOKEN_SERVICE_SECURITY_CONFIGURATION",
+      "status": "RESOLVED",
+      "reason": "用户批准方案已执行，3份原文件加密迁移并比对内容一致；两唯一回环服务healthy，10次只读业务成功。",
+      "affects": [],
+      "unblock": "已有安全配置引用，或用户批准可审阅的本机密钥初始化与旧缓存显式加密迁移方案。其余本地研发继续。"
     }
   ],
   "rules": {
@@ -3016,8 +3100,8 @@
     "offline": "离线通过不等于真实依赖、前端联调或平台验收通过"
   },
   "nextTask": {
-    "status": "READY",
-    "id": "M3-15a"
+    "status": "IN_PROGRESS",
+    "id": "M4-01b"
   },
   "continuation": {
     "requestedOn": "2026-10-27",
@@ -3027,9 +3111,9 @@
     "latestUserRequest": "继续采用多agent模式持续开发，当前任务结束直接开启下一个任务，需要资源再找用户",
     "developmentPolicy": "缺人工/外部验收时记录并继续可独立技术准备；正式门禁、平台调用和付费仍按各自证据许可",
     "lastCompletedTechnicalTask": "M4-02",
-    "nextTechnicalTask": "M3-15a",
+    "nextTechnicalTask": "M4-01b:comparison",
     "executionRules": "docs/backend/evidence/execution-rules.md",
-    "checkpoint": "第二批云稿5专项、覆盖17专项、人群7专项及755单元/契约、806全量设施+1跳过通过；0053开发库19表0行/NOLOGIN。下一素材上传、分析计算、推广目标切片。用户新授只读许可，原项目真实只读核验单列。",
+    "checkpoint": "第三批本期分析/规则证据/草稿、私有图片文本上传、targets技术切片通过；796单元，827全量+1跳过后安全/前端比例补强专项26分析+4草稿通过。比较期未实现，M4-01b IN_PROGRESS优先续卡。原服务安全迁移已获准执行，累计10次只读业务成功但runtime内部映射未验收。",
     "technicalPreparationQueue": [
       "M3-13a",
       "M3-08a",
@@ -3057,11 +3141,13 @@
     "integrationCheckpoint": "已整合前端frontend目录重构和M1-06/07原生适配；SSE迁移改为0040，保留0039令牌续期与资源未绑定门禁",
     "multiAgentAuthorization": "2026-10-28用户明确授权多Agent持续开发，资源阻塞单列；BE负责人不变",
     "nextReadyQueue": [
-      "M3-15a",
-      "M4-01b",
-      "M3-08a:targets",
-      "M1-18"
-    ]
+      "M4-01b:comparison",
+      "M3-15b",
+      "M1-18",
+      "M4-06a",
+      "M3-08a:remaining-kinds"
+    ],
+    "latestVerification": "assets-analysis-verification.json"
   },
   "frontendIntegration": {
     "F01": {
@@ -3107,7 +3193,7 @@
     "document": "resource-handoff/平台接入配置清单.md",
     "template": "resource-handoff/platform-inputs.template.json",
     "commit": "ab2b975",
-    "status": "LOCAL_TEST_RESOURCES_COLLECTED_UNBOUND_ADAPTERS_IMPLEMENTED",
+    "status": "SECURE_ORIGINAL_SERVICES_READY_READONLY_VERIFIED_YULIANG_MAPPING_PENDING",
     "runtimeConfiguration": "OPTIONAL_EXPLICIT_CONFIG_DISABLED",
     "credentialsReceived": false,
     "knownIndependentProjects": {
@@ -3118,21 +3204,23 @@
       "securityFixCommit": "62d26916658e02a622551a3688ca7c0dc0779a06",
       "evidence": "backend/tools/token-service-hardening/README.md",
       "productionSwitchover": false,
-      "actualCredentialsReadByThisTask": false,
+      "actualCredentialsReadByThisTask": true,
       "readonlyValidationPermission": "USER_APPROVED_READONLY_2026_10_28",
-      "note": "用户确认两个项目均属于yizhi，店铺不同；凭据引用已采集，原服务唯一刷新模式新增受控运行时接线但未启用真实配置。",
+      "note": "用户批准两原项目安全初始化与显式加密迁移；API key与密钥仅私有配置/内存，未入Git。原SDK累计10次真实只读成功，驭量内部业务映射仍未绑定。",
       "nativeAdaptationCommit": "c70365467bef6ba05a3732c5249de13a6df3a1b5"
     },
     "credentialReferencesReceived": true,
     "businessTenantAssigned": false,
     "shopRelationship": "DISTINCT_SHOPS",
-    "livePlatformCalls": 0,
+    "livePlatformCalls": 10,
     "localPrivateResources": ".runtime/platform-config/resources.local.json",
     "localPrivateChecklist": ".runtime/platform-config/inputs.local.json",
     "adapterGuide": "resource-handoff/资源交接与原生适配说明.md",
     "businessTenantName": "yizhi",
     "businessTenantConfirmation": "USER_CONFIRMED_2026_10_28_BOTH_PROJECTS_BELONG_TO_YIZHI",
     "existingTokenAndApiImplementation": "USER_CONFIRMED_PRESENT_NOT_LIVE_REVERIFIED",
-    "databaseTenantBinding": "PENDING_VERIFICATION"
+    "databaseTenantBinding": "PENDING_VERIFICATION",
+    "liveReadonlyCheck": "BLOCKED_LOCAL_SECURE_TOKEN_SERVICE_CONFIGURATION; PLATFORM_CALLS_0",
+    "securityInitialization": "USER_APPROVED_EXECUTED_AND_VERIFIED; 3_ENCRYPTED_MIGRATIONS; LOOPBACK_UNIQUE_SERVICES"
   }
 }

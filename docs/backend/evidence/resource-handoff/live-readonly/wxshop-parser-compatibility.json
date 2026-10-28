@@ -1,0 +1,50 @@
+{
+  "checkedAt": "2026-10-28T17:21:57.554460+08:00",
+  "source": "ORIGINAL_SDK_LIVE_RESPONSE_TO_YULIANG_PRODUCTION_PARSERS_IN_MEMORY",
+  "platformCalls": 3,
+  "forceRefreshCalls": 0,
+  "rawPayloadsPersisted": false,
+  "checks": [
+    {
+      "parser": "product_id_page(parse_page)",
+      "errcode": 0,
+      "http": 200,
+      "result": "PASS",
+      "safeReturnedRows": 1
+    },
+    {
+      "parser": "parse_detail",
+      "errcode": 0,
+      "http": 200,
+      "result": "PASS",
+      "numericShape": {
+        "sale_price": {
+          "INTEGER_NUMBER": 6
+        },
+        "stock_num": {
+          "INTEGER_NUMBER": 6
+        },
+        "status": {
+          "INTEGER_NUMBER": 6
+        }
+      }
+    },
+    {
+      "parser": "compass_page",
+      "errcode": 0,
+      "http": 200,
+      "day": "2026-10-27",
+      "result": "PASS",
+      "numericShape": {
+        "pay_gmv": "INTEGER_TEXT",
+        "pay_uv": "INTEGER_TEXT",
+        "pay_order_cnt": "INTEGER_TEXT",
+        "pay_refund_gmv": "INTEGER_TEXT",
+        "live_pay_gmv": "INTEGER_TEXT",
+        "feed_pay_gmv": "INTEGER_TEXT",
+        "product_click_uv": "INTEGER_TEXT"
+      }
+    }
+  ],
+  "result": "PASS"
+}

@@ -27,6 +27,8 @@ class NativeAuthorization:
 
     def application(self) -> OAuthApplication:
         item = self.resource
+        if item.external_token_service is not None:
+            raise ValueError("托管令牌不创建驭量OAuth应用或虚构回调")
         if not item.enabled:
             raise ValueError("应用交接尚未完成，拒绝启用")
         return OAuthApplication(

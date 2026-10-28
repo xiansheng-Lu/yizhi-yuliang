@@ -1,0 +1,26 @@
+{
+  "result": "PASS",
+  "preflight": [
+    {
+      "origin": "http://localhost:3000",
+      "status": 204,
+      "allowedOrigin": "http://localhost:3000",
+      "allowedHeaders": "content-type,x-amz-checksum-sha256,x-amz-meta-upload-id"
+    },
+    {
+      "origin": "http://127.0.0.1:3000",
+      "status": 204,
+      "allowedOrigin": "http://127.0.0.1:3000",
+      "allowedHeaders": "content-type,x-amz-checksum-sha256,x-amz-meta-upload-id"
+    },
+    {
+      "origin": "https://untrusted.invalid",
+      "status": 204,
+      "allowedOrigin": null,
+      "allowedHeaders": null
+    }
+  ],
+  "anonymousGet": 403,
+  "scope": "ACTUAL_PINNED_LOCAL_MINIO_OPTIONS_ONLY_NOT_FRONTEND_UPLOAD_QA",
+  "source": "https://docs.min.io/aistor/administration/cors-configuration/"
+}

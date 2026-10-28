@@ -1,0 +1,94 @@
+{
+  "checkedAt": "2026-10-28T17:16:32.500425+08:00",
+  "source": "ORIGINAL_ADQ_VERIFY_EXAMPLE_COMMON_PARAMETERS_EXISTING_UNIQUE_SERVICE",
+  "yuliangRuntimeAcceptance": "NOT_RUN",
+  "platformCalls": 3,
+  "forceRefreshCalls": 0,
+  "calls": [
+    {
+      "path": "/v3.0/advertiser/get",
+      "http": 200,
+      "code": 0,
+      "status": "BUSINESS_SUCCESS",
+      "schema": {
+        "code": "int",
+        "message": "str",
+        "message_cn": "str",
+        "data": {
+          "page_info": {
+            "page": "int",
+            "page_size": "int",
+            "total_number": "int",
+            "total_page": "int"
+          },
+          "list": {
+            "type": "array",
+            "sampleSchema": {
+              "account_id": "int",
+              "system_status": "str"
+            }
+          }
+        }
+      },
+      "safeReturnedRows": 1
+    },
+    {
+      "path": "/v1.3/campaigns/get",
+      "http": 200,
+      "code": 0,
+      "status": "BUSINESS_SUCCESS",
+      "schema": {
+        "code": "int",
+        "data": {
+          "list": {
+            "type": "array",
+            "sampleSchema": null
+          },
+          "page_info": {
+            "page": "int",
+            "page_size": "int",
+            "total_number": "int",
+            "total_page": "int"
+          }
+        },
+        "message": "str",
+        "message_cn": "str",
+        "trace_id": "str"
+      },
+      "requestId": "6e922ecd3bb4b64088bc5cb6230df75d",
+      "safeReturnedRows": 0
+    },
+    {
+      "path": "/v1.3/funds/get",
+      "http": 200,
+      "code": 0,
+      "status": "BUSINESS_SUCCESS",
+      "schema": {
+        "code": "int",
+        "data": {
+          "list": {
+            "type": "array",
+            "sampleSchema": {
+              "balance": "int",
+              "effect_funds": "list",
+              "fund_status": "str",
+              "fund_type": "str",
+              "realtime_cost": "int"
+            }
+          }
+        },
+        "message": "str",
+        "message_cn": "str"
+      },
+      "safeReturnedRows": 3
+    }
+  ],
+  "health": {
+    "http": 200,
+    "ok": true,
+    "status": "ready",
+    "accountCount": 1
+  },
+  "tokenServiceHttp": 200,
+  "status": "READONLY_PROBE_COMPLETED"
+}

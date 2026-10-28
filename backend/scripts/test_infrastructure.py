@@ -100,6 +100,9 @@ def main() -> int:
             "external-token-runtime",
             "content-documents",
             "resource-lookups",
+            "content-uploads",
+            "lookup-targets",
+            "report-drafts",
         ),
         default="all",
     )
@@ -165,6 +168,9 @@ def main() -> int:
         "external-token-runtime": ["tests/integration/test_external_token_runtime.py"],
         "content-documents": ["tests/integration/test_cloud_documents.py"],
         "resource-lookups": ["tests/integration/test_resource_lookups.py"],
+        "content-uploads": ["tests/integration/test_content_uploads.py"],
+        "lookup-targets": ["tests/integration/test_lookup_targets.py"],
+        "report-drafts": ["tests/integration/test_report_drafts.py"],
         "parser": [
             "tests/integration/test_command_parse.py",
             "tests/integration/test_workspace.py",

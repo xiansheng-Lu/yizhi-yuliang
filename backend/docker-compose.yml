@@ -55,6 +55,8 @@ services:
     environment:
       MINIO_ROOT_USER: yuliang-local
       MINIO_ROOT_PASSWORD: ${YULIANG_MINIO_PASSWORD:?set local object storage password}
+      # 本地浏览器直传仅信任明确来源；不依赖镜像默认的通配CORS。
+      MINIO_API_CORS_ALLOW_ORIGIN: ${YULIANG_MINIO_CORS_ORIGINS:-http://localhost:3000,http://127.0.0.1:3000}
     command: ["server", "/data", "--console-address", ":9001"]
     ports: ["127.0.0.1:19000:9000", "127.0.0.1:19001:9001"]
     volumes: ["minio-data:/data"]

@@ -1,0 +1,34 @@
+{
+  "unit": {
+    "passed": 1,
+    "command": "uv run --frozen pytest tests/unit/test_report_drafts.py -q",
+    "seconds": 0.41
+  },
+  "result": "PASS_REAL_PG_HTTP_REPORT_DRAFTS",
+  "regression": {
+    "passed": 24,
+    "command": "uv run --frozen python scripts/test_infrastructure.py --group analysis --details",
+    "seconds": 49.5
+  },
+  "ruff": "PASS",
+  "paidCalls": 0,
+  "date": "2026-10-28",
+  "integration": {
+    "passed": 4,
+    "command": "uv run --frozen python scripts/test_infrastructure.py --group report-drafts --details",
+    "seconds": 10.4
+  },
+  "livePlatformCalls": 0,
+  "next": "M4-06a",
+  "scope": "draft title/modules only; immutable analysis evidence; CAS and append-only versions; escaped private preview",
+  "mypySourceFiles": 11,
+  "review": "PENDING_BE_F08",
+  "migration": "0057_report_drafts",
+  "nullIdentityNegative": {
+    "role": "app_login",
+    "expected": "REJECTED_22023",
+    "draftAndHistoryRows": 0,
+    "fields": 5,
+    "missingAndJsonNullCases": 10
+  }
+}

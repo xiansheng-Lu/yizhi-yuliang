@@ -92,7 +92,10 @@ class ApplicationResource(ResourceModel):
             or self.granted_scopes is None
             or not self.permissions_evidence
             or not owner_ready
+            or self.external_token_service is not None
+            and self.account_id is None
             or self.connector_id == "adq"
+            and self.external_token_service is None
             and not self.redirect_uri
         ):
             raise ValueError("启用前需要真实映射、权限依据、固定回调和唯一刷新者交接")
@@ -101,6 +104,7 @@ class ApplicationResource(ResourceModel):
         if (
             self.enabled
             and self.connector_id == "adq"
+            and self.external_token_service is None
             and urlsplit(self.redirect_uri or "").path
             != (f"/v1/connections/oauth/{self.id}/callback")
         ):

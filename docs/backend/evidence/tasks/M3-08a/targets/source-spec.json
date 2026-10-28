@@ -1,0 +1,45 @@
+{
+  "properties": "NOT_REQUESTED_NOT_STORED",
+  "sources": [
+    {
+      "sha256": "7621c11606efaf47eb61005b005aff5ffc66596ae0109580a48589e5a3486373",
+      "repository": "https://github.com/TencentAd/marketing-api-go-sdk",
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/api/v3/api_marketing_target_assets.go",
+      "revision": "81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9",
+      "path": "pkg/api/v3/api_marketing_target_assets.go"
+    },
+    {
+      "sha256": "df08bcf2ab15c793df72aa9a4326a3918ef324e3d9bc36f802583131a77c76d5",
+      "repository": "https://github.com/TencentAd/marketing-api-go-sdk",
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/model/v3/model_marketing_target_assets_get_response_data.go",
+      "revision": "81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9",
+      "path": "pkg/model/v3/model_marketing_target_assets_get_response_data.go"
+    },
+    {
+      "sha256": "49cded75fae64efb30a177d65bf53d68662bdedd8b1987a506e4832c7ee745e3",
+      "repository": "https://github.com/TencentAd/marketing-api-go-sdk",
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/model/v3/model_marketing_asset_struct.go",
+      "revision": "81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9",
+      "path": "pkg/model/v3/model_marketing_asset_struct.go"
+    },
+    {
+      "sha256": "cde6bb5bf549db5681ab920ce418d3172b236c8f9f9e9a8f7054c1b8ee51a879",
+      "repository": "https://github.com/TencentAd/marketing-api-go-sdk",
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/model/v3/model_marketing_target_type.go",
+      "revision": "81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9",
+      "path": "pkg/model/v3/model_marketing_target_type.go"
+    },
+    {
+      "sha256": "ae637be916d7e7956b5b728ba4736efb1b7c29108400cc781d2aa609f3b9b74d",
+      "repository": "https://github.com/TencentAd/marketing-api-go-sdk",
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/model/v3/model_marketing_asset_type.go",
+      "revision": "81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9",
+      "path": "pkg/model/v3/model_marketing_asset_type.go"
+    }
+  ],
+  "request": "GET /v3.0/marketing_target_assets/get: explicit account_id, marketing_target_type, page, page_size, fields; no organization mode",
+  "response": "data.list MarketingAssetStruct plus PageInfo",
+  "platformCalls": 0,
+  "checkedOn": "2026-10-28",
+  "eligibility": "EXACT_CONTEXT_AND_TARGET_TYPE_PROOF_REQUIRED; is_deleted MUST BE false; asset type must match independently verified allowlist"
+}

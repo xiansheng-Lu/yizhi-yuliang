@@ -1,0 +1,34 @@
+{
+  "date": "2026-10-28",
+  "implementation": "OPTIONAL_NATIVE_AUTHORIZATION_AND_INITIAL_READ_ADAPTERS",
+  "sourceApplications": 2,
+  "shopRelationship": "DISTINCT_SHOPS",
+  "businessTenantAssigned": false,
+  "sourceSecretsCopied": false,
+  "sourceTokensCopied": false,
+  "sourceProjectsModified": false,
+  "runtimeApplicationsEnabled": 0,
+  "livePlatformCalls": 0,
+  "businessDatabaseMigrated": false,
+  "verification": {
+    "unitAndContractPassed": 609,
+    "targetedPostgresIntegrationPassed": 37,
+    "nativeIntegrationCases": 8,
+    "ruff": "PASS",
+    "mypyFiles": 13,
+    "mypy": "PASS",
+    "platformTransport": "SYNTHETIC_MOCKTRANSPORT"
+  },
+  "remaining": [
+    "ACTUAL_TENANT_AND_DISTINCT_SHOP_MAPPING",
+    "APPROVED_PERMISSIONS_EVIDENCE",
+    "ADQ_CALLBACK_REGISTRATION",
+    "SINGLE_TOKEN_OWNER_HANDOVER",
+    "REAL_PLATFORM_ACCEPTANCE",
+    "HUMAN_REVIEW"
+  ],
+  "mainIntegration": "Merged upstream frontend directory restructure; 609 unit/contract and 37 targeted PG cases passed afterwards",
+  "verificationNotes": [
+    "One intermediate rerun had 33 passes and 4 setup errors because shared app_migrate role became NOLOGIN; unchanged code rerun passed all 37. No business database role configuration was changed manually."
+  ]
+}

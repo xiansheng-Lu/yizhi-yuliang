@@ -23,6 +23,7 @@ from yuliang.platform.errors import (
 )
 from yuliang.platform.middleware import RequestContextMiddleware
 from yuliang.platform.probes import ProbeService
+from yuliang.platform.security.oauth_callback import OAuthCallbackPrivacy
 from yuliang.settings import Settings
 
 
@@ -44,9 +45,20 @@ def create_app(settings: Settings | None = None, mail_sender: MailSender | None 
             app.state.identity_service = IdentityService(
                 app.state.settings, mail_sender=mail_sender
             )
+        app.state.platform_runtime = None
         try:
+            if app.state.settings.platform_resources_file is not None:
+                from yuliang.modules.connectors.runtime import PlatformRuntime
+
+                app.state.platform_runtime = PlatformRuntime.load(
+                    app.state.identity_service.app,
+                    app.state.settings,
+                    app.state.settings.platform_resources_file,
+                )
             yield
         finally:
+            if app.state.platform_runtime is not None:
+                app.state.platform_runtime.close()
             app.state.probes.close()
             if app.state.settings.identity_api_enabled:
                 app.state.identity_service.close()
@@ -64,6 +76,7 @@ def create_app(settings: Settings | None = None, mail_sender: MailSender | None 
     app.include_router(operations_router)
     if settings.identity_api_enabled:
         from yuliang.api.connections import router as connection_router
+        from yuliang.api.platform_authorization import router as platform_router
         from yuliang.modules.identity.routes import router
         from yuliang.modules.identity.workspace_routes import router as workspace_router
         from yuliang.modules.workspace.routes import router as history_router
@@ -71,6 +84,7 @@ def create_app(settings: Settings | None = None, mail_sender: MailSender | None 
         app.include_router(router)
         app.include_router(workspace_router)
         app.include_router(history_router)
+        app.include_router(platform_router)
         app.include_router(connection_router)
     if settings.admin_api_enabled:
         from yuliang.admin.routes import router as admin_router
@@ -81,6 +95,7 @@ def create_app(settings: Settings | None = None, mail_sender: MailSender | None 
     app.add_exception_handler(HTTPException, http_error_handler)  # type: ignore[arg-type]
     app.add_exception_handler(Exception, unhandled_error_handler)
     app.add_middleware(RequestContextMiddleware)
+    app.add_middleware(OAuthCallbackPrivacy)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.allowed_origins,

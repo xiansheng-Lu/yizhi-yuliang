@@ -6,7 +6,7 @@ import re
 import secrets
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
-from typing import Any, Protocol
+from typing import Any, Literal, Protocol
 from urllib.parse import urlsplit
 from uuid import UUID, uuid4
 
@@ -41,26 +41,43 @@ class OAuthApplication:
     provider: str
     product_line: str
     redirect_uri: str
+    authorization_mode: Literal["OAUTH", "SELF_CREDENTIAL"] = "OAUTH"
 
     def __post_init__(self) -> None:
         parsed = urlsplit(self.redirect_uri)
+        self_credential = (
+            self.authorization_mode == "SELF_CREDENTIAL"
+            and self.connector_id == "wxshop"
+            and self.redirect_uri == ""
+        )
         if (
             self.connector_id not in {"adq", "wxpromo", "wxshop"}
             or CONNECTOR_CONTEXTS.get(self.connector_id) != (self.provider, self.product_line)
             or not re.fullmatch(r"[A-Za-z0-9_.:-]{1,128}", self.app_id)
-            or parsed.scheme != "https"
-            or not parsed.hostname
-            or parsed.username
-            or parsed.password
-            or parsed.fragment
-            or parsed.query
-            or parsed.port not in (None, 443)
+            or not self_credential
+            and (
+                parsed.scheme != "https"
+                or not parsed.hostname
+                or parsed.username
+                or parsed.password
+                or parsed.fragment
+                or parsed.query
+                or parsed.port not in (None, 443)
+            )
+            or self.authorization_mode not in {"OAUTH", "SELF_CREDENTIAL"}
+            or self.authorization_mode == "SELF_CREDENTIAL"
+            and not self_credential
         ):
             raise ValueError("需要服务端核对的应用与固定HTTPS回调")
 
     @property
     def redirect_digest(self) -> str:
-        return hashlib.sha256(self.redirect_uri.encode()).hexdigest()
+        binding = (
+            f"self-credential:{self.id}"
+            if self.authorization_mode == "SELF_CREDENTIAL"
+            else self.redirect_uri
+        )
+        return hashlib.sha256(binding.encode()).hexdigest()
 
 
 @dataclass(frozen=True)

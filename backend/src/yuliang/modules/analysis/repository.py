@@ -26,13 +26,19 @@ def execute_analysis(engine: Engine, identity: VerifiedIdentity, task_id: UUID) 
             current = AnalysisService._task(session, task_id)
             if current.status in {"succeeded", "failed"}:
                 return None
+            original_scope = tuple(
+                session.execute(
+                    text("SELECT unnest(account_scope) FROM analysis_tasks WHERE id=:id"),
+                    dict(id=task_id),
+                ).scalars()
+            )
             frozen = session.execute(
                 text("SELECT snapshot IS NOT NULL FROM analysis_executions WHERE task_id=:id"),
                 dict(id=task_id),
             ).scalar_one_or_none()
             if number in {10, 40} and not frozen:
                 try:
-                    require_coverage(session, current.query)
+                    require_coverage(session, current.query, account_scope=original_scope)
                 except ApiError:
                     if number != 10:
                         raise
@@ -40,6 +46,20 @@ def execute_analysis(engine: Engine, identity: VerifiedIdentity, task_id: UUID) 
                         text("SELECT access.analysis_coverage_failed(:id)"), dict(id=task_id)
                     )
                     return None
+            if number == 40:
+                from yuliang.modules.analysis.comparisons import comparison_preflight
+
+                if not frozen:
+                    bundle = comparison_preflight(session, current.query, original_scope)
+                    metadata = json.dumps(bundle)
+                else:
+                    metadata = None
+                session.execute(
+                    text(
+                        "SELECT access.analysis_comparisons_freeze(:id,:token,CAST(:meta AS jsonb))"
+                    ),
+                    dict(id=task_id, token=token, meta=metadata),
+                )
             return session.execute(
                 text("SELECT access.analysis_execute(:id,:token,:stage,CAST(:result AS jsonb))"),
                 dict(id=task_id, token=token, stage=number, result=result),
@@ -56,7 +76,10 @@ def execute_analysis(engine: Engine, identity: VerifiedIdentity, task_id: UUID) 
         with business_transaction(consistent, identity) as session:
             task = AnalysisService._task(session, task_id)
             row = session.execute(
-                text("SELECT snapshot,result_id FROM analysis_executions WHERE task_id=:id"),
+                text(
+                    "SELECT snapshot,result_id,comparisons_snapshot FROM analysis_executions "
+                    "WHERE task_id=:id"
+                ),
                 dict(id=task_id),
             ).one()
             name = session.execute(
@@ -70,6 +93,9 @@ def execute_analysis(engine: Engine, identity: VerifiedIdentity, task_id: UUID) 
                 ).scalars()
             )
         result = calculate(task.query, snapshot, task_id, row.result_id, name)
+        from yuliang.modules.analysis.comparisons import apply_comparisons
+
+        result = apply_comparisons(result, row.comparisons_snapshot or {})
         from yuliang.modules.analysis.narrative import rule_insights
 
         result = result.model_copy(update=dict(insights=rule_insights(result, snapshot, accounts)))

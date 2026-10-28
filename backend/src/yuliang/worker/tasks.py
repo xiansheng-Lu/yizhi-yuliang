@@ -113,7 +113,13 @@ def accept_analysis(payload: dict[str, Any]) -> dict[str, Any]:
         from yuliang.platform.errors import ApiError, ErrorCode
 
         try:
-            require_coverage(session, query)
+            original_scope = tuple(
+                session.execute(
+                    text("SELECT unnest(account_scope) FROM analysis_tasks WHERE id=:id"),
+                    dict(id=item.job_id),
+                ).scalars()
+            )
+            require_coverage(session, query, account_scope=original_scope)
         except ApiError as error:
             if error.code != ErrorCode.DATA_COVERAGE_INSUFFICIENT:
                 raise

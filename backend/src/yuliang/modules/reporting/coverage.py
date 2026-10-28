@@ -1,6 +1,8 @@
 """基于规范事实及真实成功页的覆盖；未知口径和缺值不补零。"""
 
+from datetime import date, timedelta
 from typing import Any
+from uuid import UUID
 
 from sqlalchemy import text
 from sqlalchemy.orm import Session
@@ -17,8 +19,19 @@ REQUIRED: dict[str, tuple[str, ...]] = {
 }
 
 
-def require_coverage(session: Session, query: AnalysisQuery) -> dict[str, Any]:
-    days = period_days(query)
+def require_coverage(
+    session: Session,
+    query: AnalysisQuery,
+    *,
+    account_scope: tuple[UUID, ...] | None = None,
+    comparison_window: bool = False,
+) -> dict[str, Any]:
+    start, end = date.fromisoformat(query.start_date), date.fromisoformat(query.end_date)
+    days = (
+        tuple(start + timedelta(days=i) for i in range((end - start).days + 1))
+        if comparison_window
+        else period_days(query)
+    )
     accounts = (
         session.execute(
             text("""SELECT id,provider,product_line FROM ad_accounts
@@ -28,6 +41,10 @@ def require_coverage(session: Session, query: AnalysisQuery) -> dict[str, Any]:
         .mappings()
         .all()
     )
+    if account_scope is not None:
+        if not set(account_scope) <= {a["id"] for a in accounts}:
+            raise ApiError(ErrorCode.FORBIDDEN, "原分析账户范围已撤销，不能计算或扩大账户集合")
+        accounts = [a for a in accounts if a["id"] in account_scope]
     gaps: list[dict[str, str]] = []
     signatures: dict[tuple[str, str, str], set[tuple[Any, ...]]] = {}
     for dimension in query.dimensions:
@@ -118,4 +135,5 @@ def require_coverage(session: Session, query: AnalysisQuery) -> dict[str, Any]:
         days=len(days),
         dimensions=list(query.dimensions),
         source="CONFIRMED_NON_MISSING_FACTS_WITH_SUCCESSFUL_PAGES",
+        signatures={"|".join(key): list(next(iter(values))) for key, values in signatures.items()},
     )

@@ -1,49 +1,71 @@
 {
-  "integration": {
-    "seconds": 48.85,
-    "passed": 26,
-    "command": "uv run --frozen python scripts/test_infrastructure.py --group analysis --details"
-  },
-  "ruff": "PASS",
-  "review": "PENDING_BE_F08",
-  "unit": {
-    "seconds": 0.35,
-    "passed": 3,
-    "command": "uv run --frozen pytest tests/unit/test_analysis_calculator.py -q"
-  },
-  "limitations": [
-    "comparison period reads/snapshots/calculation NOT_IMPLEMENTED; no comparison coverage lookup performed",
-    "full M4-01b not complete; prioritize comparison continuation",
-    "SQL NULL fence and draft identity rejection need direct app-role regression",
-    "CPA missing attributed_order_count; no profit facts"
-  ],
-  "result": "PASS_CURRENT_PERIOD_AND_EXECUTION_SLICE_ONLY",
-  "mypySourceFiles": 8,
-  "paidCalls": 0,
-  "date": "2026-10-28",
-  "recovery": "frozen snapshot survives new fact changes; prior stage requires current coverage; stale fence refused",
-  "migration": "0055_analysis_execution",
-  "livePlatformCalls": 0,
-  "comparisonStatus": "NOT_IMPLEMENTED",
-  "taskStatus": "IN_PROGRESS",
-  "finalSqlNegative": {
-    "unclaimedAndNullFence": "REJECTED_P0409",
-    "statusUnchanged": true,
-    "runtimeRole": "app_login"
-  },
-  "frontendConsumer": {
-    "weeklyCTR": 0.25,
-    "result": "PASS",
-    "command": "node node_modules/tsx/dist/cli.mjs --tsconfig frontend/tsconfig.json backend/scripts/check_analysis_result_frontend.mts docs/backend/evidence/tasks/M4-01b/frontend-result.json",
-    "actualPointValue": true,
-    "weeklyCPC": 28.571428571428573,
-    "weeklyROI": 1.9,
-    "actualGroupAnalysisPoints": true,
+  "isolation": "THREE_PERIODS_SINGLE_REPEATABLE_READ_FREEZE",
+  "frontend": {
     "missingCPA": null,
-    "source": "ACTUAL_PG_RESULT_WITH_SYNTHETIC_UPSTREAM"
+    "weightedCurrentROI": 1.9,
+    "comparisonConsumer": "PASS_ACTUAL_PREVIOUS_RANGE_GROUP_POINTS_POINT_VALUE",
+    "actualPGROI": [
+      3,
+      2,
+      1.5
+    ]
   },
-  "finalStatic": {
-    "ruff": "PASS_ALL_SRC_TESTS_SCRIPTS",
-    "mypy": 187
-  }
+  "date": "2026-10-28",
+  "comparisonChecks": [
+    {
+      "passed": 12,
+      "seconds": 38.13,
+      "command": "uv run --frozen python scripts/test_infrastructure.py --group analysis-comparisons --details"
+    },
+    {
+      "deselected": 12,
+      "passed": 1,
+      "seconds": 4.95,
+      "command": "PYTEST_ADDOPTS='-k actual_compass' uv run --frozen python scripts/test_infrastructure.py --group analysis-comparisons --details"
+    },
+    {
+      "deselected": 12,
+      "passed": 1,
+      "seconds": 7.84,
+      "command": "PYTEST_ADDOPTS='-k actual_previous' uv run --frozen python scripts/test_infrastructure.py --group analysis-comparisons --details"
+    }
+  ],
+  "comparisonStatus": "PASS_REAL_LOCAL_PG",
+  "legacy": "NOT_CAPTURED_LEGACY_NO_BACKFILL",
+  "scope": "ORIGINAL_TASK_ACCOUNT_SCOPE_ONLY",
+  "limitations": [
+    "live/video require normative facts and currently reject missing selected dimensions",
+    "CPA lacks attributed order count and remains null",
+    "source financial meanings need real platform evidence and human acceptance"
+  ],
+  "taskStatus": "WAITING_REVIEW",
+  "mypySourceFiles": 16,
+  "baseline": "739b721",
+  "migration": "0058_analysis_comparisons",
+  "paidCalls": 0,
+  "result": "PASS_TECHNICAL_CURRENT_COMPARISON_AND_EXECUTION",
+  "recovery": "IMMUTABLE_ORIGINAL_SNAPSHOTS",
+  "unit": {
+    "file": "tests/unit/test_analysis_comparisons.py",
+    "passed": 6,
+    "seconds": 0.57
+  },
+  "regression": [
+    {
+      "passed": 26,
+      "group": "analysis",
+      "seconds": 42.78
+    },
+    {
+      "passed": 4,
+      "group": "report-drafts",
+      "seconds": 9.2
+    }
+  ],
+  "livePlatformCalls": 0,
+  "ruff": "PASS_TASK_SOURCES_AND_TESTS",
+  "review": "PENDING_BE_F08",
+  "external": "E01/E02/G0/E08 retain",
+  "distinctComparisonCasesPassed": 13,
+  "source": "SYNTHETIC_UPSTREAM_AND_CONTRACTS_REAL_LOCAL_PG_REDIS_RABBITMQ"
 }

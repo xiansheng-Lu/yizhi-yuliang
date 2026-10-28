@@ -70,7 +70,7 @@ def approval_current(session: Session, context: RiskContext) -> CheckEvidence:
     if (
         job is not None
         and job.approval.state == "APPROVED"
-        and job.approval.method == "MANUAL"
+        and job.approval.method in {"MANUAL", "SERVER_POLICY"}
         and job.approval.actor_id is not None
         and job.approval.decided_at is not None
         and job.created_at <= job.approval.decided_at <= context.checked_at

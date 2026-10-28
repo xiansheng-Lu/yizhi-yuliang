@@ -29,6 +29,7 @@ def controlled[T](operation: Callable[[], T]) -> T:
             "P0002": ErrorCode.NO_DATA,
             "40001": ErrorCode.VERSION_CONFLICT,
             "P0211": ErrorCode.TARGET_QUARANTINED,
+            "P0210": ErrorCode.POLICY_VERSION_CHANGED,
             "55P03": ErrorCode.LOCKED,
             "22023": ErrorCode.INVALID_INPUT,
             "23505": ErrorCode.IDEMPOTENCY_MISMATCH,

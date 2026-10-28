@@ -19,6 +19,8 @@ from yuliang.modules.command.state import JobEvent, StateFacts, evolve
 from yuliang.modules.connectors.archive import RecordedPlatformClient
 from yuliang.modules.connectors.http import PlatformHttpClient
 from yuliang.modules.connectors.redaction import ArchivePolicy
+from yuliang.modules.execution.approval_models import ReviewJobRequest
+from yuliang.modules.execution.approvals import Approvals
 from yuliang.modules.execution.attempt_models import BusinessKind, BusinessRef
 from yuliang.modules.execution.attempts import ExecutionOrders, PreparedExecution
 from yuliang.modules.execution.guards import TargetGuards
@@ -274,6 +276,7 @@ def test_terminal_kernel_and_release_same_transaction(
     apps = data["applications"]
     if event == JobEvent.REJECT:
         job = stage_only(data, job, JobEvent.CONFIRM)
+        Approvals(apps).open(UUID(job.job_id), job.version)
         apps = JobApplications(
             data["engine"],
             VerifiedIdentity(data["tenant"], data["approver_member"], data["approver"]),
@@ -281,30 +284,41 @@ def test_terminal_kernel_and_release_same_transaction(
             apps.key,
         )
     with business_transaction(data["engine"], apps.identity) as session:
-        at = session.execute(text("SELECT clock_timestamp()")).scalar_one()
-        after = evolve(
-            job,
-            event,
-            StateFacts(),
-            at=at,
-            actor_id=apps.identity.user_id,
-            requester_id=data["user"],
-        )
-        session.execute(
-            text("""SELECT access.job_apply_transition(:member,:user,:job,:version,
-        :event,CAST(:document AS jsonb),:request,:proof)"""),
-            {
-                "member": apps.identity.membership_id,
-                "user": apps.identity.user_id,
-                "job": job.job_id,
-                "version": job.version,
-                "event": event.value,
-                "document": after.model_dump_json(),
-                "request": apps.request_id,
-                "proof": "a" * 64,
-            },
-        )
-        BudgetSettlement(apps).release(UUID(job.job_id), unit_of_work=session)
+        if event == JobEvent.REJECT:
+            # M2-14实际审批门已上线，驳回必须留决定，并在同一Session释放预占。
+            Approvals(apps).review(
+                ReviewJobRequest(
+                    job_id=UUID(job.job_id),
+                    expected_version=job.version,
+                    decision="REJECT",
+                ),
+                unit_of_work=session,
+            )
+        else:
+            at = session.execute(text("SELECT clock_timestamp()")).scalar_one()
+            after = evolve(
+                job,
+                event,
+                StateFacts(),
+                at=at,
+                actor_id=apps.identity.user_id,
+                requester_id=data["user"],
+            )
+            session.execute(
+                text("""SELECT access.job_apply_transition(:member,:user,:job,:version,
+            :event,CAST(:document AS jsonb),:request,:proof)"""),
+                {
+                    "member": apps.identity.membership_id,
+                    "user": apps.identity.user_id,
+                    "job": job.job_id,
+                    "version": job.version,
+                    "event": event.value,
+                    "document": after.model_dump_json(),
+                    "request": apps.request_id,
+                    "proof": "a" * 64,
+                },
+            )
+            BudgetSettlement(apps).release(UUID(job.job_id), unit_of_work=session)
     assert ledger(data)[:2] == (9990, 0)
     assert BudgetSettlement(apps).release(UUID(job.job_id)).proof_kind == "UNCLAIMED_TERMINAL"
 

@@ -105,6 +105,8 @@ class StateFacts:
     retry_current: JobValue | None = None
     transport_unknown: bool = False
     transport_not_sent: bool = False
+    approval_method: Literal["MANUAL", "SERVER_POLICY"] = "MANUAL"
+    approval_policy_ref: UUID | None = None
     retry_actions: frozenset[Action] = frozenset({"PAUSE_AD_PLAN", "RESUME_AD_PLAN"})
 
 
@@ -175,11 +177,17 @@ def evolve(
     elif event in {JobEvent.APPROVE, JobEvent.REJECT}:
         if actor_id == requester_id or job.approval.state != "PENDING":
             _deny("审批须分离且申请处于待审批状态")
+        if facts.approval_method == "SERVER_POLICY" and (
+            event != JobEvent.APPROVE or facts.approval_policy_ref is None or not facts.proof_ref
+        ):
+            _deny("策略批准必须由后台白名单与持久依据支持")
+        if facts.approval_method == "MANUAL" and facts.approval_policy_ref is not None:
+            _deny("人工决定不能混入策略批准依据")
         changes["approval"] = JobApproval(
             state="APPROVED" if event == JobEvent.APPROVE else "REJECTED",
             actor_id=str(actor_id),
             decided_at=at,
-            method="MANUAL",
+            method=facts.approval_method,
             approved_version=job.version,
         )
     elif event in {JobEvent.CANCEL, JobEvent.EXPIRE}:

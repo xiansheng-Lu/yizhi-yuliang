@@ -173,6 +173,13 @@ def test_each_legal_edge_with_real_condition_update(
 ) -> None:
     data = applications
     job = seed(data, status, expired=event == JobEvent.EXPIRE)
+    if event in {JobEvent.APPROVE, JobEvent.REJECT}:
+        # M2-14上线后纯合成参与者不能绕过真实审批账，合法纯归约边仍由单元矩阵覆盖。
+        with pytest.raises(ApiError) as denied:
+            service(data, event).apply(UUID(job.job_id), job.version, event)
+        assert denied.value.code == ErrorCode.FORBIDDEN
+        assert counts(data, job) == ((status.value, 1), 1, 0, 0)
+        return
     after = service(data, event).apply(UUID(job.job_id), job.version, event)
     assert after.status == RULES[event].destination and after.version == 2
     assert counts(data, job) == ((after.status.value, 2), 2, 1, 1)

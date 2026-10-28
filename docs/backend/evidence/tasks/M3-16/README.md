@@ -1,6 +1,6 @@
 # M3-16 共用内容校验器（结构与保存入口技术切片）
 
-2026-10-28，负责人BE，协作F09/F10。整卡状态IN_PROGRESS；结构/共用库/实际保存入口切片为TECH_VERIFIED_WAITING_REVIEW。真实GENERATION/SOP业务入口尚未实现，整卡仍有开发工作，不是仅待人工复核，不宣称完整三业务入口DoD完成。基线main d0caf14，本地分支codex/backend-content-plan-readmodels。无本卡新迁移，06/12原有未提交内容未动。
+2026-10-28，负责人BE，协作F09/F10。整卡状态IN_PROGRESS；结构/共用库/实际保存入口切片为TECH_VERIFIED_WAITING_REVIEW。真实GENERATION及SOP执行/采纳入口尚未实现；本批M3-17a已实际接入SOP根文档初始化，整卡仍有开发工作，不是仅待人工复核，不宣称完整三业务入口DoD完成。基线main d0caf14，本地分支codex/backend-content-plan-readmodels。无本卡新迁移，06/12原有未提交内容未动。
 
 ## 规则与入口
 
@@ -10,7 +10,7 @@ validation.py作为唯一结构/图/可信媒体边界规则，Document模型aft
 
 依本轮明确约定兼容真实前端：x/y只要求有限，可为0或负，不擅自钳位；宽高/字号仍为正。16册表“坐标为正”与前端现状差异保留待BE/FE具名规格决议。依16册134行，已有caption片段的text为空或纯空白明确拒绝，定位clips.<index>.text/clipId；空clips集合不受影响。skill仅保存声明标签，不从任意字符串取得模板执行能力；实际模板目录仍归后卡。
 
-validate_content的SAVE/GENERATION/SOP purpose只标签化同一库判断，无供应商调用、业务状态推进或自授权限。当前后端没有完整生成/SOP业务入口，不新增空业务路由冒充已集成；只真实接保存及其内部入口。实际素材scope/kind/具体版本HEAD/HMAC/历史引用互斥仍复用M3-15b，不改权限为客户端自报。
+validate_content的SAVE/GENERATION/SOP purpose只标签化同一库判断，无供应商调用、业务状态推进或自授权限。保存基线当时仅接入保存及其内部入口；本批M3-17a已真实接入SOP根planning文档初始化（purpose=SOP及同事务_save）。生成及SOP执行/采纳入口仍未完成，不新增空业务路由冒充已集成。实际素材scope/kind/具体版本HEAD/HMAC/历史引用互斥仍复用M3-15b，不改权限为客户端自报。
 
 ## 可信时长边界
 
@@ -36,6 +36,10 @@ model_construct复验序列化显式关闭可能携原值的Pydantic serializer 
 
 ## DoD边界与推进
 
-DoD1的本地结构规则与合成可信时长比较已有证据，真实音视频时长未验；DoD2共用库三个purpose结果一致，但仅保存实际业务入口已接入，生成/SOP尚待后卡；DoD3实际商品/素材scope继续由既有真实PG guard验证，账户关联模型/入口尚未由本卡交付，不凭Document额外字段拒绝声称完整账户关联验收。
+DoD1的本地结构规则与合成可信时长比较已有证据，真实音视频时长未验；DoD2共用库三个purpose结果一致，已实际接入保存及本批M3-17a SOP根文档初始化；生成和后续SOP执行/采纳尚待后卡；DoD3实际商品/素材scope继续由既有真实PG guard验证，账户关联模型/入口尚未由本卡交付，不凭Document额外字段拒绝声称完整账户关联验收。
 
-该技术切片可作为M3-14本地派生实现输入，不能把缺业务入口或BE/FE签字改写为DONE。完整F09/F10浏览器、实际生成/SOP接线、音视频探测及规格具名复核继续保留。回滚可停用新入口，保留已存内容，不自动修订/抹除旧文档。
+该技术切片可作为M3-14本地派生实现输入，不能把缺业务入口或BE/FE签字改写为DONE。完整F09/F10浏览器、实际生成与后续SOP执行/采纳接线、音视频探测及规格具名复核继续保留。回滚可停用新入口，保留已存内容，不自动修订/抹除旧文档。
+
+## 本批新增实际业务入口证据
+
+M3-17a真实create_app/Cookie/CSRF及PG开线已验证根planning文档实际调用validate_content(purpose=SOP)，文档、run、steps与引用同事务。修后8项专项通过，详见../M3-17a/verification.json；M3-13b导入同样复用_Save实际守卫，13项专项通过并保留F09浏览器缺口。整卡仍IN_PROGRESS，不将初始化当成步骤执行或供应商生成。

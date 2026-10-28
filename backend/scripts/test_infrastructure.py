@@ -111,6 +111,9 @@ def main() -> int:
             "content-validation",
             "resource-queries",
             "content-flows",
+            "content-workflows",
+            "content-imports",
+            "overview-facts",
         ),
         default="all",
     )
@@ -187,6 +190,9 @@ def main() -> int:
         "content-validation": ["tests/integration/test_content_validation.py"],
         "resource-queries": ["tests/integration/test_resource_queries.py"],
         "content-flows": ["tests/integration/test_content_flows.py"],
+        "content-workflows": ["tests/integration/test_content_workflows.py"],
+        "content-imports": ["tests/integration/test_content_imports.py"],
+        "overview-facts": ["tests/integration/test_overview_facts.py"],
         "parser": [
             "tests/integration/test_command_parse.py",
             "tests/integration/test_workspace.py",

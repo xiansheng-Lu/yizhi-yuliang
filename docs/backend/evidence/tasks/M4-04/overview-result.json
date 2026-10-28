@@ -1,0 +1,93 @@
+{
+  "source": "API",
+  "filter": {
+    "scope": {
+      "shop_id": "489ca2d7-11d0-4363-ad4f-189433c7cad2",
+      "live_session_id": "all",
+      "connector_id": "adq",
+      "date": "2026-10-26",
+      "timezone": "Asia/Shanghai"
+    },
+    "startDate": "2026-10-24",
+    "endDate": "2026-10-26"
+  },
+  "updatedAt": null,
+  "coverageNote": "仅冻结显式ADQ账户范围；广告支付归因GMV/CNY分，不混入店铺经营GMV；缺账户日/未知口径为null，不补零；无计划/直播规范维度，不摊派账户金额。源更新时间未提供，updatedAt=null。已知口径=[('7d_click/REQUEST_TIME', 'GROSS', 'Asia/Shanghai')]；持久抓取时间范围=2026-10-28T12:02:39.861756+00:00~2026-10-28T12:02:40.021316+00:00；未配置新鲜度SLA，不声明FRESH。",
+  "totals": {
+    "spend": 300,
+    "gmv": 900,
+    "roi": 3.0,
+    "orders": null,
+    "conversion": null,
+    "cpm": 5000.0
+  },
+  "previous": {
+    "spend": 300,
+    "gmv": 900,
+    "roi": 3.0,
+    "orders": null,
+    "conversion": null,
+    "cpm": 5000.0
+  },
+  "trend": {
+    "status": "ready",
+    "data": [
+      {
+        "at": "2026-10-24",
+        "spend": 100,
+        "gmv": 300,
+        "roi": 3.0
+      },
+      {
+        "at": "2026-10-25",
+        "spend": 100,
+        "gmv": 300,
+        "roi": 3.0
+      },
+      {
+        "at": "2026-10-26",
+        "spend": 100,
+        "gmv": 300,
+        "roi": 3.0
+      }
+    ]
+  },
+  "channels": [
+    {
+      "id": "adq",
+      "name": "腾讯广告",
+      "detail": "显式冻结账户日范围；非计划归因",
+      "spend": 300,
+      "gmv": 900,
+      "roi": 3.0,
+      "share": 1.0
+    }
+  ],
+  "lives": [],
+  "distributions": {
+    "status": [],
+    "channel": [
+      {
+        "id": "adq",
+        "name": "腾讯广告",
+        "value": 300
+      }
+    ]
+  },
+  "funnel": {
+    "status": "unavailable",
+    "reason": "缺同范围进房/下单/支付漏斗规范维度"
+  },
+  "traffic": {
+    "status": "unavailable",
+    "reason": "缺流量来源规范事实，不根据GMV推断"
+  },
+  "ai": {
+    "completed": 0,
+    "running": 0,
+    "exceptions": 0,
+    "pending": 0,
+    "successRate": null
+  },
+  "insights": []
+}

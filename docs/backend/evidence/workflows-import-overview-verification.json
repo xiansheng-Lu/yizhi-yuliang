@@ -1,0 +1,91 @@
+{
+  "date": "2026-10-28",
+  "baseline": "70ab960",
+  "branch": "codex/backend-workflows-import-overview",
+  "result": "PASS_COMBINED_FULL",
+  "environment": "WSL Python3.13; actual local PostgreSQL Redis RabbitMQ MinIO and Cookie/CSRF HTTP; synthetic identities/upstream in isolated databases",
+  "checks": [
+    {
+      "command": "ruff check src tests scripts",
+      "result": "PASS"
+    },
+    {
+      "command": "ruff check alembic/versions/0064_workflow_templates_runs.py alembic/versions/0065_content_imports.py",
+      "result": "PASS",
+      "formattingNote": "0065 import spacing only; executable AST unchanged"
+    },
+    {
+      "command": "mypy src",
+      "sourceFiles": 221,
+      "result": "PASS"
+    },
+    {
+      "command": "pytest -m \"unit or contract\" -q",
+      "passed": 893,
+      "deselected": 919,
+      "seconds": 9.83
+    },
+    {
+      "command": "python scripts/test_infrastructure.py --group all --details",
+      "passed": 916,
+      "skipped": 1,
+      "seconds": 792.45,
+      "scope": "final reviewed sources, including both import race/replay fixes and exact-limit/overflow list tests",
+      "skip": "optional infrastructure lifecycle restart disabled by default"
+    }
+  ],
+  "dedicated": {
+    "workflowsIntegration": 8,
+    "workflowsUnit": 8,
+    "importsIntegration": 13,
+    "importsUnit": 7,
+    "overviewIntegration": 4,
+    "overviewUnit": 4,
+    "overviewFullMatchedFacts": [
+      100,
+      5000
+    ]
+  },
+  "crossReviewFixes": [
+    "ordinary editor and import share document advisory lock before create-only target check",
+    "successful import receipt replay preserves current permissions without historical blob HEAD",
+    "template/run arrays refuse overflow explicitly instead of silent truncation"
+  ],
+  "actualFrontendConsumers": {
+    "overview": "actual Overview helpers consume PG serialized output PASS",
+    "loaderWired": false,
+    "browserUI": "NOT_RUN"
+  },
+  "development": "workflows-import-overview-development.json",
+  "migrationHead": "0065_content_imports",
+  "paidCalls": 0,
+  "livePlatformCalls": 0,
+  "platformBusinessWriteCalls": 0,
+  "originalTokenServiceChanges": 0,
+  "status": {
+    "M3-17a": "WAITING_REVIEW",
+    "M3-13b": "IN_PROGRESS_BROWSER_F09_NOT_IMPLEMENTED",
+    "M4-04": "IN_PROGRESS_FULL_DIMENSIONS_AND_FE_LOADER_NOT_IMPLEMENTED",
+    "M3-16": "IN_PROGRESS_GENERATION_AND_FULL_SOP_EXECUTION_NOT_IMPLEMENTED"
+  },
+  "nextPlanned": [
+    "M3-17b",
+    "M3-20a",
+    "M4-09c:analysis-events"
+  ],
+  "earlierInterruptedRun": {
+    "passedBeforeInterrupt": 117,
+    "skipped": 1,
+    "seconds": 88.33,
+    "reason": "cross-review defects found; graceful interrupt before final reviewed fixes",
+    "finalVerification": false
+  },
+  "notClaimed": [
+    "named BE/FE acceptance",
+    "browser IndexedDB export/F09 cloud UI",
+    "F10 SOP execution/generation",
+    "full Overview plan/live/distribution/funnel/traffic dimensions or loader wiring",
+    "platform business success or new paid permission",
+    "full V8 workspace or nullable contract decision"
+  ]
+}

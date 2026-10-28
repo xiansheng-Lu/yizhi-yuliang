@@ -1,0 +1,49 @@
+{
+  "task": "M1-18",
+  "slice": "plan-read-projections",
+  "status": "IN_PROGRESS",
+  "checkedAt": "2026-10-28T11:10:23.270602+00:00",
+  "unit": {
+    "command": "pytest -q tests/unit/test_plan_protocol.py",
+    "result": "PASS",
+    "passed": 16,
+    "seconds": 0.54
+  },
+  "static": {
+    "ruff": "PASS",
+    "mypy": "PASS",
+    "files": 6
+  },
+  "integration": {
+    "result": "PASS",
+    "passed": 10,
+    "seconds": 9.08,
+    "command": "python scripts/test_infrastructure.py --group plan-read-projections --details",
+    "infrastructure": "real PostgreSQL + Redis",
+    "upstream": "httpx.MockTransport synthetic provider HTTP",
+    "firstRun": {
+      "passed": 9,
+      "failed": 1,
+      "reason": "test maintenance source SELECT lacked current account filter; fixed test only",
+      "retest": "10/10 PASS"
+    }
+  },
+  "realPlatformCalls": 0,
+  "businessWrites": 0,
+  "originalTokenConfigurationChanges": 0,
+  "frontendSnapshotWired": false,
+  "realPlatformAcceptance": false,
+  "gaps": [
+    "CAMPAIGN official return model has no bid_amount for mandatory frontend bidMinor",
+    "Plan money units / ROI attribution / source epoch remain independently unconfirmed for actual tenant",
+    "ADGROUP protocol/source profile is technical capability only; actual yuliang mapping and G1 acceptance outstanding",
+    "No canonical AdPlan id/mapping or shared V8/snapshot wiring in this slice; precise ADGROUP level retained"
+  ],
+  "readRouteRegression": {
+    "result": "PASS",
+    "passed": 5,
+    "seconds": 5.92,
+    "command": "python scripts/test_infrastructure.py --group read-routes --details"
+  },
+  "dbWindow": "RELEASED_TO_ROOT"
+}

@@ -1,0 +1,70 @@
+{
+  "date": "2026-10-28",
+  "baseline": "d0caf14",
+  "branch": "codex/backend-content-plan-readmodels",
+  "result": "PASS_COMBINED_FULL",
+  "environment": "WSL Python3.13; real local PG Redis RabbitMQ MinIO; synthetic upstream and identities in isolated databases",
+  "checks": [
+    {
+      "command": "ruff check src tests scripts",
+      "result": "PASS"
+    },
+    {
+      "command": "mypy src",
+      "sourceFiles": 212,
+      "result": "PASS"
+    },
+    {
+      "command": "pytest -m \"unit or contract\" -q",
+      "passed": 874,
+      "deselected": 894,
+      "seconds": 7.73
+    },
+    {
+      "command": "python scripts/test_infrastructure.py --group all --details",
+      "passed": 891,
+      "skipped": 1,
+      "seconds": 672.28,
+      "scope": "final frozen sources including child-edit replay and forged SQL relation assertions",
+      "skip": "optional infrastructure lifecycle restart, disabled by default"
+    }
+  ],
+  "dedicated": {
+    "contentValidation": 5,
+    "contentValidationUnit": 21,
+    "planReadProjections": 10,
+    "planUnit": 16,
+    "readRoutesRegression": 5,
+    "resourceQueries": 6,
+    "queryUnit": 10,
+    "integrationContextRegression": 15,
+    "contentFlows": 5,
+    "flowUnit": 9
+  },
+  "actualFrontendConsumers": {
+    "content": "flowDocument and validateContent, five actual PG children, PASS",
+    "query": "PlatformService.query with actual PG/HTTP capture, PASS",
+    "transportReplayNetworkCalls": 0,
+    "browserUI": "NOT_RUN"
+  },
+  "development": "content-plan-development.json",
+  "migrationHead": "0063_content_derivations",
+  "paidCalls": 0,
+  "livePlatformCalls": 0,
+  "platformBusinessWriteCalls": 0,
+  "status": {
+    "M1-18": "IN_PROGRESS_FULL_PROJECTIONS_NOT_IMPLEMENTED",
+    "M1-19": "IN_PROGRESS_V8_WORKSPACE_NOT_IMPLEMENTED",
+    "M3-16": "IN_PROGRESS_REAL_GENERATION_SOP_ENTRYPOINTS_NOT_IMPLEMENTED",
+    "M3-14": "WAITING_REVIEW"
+  },
+  "notClaimed": [
+    "formal named BE FE approval",
+    "full V8 workspace or canonical plan mapping",
+    "Campaign bid or ROI source that does not exist in SDK",
+    "real financial meaning from SDK types",
+    "historical inventory or complete platform product catalog",
+    "F09/F10 browser cloud UI or production rollout"
+  ],
+  "contractDecision": "resource-handoff/v8-plan-contract-gap.md"
+}

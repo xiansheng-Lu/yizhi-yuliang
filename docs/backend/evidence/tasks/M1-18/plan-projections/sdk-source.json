@@ -1,0 +1,34 @@
+{
+  "date": "2026-10-28",
+  "profile": "ADQ_ADGROUPS_V1_3_READ",
+  "revision": "81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9",
+  "sourceFile": "pkg/api/api_adgroups.go",
+  "sourceUrl": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/api/api_adgroups.go",
+  "sourceBytes": 43413,
+  "sha256": "14c4726671b9d3ecb85c75553d8ad0723325cd1b7e6089bc1ff0500698061765",
+  "gitBlob": "d6a0978daf7f65c179e2513bc17e8c7b9cc0eef0",
+  "pinnedTreeMatch": true,
+  "confirmed": {
+    "apiVersion": "1.3",
+    "method": "GET",
+    "relativePath": "adgroups/get",
+    "allowedQuery": [
+      "account_id",
+      "filtering",
+      "page",
+      "page_size",
+      "is_deleted",
+      "weixin_official_accounts_upgrade_enabled",
+      "fields"
+    ]
+  },
+  "notConfirmed": [
+    "business account scope grant",
+    "production reachability",
+    "budget/bid currency and units",
+    "ROI multiplier/attribution",
+    "source timestamps epoch units/timezone"
+  ],
+  "livePlatformCalls": 0,
+  "notes": "Public SDK fetch and cryptographic source verification only; additive read catalog, not frontend frozen catalog replacement or account capability approval"
+}

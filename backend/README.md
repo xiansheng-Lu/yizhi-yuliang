@@ -247,3 +247,16 @@ uv run python scripts/test_infrastructure.py --group parser --details验证真�
 M2-04使用用户已确认的28条预期。首轮真实DeepSeek候选25/28匹配，三条对象范围差异被严格守卫拒绝；修复服务端消歧后，原28条实际响应回放28/28、针对三条差异另做真实复验3/3。动作/值/类型必须相同，只有原话与授权目录能把模型候选超集收窄，模型不能缩减真正歧义。最终规则标识command-rules-v2，原始模型与组合链结果分列，不能把组合链通过写成裸模型准确率100%。
 
 真实验证共31次、预占93分，按核验高峰价推算约0.054316元，实际账单未知并保持UNKNOWN；独立临时测试库已删除，已用许可不清零。完整证据见docs/backend/evidence/tasks/M2-04。live入口默认排除，需要YULIANG_COMMAND_LIVE_APPROVED=1与独立持久许可，定向修后套件另用YULIANG_COMMAND_LIVE_RUN=recheck；不会自动重试、付费或启动生产在线模型。
+
+
+## 计划观察、V9查询与内容派生（0062—0063）
+
+ADQ计划/广告组读取复用受控网关、当前授权和唯一token provider；PlatformRuntime.sync_adq_plans只接受固定CAMPAIGN/ADGROUP协议和显式readonly_interfaces。完整分页观察与独立PlanMeasureProof分开：币种、预算/出价单位、ROI倍率/归因、源时间与状态均需有效字段依据。CAMPAIGN官方模型没有bid字段，不用0或子广告组出价填V8计划；ADGROUP保留其真实层级。此阶段尚未接入canonical AdPlan/完整FrontendSnapshot或V8 workspace，不把原始观察当执行依据。
+
+POST /v1/delivery/integrations/queries沿用现有V9请求/响应，当前仅adq reports及wxshop compass/products/stock。要求真实Cookie、CSRF及八字段scope，逐请求核对主体/店铺/账户、授权/版本、六阶段与精确路径。未知源时间明确显示“源更新时间未提供”，syncedAt为持久抓取时间；缺口/null/真实0分开。商品为明确标注的本地已观察子集，未取详情ID给warning，不宣称平台完整目录或历史库存回放；超过完整范围上限明确拒绝。未实现资源及完整V8 workspace不伪造成功。
+
+内容模型增加共用DAG/结构/字幕文本校验，所有保存及内部_save均复验；错误给中文字段路径及受控对象ID，不回显input/ctx。实际生成/SOP业务入口尚未集成，共用三purpose单元验证不能替代它们。音视频未完成服务端真实时长探测，继续拒绝相关素材和剪辑，不用客户端自报时长替代。
+
+POST /v1/content/documents/{id}/flow接受kind/version/idempotencyKey，要求Cookie、CSRF和X-Shop-Id。复制规则与实际frontend flowDocument一致；父版本锁、稳定键、子稿首版和不可变关系同事务，原键重试不重复创建或跟随后续编辑漂移。已移除子稿为终态，不复活；新请求键才可重新创建。F09云UI适配及BE/FE验收仍独立保留。
+
+云内容/素材绑定使用commerce_products.id，V9 products返回该内部ID；旧FrontendSnapshot的canonical products.id是另一命名空间。本地稿迁移必须显式核对映射，不能把两个UUID当作同一个商品。所有本批测试使用合成上游及真实本地设施，无新真实平台写入或供应商付费。

@@ -1,0 +1,45 @@
+{
+  "task": "M1-19",
+  "status": "IN_PROGRESS",
+  "date": "2026-10-28",
+  "baseline": "d0caf14",
+  "unit": {
+    "passed": 10,
+    "seconds": 0.54
+  },
+  "postgres_http": {
+    "group": "resource-queries",
+    "passed": 6,
+    "seconds": 8.63
+  },
+  "regression": {
+    "group": "integration-context",
+    "passed": 15,
+    "seconds": 10.37
+  },
+  "ruff": "PASS",
+  "mypy": {
+    "result": "PASS",
+    "sourceFiles": 5
+  },
+  "frontend": {
+    "consumer": "PlatformService.query",
+    "result": "PASS",
+    "injectedFetches": 2,
+    "realNetworkCalls": 0,
+    "browserAcceptance": "NOT_RUN"
+  },
+  "platformAcceptance": "PENDING",
+  "manualSignoff": "PENDING",
+  "fullCard": "IN_PROGRESS",
+  "migration": "NONE",
+  "dbWindow": "RELEASED",
+  "unknownSourceTime": "V9 explicit text; sourceUpdatedAt never invented",
+  "notImplemented": [
+    "V8 full workspace",
+    "complete platform catalog",
+    "historical inventory replay",
+    "M4-04 overview"
+  ],
+  "sliceStatus": "TECH_VERIFIED"
+}

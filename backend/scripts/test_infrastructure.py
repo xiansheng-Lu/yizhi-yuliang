@@ -107,6 +107,10 @@ def main() -> int:
             "content-assets",
             "frontend-snapshot",
             "report-publications",
+            "plan-read-projections",
+            "content-validation",
+            "resource-queries",
+            "content-flows",
         ),
         default="all",
     )
@@ -179,6 +183,10 @@ def main() -> int:
         "content-assets": ["tests/integration/test_content_assets.py"],
         "frontend-snapshot": ["tests/integration/test_frontend_snapshot.py"],
         "report-publications": ["tests/integration/test_report_publications.py"],
+        "plan-read-projections": ["tests/integration/test_plan_read_projections.py"],
+        "content-validation": ["tests/integration/test_content_validation.py"],
+        "resource-queries": ["tests/integration/test_resource_queries.py"],
+        "content-flows": ["tests/integration/test_content_flows.py"],
         "parser": [
             "tests/integration/test_command_parse.py",
             "tests/integration/test_workspace.py",

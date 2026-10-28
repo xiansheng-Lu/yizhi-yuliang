@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-28",
+  "baseline": "0328a0e",
+  "result": "PASS",
+  "environment": "WSL Ubuntu; Python3.13; real local PG Redis RabbitMQ MinIO",
+  "checks": [
+    {
+      "result": "PASS",
+      "command": "ruff check src tests scripts"
+    },
+    {
+      "command": "mypy src",
+      "sourceFiles": 176,
+      "result": "PASS"
+    },
+    {
+      "command": "pytest -m 'unit or contract' -q",
+      "seconds": 7.95,
+      "passed": 755
+    },
+    {
+      "command": "python scripts/test_infrastructure.py --group all --details",
+      "skipped": 1,
+      "seconds": 545.71,
+      "passed": 806
+    }
+  ],
+  "dedicated": {
+    "cloudDocuments": 5,
+    "resourceAudiences": 7,
+    "analysisCoverage": 17
+  },
+  "development": "commerce-content-development.json",
+  "review": "PENDING_BE_FE",
+  "livePlatformScope": "Local integration HTTP inputs synthetic. Separate original-project live-readonly evidence is not runtime integration acceptance."
+}

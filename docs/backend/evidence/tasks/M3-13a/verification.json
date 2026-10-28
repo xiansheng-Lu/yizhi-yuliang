@@ -1,0 +1,12 @@
+{
+ "task":"M3-13a","date":"2026-10-28","status":"WAITING_REVIEW",
+ "baseline":"0328a0e","technicalResult":"PASS_REAL_PG_HTTP_DOCUMENT_CRUD_REVISION_SCOPE_REFERENCE_GUARDS",
+ "migration":"0051_cloud_documents","unit":{"passed":14,"seconds":0.38},
+ "integration":{"passed":5,"seconds":6.06,"realCreateAppRouter":true,"manualTestRouterRegistration":false},
+ "ruff":"PASS","mypy":"PASS_NEW_CONTENT_AND_TESTS_6_FILES",
+ "commands":["python scripts/test_infrastructure.py --group content-documents --details","pytest tests/unit/test_cloud_documents.py -q"],
+ "livePlatformCalls":0,"paidCalls":0,"frontendIntegration":"NOT_RUN_F09_CLOUD_ADAPTER",
+ "review":{"backend":"PENDING","frontend":"PENDING_F09"},
+ "notClaimed":["Public flow/review endpoints","M3-14 SOP derivation","M3-15a/b confirmed assets","Actual run/generation producers","Real supplier or platform acceptance"],
+ "nextTechnicalTask":"M3-15a"
+}

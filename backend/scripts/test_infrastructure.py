@@ -98,6 +98,8 @@ def main() -> int:
             "shop-compass",
             "shop-orders",
             "external-token-runtime",
+            "content-documents",
+            "resource-lookups",
         ),
         default="all",
     )
@@ -161,6 +163,8 @@ def main() -> int:
         "shop-compass": ["tests/integration/test_shop_compass.py"],
         "shop-orders": ["tests/integration/test_shop_orders.py"],
         "external-token-runtime": ["tests/integration/test_external_token_runtime.py"],
+        "content-documents": ["tests/integration/test_cloud_documents.py"],
+        "resource-lookups": ["tests/integration/test_resource_lookups.py"],
         "parser": [
             "tests/integration/test_command_parse.py",
             "tests/integration/test_workspace.py",

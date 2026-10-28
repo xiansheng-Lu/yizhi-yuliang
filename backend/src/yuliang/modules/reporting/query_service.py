@@ -7,6 +7,7 @@ from typing import Any
 from uuid import NAMESPACE_URL, uuid5
 
 from sqlalchemy import Engine, text
+from sqlalchemy.exc import DBAPIError
 
 from yuliang.modules.commerce.shop_details import product_view
 from yuliang.modules.configuration.integration_service import IntegrationService
@@ -40,7 +41,7 @@ class QueryService:
         self.engine, self.identity = engine, identity
 
     def query(self, value: QueryRequest) -> ResourcePage:
-        if value.filters.cursor:
+        if value.filters.cursor and value.resource != "adgroups":
             raise ApiError(
                 ErrorCode.INVALID_INPUT, "本只读切片不支持游标；完整范围过大时明确拒绝，请收窄筛选"
             )
@@ -54,8 +55,21 @@ class QueryService:
             raise ApiError(
                 ErrorCode.CAPABILITY_UNAVAILABLE, "此资源读模型尚未实现，不返回伪造空集合"
             )
+        for attempt in range(3):
+            try:
+                return self._query_once(value)
+            except DBAPIError as failure:
+                if getattr(failure.orig, "sqlstate", None) != "40001":
+                    raise
+                if attempt == 2:
+                    raise ApiError(
+                        ErrorCode.VERSION_CONFLICT, "读取上下文并发变化，请重试"
+                    ) from None
+        raise ApiError(ErrorCode.VERSION_CONFLICT, "读取上下文并发变化，请重试")
+
+    def _query_once(self, value: QueryRequest) -> ResourcePage:
         engine = self.engine.execution_options(
-            isolation_level="REPEATABLE READ", postgresql_readonly=True
+            isolation_level="REPEATABLE READ", postgresql_readonly=value.resource != "adgroups"
         )
         with business_transaction(engine, self.identity) as session:
             ctx, pair = query_context(

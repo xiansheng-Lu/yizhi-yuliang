@@ -1,7 +1,9 @@
 """完整成功run才可读取；跨页重复、总量漂移拒绝原子提交。"""
 
+import hashlib
 import json
 from datetime import UTC, datetime
+from typing import Any
 from uuid import UUID
 
 from sqlalchemy import Connection, text
@@ -132,6 +134,11 @@ def read_plan_observations(
     from yuliang.modules.delivery.plan_proofs import measure_plan
 
     version = require_adq_read(session, ctx, application_id, required_scopes)
+    snapshot: dict[str, Any] | None = None
+
+    def with_snapshot(**values: Any) -> dict[str, object]:
+        return dict(values, snapshot=snapshot)
+
     kind = f"adq.plans.{level.lower()}"
     args = dict(account=ctx.account_id, shop=ctx.shop_id, binding=ctx.binding_id, kind=kind)
     runs = (
@@ -146,17 +153,38 @@ def read_plan_observations(
         .all()
     )
     if not runs:
-        return dict(
+        return with_snapshot(
             status="not_connected", observations=[], normalized=[], gaps=["PLAN_SOURCE_NOT_SYNCED"]
         )
     # 不跨不同filters选取局部run冒充全量；生产协议只有固定fields/full-page参数。
     run = runs[0]
+    snapshot = dict(
+        sourceId=str(run["actual_source"]),
+        runId=str(run["id"]),
+        runState=run["state"],
+        accountId=str(ctx.account_id),
+        shopId=str(ctx.shop_id),
+        bindingId=str(ctx.binding_id),
+        bindingVersion=ctx.capability_version,
+        authorizationId=str(ctx.authorization_id),
+        authorizationVersion=version,
+        nativeAccountId=ctx.native_account_id,
+        level=level,
+        complete=False,
+        pageCount=None,
+        totalNumber=None,
+        totalPages=None,
+        fetchedAt=None,
+        measureProof=None,
+    )
     if len(runs) > 1 and runs[1]["actual_source"] != run["actual_source"]:
-        return dict(
+        return with_snapshot(
             status="error", observations=[], normalized=[], gaps=["AMBIGUOUS_PLAN_FULL_SOURCE"]
         )
     if run["state"] != "SUCCESS":
-        return dict(status="error", observations=[], normalized=[], gaps=["PLAN_RUN_NOT_COMPLETE"])
+        return with_snapshot(
+            status="error", observations=[], normalized=[], gaps=["PLAN_RUN_NOT_COMPLETE"]
+        )
     args |= dict(run=run["id"])
     pages = (
         session.execute(
@@ -174,10 +202,16 @@ def read_plan_observations(
         or p["level"] != level
         for p in pages
     ):
-        return dict(
+        return with_snapshot(
             status="error", observations=[], normalized=[], gaps=["PLAN_RUN_AUTHORIZATION_CHANGED"]
         )
     total = pages[0]["total_number"]
+    snapshot.update(
+        pageCount=len(pages),
+        totalNumber=total,
+        totalPages=pages[0]["total_page"],
+        fetchedAt=max(p["fetched_at"] for p in pages).isoformat(),
+    )
     rows = (
         session.execute(
             text("""SELECT o.native_id,o.observation,p.fetched_at
@@ -188,10 +222,18 @@ def read_plan_observations(
         .mappings()
         .all()
     )
-    if len(rows) != total or len(pages) != max(1, pages[0]["total_page"]):
-        return dict(
+    if (
+        len(rows) != total
+        or len(pages) != max(1, pages[0]["total_page"])
+        or [p["page_no"] for p in pages] != list(range(len(pages)))
+        or any(
+            p["total_number"] != total or p["total_page"] != pages[0]["total_page"] for p in pages
+        )
+    ):
+        return with_snapshot(
             status="error", observations=[], normalized=[], gaps=["PLAN_COVERAGE_INCOMPLETE"]
         )
+    snapshot["complete"] = True
     payload = session.execute(
         text("""SELECT payload FROM adq_plan_measure_proofs
         WHERE source_id=:source ORDER BY version DESC LIMIT 1"""),
@@ -204,13 +246,21 @@ def read_plan_observations(
         for r in rows
     ]
     if payload is None:
-        return dict(
+        return with_snapshot(
             status="empty" if total == 0 else "coverage_error",
             observations=observations,
             normalized=[],
             gaps=[] if total == 0 else ["PLAN_MEASURE_PROOF_MISSING"],
         )
     proof = PlanMeasureProof.model_validate(payload)
+    snapshot["measureProof"] = dict(
+        id=str(proof.id),
+        version=proof.version,
+        payloadHash=hashlib.sha256(
+            json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()
+        ).hexdigest(),
+        expiresAt=proof.expires_at.isoformat(),
+    )
     normalized, gaps = [], []
     now = datetime.now(UTC)
     for row in rows:
@@ -235,7 +285,7 @@ def read_plan_observations(
                     runId=str(run["id"]),
                 )
             )
-    return dict(
+    return with_snapshot(
         status="coverage_error" if gaps else "empty" if total == 0 else "ready",
         observations=observations,
         normalized=[] if gaps else normalized,

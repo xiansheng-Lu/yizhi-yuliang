@@ -36,3 +36,5 @@ reports/compass为完整所选范围的账户日投影，nativeId为真实账户
 本地测试数据库每次空库执行真实head迁移到0063；无新增DDL。上游使用合成payload、独立合同、实际PG/RLS/session cookie/CSRF与真实app路由，不等于平台E01/E02、人工签字或浏览器完整验收。
 
 V9 ADGROUP只读切片已接现有query入口：完整最新观察、原生父级筛选及未知/真实0、当前目录/profile/scope，14专项+15上下文回归及实际TS消费者通过。见[adgroups/README.md](adgroups/README.md)；当前完整匹配最多1000行、超限422、未分页，CAMPAIGN明确关闭，整卡其余读链/浏览器及BE/FE保留。
+
+ADGROUP稳定分页后续切片已通过：page100/有界完整源、跨页身份与快照绑定、真实TS消费12页1101条无重漏。见[adgroups/pagination/README.md](adgroups/pagination/README.md)与最新合同；本批989单元/相关25及独立执行读取16PG通过，整卡其余读链/真实验收保留。

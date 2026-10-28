@@ -337,7 +337,9 @@ async def test_current_authorization_and_sources_rechecked(
                 )
 
 
-async def test_scope_and_campaign_closed_and_cursor_rejected(query_plans: dict[str, Any]) -> None:
+async def test_scope_campaign_closed_and_cursor_without_source_rejected(
+    query_plans: dict[str, Any],
+) -> None:
     d = query_plans
     value = request(d, d["ctx"], "adgroups")
     service = QueryService(d["engine"], d["identity"])
@@ -381,7 +383,7 @@ async def test_scope_and_campaign_closed_and_cursor_rejected(query_plans: dict[s
                 update=dict(filters=value.filters.model_copy(update=dict(cursor="not-supported")))
             ),
         ).status_code
-        == 422
+        == 409
     )
 
 
@@ -427,7 +429,7 @@ async def test_optional_account_resolves_stable_id_and_search(query_plans: dict[
     assert http(d, invalid).status_code == 422
 
 
-async def test_full_result_limit_is_explicit_and_parent_can_narrow(
+async def test_full_source_limit_and_parent_results_are_paginated(
     query_plans: dict[str, Any],
 ) -> None:
     d = query_plans
@@ -438,14 +440,25 @@ async def test_full_result_limit_is_explicit_and_parent_can_narrow(
     await d["reader"].sync(d["ctx"], "ADGROUP", uuid4(), page_size=100)
     value = request(d, d["ctx"], "adgroups")
     result = http(d, value)
-    assert result.status_code == 422 and "1000" in result.text
+    assert result.status_code == 200, result.text
+    assert len(result.json()["data"]["rows"]) == 100
+    assert result.json()["data"]["nextCursor"]
     selected = value.model_copy(
         update=dict(filters=value.filters.model_copy(update=dict(native_parent_id="10")))
     )
     result = http(d, selected)
     assert result.status_code == 200, result.text
-    assert len(result.json()["data"]["rows"]) == 1000
-    assert result.json()["data"]["nextCursor"] is None
+    assert len(result.json()["data"]["rows"]) == 100
+    assert result.json()["data"]["nextCursor"]
+    d["state"]["rows"] = [
+        dict(base, adgroup_id=i, campaign_id=10 if i == 1 else 20) for i in range(1, 10002)
+    ]
+    with pytest.raises(ValueError, match="10000"):
+        await d["reader"].sync(d["ctx"], "ADGROUP", uuid4(), page_size=100)
+    for query in (value, selected):
+        result = http(d, query)
+        assert result.status_code == 422
+        assert "rows" not in result.json().get("data", {})
 
 
 @pytest.mark.parametrize("change", ["proof_expired", "auth_version"])

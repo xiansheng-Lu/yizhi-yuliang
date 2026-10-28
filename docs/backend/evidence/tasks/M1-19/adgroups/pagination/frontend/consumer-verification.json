@@ -1,0 +1,23 @@
+{
+  "result": "PASS_CAPTURED_HTTP_MULTIPAGE_FRONTEND_CONSUMPTION",
+  "pages": 12,
+  "rows": 1101,
+  "uniqueNativeIds": 1101,
+  "cursorReplay": "EXACT_CAPTURED_PAGE",
+  "terminalCursor": null,
+  "unknownBudgetRows": 1101,
+  "zeroBudgetRows": 0,
+  "fetches": 15,
+  "sourceSha256": {
+    "frontend/src/services/platform-service.ts": "d736b9d987c1d0de9ab56f125704940ec8f4bd88ce631518c1331a6cefbfc187",
+    "frontend/src/lib/platform-catalog.ts": "0719bad960c9fb6abc2656747baec26f697468c3f5baa61a8e8e5509ce45322e",
+    "frontend/src/features/platform-workspace.tsx": "d69e02c66bf088c4ee565df2ec0a8bf70e68d40380495f726b86a65f98f3973c"
+  },
+  "realNetworkCalls": 0,
+  "databaseCalls": 0,
+  "paidCalls": 0,
+  "uiBinding": "STATIC_SOURCE_ONLY",
+  "browserAcceptance": "NOT_RUN",
+  "serverLifecycleNegatives": "REFER_TO_OWNER_PG_EVIDENCE",
+  "humanSignoff": "PENDING"
+}

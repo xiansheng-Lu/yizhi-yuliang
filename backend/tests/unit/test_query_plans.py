@@ -132,12 +132,14 @@ def test_identity_or_required_name_is_not_invented(invalid: str) -> None:
 
 
 def test_limit_never_silently_truncates_and_can_narrow() -> None:
-    data = view() | dict(observations=[observation(str(i), str(i % 2)) for i in range(1001)])
-    with pytest.raises(ApiError):
-        project_adgroups(data, request(), "2026-10-28T00:00:00Z")
+    data = view() | dict(observations=[observation(str(i), str(i % 2 + 1)) for i in range(1, 1002)])
+    assert len(project_adgroups(data, request(), "2026-10-28T00:00:00Z").rows) == 1001
     assert (
         len(project_adgroups(data, request(nativeParentId="1"), "2026-10-28T00:00:00Z").rows) == 500
     )
+    data["observations"] = [observation(str(i)) for i in range(1, 10002)]
+    with pytest.raises(ApiError):
+        project_adgroups(data, request(), "2026-10-28T00:00:00Z")
 
 
 @pytest.mark.parametrize("parent", ["0", "01", "9223372036854775808", "local-uuid"])

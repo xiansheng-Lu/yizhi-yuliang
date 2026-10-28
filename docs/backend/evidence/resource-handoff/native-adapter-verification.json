@@ -26,5 +26,9 @@
     "SINGLE_TOKEN_OWNER_HANDOVER",
     "REAL_PLATFORM_ACCEPTANCE",
     "HUMAN_REVIEW"
+  ],
+  "mainIntegration": "Merged upstream frontend directory restructure; 609 unit/contract and 37 targeted PG cases passed afterwards",
+  "verificationNotes": [
+    "One intermediate rerun had 33 passes and 4 setup errors because shared app_migrate role became NOLOGIN; unchanged code rerun passed all 37. No business database role configuration was changed manually."
   ]
 }

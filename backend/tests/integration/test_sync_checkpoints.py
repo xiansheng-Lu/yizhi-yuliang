@@ -418,3 +418,40 @@ def test_source_foreign_key_rejects_other_account_binding(sync_ready: dict[str, 
             FROM sync_sources WHERE id=:source"""),
             {"id": uuid4(), "other": another, "source": lease.source_id},
         )
+
+
+@pytest.mark.parametrize("fenced", [False, True])
+async def test_explicit_new_snapshot_restarts_partial_cursor_and_fences_old_lease(
+    sync_ready: dict[str, Any],
+    fenced: bool,
+) -> None:
+    data = sync_ready
+    store, ctx, spec = data["store"], data["ctx"], data["spec"]
+    first = begin(data)
+    permit = store.prepare(ctx, spec, first)
+    await fetch(data, permit)
+    old = store.commit_page(ctx, spec, permit, page())
+    assert isinstance(old, SyncLease)
+    with pytest.raises(SyncConflict) as active:
+        store.begin(ctx, spec, "adgroups", uuid4(), parameters(ctx), restart_cursor=True)
+    assert active.value.reason == "LEASE_ACTIVE"
+    store.stop(ctx, spec, old)
+    if fenced:
+        with data["maintenance"].begin() as owner:
+            owner.execute(text("SET LOCAL ROLE app_owner"))
+            owner.execute(
+                text("UPDATE sync_sources SET version=version+1 WHERE id=:id"),
+                {"id": old.source_id},
+            )
+    fresh = store.begin(ctx, spec, "adgroups", uuid4(), parameters(ctx), restart_cursor=True)
+    assert isinstance(fresh, SyncLease) and fresh.source_id == old.source_id and fresh.page_no == 0
+    next_permit = store.prepare(ctx, spec, fresh)
+    assert next_permit.cursor is None
+    with pytest.raises(SyncConflict):
+        store.prepare(ctx, spec, old)
+    with business_transaction(data["engine"], data["identity"]) as session:
+        assert session.execute(text("SELECT count(*) FROM sync_resource_mirrors")).scalar_one() == 1
+        assert session.execute(text("SELECT count(*) FROM sync_pages")).scalar_one() == 1
+    await fetch(data, next_permit)
+    result = store.commit_page(ctx, spec, next_permit, page(cursor=None, terminal=True, value=2))
+    assert isinstance(result, dict) and result["state"] == "SUCCESS" and result["itemsCount"] == 1

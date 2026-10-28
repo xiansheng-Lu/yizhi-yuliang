@@ -1,0 +1,21 @@
+{
+  "task": "M1-11",
+  "date": "2026-10-28",
+  "status": "IN_PROGRESS",
+  "result": "PASS_PRODUCT_ID_SLICE_ONLY",
+  "wholeTaskTechnicalResult": "PENDING_SKU_STOCK_PRICE_SOFT_DELETE",
+  "unitAndContract": {"passed": 696, "seconds": 6.08},
+  "dedicatedUnit": 10,
+  "realPostgresRedisIntegration": {"passed": 4, "seconds": 7.90},
+  "ruff": "PASS",
+  "mypy": "PASS_5_FILES",
+  "livePlatformCalls": 0,
+  "paidCalls": 0,
+  "liveAcceptance": "NOT_RUN_E02",
+  "review": "PENDING_BE_FE",
+  "migration": "NONE_REUSES_SYNC_STORE",
+  "commands": [
+    "python scripts/test_infrastructure.py --group shop-products --details",
+    "pytest tests/unit tests/contract -q"
+  ]
+}

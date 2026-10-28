@@ -1,0 +1,11 @@
+{
+  "head": "0046_adq_finance_reads",
+  "migrationRoleCanLogin": false,
+  "developmentRows": {
+    "sync_sources": 0,
+    "sync_runs": 0,
+    "sync_pages": 0,
+    "sync_resource_mirrors": 0,
+    "provider_authorizations": 0
+  }
+}

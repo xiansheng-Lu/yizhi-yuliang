@@ -14,7 +14,12 @@ from yuliang.modules.capability.models import Binding
 SDK_REVISION: Literal["81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9"] = (
     "81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9"
 )
-ProfileName = Literal["ADQ_CAMPAIGNS_V1_3_READ", "ADQ_FUNDS_V1_3_READ"]
+ProfileName = Literal[
+    "ADQ_CAMPAIGNS_V1_3_READ",
+    "ADQ_FUNDS_V1_3_READ",
+    "ADQ_DAILY_REPORTS_V1_3_READ",
+    "ADQ_HOURLY_REPORTS_V1_3_READ",
+]
 
 
 @dataclass(frozen=True)
@@ -37,6 +42,18 @@ PROFILES = {
         "/v1.3/funds/get",
         "pkg/api/api_funds.go",
         "f8409059915f1bf6d4ef315235c1c011da6a063d47359a862e7d36f31567dce6",
+    ),
+    "ADQ_DAILY_REPORTS_V1_3_READ": RouteProfile(
+        "daily_reports/get",
+        "/v1.3/daily_reports/get",
+        "pkg/api/api_daily_reports.go",
+        "ec08ac4d0440ca64207799c75e74934fe463fb8e31276e3897f33d135286faa1",
+    ),
+    "ADQ_HOURLY_REPORTS_V1_3_READ": RouteProfile(
+        "hourly_reports/get",
+        "/v1.3/hourly_reports/get",
+        "pkg/api/api_hourly_reports.go",
+        "1e976e7e34600ea8186bac9877e9eb466dc271d8303d52c4731fc924867fc1d0",
     ),
 }
 

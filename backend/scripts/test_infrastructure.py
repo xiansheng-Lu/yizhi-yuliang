@@ -92,6 +92,8 @@ def main() -> int:
             "adq-assets",
             "native-handoff",
             "adq-finance",
+            "adq-reports",
+            "shop-products",
         ),
         default="all",
     )
@@ -149,6 +151,8 @@ def main() -> int:
         "adq-assets": ["tests/integration/test_adq_asset_mirrors.py"],
         "native-handoff": ["tests/integration/test_native_platform_handoff.py"],
         "adq-finance": ["tests/integration/test_adq_finance_reads.py"],
+        "adq-reports": ["tests/integration/test_adq_reports.py"],
+        "shop-products": ["tests/integration/test_shop_products.py"],
         "parser": [
             "tests/integration/test_command_parse.py",
             "tests/integration/test_workspace.py",

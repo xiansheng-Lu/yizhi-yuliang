@@ -96,10 +96,12 @@ class OperationSpec:
     def __post_init__(self) -> None:
         if self.initial_cursor is not None and (
             self.effect != "READ"
+            or not self.idempotent_read
             or self.cursor_parameter is None
-            or not re.fullmatch(r"[1-9][0-9]{0,5}", self.initial_cursor)
+            or self.initial_cursor != ""
+            and not re.fullmatch(r"[1-9][0-9]{0,5}", self.initial_cursor)
         ):
-            raise ValueError("数字分页首值须由固定只读Schema明确声明")
+            raise ValueError("分页首值须由固定只读Schema明确声明（数字或空串）")
         if (
             type(self.preflight_resources) is not tuple
             or len(self.preflight_resources) > 16

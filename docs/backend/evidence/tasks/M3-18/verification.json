@@ -1,0 +1,86 @@
+{
+  "task": "M3-18",
+  "date": "2026-10-28",
+  "baseline": "0c613c4f9dc40b87e65383844f799e59403e64ab",
+  "status": "IN_PROGRESS",
+  "sliceStatus": "TECH_VERIFIED_WAITING_REVIEW",
+  "technicalResult": "PASS_THREE_CONTENT_SCENARIOS_REAL_PG_MODEL_PRODUCER_AND_ACCEPT_SYNTHETIC_HTTP",
+  "migration": "0069_ai_content_requests",
+  "downRevision": "0068_content_analysis_events",
+  "testedHead": "0072",
+  "unit": {
+    "passed": 26,
+    "seconds": 0.6
+  },
+  "integration": {
+    "passed": 17,
+    "seconds": 17.93,
+    "realPostgres": true,
+    "realCreateApp": true,
+    "realMinIO": true,
+    "modelTransport": "SYNTHETIC_HTTPX_TRANSPORT_NOT_REAL_PROVIDER"
+  },
+  "rootIndependentCostUow": {
+    "passed": 27,
+    "seconds": 8.11
+  },
+  "ruff": "PASS",
+  "mypy": "PASS_7_SOURCE_2_TEST_FILES",
+  "dbWindow": "RELEASED",
+  "scenarios": [
+    "content_planning",
+    "content_script",
+    "content_storyboard"
+  ],
+  "promptArtifactState": "DRAFT",
+  "defaultRuntime": "DISABLED",
+  "candidateProducer": "MODEL_WITH_REAL_SYNTHETIC_HTTP_CALL_LEDGER_PROMPT_MODEL_COMPOSITE_FK",
+  "inputUnitsUpperBound": 8192,
+  "outputTokensUpperBound": 2048,
+  "networkDeadlineSeconds": 8,
+  "maxResponseBytes": 65536,
+  "automaticRetries": 0,
+  "automaticRepairCalls": 0,
+  "automaticFallbackCalls": 0,
+  "realModelCalls": 0,
+  "paidCalls": 0,
+  "realPlatformCalls": 0,
+  "piiBoundary": "FIELD_ALLOWLIST_AND_KNOWN_PATTERN_FAIL_CLOSED_SEMANTIC_RESIDUAL_EXPLICIT",
+  "notClaimed": [
+    "real commercial provider P acceptance",
+    "real model prose quality",
+    "all future aiScenarios",
+    "audio video vision ASR or duration probing",
+    "known billing settlement",
+    "F10 browser integration",
+    "complete PII semantic recognition"
+  ],
+  "postIntegrationReadOnlyFix": {
+    "change": "WRITE_REREAD_LEFT_JOIN_PERMIT_STATE_FOR_UPDATE_OF_REQUEST_ONLY",
+    "static": "PASS",
+    "newFeeStateConfirmGetAssertion": "PASS_AI_CONTENT_17_ACTUAL_PG"
+  },
+  "reviewFixes": {
+    "privateCrossActorDuplicateKey": "PASS_409_AND_B_CALL_QUOTE_ROLLBACK",
+    "businessBeforeFeeLockOrder": "PASS_SHARED_REAL_ASSET_BUDGET_CONCURRENCY",
+    "originalIntegration": {
+      "passed": 15,
+      "seconds": 15.41
+    },
+    "rootIndependentAiLedger": {
+      "passed": 21,
+      "seconds": 6.45
+    }
+  },
+  "review": {
+    "backend": "PENDING",
+    "frontend": "PENDING"
+  },
+  "combinedRegression": {
+    "result": "PASS_COMBINED_FULL",
+    "passed": 1009,
+    "skipped": 1,
+    "seconds": 953.14,
+    "evidence": "../../ai-content-generation-verification.json"
+  }
+}

@@ -106,6 +106,46 @@ def receipt(amount: int = 5, currency: str = "CNY") -> BillingOutcome:
     )
 
 
+def test_fee_transaction_participants_rollback_reservation_dispatch_and_settlement(
+    costs: dict[str, Any],
+) -> None:
+    gate: CostGate = costs["gate"]
+    req = request(costs, generation=True)
+    with pytest.raises(RuntimeError, match="quote rollback"):
+        with business_transaction(gate.engine, gate.identity) as session:
+            quote = gate.quote_in_transaction(session, req)
+            gate.confirm_in_transaction(session, quote)
+            raise RuntimeError("quote rollback")
+    with business_transaction(gate.engine, gate.identity) as session:
+        assert session.execute(
+            text("SELECT count(*) FROM ai_cost_quotes WHERE request_key=:key"),
+            dict(key=req.request_key),
+        ).scalar_one() == 0
+    quote = gate.quote(req)
+    gate.confirm(quote)
+    with pytest.raises(RuntimeError, match="dispatch rollback"):
+        with business_transaction(gate.engine, gate.identity) as session:
+            current = gate.acquire_in_transaction(session, quote)
+            gate.start_in_transaction(session, current, req)
+            raise RuntimeError("dispatch rollback")
+    assert budget(costs) == (0, 0)
+    with business_transaction(gate.engine, gate.identity) as session:
+        assert session.execute(
+            text("SELECT count(*) FROM ai_cost_permits WHERE request_key=:key"),
+            dict(key=req.request_key),
+        ).scalar_one() == 0
+        current = gate.acquire_in_transaction(session, quote)
+        gate.start_in_transaction(session, current, req)
+    assert record(costs, current)["state"] == "IN_FLIGHT" and budget(costs) == (7, 0)
+    with pytest.raises(RuntimeError, match="settlement rollback"):
+        with business_transaction(gate.engine, gate.identity) as session:
+            assert gate.finish_in_transaction(session, current, receipt()) == "SETTLED"
+            raise RuntimeError("settlement rollback")
+    assert record(costs, current)["state"] == "IN_FLIGHT" and budget(costs) == (7, 0)
+    assert gate.finish(current, receipt()) == "SETTLED"
+    assert budget(costs) == (0, 5)
+
+
 def test_m5_02a_confirmation_exact_price_and_unsent_cancel(costs: dict[str, Any]) -> None:
     gate: CostGate = costs["gate"]
     req = request(costs)

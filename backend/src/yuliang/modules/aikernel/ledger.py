@@ -4,6 +4,7 @@ import time
 from typing import Any
 
 from sqlalchemy import Engine, text
+from sqlalchemy.orm import Session
 
 from yuliang.modules.aikernel.models import Candidate, Completion, InvocationRequest
 from yuliang.platform.db import VerifiedIdentity, business_transaction
@@ -16,55 +17,63 @@ class InvocationLedger:
 
     def begin(self, request: InvocationRequest) -> dict[str, Any]:
         with business_transaction(self.engine, self.identity) as session:
-            row = (
-                session.execute(
-                    text("""
-              SELECT * FROM access.ai_begin(:call,:request,:member,:user,:scenario,:alias,
-                :prompt,:version,:role,:parent)
-            """),
-                    {
-                        "call": request.call_id,
-                        "request": request.request_id,
-                        "member": self.identity.membership_id,
-                        "user": self.identity.user_id,
-                        "scenario": request.scenario,
-                        "alias": request.capability_alias,
-                        "prompt": request.prompt_key,
-                        "version": request.prompt_version,
-                        "role": request.model_role,
-                        "parent": request.parent_call_id,
-                    },
-                )
-                .mappings()
-                .one()
-            )
-            return dict(row)
+            return self.begin_in_transaction(session, request)
 
-    def finish(self, request: InvocationRequest, outcome: Completion) -> None:
-        usage = outcome.usage
-        with business_transaction(self.engine, self.identity) as session:
-            changed = session.execute(
+    def begin_in_transaction(self, session: Session, request: InvocationRequest) -> dict[str, Any]:
+        row = (
+            session.execute(
                 text("""
-              SELECT access.ai_finish(:call,:user,:status,:usage,:cost,:input,:output,
-                :amount,:latency,:external,:dispatch,:currency,:provider_model,:response_hash)
-            """),
+          SELECT * FROM access.ai_begin(:call,:request,:member,:user,:scenario,:alias,
+            :prompt,:version,:role,:parent)
+        """),
                 {
                     "call": request.call_id,
+                    "request": request.request_id,
+                    "member": self.identity.membership_id,
                     "user": self.identity.user_id,
-                    "status": outcome.status,
-                    "usage": usage.usage_state,
-                    "cost": usage.cost_state,
-                    "input": usage.tokens_in,
-                    "output": usage.tokens_out,
-                    "amount": usage.cost_minor,
-                    "latency": outcome.latency_ms,
-                    "external": outcome.external_request_id,
-                    "dispatch": outcome.dispatch_state,
-                    "currency": usage.cost_currency,
-                    "provider_model": outcome.provider_model,
-                    "response_hash": outcome.response_hash,
+                    "scenario": request.scenario,
+                    "alias": request.capability_alias,
+                    "prompt": request.prompt_key,
+                    "version": request.prompt_version,
+                    "role": request.model_role,
+                    "parent": request.parent_call_id,
                 },
-            ).scalar_one()
+            )
+            .mappings()
+            .one()
+        )
+        return dict(row)
+
+    def finish(self, request: InvocationRequest, outcome: Completion) -> None:
+        with business_transaction(self.engine, self.identity) as session:
+            return self.finish_in_transaction(session, request, outcome)
+
+    def finish_in_transaction(
+        self, session: Session, request: InvocationRequest, outcome: Completion
+    ) -> None:
+        usage = outcome.usage
+        changed = session.execute(
+            text("""
+          SELECT access.ai_finish(:call,:user,:status,:usage,:cost,:input,:output,
+            :amount,:latency,:external,:dispatch,:currency,:provider_model,:response_hash)
+        """),
+            {
+                "call": request.call_id,
+                "user": self.identity.user_id,
+                "status": outcome.status,
+                "usage": usage.usage_state,
+                "cost": usage.cost_state,
+                "input": usage.tokens_in,
+                "output": usage.tokens_out,
+                "amount": usage.cost_minor,
+                "latency": outcome.latency_ms,
+                "external": outcome.external_request_id,
+                "dispatch": outcome.dispatch_state,
+                "currency": usage.cost_currency,
+                "provider_model": outcome.provider_model,
+                "response_hash": outcome.response_hash,
+            },
+        ).scalar_one()
         if not changed:
             raise ValueError("调用已结束或不在当前范围，不能覆盖用量与费用")
 

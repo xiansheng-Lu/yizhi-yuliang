@@ -2,12 +2,12 @@ import { readFileSync, existsSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { resolve } from "node:path";
 const baseline = JSON.parse(
-  readFileSync(new URL("../docs/shared/baselines/homepage-baseline.json", import.meta.url)),
+  readFileSync(new URL("../../docs/shared/baselines/homepage-baseline.json", import.meta.url)),
 );
 const hash = (file) =>
   createHash("sha256").update(readFileSync(file)).digest("hex");
 for (const [name, expected] of Object.entries(baseline.files)) {
-  const target = resolve("public", name),
+  const target = new URL(`../public/${name}`, import.meta.url),
     source = resolve(baseline.sourceRoot, name);
   if (
     hash(target) !== expected ||

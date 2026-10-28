@@ -43,7 +43,9 @@ def test_actual_catalog_has_full_counts_and_no_enabled_routes() -> None:
     ],
 )
 def test_catalog_rejects_corruption_before_database(case: str) -> None:
-    data: dict[str, Any] = json.loads((ROOT / "src/data/platform-api-catalog.json").read_bytes())
+    data: dict[str, Any] = json.loads(
+        (ROOT / "frontend/src/data/platform-api-catalog.json").read_bytes()
+    )
     if case == "version":
         data["schemaVersion"] = "unsupported"
     elif case.startswith("source_"):

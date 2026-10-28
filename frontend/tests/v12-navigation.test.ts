@@ -68,7 +68,7 @@ test("approved logo and heading spacing exceptions preserve the recorded homepag
     .replace(/<img class="brand-logo" src="\/assets\/yuliang-logo(?:-white)?\.png"[^>]*>/g, originalBrand);
   const sha = (content: string | Buffer) => createHash("sha256").update(content).digest("hex");
   assert.equal(sha(normalized), "5841a01138fa82ab6d9b018409f7fe23c81053f8a916c07290e6a2c1ddd92c88");
-  const baseline = JSON.parse(readFileSync("docs/shared/baselines/homepage-baseline.json", "utf8")) as { files: Record<string, string> };
+  const baseline = JSON.parse(readFileSync("../docs/shared/baselines/homepage-baseline.json", "utf8")) as { files: Record<string, string> };
   assert.equal(sha(readFileSync("public/assets/styles.css")), baseline.files["assets/styles.css"]);
   assert.equal(sha(readFileSync("public/assets/site.js")), "c03c34b14868d84acaac3038b62a45f532c3e47d0d29862a677cbf4d664f230e");
 });

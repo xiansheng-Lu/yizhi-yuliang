@@ -1,0 +1,121 @@
+{
+  "checkedAt": "2026-10-28T03:53:41.885Z",
+  "baseline": "db239ccc72096efbef23249b827b7544c74287c6",
+  "implementationCommit": "d55fc2b",
+  "contractToolFix": "5038eff",
+  "result": "PASS_REAL_PG_HTTP_COMPLETE_CONFIGURATION_CONTEXT_AND_CURRENT_SOURCE_GUARDS",
+  "checks": [
+    {
+      "command": "uv run --frozen ruff check src tests scripts alembic",
+      "result": "PASS"
+    },
+    {
+      "command": "uv run --frozen ruff format --check src tests scripts alembic",
+      "result": "PASS",
+      "count": 262
+    },
+    {
+      "command": "uv run --frozen mypy",
+      "result": "PASS",
+      "count": 212
+    },
+    {
+      "command": "uv run --frozen pytest tests/unit tests/contract -q",
+      "result": "PASS",
+      "count": 637
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --group configuration --details",
+      "result": "PASS",
+      "count": 21,
+      "seconds": 11.73
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --details",
+      "result": "PASS_WITH_EXPLICIT_LIFECYCLE_SKIP",
+      "count": 672,
+      "skipped": 1,
+      "seconds": 438.63
+    },
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --tsconfig frontend/tsconfig.json backend/scripts/check_configuration_frontend.mts docs/backend/evidence/tasks/M3-07/context.json",
+      "result": "PASS",
+      "artifact": "frontend-check.json"
+    },
+    {
+      "command": "node docs/backend/tools/freeze_frontend_surface.mjs",
+      "result": "PASS",
+      "calls": 56,
+      "routes": 53,
+      "types": 133,
+      "frozenSourceHashesUnchanged": 15,
+      "write": false
+    },
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --tsconfig frontend/tsconfig.json docs/backend/tools/check_frontend_contracts.ts",
+      "result": "PASS",
+      "count": 45
+    },
+    {
+      "command": "python docs/backend/tools/check_contracts.py",
+      "result": "PASS"
+    },
+    {
+      "command": "python docs/backend/tools/check_task_status.py --self-test",
+      "result": "PASS",
+      "registered": 65,
+      "invalidVariantsRejected": 13
+    },
+    {
+      "command": "python docs/backend/tools/check_plan.py",
+      "result": "PASS",
+      "cards": 149,
+      "nodes": 156
+    },
+    {
+      "command": "uv run --frozen python scripts/migrate_local.py upgrade",
+      "result": "PASS"
+    }
+  ],
+  "database": {
+    "head": "0041_configuration_fields",
+    "migrationRoleCanLogin": false,
+    "configurationFieldAssertions": 0,
+    "otherVerifiedBusinessAndEventTables": 14,
+    "otherVerifiedBusinessAndEventRows": 0
+  },
+  "traces": [
+    "context.json",
+    "frontend-check.json"
+  ],
+  "contexts": 15,
+  "fields": 42,
+  "fieldStates": 6,
+  "defects": [
+    {
+      "layer": "SQL_IMPLEMENTATION",
+      "problem": "scope is PostgreSQL text[] rather than JSON",
+      "resolution": "Use cardinality; final dedicated and full regression pass"
+    },
+    {
+      "layer": "TEST_FIXTURE",
+      "problem": "Attempted overwrite of immutable capability binding",
+      "resolution": "Keep database refusal as negative assertion; no runtime guard relaxed"
+    },
+    {
+      "layer": "CONTRACT_TOOLS",
+      "problem": "Frozen source lookup and imports retained pre-restructure src paths",
+      "resolution": "Read frontend/src and normalize TypeScript absolute import locations only; original frozen files and all source hashes unchanged"
+    }
+  ],
+  "status": "WAITING_REVIEW",
+  "humanSignoff": "PENDING_BE_F11",
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "frontendBrowser": "NOT_RUN_THIS_CARD",
+  "limits": [
+    "All test identities, authorizations and field proofs are explicitly synthetic",
+    "No creation executor, upload or estimate channel is granted",
+    "Real resources remain unbound to actual business tenant and distinct shops"
+  ]
+}

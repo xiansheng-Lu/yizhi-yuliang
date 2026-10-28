@@ -1,0 +1,10 @@
+{
+  "input": "REAL_LOCAL_HTTP_IDLE_STREAM_AND_PG_ADMIN_OBSERVATION",
+  "requestId": "d119d3c3eeae4b2a9438acbb9b098740",
+  "elapsedSeconds": 25.016418216000602,
+  "heartbeat": ": ping",
+  "idleInTransaction": 0,
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "humanSignoff": "PENDING"
+}

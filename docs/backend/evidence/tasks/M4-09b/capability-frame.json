@@ -1,0 +1,14 @@
+{
+  "input": "REAL_LOCAL_HTTP_PG_MAINTENANCE_SYNTHETIC_EVIDENCE",
+  "requestId": "92eb3422d1dc4443bbd87df4f9bbc45e",
+  "frame": [
+    "id: 1:4",
+    "event: capability.changed",
+    "data: {\"tenantId\":\"1\",\"entityType\":\"capability_binding\",\"entityId\":\"bf5d84b5-194f-40ab-b8aa-7132534111e9\",\"version\":2,\"changes\":{\"status\":\"CHANGED\"},\"at\":\"2026-10-28T02:49:15.463656Z\"}"
+  ],
+  "assertionId": "f1f24c21-71da-4baa-80b6-1cbd6548b598",
+  "bindingContractRevision": 1,
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "humanSignoff": "PENDING"
+}

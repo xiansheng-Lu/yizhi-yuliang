@@ -1,0 +1,31 @@
+{
+  "input": "REAL_LOCAL_HTTP_PG_COOKIE_AND_APPLICATIONS",
+  "requestIds": [
+    "a454b8a3dfa7479aa803d291c67d1277",
+    "be6481e235e74f918454abeaff9b2053"
+  ],
+  "firstFrame": [
+    "id: 1:4",
+    "event: job.changed",
+    "data: {\"tenantId\":\"1\",\"entityType\":\"command_job\",\"entityId\":\"87d0a6c3-8d56-42c8-98a6-bc04890f6abe\",\"version\":1,\"changes\":{\"status\":\"BLOCKED\"},\"at\":\"2026-10-28T02:48:43.119204Z\"}"
+  ],
+  "resumedFrame": [
+    "id: 1:5",
+    "event: job.changed",
+    "data: {\"tenantId\":\"1\",\"entityType\":\"command_job\",\"entityId\":\"2f551685-8d7c-416c-b863-d9a670224143\",\"version\":1,\"changes\":{\"status\":\"BLOCKED\"},\"at\":\"2026-10-28T02:48:43.299433Z\"}"
+  ],
+  "reread": "ACTUAL_APPLICATION_QUERY_NOT_LIFECYCLE_HTTP",
+  "jobIds": [
+    "87d0a6c3-8d56-42c8-98a6-bc04890f6abe",
+    "2f551685-8d7c-416c-b863-d9a670224143"
+  ],
+  "jobVersions": [
+    1,
+    1
+  ],
+  "commandJobsAfterReconnect": 2,
+  "executionOrdersAfterReconnect": 0,
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "humanSignoff": "PENDING"
+}

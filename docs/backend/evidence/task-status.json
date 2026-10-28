@@ -4,7 +4,7 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "currentFocus": "M4-09a",
+  "currentFocus": "M4-09b",
   "tasks": {
     "R00-01": {
       "owner": "BE",
@@ -2362,7 +2362,7 @@
     },
     "M1-06": {
       "owner": "BE",
-      "status": "WAITING_RESOURCE",
+      "status": "BLOCKED",
       "delivery": "ADQ原生OAuth换码、PG串行续期、固定回调、受控账户/计划/资金只读适配已交付；历史测试资源私有引用已采集，未执行真实授权",
       "dependencyInput": "M1-05/M1-04既有通用基件；用户要求复用独立测试项目，并确认尚无业务租户且两账户属于不同店铺",
       "technicalVerification": {
@@ -2377,11 +2377,37 @@
         "frontend": "PENDING_F03"
       },
       "liveAcceptance": "NOT_EXECUTED_UNBOUND",
-      "evidence": "tasks/M1-06/README.md"
+      "evidence": "tasks/M1-06/README.md",
+      "blockedBy": [
+        "E01",
+        "ACTUAL_TENANT_AND_DISTINCT_SHOP_MAPPING",
+        "E08"
+      ],
+      "statusNormalization": "整合时将WAITING_RESOURCE归一为execution-rules既有BLOCKED；保留已交付技术实现和未跑P层事实",
+      "dod": [
+        {
+          "item": 1,
+          "technical": "IMPLEMENTED_NOT_LIVE_VERIFIED",
+          "platform": "NOT_RUN",
+          "review": "PENDING_F03"
+        },
+        {
+          "item": 2,
+          "technical": "PASS_LOCAL_SYNTHETIC_PLATFORM_REAL_PG",
+          "platform": "NOT_RUN",
+          "review": "PENDING_F03"
+        },
+        {
+          "item": 3,
+          "technical": "PASS_LOCAL_SYNTHETIC_PLATFORM_REAL_PG",
+          "platform": "NOT_RUN",
+          "review": "PENDING_F03"
+        }
+      ]
     },
     "M1-07": {
       "owner": "BE",
-      "status": "WAITING_RESOURCE",
+      "status": "BLOCKED",
       "delivery": "小店自研stable_token与权限/店铺隔离配置、受控店铺/商品标识/结算只读适配已交付；不虚构ISV链或商家回调，未执行真实授权",
       "dependencyInput": "M1-05/M1-04既有通用基件；用户要求复用独立测试项目，并确认尚无业务租户且两账户属于不同店铺",
       "technicalVerification": {
@@ -2396,7 +2422,75 @@
         "frontend": "PENDING_F03"
       },
       "liveAcceptance": "NOT_EXECUTED_UNBOUND",
-      "evidence": "tasks/M1-07/README.md"
+      "evidence": "tasks/M1-07/README.md",
+      "blockedBy": [
+        "E02",
+        "ACTUAL_TENANT_AND_DISTINCT_SHOP_MAPPING",
+        "E08"
+      ],
+      "statusNormalization": "整合时将WAITING_RESOURCE归一为execution-rules既有BLOCKED；保留已交付技术实现和未跑P层事实",
+      "dod": [
+        {
+          "item": 1,
+          "technical": "IMPLEMENTED_NOT_LIVE_VERIFIED",
+          "platform": "NOT_RUN",
+          "review": "PENDING_F03"
+        },
+        {
+          "item": 2,
+          "technical": "PASS_LOCAL_SYNTHETIC_PLATFORM_REAL_PG",
+          "platform": "NOT_RUN",
+          "review": "PENDING_F03"
+        },
+        {
+          "item": 3,
+          "technical": "PREPARED_UNBOUND",
+          "platform": "NOT_RUN",
+          "review": "PENDING_F03"
+        }
+      ]
+    },
+    "M4-09b": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "scope": "核心SSE会话和权限续查、租户游标/resync/心跳、capability与sync实际生产者",
+      "dependencyInput": "M4-09a已合并main bb208e7，M0-11c真实会话/撤销技术证据可用；G0/E08保留；已整合原生适配c703654并采用0040后继迁移",
+      "delivery": "五类真实核心SSE、当前会话/范围续查、游标/心跳、持久截止和通知修订已技术验证；F12页面和缺失的完整资源HTTP链另验",
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS",
+          "review": "PENDING_BE_FE_F12"
+        },
+        {
+          "item": 2,
+          "technical": "PASS",
+          "review": "PENDING_BE_FE_F12"
+        },
+        {
+          "item": 3,
+          "technical": "PASS",
+          "review": "PENDING_BE_FE_F12"
+        }
+      ],
+      "evidence": "tasks/M4-09b/README.md",
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F12"
+      },
+      "implementationCommit": "f425af46a6571de8b06b408799cb167c30002608",
+      "git": "COMMITTED",
+      "syncVerification": "git merge-base --is-ancestor f425af46a6571de8b06b408799cb167c30002608 origin/main",
+      "technicalVerification": {
+        "result": "PASS",
+        "unitContract": 609,
+        "integration": 651,
+        "skipped": 1,
+        "dedicatedSse": 20,
+        "realHeartbeatSeconds": 25,
+        "migration": "0040_connector_events",
+        "frontendBrowser": "NOT_RUN_F12"
+      }
     }
   },
   "gates": {
@@ -2502,7 +2596,7 @@
     "offline": "离线通过不等于真实依赖、前端联调或平台验收通过"
   },
   "nextTask": {
-    "id": "M4-09b",
+    "id": "M3-07",
     "status": "READY_FOR_TECHNICAL_PREPARATION"
   },
   "continuation": {
@@ -2512,12 +2606,11 @@
     "environment": "WSL2 Ubuntu Docker; UV_PROJECT_ENVIRONMENT=/home/lenovo/.cache/yuliang-venv",
     "latestUserRequest": "补齐浏览器验收，然后按照后端任务卡继续后续的所有开发，需要资源再找我对接，不阻塞持续开发到完毕",
     "developmentPolicy": "缺人工/外部验收时记录并继续可独立技术准备；正式门禁、平台调用和付费仍按各自证据许可",
-    "lastCompletedTechnicalTask": "M4-09a",
-    "nextTechnicalTask": "M4-09b",
+    "lastCompletedTechnicalTask": "M4-09b",
+    "nextTechnicalTask": "M3-07",
     "executionRules": "docs/backend/evidence/execution-rules.md",
-    "checkpoint": "事件投影18项专用/623项全量集成通过，0038开发库空数据，继续核心SSE",
+    "checkpoint": "五类SSE/20专用/651全量集成通过，0040开发库空业务数据；已整合前端目录和原生适配，继续V9字段上下文",
     "technicalPreparationQueue": [
-      "M4-09b",
       "M3-07",
       "M4-01a"
     ],
@@ -2533,7 +2626,8 @@
         "reason": "直接依赖M1-18尚无技术输入",
         "unblock": "M1-18实际投影与scope持久化技术通过后装配生命周期HTTP"
       }
-    ]
+    ],
+    "integrationCheckpoint": "已整合前端frontend目录重构和M1-06/07原生适配；SSE迁移改为0040，保留0039令牌续期与资源未绑定门禁"
   },
   "frontendIntegration": {
     "F01": {
@@ -2582,6 +2676,19 @@
     "status": "LOCAL_TEST_RESOURCES_COLLECTED_UNBOUND_ADAPTERS_IMPLEMENTED",
     "runtimeConfiguration": "OPTIONAL_EXPLICIT_CONFIG_DISABLED",
     "credentialsReceived": false,
+    "knownIndependentProjects": {
+      "paths": [
+        "D:/codex/tencent-adq",
+        "D:/codex/wx_shop"
+      ],
+      "securityFixCommit": "62d26916658e02a622551a3688ca7c0dc0779a06",
+      "evidence": "backend/tools/token-service-hardening/README.md",
+      "productionSwitchover": false,
+      "actualCredentialsReadByThisTask": false,
+      "readonlyValidationPermission": "NOT_RECEIVED",
+      "note": "另一用户任务已技术接入，私有引用已采集；用户确认无业务租户且为不同店铺，未激活/真实验收",
+      "nativeAdaptationCommit": "c70365467bef6ba05a3732c5249de13a6df3a1b5"
+    },
     "credentialReferencesReceived": true,
     "businessTenantAssigned": false,
     "shopRelationship": "DISTINCT_SHOPS",

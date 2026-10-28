@@ -1,5 +1,7 @@
 """持久业务提示，不承载完整对象；投影提交序与当前可见范围均由PG保证。"""
 
+import hashlib
+import json
 import re
 from contextlib import nullcontext
 from typing import Literal
@@ -24,7 +26,9 @@ class EventChanges(BaseModel):
 class EventData(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
     tenant_id: str = Field(alias="tenantId", pattern=r"^[1-9][0-9]{0,18}$")
-    entity_type: Literal["command_job", "approval", "execution"] = Field(alias="entityType")
+    entity_type: Literal[
+        "command_job", "approval", "execution", "capability_binding", "sync_source"
+    ] = Field(alias="entityType")
     entity_id: UUID = Field(alias="entityId")
     version: int = Field(strict=True, gt=0, le=9007199254740991)
     changes: EventChanges
@@ -35,7 +39,13 @@ class StreamEvent(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
     seq: int = Field(strict=True, gt=0, le=MAX_BIGINT)
     source_event_id: UUID
-    event: Literal["job.changed", "approval.changed", "execution.unknown"]
+    event: Literal[
+        "job.changed",
+        "approval.changed",
+        "execution.unknown",
+        "capability.changed",
+        "sync.completed",
+    ]
     data: EventData
 
 
@@ -53,6 +63,33 @@ class CoreEventStream:
     def __init__(self, engine: Engine, identity: VerifiedIdentity) -> None:
         self.engine, self.identity = engine, identity
 
+    def permission_fingerprint(self) -> str:
+        """权限版本之外也绑定实际角色/范围，不能靠未刷新的会话或Redis放行。"""
+        with business_transaction(self.engine, self.identity) as session:
+            material = session.execute(
+                text("""SELECT jsonb_build_object('authz',m.authz_version,
+              'permissions',coalesce((SELECT jsonb_agg(code ORDER BY code) FROM (
+                SELECT DISTINCT rp.permission_code AS code
+                 FROM role_grants g JOIN role_permissions rp
+                 ON (rp.tenant_id,rp.role_id)=(g.tenant_id,g.role_id)
+                WHERE g.membership_id=m.id) permissions),'[]'::jsonb),
+              'scopes',coalesce((SELECT jsonb_agg(to_jsonb(ds) ORDER BY ds.id)
+                FROM data_scopes ds WHERE ds.membership_id=m.id),'[]'::jsonb),
+              'shops',coalesce((SELECT jsonb_agg(
+                jsonb_build_array(id,entity_id,deleted_at) ORDER BY id)
+                FROM shops),'[]'::jsonb),
+              'accounts',coalesce((SELECT jsonb_agg(
+                jsonb_build_array(id,entity_id,status,deleted_at)
+                ORDER BY id) FROM ad_accounts),'[]'::jsonb))
+              FROM memberships m WHERE m.id=:member AND m.user_id=:user AND m.status='ACTIVE'"""),
+                {"member": self.identity.membership_id, "user": self.identity.user_id},
+            ).scalar_one_or_none()
+        if material is None:
+            raise ApiError(ErrorCode.FORBIDDEN, "事件订阅范围已失效")
+        return hashlib.sha256(
+            json.dumps(material, sort_keys=True, separators=(",", ":")).encode()
+        ).hexdigest()
+
     def project(self, limit: int = 100, *, unit_of_work: Session | None = None) -> int:
         if type(limit) is not int or not 1 <= limit <= 500:
             raise ValueError("事件投影批量必须为1到500")
@@ -64,6 +101,16 @@ class CoreEventStream:
             return int(
                 session.execute(
                     text("SELECT access.project_core_events(:limit)"), {"limit": limit}
+                ).scalar_one()
+            )
+
+    def capture_due(self, limit: int = 100) -> int:
+        if type(limit) is not int or not 1 <= limit <= 500:
+            raise ValueError("证据截止批量必须为1到500")
+        with business_transaction(self.engine, self.identity) as session:
+            return int(
+                session.execute(
+                    text("SELECT access.capture_due_capabilities(:limit)"), {"limit": limit}
                 ).scalar_one()
             )
 

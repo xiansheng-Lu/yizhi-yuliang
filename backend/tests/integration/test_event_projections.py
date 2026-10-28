@@ -32,6 +32,19 @@ from .test_sync_checkpoints import sync_ready as sync_ready
 pytestmark = pytest.mark.integration
 
 
+@pytest.fixture(autouse=True)
+def isolate_three_core_sources(applications: dict[str, Any]) -> None:
+    """本模块只验M4-09a三类源；清除连接器fixture的尚未投影提示，另由SSE模块验。"""
+    with applications["maintenance"].begin() as owner:
+        owner.execute(text("SET LOCAL ROLE app_owner"))
+        owner.execute(
+            text(
+                "DELETE FROM event_source_outbox WHERE projected_seq IS NULL "
+                "AND entity_type IN ('capability_binding','sync_source')"
+            )
+        )
+
+
 def stream(data: dict[str, Any]) -> CoreEventStream:
     return CoreEventStream(data["engine"], data["identity"])
 
@@ -255,7 +268,11 @@ def test_actual_approval_events_include_reviewers_without_exposing_job_events(
     other = CoreEventStream(
         data["engine"], VerifiedIdentity(data["tenant"], data["approver_member"], data["approver"])
     )
-    assert [item.event for item in other.read().events] == ["approval.changed", "approval.changed"]
+    assert [
+        item.event
+        for item in other.read().events
+        if item.event in {"job.changed", "approval.changed", "execution.unknown"}
+    ] == ["approval.changed", "approval.changed"]
     assert all(
         set(item.data.model_dump(by_alias=True))
         == {"tenantId", "entityType", "entityId", "version", "changes", "at"}

@@ -73,9 +73,15 @@ def test_http_actual_identifiers_links_and_seven_stage_operation_context(
     assert operation["editableFields"] == [] and operation["kind"] == "READ"
     write = next(item for item in view["operations"] if item["kind"] == "WRITE")
     assert not write["evidence"]["backend"]["verified"]
-    assert len(operation["evidence"]) == 7 and all(
-        stage["verified"] and stage["proofId"] for stage in operation["evidence"].values()
+    assert len(operation["evidence"]) == 7
+    assert all(
+        operation["evidence"][key]["verified"]
+        for key in ("directory", "path", "applicationScope", "account")
     )
+    # 旧v3目录/阶段声明不是正式v1.3广告组读取实现；前端queryBlock因此拒绝。
+    assert not operation["evidence"]["backend"]["verified"]
+    assert not operation["evidence"]["requestSchema"]["verified"]
+    assert not operation["evidence"]["execution"]["verified"]
     assert "private-access" not in response.text and response.headers["cache-control"] == "no-store"
     if target := os.getenv("YULIANG_INTEGRATION_CONTEXT_EVIDENCE"):
         Path(target).write_text(

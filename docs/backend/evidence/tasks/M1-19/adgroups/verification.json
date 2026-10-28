@@ -1,0 +1,81 @@
+{
+  "task": "M1-19",
+  "slice": "ADQ_ADGROUP_V9_READ_ONLY",
+  "status": "TECHNICALLY_VERIFIED_CARD_IN_PROGRESS",
+  "verifiedAtUtc": "2026-10-28T15:18:46Z",
+  "baseMain": "bf2b2f6a071a53e716ba9e8560fccfe45991e179",
+  "migrationHead": "0073_content_topic",
+  "newDdl": false,
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "tokenConfigurationChanges": 0,
+  "unit": {
+    "command": "python -m pytest tests/unit/test_query_plans.py -q",
+    "passed": 15,
+    "seconds": 0.69
+  },
+  "integration": {
+    "command": "YULIANG_ADGROUP_QUERY_CAPTURE=<private-runtime>/adgroup-query-http-capture.json python scripts/test_infrastructure.py --group resource-query-plans --details",
+    "passed": 14,
+    "seconds": 14.61,
+    "infrastructure": [
+      "PostgreSQL",
+      "Redis",
+      "Cookie/CSRF HTTP",
+      "synthetic upstream HTTP transport"
+    ]
+  },
+  "regression": {
+    "command": "python scripts/test_infrastructure.py --group integration-context --details",
+    "passed": 15,
+    "seconds": 10.05
+  },
+  "earlierAttempts": [
+    {
+      "passed": 12,
+      "failed": 2,
+      "seconds": 16.53,
+      "cause": "Synthetic expiry fixture violated checked_at/expires_at valid ordering"
+    },
+    {
+      "passed": 13,
+      "failed": 1,
+      "seconds": 15.16,
+      "cause": "Synthetic proof PG text timezone +00 rejected; fixed typed timestamptz JSON encoding"
+    }
+  ],
+  "static": {
+    "ruff": "PASS",
+    "format": "PASS",
+    "mypyFiles": 6,
+    "mypy": "PASS"
+  },
+  "frontend": {
+    "status": "INDEPENDENT_CHECK_SEPARATE_EVIDENCE",
+    "evidence": "frontend/"
+  },
+  "limits": {
+    "completeResultMaxRows": 1000,
+    "overLimit": "DATA_COVERAGE_INSUFFICIENT/422; no silent truncation",
+    "cursor": "UNSUPPORTED/422; nextCursor=null",
+    "campaigns": "EXPLICITLY_DISABLED",
+    "time": "LATEST_CONFIG_NOT_DATE_HISTORY; unknown source time never replaced by fetched time",
+    "metrics": "Budget only under valid independent proof; no target ROI as performance ROI"
+  },
+  "notClaimed": [
+    "G1 real platform mapping",
+    "F11/F12 browser acceptance",
+    "M1-19 entire card complete",
+    "M3-11b command execution",
+    "server pagination"
+  ],
+  "relatedRegression": {
+    "passed": 36,
+    "seconds": 35.59,
+    "evidence": "../../../topic-adgroup-verification.json"
+  },
+  "combinedUnitContract": {
+    "passed": 975,
+    "seconds": 10.73
+  }
+}

@@ -34,3 +34,5 @@ reports/compass为完整所选范围的账户日投影，nativeId为真实账户
 - 仓库根目录：`node node_modules/tsx/dist/cli.mjs --tsconfig frontend/tsconfig.json backend/scripts/check_resource_queries_frontend.mts backend/.runtime/resource-query-capture.json`
 
 本地测试数据库每次空库执行真实head迁移到0063；无新增DDL。上游使用合成payload、独立合同、实际PG/RLS/session cookie/CSRF与真实app路由，不等于平台E01/E02、人工签字或浏览器完整验收。
+
+V9 ADGROUP只读切片已接现有query入口：完整最新观察、原生父级筛选及未知/真实0、当前目录/profile/scope，14专项+15上下文回归及实际TS消费者通过。见[adgroups/README.md](adgroups/README.md)；当前完整匹配最多1000行、超限422、未分页，CAMPAIGN明确关闭，整卡其余读链/浏览器及BE/FE保留。

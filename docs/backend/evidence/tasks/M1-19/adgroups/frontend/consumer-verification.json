@@ -1,0 +1,32 @@
+{
+  "result": "PASS_RECORDED_HTTP_FRONTEND_CONSUMPTION",
+  "actualPlatformService": true,
+  "sourceSha256": {
+    "frontend/src/services/platform-service.ts": "d736b9d987c1d0de9ab56f125704940ec8f4bd88ce631518c1331a6cefbfc187",
+    "frontend/src/services/api-client.ts": "5dc0a2f6ce1dd74d74adf9517284d33d9e6265cdd9412e274689f704248bc666",
+    "frontend/src/lib/platform-catalog.ts": "0719bad960c9fb6abc2656747baec26f697468c3f5baa61a8e8e5509ce45322e",
+    "frontend/src/features/platform-workspace.tsx": "d69e02c66bf088c4ee565df2ec0a8bf70e68d40380495f726b86a65f98f3973c"
+  },
+  "parentFilter": "CAPTURED_PARENT_10_RETURNS_11_12",
+  "writeDisabled": "ALL_CONSUMED_ROWS_VERSION_NULL",
+  "actualQueryBlock": true,
+  "caseCount": 3,
+  "consumedRows": 8,
+  "distinctObservedNativeIds": 3,
+  "realZeroBudgetRows": 3,
+  "unknownBudgetRows": 5,
+  "unknownSourceTimeRows": 5,
+  "invalidResponsesRejected": 6,
+  "missingPathBlockedBeforeHttp": true,
+  "campaignsClosedBeforeHttp": true,
+  "adgroupNativeIdDrillBlockedBeforeUnimplementedCreatives": true,
+  "continuation": "NOT_PRESENT_NO_LOAD_MORE",
+  "uiBindingReview": "STATIC_SOURCE_ONLY",
+  "browserAcceptance": "NOT_RUN",
+  "injectedFetches": 11,
+  "realNetworkCalls": 0,
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "coverageMissingCases": [],
+  "humanSignoff": "PENDING"
+}

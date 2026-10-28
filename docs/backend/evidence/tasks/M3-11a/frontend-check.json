@@ -1,0 +1,1 @@
+{"result":"PASS","actualPlatformService":true,"validContext":1,"scopedReadReady":true,"unimplementedWriteBlockedBeforeHttp":true,"invalidResponsesRejected":6,"injectedFetches":7,"realNetworkCalls":0,"clock":"RECORDED_HTTP_CHECKED_AT","browserAcceptance":"NOT_RUN","platformAcceptance":"NOT_RUN"}

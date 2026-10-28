@@ -87,6 +87,7 @@ def main() -> int:
             "sse",
             "configuration",
             "analysis",
+            "integration-context",
         ),
         default="all",
     )
@@ -139,6 +140,7 @@ def main() -> int:
         "sse": ["tests/integration/test_core_sse.py", "tests/integration/test_connector_events.py"],
         "configuration": ["tests/integration/test_configuration_context.py"],
         "analysis": ["tests/integration/test_analysis_admission.py"],
+        "integration-context": ["tests/integration/test_integration_context.py"],
         "parser": [
             "tests/integration/test_command_parse.py",
             "tests/integration/test_workspace.py",

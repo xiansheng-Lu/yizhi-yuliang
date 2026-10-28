@@ -4,7 +4,7 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "currentFocus": "M3-11a",
+  "currentFocus": "M1-08",
   "tasks": {
     "R00-01": {
       "owner": "BE",
@@ -2581,6 +2581,49 @@
         "paidCalls": 0
       },
       "syncVerification": "git merge-base --is-ancestor ec45f67 origin/main"
+    },
+    "M3-11a": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "scope": "平台资源上下文、实际主体/店铺/账户与多对多关联、操作逐项证据",
+      "dependencyInput": "M3-07与M1-17技术证据实际交付；依持续授权继续，真实平台与G0/E08保留",
+      "delivery": "实际多对多资源上下文、原生ID核验快照、逐项七阶段与当前操作范围通过；资源写与小店逐请求入口保持关闭",
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS",
+          "review": "PENDING_BE_F11"
+        },
+        {
+          "item": 2,
+          "technical": "PASS",
+          "review": "PENDING_BE_F11"
+        },
+        {
+          "item": 3,
+          "technical": "PASS",
+          "review": "PENDING_BE_F11"
+        }
+      ],
+      "evidence": "tasks/M3-11a/README.md",
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F11"
+      },
+      "implementationCommit": "8c19045",
+      "git": "COMMITTED",
+      "syncVerification": "git merge-base --is-ancestor 8c19045 origin/main",
+      "technicalVerification": {
+        "result": "PASS_REAL_PG_HTTP_RESOURCE_CONTEXT_NATIVE_LINK_FENCE_AND_CURRENT_OPERATION_EVIDENCE",
+        "unitAndContract": 654,
+        "infrastructure": 698,
+        "skipped": 1,
+        "dedicated": 15,
+        "migration": "0043_integration_operations",
+        "actualFrontendConsumer": "PLATFORM_SERVICE_INJECTED_FETCH_CAPTURED_CLOCK",
+        "platformCalls": 0,
+        "paidCalls": 0
+      }
     }
   },
   "gates": {
@@ -2686,7 +2729,7 @@
     "offline": "离线通过不等于真实依赖、前端联调或平台验收通过"
   },
   "nextTask": {
-    "id": "M3-11a",
+    "id": "M1-08",
     "status": "NOT_STARTED"
   },
   "continuation": {
@@ -2696,14 +2739,19 @@
     "environment": "WSL2 Ubuntu Docker; UV_PROJECT_ENVIRONMENT=/home/lenovo/.cache/yuliang-venv",
     "latestUserRequest": "补齐浏览器验收，然后按照后端任务卡继续后续的所有开发，需要资源再找我对接，不阻塞持续开发到完毕",
     "developmentPolicy": "缺人工/外部验收时记录并继续可独立技术准备；正式门禁、平台调用和付费仍按各自证据许可",
-    "lastCompletedTechnicalTask": "M4-01a",
-    "nextTechnicalTask": "M3-11a",
+    "lastCompletedTechnicalTask": "M3-11a",
+    "nextTechnicalTask": "M1-08",
     "executionRules": "docs/backend/evidence/execution-rules.md",
-    "checkpoint": "分析受理654单元/契约、10实际PG/HTTP/MQ专项、683全量集成+1明确跳过通过；0042开发库18类业务记录为0/NOLOGIN；继续平台资源上下文",
+    "checkpoint": "M3-11a完成654单元/契约、15专项、698全量集成+1明确跳过；0043开发库19类记录0/NOLOGIN；继续ADQ账户计划镜像技术实现，真实验收缺E01",
     "technicalPreparationQueue": [
-      "M3-11a"
+      "M1-08",
+      "M1-11",
+      "M1-12",
+      "M1-13",
+      "M1-14",
+      "M3-08a"
     ],
-    "routingReason": "M3-11a依赖M3-07/M1-17的实际技术证据已具备；M4-02缺M1-10/12/13报表技术输入，先补依赖再接分析计算，不用空结果跳过技术依赖",
+    "routingReason": "重新核对149卡，M1-06/07原生适配已有实际技术证据，M1-08与后续镜像可做本地实现与合成端口/真实PG集成；按持续授权不等待实际租户/店铺绑定，但P验收必须保留E01/E02，不能把合成测试当真平台",
     "deferredTechnicalDependencies": [
       {
         "task": "M1-18",

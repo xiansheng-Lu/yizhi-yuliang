@@ -1,0 +1,203 @@
+{
+  "context": {
+    "contractVersion": "platform-workspace-v9.0",
+    "source": "API",
+    "tenantId": "1",
+    "productLine": "adq",
+    "checkedAt": "2026-10-28T04:38:47.514934Z",
+    "expiresAt": "2026-10-28T04:39:47.514934Z",
+    "entities": [
+      {
+        "id": "f71fb52b-4510-4dfa-972f-2959c0c1111a",
+        "name": "Synthetic entity"
+      }
+    ],
+    "shops": [
+      {
+        "id": "0a8909d0-20ba-4391-b47d-c98f451c0703",
+        "name": "Shop",
+        "businessEntityId": "f71fb52b-4510-4dfa-972f-2959c0c1111a",
+        "provider": "wxshop"
+      }
+    ],
+    "accounts": [
+      {
+        "id": "1419ae4b-93b8-4922-932b-e50828fefca6",
+        "nativeId": "1419ae4b-93b8-4922-932b-e50828fefca6",
+        "name": "Synthetic",
+        "businessEntityId": "f71fb52b-4510-4dfa-972f-2959c0c1111a",
+        "provider": "tencent",
+        "productLine": "adq",
+        "authorization": "AUTHORIZED"
+      }
+    ],
+    "links": [
+      {
+        "accountId": "1419ae4b-93b8-4922-932b-e50828fefca6",
+        "shopId": "0a8909d0-20ba-4391-b47d-c98f451c0703",
+        "state": "AUTHORIZED",
+        "checkedAt": "2026-10-28T04:38:47.514934Z"
+      }
+    ],
+    "operations": [
+      {
+        "catalogId": "90b086afd649f5dc0600",
+        "resource": "adgroups",
+        "kind": "READ",
+        "accountIds": [
+          "1419ae4b-93b8-4922-932b-e50828fefca6"
+        ],
+        "evidence": {
+          "directory": {
+            "verified": true,
+            "proofId": "catalog/e67b23b908814808158d42e10c43a4ff302d825cd432eb9dfb92baf46bfd1b77/90b086afd649f5dc0600",
+            "checkedAt": "2026-10-28T04:38:47.514934Z",
+            "reason": "\u5f53\u524d\u76ee\u5f55\u884c\u5b58\u5728\uff1b\u4e0d\u7b49\u4e8e\u8def\u5f84\u3001\u6388\u6743\u6216\u5165\u53e3\u5c31\u7eea"
+          },
+          "path": {
+            "verified": true,
+            "proofId": "synthetic/PATH_VERIFIED",
+            "checkedAt": "2026-10-28T04:38:27.270459Z",
+            "reason": "\u5bf9\u5e94\u6765\u6e90\u9636\u6bb5\u4ecd\u6709\u6548"
+          },
+          "applicationScope": {
+            "verified": true,
+            "proofId": "synthetic/SCOPE_GRANTED",
+            "checkedAt": "2026-10-28T04:38:27.270459Z",
+            "reason": "\u5bf9\u5e94\u6765\u6e90\u9636\u6bb5\u4ecd\u6709\u6548"
+          },
+          "account": {
+            "verified": true,
+            "proofId": "synthetic/ACCOUNT_AUTHORIZED",
+            "checkedAt": "2026-10-28T04:38:27.270459Z",
+            "reason": "\u5bf9\u5e94\u6765\u6e90\u9636\u6bb5\u4ecd\u6709\u6548"
+          },
+          "backend": {
+            "verified": true,
+            "proofId": "synthetic/BACKEND_INTEGRATED",
+            "checkedAt": "2026-10-28T04:38:27.270459Z",
+            "reason": "\u5bf9\u5e94\u6765\u6e90\u9636\u6bb5\u4ecd\u6709\u6548"
+          },
+          "requestSchema": {
+            "verified": true,
+            "proofId": "synthetic/SCHEMA_VERIFIED",
+            "checkedAt": "2026-10-28T04:38:27.270459Z",
+            "reason": "\u5bf9\u5e94\u6765\u6e90\u9636\u6bb5\u4ecd\u6709\u6548"
+          },
+          "execution": {
+            "verified": true,
+            "proofId": "synthetic/EXECUTION_VERIFIED",
+            "checkedAt": "2026-10-28T04:38:27.270459Z",
+            "reason": "\u5bf9\u5e94\u6765\u6e90\u9636\u6bb5\u4ecd\u6709\u6548"
+          }
+        },
+        "permission": "overview.read",
+        "editableFields": []
+      },
+      {
+        "catalogId": "2787a70612d48bd92d4b",
+        "resource": "adgroups",
+        "kind": "WRITE",
+        "accountIds": [
+          "1419ae4b-93b8-4922-932b-e50828fefca6"
+        ],
+        "evidence": {
+          "directory": {
+            "verified": true,
+            "proofId": "catalog/e67b23b908814808158d42e10c43a4ff302d825cd432eb9dfb92baf46bfd1b77/2787a70612d48bd92d4b",
+            "checkedAt": "2026-10-28T04:38:47.514934Z",
+            "reason": "\u5f53\u524d\u76ee\u5f55\u884c\u5b58\u5728\uff1b\u4e0d\u7b49\u4e8e\u8def\u5f84\u3001\u6388\u6743\u6216\u5165\u53e3\u5c31\u7eea"
+          },
+          "path": {
+            "verified": true,
+            "proofId": "synthetic/PATH_VERIFIED",
+            "checkedAt": "2026-10-28T04:38:27.270459Z",
+            "reason": "\u5bf9\u5e94\u6765\u6e90\u9636\u6bb5\u4ecd\u6709\u6548"
+          },
+          "applicationScope": {
+            "verified": true,
+            "proofId": "synthetic/SCOPE_GRANTED",
+            "checkedAt": "2026-10-28T04:38:27.270459Z",
+            "reason": "\u5bf9\u5e94\u6765\u6e90\u9636\u6bb5\u4ecd\u6709\u6548"
+          },
+          "account": {
+            "verified": true,
+            "proofId": "synthetic/ACCOUNT_AUTHORIZED",
+            "checkedAt": "2026-10-28T04:38:27.270459Z",
+            "reason": "\u5bf9\u5e94\u6765\u6e90\u9636\u6bb5\u4ecd\u6709\u6548"
+          },
+          "backend": {
+            "verified": false,
+            "proofId": "synthetic/BACKEND_INTEGRATED",
+            "checkedAt": "2026-10-28T04:38:27.270459Z",
+            "reason": "\u8d44\u6e90\u547d\u4ee4\u5165\u53e3\u5c1a\u5f85M3-11b\u4ea4\u4ed8"
+          },
+          "requestSchema": {
+            "verified": false,
+            "proofId": "synthetic/SCHEMA_VERIFIED",
+            "checkedAt": "2026-10-28T04:38:27.270459Z",
+            "reason": "\u5f53\u524d\u4e0a\u4e0b\u6587\u7f3a\u5c11\u6709\u6548\u7684\u9636\u6bb5\u8bc1\u636e"
+          },
+          "execution": {
+            "verified": false,
+            "proofId": "synthetic/EXECUTION_VERIFIED",
+            "checkedAt": "2026-10-28T04:38:27.270459Z",
+            "reason": "\u5f53\u524d\u4e0a\u4e0b\u6587\u7f3a\u5c11\u6709\u6548\u7684\u9636\u6bb5\u8bc1\u636e"
+          }
+        },
+        "permission": "budget.edit",
+        "editableFields": [
+          "budget"
+        ]
+      }
+    ]
+  },
+  "identity": {
+    "userId": "7c8c9ef9-098b-48bb-84fb-dd7b3e4eff90",
+    "displayName": "User",
+    "email": "7c8c9ef9-098b-48bb-84fb-dd7b3e4eff90@example.invalid",
+    "tenantId": "1",
+    "shopIds": [
+      "0a8909d0-20ba-4391-b47d-c98f451c0703"
+    ],
+    "permissions": [
+      "access.manage",
+      "budget.edit",
+      "connection.manage",
+      "content.write",
+      "goal.edit",
+      "overview.read",
+      "plan.write",
+      "policy.edit",
+      "report.publish",
+      "snapshot.read",
+      "task.approve",
+      "task.create"
+    ],
+    "workspacePages": [
+      "analytics",
+      "assets",
+      "budgets",
+      "command",
+      "decisions",
+      "editing",
+      "executions",
+      "experiments",
+      "goals",
+      "graphics",
+      "monitor",
+      "overview",
+      "planning",
+      "plans",
+      "products",
+      "reports",
+      "scripts",
+      "tasks",
+      "videos"
+    ],
+    "mode": "API"
+  },
+  "input": "SYNTHETIC_SOURCE_PROOFS_IDENTITIES_REAL_PG_COOKIE_HTTP",
+  "platformCalls": 0,
+  "paidCalls": 0
+}

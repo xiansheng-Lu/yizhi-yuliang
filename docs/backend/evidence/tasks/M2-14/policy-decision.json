@@ -1,0 +1,17 @@
+{
+  "approval_id": "e27a9731-beaa-4685-b1ce-376cbbe5321a",
+  "approval_version": 2,
+  "decision_id": "a33c8bba-5849-49b2-9bfa-31246970b204",
+  "method": "SERVER_POLICY",
+  "jobId": "6c702416-b012-4d80-92ba-4a1321284ce5",
+  "jobStatus": "APPROVED",
+  "jobVersion": 3,
+  "permitId": "bcdb49d3-c018-4fbe-9d01-771ac0c3b9c7",
+  "requestId": "54799020-2fc9-47d0-8f9e-42c1414db6ed",
+  "riskAssessmentId": "17e5fad6-a3e5-41c2-9bba-c586aa07f40a",
+  "B": 9990,
+  "R": 0,
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "input": "SYNTHETIC_CONFIRM_REAL_PG_APPROVAL_BUDGET_NO_HUMAN_SIGNOFF"
+}

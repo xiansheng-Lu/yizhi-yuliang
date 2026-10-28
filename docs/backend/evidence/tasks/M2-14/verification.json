@@ -1,0 +1,87 @@
+{
+  "checkedAt": "2026-10-28T00:47:36.344Z",
+  "baseline": "f681ce4",
+  "implementationCommit": "9da331ce07c20bd97e8332115afa8c8e5ae0b796",
+  "result": "PASS_REAL_PG_IMMUTABLE_APPROVALS_ATOMIC_RELEASE_AND_INTERNAL_POLICY_PERMITS",
+  "checks": [
+    {
+      "command": "uv run --frozen ruff check .",
+      "result": "PASS"
+    },
+    {
+      "command": "uv run --frozen ruff format --check .",
+      "result": "PASS",
+      "count": 232
+    },
+    {
+      "command": "uv run --frozen mypy",
+      "result": "PASS",
+      "count": 186
+    },
+    {
+      "command": "uv run --frozen pytest tests/unit tests/contract -q",
+      "result": "PASS",
+      "count": 555,
+      "added": 12
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --group approvals --details",
+      "result": "PASS",
+      "count": 21
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --group settlement --details",
+      "result": "PASS",
+      "count": 22
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --details",
+      "result": "PASS_WITH_EXPLICIT_LIFECYCLE_SKIP",
+      "count": 593,
+      "skipped": 1
+    },
+    {
+      "command": "uv run --frozen python scripts/migrate_local.py upgrade",
+      "result": "PASS"
+    }
+  ],
+  "database": {
+    "head": "0037_approval_service",
+    "migrationRoleCanLogin": false,
+    "developmentRows": {
+      "approvals": 0,
+      "approval_decisions": 0,
+      "server_approval_permits": 0,
+      "execution_recoveries": 0,
+      "execution_recovery_evidence": 0,
+      "execution_orders": 0,
+      "execution_attempts": 0,
+      "budget_job_finalizations": 0,
+      "command_jobs": 0
+    }
+  },
+  "traces": [
+    "manual-approve.json",
+    "manual-reject.json",
+    "policy-decision.json"
+  ],
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "correctedFailure": {
+    "check": "first full integration",
+    "result": "592_PASS_1_FAIL_1_SKIP",
+    "reason": "legacy settlement REJECT fixture used direct state transition without real approval decision",
+    "correction": "actual Approvals.open/review with same unit_of_work; mandatory gate retained",
+    "recheck": "22_SETTLEMENT_PASS_AND_593_FULL_PASS_1_SKIP"
+  },
+  "notCovered": [
+    "M2-05b confirm/lifecycle HTTP and M2-15 reliable execution producer",
+    "F06/F07 approval UI/browser and named FE review",
+    "live platform writes and paid supplier calls",
+    "BE/FE G0/E08 signatures"
+  ],
+  "review": {
+    "backend": "PENDING",
+    "frontend": "PENDING_F06_F07"
+  }
+}

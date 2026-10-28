@@ -1,0 +1,18 @@
+{
+  "result": "PASS",
+  "actualNginx": true,
+  "actualBusinessCreations": 2,
+  "resumedDistinctResources": 2,
+  "cleanup": {
+    "ownNginxExited": true,
+    "ownUvicornExited": true,
+    "normalPortClosed": true,
+    "faultPortClosed": true,
+    "appPortClosed": true
+  },
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "productionTls": "NOT_RUN",
+  "frontendF12": "PENDING",
+  "humanSignoff": "PENDING"
+}

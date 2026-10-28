@@ -110,3 +110,18 @@ main591447d已远程核对同步后，本地新分支codex/backend-workflow-exec
 0066/0067/0068真实迁移串行升级，SOP人工候选/采纳/skip/redo12专项、账号交接意图14专项、分析/workflow事件9专项及真实SSE通过，Flow参与调用方事务/冻结payload/抢占创建保护8回归通过。交叉审查修复派生prompt/节点残留旧父稿、当前history/1001容量和buffered权限指纹缺字段，全部进入最终完整回归。954集成通过/1可选重启跳过（826.45s）；919单元/契约、228源码mypy及Ruff、三迁移Ruff通过。默认开发库0068、44相关表仅5系统模板行，其余0，迁移角色NOLOGIN；DB已释放。
 
 三卡为技术切片，不将尚未实现的AI/供应商、平台上传/审核、全内容事件/代理50连接/F12改为仅待人工。M3-16新增实际MANUAL/REVIEW执行采纳仍保留真实GENERATION缺口。主干同步后新分支立即推进M3-18/M3-19a和本地代理负载，现readiness仅计划。旧M2-01b真实6次/20分许可已用，不沿用或新增付费；先做实际本地协议/PG/HTTP/代理验收，不因缺生产TLS或模型key阻塞本地研发。06/12既有伙伴改动各2新增，不夹带。
+
+
+## 2026-10-28 模型候选、生成账本及代理负载正式领取
+
+main0c613c4远程核对同步后，新本地codex/backend-ai-content-generation已实际实现M3-18/0069、M3-19a/0070，代理/50真实TCP流测试3项已准备。root统一CostGate/InvocationLedger同事务参与接口、旧SOP完成槽计数与0071费用绑定SQL（不落或输出permit token，不借OAuth密钥域）；所有新价格默认关闭，历史6次/20分授权已用不沿用。0069/70/71当前冻结，root cost27 PG8.11s已验证新链与费用事务回滚；当前独占窗口转commerce AI，之后GEN/proxy须等各自明确授权，不并行。06/12各2新增仍不夹带。
+
+
+本批审查补强：AI跨actor隐藏键23505转受控409、GEN释放/结账与创建统一run→job→sorted assets→费用顺序、dispatch RLS绑定实际actor/job/key/hash/IN_FLIGHT许可。root新增0072显式核ai_begin与ai_finish的真实事务actor（实际12/14参数重载），21 ledger PG含同租户负例通过；不改已发布旧迁移。AI17和GEN31修后专项仍须实际复验，不把之前15/27结果写成新fix已过。调度已completed的Agent时，用followup_task明确启动，send_message只传消息不会唤醒；收到本次实际开始/释放才更新窗口，不沿用旧session或口头状态。NEXORA源资料缺口已具体询问用户，其他本地研发继续。
+
+
+修后专项已实际复验：AI17/17.93s、GEN31/26.96s，均head0072并明确释放DB；ledger21/6.45s及nginx50真实TCP流3项/77.36s也已通过。最终952单元/契约9.86s、240源码mypy/Ruff通过。当前root唯一all整合session65184，冻结36份后端改动；未预填全量结果。三个Agent仅只读下一卡技术依赖，禁止DB/代理/源码变更，整合结束再按新分支授权。
+
+## 本批最终整合实证
+
+本批1009集成通过/1可选重启跳过（953.14s），952单元/契约及240源码mypy/Ruff通过。0069至0072迁移实际升级，48相关表仅5系统模板其余0，迁移角色NOLOGIN。AI17/GEN31/ledger21/proxy3修后专项通过；三卡整卡仍IN_PROGRESS。待中文提交合并main推送后立即新分支继续，真实模型/供应商/平台调用0。

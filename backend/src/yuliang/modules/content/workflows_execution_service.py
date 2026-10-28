@@ -161,7 +161,7 @@ class WorkflowExecution:
                 raise ApiError(ErrorCode.IDEMPOTENCY_MISMATCH, "动作键已用于其他请求")
             return run, None, template, digest, dict(old["result"])
         count = s.execute(
-            text("SELECT count(*) FROM workflow_step_actions WHERE run_id=:id"), dict(id=identifier)
+            text("SELECT access.workflow_action_occupancy(:id)"), dict(id=identifier)
         ).scalar_one()
         if count >= 1000:
             raise ApiError(ErrorCode.INVALID_INPUT, "动作历史已达1000条；新动作拒绝，原键仍可重放")

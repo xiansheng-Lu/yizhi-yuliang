@@ -1,0 +1,73 @@
+{
+  "task": "M3-19a",
+  "status": "IN_PROGRESS",
+  "baseline": "0c613c4f9dc40b87e65383844f799e59403e64ab",
+  "checkedAt": "2026-10-28T14:40:32.829025+00:00",
+  "unit": {
+    "result": "PASS",
+    "passed": 7,
+    "seconds": 0.52
+  },
+  "static": {
+    "ruff": "PASS",
+    "mypy": "PASS",
+    "files": 7
+  },
+  "integration": {
+    "result": "PASS",
+    "passed": 31,
+    "seconds": 26.96,
+    "command": "python scripts/test_infrastructure.py --group generation-jobs --details",
+    "head": "0072",
+    "infrastructure": [
+      "PostgreSQL",
+      "MinIO",
+      "actual main HTTP"
+    ],
+    "lockBarrierCases": 2,
+    "crossActorDispatchSqlCases": 2,
+    "sharedSqlChangesDuringRun": false
+  },
+  "realSupplier": "DEFAULT_UNAVAILABLE",
+  "trustedRealGenerationPrices": "NOT_CONFIGURED",
+  "actualSupplierCalls": 0,
+  "paidCalls": 0,
+  "platformCalls": 0,
+  "scopeLimit": "IMAGE_GRAPHIC_ONE_REQUEST_JOB_ONLY",
+  "notClaimed": [
+    "M3-19b supplier callbacks/live query",
+    "M3-19c actual result acceptance billing",
+    "F10 browser integration"
+  ],
+  "dbWindow": "RELEASED_AFTER_GEN_FIX_31",
+  "sourceFrozen": true,
+  "billingCases": [
+    "FAILED business UNKNOWN fee can query",
+    "KNOWN fee not repeated can progress asset",
+    "Contradictory KNOWN fee rejected"
+  ],
+  "integrationBeforeLockAndDispatchRlsFix": {
+    "result": "PASS",
+    "passed": 27,
+    "seconds": 23.3,
+    "command": "python scripts/test_infrastructure.py --group generation-jobs --details",
+    "infrastructure": [
+      "PostgreSQL",
+      "MinIO",
+      "actual main HTTP cookie CSRF"
+    ],
+    "syntheticSupplier": true,
+    "ddlSemanticChangesDuringRun": false,
+    "sqlNegativeCases": 4,
+    "realUnknownJobAncestorRedoDenied": true
+  },
+  "lockOrder": "run_job_sorted_assets_budget",
+  "dispatchRls": "current_actor_real_job_key_payload_and_inflight_fee",
+  "combinedRegression": {
+    "result": "PASS_COMBINED_FULL",
+    "passed": 1009,
+    "skipped": 1,
+    "seconds": 953.14,
+    "evidence": "../../ai-content-generation-verification.json"
+  }
+}

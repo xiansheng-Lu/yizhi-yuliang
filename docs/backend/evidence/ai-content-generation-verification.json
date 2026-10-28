@@ -1,0 +1,139 @@
+{
+  "date": "2026-10-28",
+  "baseline": "0c613c4f9dc40b87e65383844f799e59403e64ab",
+  "branch": "codex/backend-ai-content-generation",
+  "result": "PASS_COMBINED_FULL",
+  "environment": "WSL Python3.13; actual isolated PostgreSQL/Redis/RabbitMQ/MinIO; Cookie CSRF HTTP; real private nginx and 50 TCP SSE streams; synthetic model/supplier ports only",
+  "checks": [
+    {
+      "command": "ruff check src tests scripts",
+      "result": "PASS"
+    },
+    {
+      "command": "ruff check alembic/versions/0069_ai_content_requests.py alembic/versions/0070_generation_jobs.py alembic/versions/0071_generation_cost_binding.py alembic/versions/0072_ai_ledger_actor_guard.py",
+      "result": "PASS"
+    },
+    {
+      "command": "mypy src",
+      "result": "PASS",
+      "sourceFiles": 240
+    },
+    {
+      "command": "pytest -m \"unit or contract\" -q",
+      "passed": 952,
+      "deselected": 1012,
+      "seconds": 9.86
+    },
+    {
+      "command": "python scripts/test_infrastructure.py --group all --details",
+      "passed": 1009,
+      "skipped": 1,
+      "seconds": 953.14,
+      "skip": "optional infrastructure lifecycle restart disabled by default"
+    }
+  ],
+  "dedicated": {
+    "aiContent": {
+      "passed": 17,
+      "seconds": 17.93,
+      "evidence": "tasks/M3-18/verification.json"
+    },
+    "generationLedger": {
+      "passed": 31,
+      "seconds": 26.96,
+      "evidence": "tasks/M3-19a/verification.json"
+    },
+    "costUow": {
+      "passed": 27,
+      "seconds": 8.11
+    },
+    "ledgerActor": {
+      "passed": 21,
+      "seconds": 6.45
+    },
+    "proxyLoad": {
+      "passed": 3,
+      "seconds": 77.36,
+      "streams": 50,
+      "identities": 1,
+      "durationSeconds": 65.28865,
+      "evidence": "tasks/M4-09c/proxy-load/summary.json"
+    }
+  },
+  "reviewFixes": [
+    "AI request private cross-actor duplicate returns generic409; caller call/quote/request all rollback",
+    "AI confirm/reply run-request-sorted documents/assets before budget; full run counts all-actor reserved completion slots",
+    "Generation run-job-sorted assets-budget lock order and actor/job/key/hash/IN_FLIGHT dispatch RLS",
+    "Private job-to-original fee binding never persists or returns permit capabilities; immutable known billing and terminal-state guards",
+    "AI begin and both actual 12/14 argument finish overloads bind transaction actor; legacy internal functions no application execute",
+    "CostGate and InvocationLedger join caller transactions; actual outer rollback evidence"
+  ],
+  "sourceFreeze": {
+    "backendFiles": 36,
+    "unchangedDuringFinalRegression": true,
+    "sha256LfNormalized": {
+      "backend/alembic/versions/0069_ai_content_requests.py": "9ce367193106d7aca418bd2ff34ebb96c62220e8db86e096ceaab498a1bec372",
+      "backend/alembic/versions/0069_ai_content_requests.sql": "06ca115bc8aefc3b4ca7d5644820147d76829ebaf8d72c0dec0744a643d867dc",
+      "backend/alembic/versions/0070_generation_jobs.py": "6264ad9111cce727d997dea07ae3725b8cfe5faa8262b9a4636e2050362a49f9",
+      "backend/alembic/versions/0070_generation_jobs.sql": "ab9ba784d41bbdf999e8b491473ea661cac1640302490cfc81ebc01d9a656e3b",
+      "backend/alembic/versions/0071_generation_cost_binding.py": "c7623b730f6ed279e5c5afaabaff658b71787ced8d13da24edb6c9fcec0db075",
+      "backend/alembic/versions/0071_generation_cost_binding.sql": "7795d775671fce7802443623faf5d3b6a9a8e63336690278b88867cb8de8f566",
+      "backend/alembic/versions/0072_ai_ledger_actor_guard.py": "682af1348914d15cea29229ac3606654c13083309935114c0948befdc9f1a7d7",
+      "backend/alembic/versions/0072_ai_ledger_actor_guard.sql": "220ac113b3eae555580741db7861ff9238f5c87dc2ada90cee2209232642c5b2",
+      "backend/src/yuliang/modules/aikernel/content_gateway.py": "7f315945b2b8c1e3c5298583dd8a35fbbb3e29c50e403fe1b2e946d072a2ebdb",
+      "backend/src/yuliang/modules/aikernel/content_prompts.py": "832d9d5f421d5f90153948ebfed3257612c2ec0ceeaa54a447604624638cc077",
+      "backend/src/yuliang/modules/aikernel/content_prompts/v1/golden.json": "22faf9b6253f8234e30764a8a3f1f1c6ec260d88a1f4c5007803535b0a92f17c",
+      "backend/src/yuliang/modules/aikernel/content_prompts/v1/manifest.json": "2a5ab7396e004bae5ab454f0a29881cb299051b8113f8ddc44781eba93a42c7e",
+      "backend/src/yuliang/modules/aikernel/content_prompts/v1/template.txt": "23b87c4e13dd5295bcf85f39a36182926dfec496f6b2cb2774a2733679967aa3",
+      "backend/src/yuliang/modules/content/ai_content_context.py": "1969281ceb348ab93f56a4057c7d3d4bd23eeee39c3a387d1e7aaa978e32dbab",
+      "backend/src/yuliang/modules/content/ai_content_models.py": "b7efd043cb9ff533000229f9fffe06dca360bdc94386adb75dbb60db833291a9",
+      "backend/src/yuliang/modules/content/ai_content_routes.py": "ffa7644196fcf116a677d8c2304ae69071cc71257739d56169b637db7f7e3ef9",
+      "backend/src/yuliang/modules/content/ai_content_service.py": "ce7b4ac6872ac0d3a9cb253cdf6d5a91c2a09001028804cdcb9af4ca540cbb99",
+      "backend/src/yuliang/modules/content/generation_models.py": "b5adc4dca05d0b220e41e9b2a5d1221b7feba90c8ac015bb327c81749b74b2e2",
+      "backend/src/yuliang/modules/content/generation_provider.py": "6455a6e56f2b1e536b5d911e822974ff3dbe0897a3cce2a6e444f277b1c1c5f3",
+      "backend/src/yuliang/modules/content/generation_repository.py": "a7fc037cd3c04731e7ef6df72b19f601f6e1df5fd63824181fb992af15059f22",
+      "backend/src/yuliang/modules/content/generation_routes.py": "d97eb9bce74cd7e71f60fa2d3c7ad7908cbb1f8d9564eea517a9f725c9c691e8",
+      "backend/src/yuliang/modules/content/generation_service.py": "dc6159273c0d8e4105e1be033e0f055433fa877351c09f90eafa4f4df7d2c7f2",
+      "backend/src/yuliang/modules/content/workflow_model_production.py": "3ac102ea4e279b1510f62dea6a8d40f1f30f4d69777b178b3ead396b96b38227",
+      "backend/tests/integration/sse_proxy_harness.py": "28607de6a8611dfadfc00c4877943b0dca15f4202967cde1cb6f4b74755a2662",
+      "backend/tests/integration/test_ai_content.py": "5b5cacc5b6a050b2190b29e11365f9c59b9bbb67495b1bbbff260dfbb001f030",
+      "backend/tests/integration/test_generation_jobs.py": "738a7e548168679972b4a6bf1f93d1f2e9cf06d7cd56bc5c1434f0d969f5bb84",
+      "backend/tests/integration/test_sse_proxy_load.py": "447d85a2be1ef1eb3644225e79e87292117a8dd067a10e1e6d0db8fc78d22dd9",
+      "backend/tests/unit/test_ai_content.py": "3e282ce899d46803c0195fc542ead9a387b6494f3f293f1b30805922fc0b9a29",
+      "backend/tests/unit/test_generation_models.py": "f003eaacfc59d893078b68a675bbbca18a36ba5db02f4c8220e7cc5306bcc51d",
+      "backend/scripts/test_infrastructure.py": "96a3414361e4255a239814adce40d00d88d6406fdc2a99358eaa10c82ad62d26",
+      "backend/src/yuliang/main.py": "ecb0255df9a5dde6d119349c75183c1e34b5cbcf8f0418ac5bd44479aa7b995c",
+      "backend/src/yuliang/modules/aikernel/cost_gate.py": "7a654f62d482e90d0535ce09ed5e732ecdf99357365c7907e8d3f2b6c2a9d0c0",
+      "backend/src/yuliang/modules/aikernel/ledger.py": "c297ca68394b6573c15f3abacef9893405813d101fa58850dc1033197d3ce2e4",
+      "backend/src/yuliang/modules/content/workflows_execution_service.py": "33b27f4d9c72de5dc0fd4892349d07eddf0064b7e658ab5dabcd0ee2a49da68e",
+      "backend/tests/integration/test_ai_cost_gate.py": "049678ee2955d587414461fb263a80aa9edd8d5ac252057a585c6ce5d1f062f2",
+      "backend/tests/integration/test_ai_ledger.py": "e878091e1648e2887828d6da82de1bae3bf852695375bf79928cba0738078f48"
+    }
+  },
+  "development": "ai-content-generation-development.json",
+  "migrationHead": "0072_ai_ledger_actor_guard",
+  "paidCalls": 0,
+  "realModelCalls": 0,
+  "realSupplierCalls": 0,
+  "livePlatformCalls": 0,
+  "platformBusinessWriteCalls": 0,
+  "originalTokenServiceChanges": 0,
+  "status": {
+    "M3-18": "IN_PROGRESS_THREE_SHORT_SCENARIOS_ONLY",
+    "M3-19a": "IN_PROGRESS_IMAGE_GRAPHIC_LOCAL_JOB_LEDGER_ONLY",
+    "M4-09c": "IN_PROGRESS_FULL_CONTENT_EVENTS_PRODUCTION_TLS_F12_PENDING"
+  },
+  "nextReady": [
+    "M3-18:independent content_topic prompt and actual system template chain",
+    "M1-19:V9 ADGROUP read query from actual complete configuration observations; CAMPAIGN closed without frozen frontend directory entry"
+  ],
+  "notClaimed": [
+    "named BE FE acceptance",
+    "commercial model quality or actual billing",
+    "real supplier protocol/result import/acceptance",
+    "audio video ASR or reliable media duration",
+    "real frontend F10 F12 browser integration",
+    "50 distinct users capacity",
+    "production TLS or full content generation event coverage"
+  ]
+}

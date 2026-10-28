@@ -94,8 +94,10 @@ def create_app(settings: Settings | None = None, mail_sender: MailSender | None 
         from yuliang.modules.content.account_links_routes import (
             router as content_account_links_router,
         )
+        from yuliang.modules.content.ai_content_routes import router as ai_content_router
         from yuliang.modules.content.assets_routes import router as content_assets_router
         from yuliang.modules.content.flows_routes import router as content_flows_router
+        from yuliang.modules.content.generation_routes import router as generation_router
         from yuliang.modules.content.imports_routes import router as content_imports_router
         from yuliang.modules.content.routes import router as content_router
         from yuliang.modules.content.uploads_routes import router as content_uploads_router
@@ -126,6 +128,8 @@ def create_app(settings: Settings | None = None, mail_sender: MailSender | None 
         app.include_router(workflows_execution_router)
         app.include_router(content_imports_router)
         app.include_router(content_account_links_router)
+        app.include_router(ai_content_router)
+        app.include_router(generation_router)
     if settings.admin_api_enabled:
         from yuliang.admin.routes import router as admin_router
 

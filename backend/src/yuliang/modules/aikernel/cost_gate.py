@@ -7,6 +7,7 @@ from collections.abc import Callable
 from pydantic import SecretStr
 from sqlalchemy import Engine, text
 from sqlalchemy.exc import DBAPIError
+from sqlalchemy.orm import Session
 
 from yuliang.modules.aikernel.cost_models import (
     BillableRequest,
@@ -29,55 +30,65 @@ class CostGate:
 
     def quote(self, request: BillableRequest) -> CostQuote:
         with business_transaction(self.engine, self.identity) as session:
-            row = (
-                session.execute(
-                    text(
-                        "SELECT * FROM access.ai_fee_quote(:member,:request,:kind,:scenario,"
-                        ":price,:input,:output,:hash)"
-                    ),
-                    {
-                        "member": self.identity.membership_id,
-                        "request": request.request_key,
-                        "kind": request.kind,
-                        "scenario": request.scenario,
-                        "price": request.price_key,
-                        "input": request.input_units,
-                        "output": request.output_units,
-                        "hash": request.fingerprint(),
-                    },
-                )
-                .mappings()
-                .one()
+            return self.quote_in_transaction(session, request)
+
+    def quote_in_transaction(self, session: Session, request: BillableRequest) -> CostQuote:
+        row = (
+            session.execute(
+                text(
+                    "SELECT * FROM access.ai_fee_quote(:member,:request,:kind,:scenario,"
+                    ":price,:input,:output,:hash)"
+                ),
+                {
+                    "member": self.identity.membership_id,
+                    "request": request.request_key,
+                    "kind": request.kind,
+                    "scenario": request.scenario,
+                    "price": request.price_key,
+                    "input": request.input_units,
+                    "output": request.output_units,
+                    "hash": request.fingerprint(),
+                },
             )
-            return CostQuote(**dict(row))
+            .mappings()
+            .one()
+        )
+        return CostQuote(**dict(row))
 
     def confirm(self, quote: CostQuote) -> None:
         with business_transaction(self.engine, self.identity) as session:
-            accepted = session.execute(
-                text("SELECT access.ai_fee_confirm(:member,:quote,:hash,:maximum,:currency)"),
-                {
-                    "member": self.identity.membership_id,
-                    "quote": quote.quote_id,
-                    "hash": quote.quote_hash,
-                    "maximum": quote.max_cost_minor,
-                    "currency": quote.currency,
-                },
-            ).scalar_one()
+            return self.confirm_in_transaction(session, quote)
+
+    def confirm_in_transaction(self, session: Session, quote: CostQuote) -> None:
+        accepted = session.execute(
+            text("SELECT access.ai_fee_confirm(:member,:quote,:hash,:maximum,:currency)"),
+            {
+                "member": self.identity.membership_id,
+                "quote": quote.quote_id,
+                "hash": quote.quote_hash,
+                "maximum": quote.max_cost_minor,
+                "currency": quote.currency,
+            },
+        ).scalar_one()
         if not accepted:
             raise ApiError(ErrorCode.VERSION_CONFLICT, "报价已变化或过期，请重新查看后确认")
 
     def acquire(self, quote: CostQuote) -> CallPermit:
+        with business_transaction(self.engine, self.identity) as session:
+            return self.acquire_in_transaction(session, quote)
+
+    def acquire_in_transaction(self, session: Session, quote: CostQuote) -> CallPermit:
+        """许可预占参加业务事务，失败时与调用方记录一起回滚。"""
         token = SecretStr(secrets.token_urlsafe(32))
         try:
-            with business_transaction(self.engine, self.identity) as session:
-                identifier = session.execute(
-                    text("SELECT access.ai_fee_acquire(:member,:quote,:token)"),
-                    {
-                        "member": self.identity.membership_id,
-                        "quote": quote.quote_id,
-                        "token": digest(token),
-                    },
-                ).scalar_one()
+            identifier = session.execute(
+                text("SELECT access.ai_fee_acquire(:member,:quote,:token)"),
+                {
+                    "member": self.identity.membership_id,
+                    "quote": quote.quote_id,
+                    "token": digest(token),
+                },
+            ).scalar_one()
         except DBAPIError as error:
             if getattr(error.orig, "sqlstate", None) == "P0001":
                 raise ApiError(ErrorCode.RISK_BLOCKED, "AI费用额度不足，未发起外部调用") from None
@@ -85,44 +96,57 @@ class CostGate:
         return CallPermit(permit_id=identifier, request_key=quote.request_key, token=token)
 
     def start(self, permit: CallPermit, request: BillableRequest) -> None:
+        with business_transaction(self.engine, self.identity) as session:
+            self.start_in_transaction(session, permit, request)
+
+    def start_in_transaction(
+        self, session: Session, permit: CallPermit, request: BillableRequest
+    ) -> None:
         if permit.request_key != request.request_key:
             raise ApiError(ErrorCode.FORBIDDEN, "费用许可不属于当前请求")
-        with business_transaction(self.engine, self.identity) as session:
-            accepted = session.execute(
-                text("SELECT access.ai_fee_start(:member,:permit,:token,:hash)"),
-                {
-                    "member": self.identity.membership_id,
-                    "permit": permit.permit_id,
-                    "token": digest(permit.token),
-                    "hash": request.fingerprint(),
-                },
-            ).scalar_one()
+        accepted = session.execute(
+            text("SELECT access.ai_fee_start(:member,:permit,:token,:hash)"),
+            {
+                "member": self.identity.membership_id,
+                "permit": permit.permit_id,
+                "token": digest(permit.token),
+                "hash": request.fingerprint(),
+            },
+        ).scalar_one()
         if not accepted:
             raise ApiError(ErrorCode.RISK_BLOCKED, "费用许可不可用，未发起外部调用")
 
     def finish(self, permit: CallPermit, outcome: BillingOutcome) -> str:
         with business_transaction(self.engine, self.identity) as session:
-            state = session.execute(
-                text("SELECT access.ai_fee_finish(:permit,:token,:state,:amount,:currency,:proof)"),
-                {
-                    "permit": permit.permit_id,
-                    "token": digest(permit.token),
-                    "state": outcome.state,
-                    "amount": outcome.amount_minor,
-                    "currency": outcome.currency,
-                    "proof": outcome.proof_hash,
-                },
-            ).scalar_one()
-            return str(state)
+            return self.finish_in_transaction(session, permit, outcome)
+
+    def finish_in_transaction(
+        self, session: Session, permit: CallPermit, outcome: BillingOutcome
+    ) -> str:
+        state = session.execute(
+            text("SELECT access.ai_fee_finish(:permit,:token,:state,:amount,:currency,:proof)"),
+            {
+                "permit": permit.permit_id,
+                "token": digest(permit.token),
+                "state": outcome.state,
+                "amount": outcome.amount_minor,
+                "currency": outcome.currency,
+                "proof": outcome.proof_hash,
+            },
+        ).scalar_one()
+        return str(state)
 
     def cancel_unsent(self, permit: CallPermit) -> bool:
         with business_transaction(self.engine, self.identity) as session:
-            return bool(
-                session.execute(
-                    text("SELECT access.ai_fee_cancel(:permit,:token)"),
-                    {"permit": permit.permit_id, "token": digest(permit.token)},
-                ).scalar_one()
-            )
+            return self.cancel_unsent_in_transaction(session, permit)
+
+    def cancel_unsent_in_transaction(self, session: Session, permit: CallPermit) -> bool:
+        return bool(
+            session.execute(
+                text("SELECT access.ai_fee_cancel(:permit,:token)"),
+                {"permit": permit.permit_id, "token": digest(permit.token)},
+            ).scalar_one()
+        )
 
     def execute[T](
         self,

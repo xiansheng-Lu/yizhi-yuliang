@@ -1,0 +1,1583 @@
+{
+  "nginx": "nginx version: nginx/1.28.3 (Ubuntu)",
+  "configSha256": "b3c4553cf9791ca4de86eff0edb62a0b585b86514d077dac86df0923fb71a30e",
+  "targetStreams": 50,
+  "connectedStreams": 50,
+  "durationSeconds": 65.28865138099354,
+  "directFirstFrameSeconds": 0.09089396300259978,
+  "proxyFirstFrameSeconds": 0.02524638500472065,
+  "rateLimitedNegativeControlDetected": true,
+  "negativeControl": "nginx 1 byte/second; buffering on alone did not delay first frame",
+  "firstFrameP95": 0.7439725449949037,
+  "firstFrameP50": 0.5560167950025061,
+  "firstFrameMax": 0.8112974179966841,
+  "eventCallToFrameP95": 1.2292480100004468,
+  "eventCallToFrameMax": 1.2367614959948696,
+  "heartbeatSeconds": 25,
+  "minimumPings": 2,
+  "businessSubmissions": 3,
+  "deliveredLoadEvents": 100,
+  "unexpectedEof": 0,
+  "streamTimeouts": 0,
+  "streamHttpErrors": 0,
+  "sampleCount": 13,
+  "records": [
+    {
+      "connection": 0,
+      "firstFrameSeconds": 0.4796755139977904,
+      "pings": [
+        28.57959703099914,
+        53.90101135500299
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.2583372090011835,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 24.53161621899926,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 1,
+      "firstFrameSeconds": 0.5968891509983223,
+      "pings": [
+        29.058349705999717,
+        54.37687964299403
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.7055777850036975,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 24.000634936994174,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 2,
+      "firstFrameSeconds": 0.49374610600352753,
+      "pings": [
+        28.593863173999125,
+        53.91641608500504
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.287939697998809,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 24.546736143995076,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 3,
+      "firstFrameSeconds": 0.5237019060004968,
+      "pings": [
+        28.729669406995527,
+        54.04994458099827
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.464807836004184,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 23.675835186993936,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 4,
+      "firstFrameSeconds": 0.5560167950025061,
+      "pings": [
+        28.98653544500121,
+        54.2919330529985
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.638014487994951,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 23.943906222004443,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 5,
+      "firstFrameSeconds": 0.5065739099954953,
+      "pings": [
+        28.68776982500276,
+        54.014539847994456
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.367577144003008,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 24.646528901997954,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 6,
+      "firstFrameSeconds": 0.5278894779912662,
+      "pings": [
+        29.196816527997726,
+        54.49236016199575
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.756914722005604,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 24.134230063005816,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 7,
+      "firstFrameSeconds": 0.5412318680027965,
+      "pings": [
+        28.73138311599905,
+        54.05261272400094
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.3866707459965255,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 24.673378692998085,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 8,
+      "firstFrameSeconds": 0.5409392169967759,
+      "pings": [
+        29.02705718499783,
+        54.30356957099866
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.630233609001152,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 23.955223472992657,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 9,
+      "firstFrameSeconds": 0.5779905220115324,
+      "pings": [
+        28.728284619995975,
+        54.0442122079985
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.425850643005106,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 24.674182180999196,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 10,
+      "firstFrameSeconds": 0.450380916998256,
+      "pings": [
+        28.78493122900545,
+        54.082461048994446
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.485478860995499,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 23.726118267994025,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 11,
+      "firstFrameSeconds": 0.8112974179966841,
+      "pings": [
+        29.243631192002795,
+        54.52507169000455
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.78032458499365,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 24.1888213820057,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 12,
+      "firstFrameSeconds": 0.4511937070055865,
+      "pings": [
+        28.588476766992244,
+        53.91154931500205
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.265255281003192,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 24.541006287996424,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 13,
+      "firstFrameSeconds": 0.6991141830076231,
+      "pings": [
+        29.05676381199737,
+        54.36322117099189
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.705667859001551,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 23.993862564995652,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 14,
+      "firstFrameSeconds": 0.5084728959918721,
+      "pings": [
+        28.59243496200361,
+        53.91584072499245
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.323936343003879,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 24.545969340993906,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 15,
+      "firstFrameSeconds": 0.47905394800181966,
+      "pings": [
+        28.6836926919932,
+        54.03546425999957
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.3614262039918685,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 24.64053132699337,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 16,
+      "firstFrameSeconds": 0.556405937008094,
+      "pings": [
+        29.08174667399726,
+        54.38522542800638
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.726808355000685,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 24.009390145001817,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 17,
+      "firstFrameSeconds": 0.8109242640057346,
+      "pings": [
+        29.262555477995193,
+        54.54722597899672
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.772811098999227,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 24.208057262003422,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 18,
+      "firstFrameSeconds": 0.5775848649936961,
+      "pings": [
+        29.08012404400506,
+        54.385024458999396
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.724377966995235,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 24.005162051995285,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 19,
+      "firstFrameSeconds": 0.6625630050111795,
+      "pings": [
+        29.0526521980064,
+        54.35459647199605
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.694465449996642,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 23.980341738992138,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 20,
+      "firstFrameSeconds": 0.5656945049995556,
+      "pings": [
+        28.785441312997136,
+        54.0766002379969
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.484587496001041,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 23.725435603992082,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 21,
+      "firstFrameSeconds": 0.5217294350004522,
+      "pings": [
+        29.180161816999316,
+        54.470786841004156
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.766255884998827,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 24.128052482992643,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 22,
+      "firstFrameSeconds": 0.6011986439989414,
+      "pings": [
+        29.16881322900008,
+        54.466222849005135
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.757036765993689,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 24.115099892995204,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 23,
+      "firstFrameSeconds": 0.5731914000061806,
+      "pings": [
+        28.820829860997037,
+        54.083615816998645
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.5651525010034675,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 23.77360415700241,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 24,
+      "firstFrameSeconds": 0.7005346469959477,
+      "pings": [
+        29.150183606994688,
+        54.42430427399813
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.7571207839937415,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 24.084931648001657,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 25,
+      "firstFrameSeconds": 0.7893751550000161,
+      "pings": [
+        29.269262400994194,
+        54.554593056993326
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.77739990799455,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 24.21586811299494,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 26,
+      "firstFrameSeconds": 0.6133207630045945,
+      "pings": [
+        29.05412783200154,
+        54.35341747700295
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.694386695991852,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 23.990400166992913,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 27,
+      "firstFrameSeconds": 0.5421062849927694,
+      "pings": [
+        29.16876582900295,
+        54.46286429000611
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.757081559000653,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 24.114146865002112,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 28,
+      "firstFrameSeconds": 0.7439725449949037,
+      "pings": [
+        29.06786353699863,
+        54.3763094820024
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.724462758997106,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 24.007023302998277,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 29,
+      "firstFrameSeconds": 0.7181013439985691,
+      "pings": [
+        29.151558726996882,
+        54.438738869997906
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.744325873005437,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 24.086233341993648,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 30,
+      "firstFrameSeconds": 0.6660297180060297,
+      "pings": [
+        29.034054900999763,
+        54.314356982999016
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.647691021003993,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 23.96196009700361,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 31,
+      "firstFrameSeconds": 0.6118006760079879,
+      "pings": [
+        29.258646928996313,
+        54.54518296700553
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.746000649000052,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 24.201211302002775,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 32,
+      "firstFrameSeconds": 0.6047353809990454,
+      "pings": [
+        29.231705179001438,
+        54.5145282529993
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.778358148992993,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 24.182510077996994,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 33,
+      "firstFrameSeconds": 0.47191341199504677,
+      "pings": [
+        29.03748913000163,
+        54.34180359399761
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.65277125799912,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 23.96846564099542,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 34,
+      "firstFrameSeconds": 0.35543470199627336,
+      "pings": [
+        28.71048626099946,
+        54.04430209599377
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.379223213996738,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 24.66676959799952,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 35,
+      "firstFrameSeconds": 0.41828685499785934,
+      "pings": [
+        28.71500878900406,
+        54.028573781994055
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.40448116499465,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 24.67046445699816,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 36,
+      "firstFrameSeconds": 0.43317233500420116,
+      "pings": [
+        29.0834871679981,
+        54.400032584992005
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.7330254949920345,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 24.007928349004942,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 37,
+      "firstFrameSeconds": 0.6245737340068445,
+      "pings": [
+        29.188321850000648,
+        54.47164902499935
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.766307797995978,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 24.13069424999412,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 38,
+      "firstFrameSeconds": 0.4161032499978319,
+      "pings": [
+        28.98136038899247,
+        54.286393564005266
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.669544887001393,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 23.924257470993325,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 39,
+      "firstFrameSeconds": 0.5569471700000577,
+      "pings": [
+        29.161225000993,
+        54.42564010800561
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.745923765003681,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 24.09231408800406,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 40,
+      "firstFrameSeconds": 0.5616899820015533,
+      "pings": [
+        29.2056086579978,
+        54.497517746000085
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.7733762669959106,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 24.158469928996055,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 41,
+      "firstFrameSeconds": 0.6126546640007291,
+      "pings": [
+        29.268368760996964,
+        54.5538588950003
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.775836731001618,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 24.209098898005323,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 42,
+      "firstFrameSeconds": 0.4736141119938111,
+      "pings": [
+        29.162553029003902,
+        54.440009238998755
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.7314755779952975,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 24.099903021997306,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 43,
+      "firstFrameSeconds": 0.44122198699915316,
+      "pings": [
+        29.01959993399214,
+        54.308870209002635
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.65268470600131,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 23.95530772100028,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 44,
+      "firstFrameSeconds": 0.45303446300385986,
+      "pings": [
+        29.10006002499722,
+        54.40651013600291
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.7388817129976815,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 24.049865039996803,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 45,
+      "firstFrameSeconds": 0.45553928198933136,
+      "pings": [
+        29.04609593299392,
+        54.312698430003366
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.689192434001598,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 23.973082961994805,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 46,
+      "firstFrameSeconds": 0.49448267099796794,
+      "pings": [
+        29.201693226001225,
+        54.51889148099872
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.760574858999462,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 24.150904861002346,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 47,
+      "firstFrameSeconds": 0.5835530649928842,
+      "pings": [
+        29.19628570700297,
+        54.493938408995746
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.7663484740041895,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 24.140006004003226,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 48,
+      "firstFrameSeconds": 0.48458431600010954,
+      "pings": [
+        29.10084921399539,
+        54.40645834899624
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.733072431001347,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 24.053975060000084,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    },
+    {
+      "connection": 49,
+      "firstFrameSeconds": 0.5807475469919154,
+      "pings": [
+        29.24407940299716,
+        54.52438374499616
+      ],
+      "events": [
+        {
+          "entityId": "55262afe-223a-4f40-bd2d-8ec2a4114704",
+          "version": 1,
+          "atSeconds": 4.766387247000239,
+          "topic": "analysis.changed"
+        },
+        {
+          "entityId": "37de8af0-0f83-42fa-a8f8-c7c9b5a41fc9",
+          "version": 1,
+          "atSeconds": 24.19375366899476,
+          "topic": "analysis.changed"
+        }
+      ],
+      "cursor": "1:40"
+    }
+  ],
+  "samples": [
+    {
+      "atSeconds": 3.5538916759978747,
+      "database": {
+        "connections": 12,
+        "idleInTransaction": 0,
+        "idleTransactionOver2s": 0,
+        "maxTransactionAgeSeconds": 0.009098
+      },
+      "processes": {
+        "nginxMaster": {
+          "rssKiB": 9360,
+          "fdCount": 8,
+          "cpuTicks": 0
+        },
+        "nginxWorkers": [
+          {
+            "rssKiB": 4552,
+            "fdCount": 109,
+            "cpuTicks": 0
+          }
+        ],
+        "appAndClientProcess": {
+          "rssKiB": 168668,
+          "fdCount": 142,
+          "cpuTicks": 280
+        },
+        "downstreamEstablished": 50,
+        "upstreamEstablished": 50
+      }
+    },
+    {
+      "atSeconds": 8.568751950995647,
+      "database": {
+        "connections": 12,
+        "idleInTransaction": 0,
+        "idleTransactionOver2s": 0,
+        "maxTransactionAgeSeconds": 0.0
+      },
+      "processes": {
+        "nginxMaster": {
+          "rssKiB": 9360,
+          "fdCount": 8,
+          "cpuTicks": 0
+        },
+        "nginxWorkers": [
+          {
+            "rssKiB": 4552,
+            "fdCount": 109,
+            "cpuTicks": 1
+          }
+        ],
+        "appAndClientProcess": {
+          "rssKiB": 170040,
+          "fdCount": 142,
+          "cpuTicks": 426
+        },
+        "downstreamEstablished": 50,
+        "upstreamEstablished": 50
+      }
+    },
+    {
+      "atSeconds": 13.583057128998917,
+      "database": {
+        "connections": 12,
+        "idleInTransaction": 0,
+        "idleTransactionOver2s": 0,
+        "maxTransactionAgeSeconds": 0.0
+      },
+      "processes": {
+        "nginxMaster": {
+          "rssKiB": 9360,
+          "fdCount": 8,
+          "cpuTicks": 0
+        },
+        "nginxWorkers": [
+          {
+            "rssKiB": 4552,
+            "fdCount": 109,
+            "cpuTicks": 1
+          }
+        ],
+        "appAndClientProcess": {
+          "rssKiB": 170076,
+          "fdCount": 142,
+          "cpuTicks": 537
+        },
+        "downstreamEstablished": 50,
+        "upstreamEstablished": 50
+      }
+    },
+    {
+      "atSeconds": 18.596913614004734,
+      "database": {
+        "connections": 12,
+        "idleInTransaction": 0,
+        "idleTransactionOver2s": 0,
+        "maxTransactionAgeSeconds": 0.0
+      },
+      "processes": {
+        "nginxMaster": {
+          "rssKiB": 9360,
+          "fdCount": 8,
+          "cpuTicks": 0
+        },
+        "nginxWorkers": [
+          {
+            "rssKiB": 4552,
+            "fdCount": 109,
+            "cpuTicks": 1
+          }
+        ],
+        "appAndClientProcess": {
+          "rssKiB": 169276,
+          "fdCount": 142,
+          "cpuTicks": 644
+        },
+        "downstreamEstablished": 50,
+        "upstreamEstablished": 50
+      }
+    },
+    {
+      "atSeconds": 23.60809342599532,
+      "database": {
+        "connections": 12,
+        "idleInTransaction": 0,
+        "idleTransactionOver2s": 0,
+        "maxTransactionAgeSeconds": 0.007051
+      },
+      "processes": {
+        "nginxMaster": {
+          "rssKiB": 9360,
+          "fdCount": 8,
+          "cpuTicks": 0
+        },
+        "nginxWorkers": [
+          {
+            "rssKiB": 4552,
+            "fdCount": 109,
+            "cpuTicks": 1
+          }
+        ],
+        "appAndClientProcess": {
+          "rssKiB": 169316,
+          "fdCount": 142,
+          "cpuTicks": 758
+        },
+        "downstreamEstablished": 50,
+        "upstreamEstablished": 50
+      }
+    },
+    {
+      "atSeconds": 28.620176932992763,
+      "database": {
+        "connections": 12,
+        "idleInTransaction": 0,
+        "idleTransactionOver2s": 0,
+        "maxTransactionAgeSeconds": 0.0
+      },
+      "processes": {
+        "nginxMaster": {
+          "rssKiB": 9360,
+          "fdCount": 8,
+          "cpuTicks": 0
+        },
+        "nginxWorkers": [
+          {
+            "rssKiB": 4552,
+            "fdCount": 109,
+            "cpuTicks": 1
+          }
+        ],
+        "appAndClientProcess": {
+          "rssKiB": 169576,
+          "fdCount": 142,
+          "cpuTicks": 893
+        },
+        "downstreamEstablished": 50,
+        "upstreamEstablished": 50
+      }
+    },
+    {
+      "atSeconds": 33.63592007399711,
+      "database": {
+        "connections": 12,
+        "idleInTransaction": 0,
+        "idleTransactionOver2s": 0,
+        "maxTransactionAgeSeconds": 0.0
+      },
+      "processes": {
+        "nginxMaster": {
+          "rssKiB": 9360,
+          "fdCount": 8,
+          "cpuTicks": 0
+        },
+        "nginxWorkers": [
+          {
+            "rssKiB": 4552,
+            "fdCount": 109,
+            "cpuTicks": 1
+          }
+        ],
+        "appAndClientProcess": {
+          "rssKiB": 169584,
+          "fdCount": 142,
+          "cpuTicks": 997
+        },
+        "downstreamEstablished": 50,
+        "upstreamEstablished": 50
+      }
+    },
+    {
+      "atSeconds": 38.65188795499853,
+      "database": {
+        "connections": 12,
+        "idleInTransaction": 0,
+        "idleTransactionOver2s": 0,
+        "maxTransactionAgeSeconds": 0.0
+      },
+      "processes": {
+        "nginxMaster": {
+          "rssKiB": 9360,
+          "fdCount": 8,
+          "cpuTicks": 0
+        },
+        "nginxWorkers": [
+          {
+            "rssKiB": 4552,
+            "fdCount": 109,
+            "cpuTicks": 1
+          }
+        ],
+        "appAndClientProcess": {
+          "rssKiB": 169524,
+          "fdCount": 142,
+          "cpuTicks": 1108
+        },
+        "downstreamEstablished": 50,
+        "upstreamEstablished": 50
+      }
+    },
+    {
+      "atSeconds": 43.66598841699306,
+      "database": {
+        "connections": 12,
+        "idleInTransaction": 0,
+        "idleTransactionOver2s": 0,
+        "maxTransactionAgeSeconds": 0.0
+      },
+      "processes": {
+        "nginxMaster": {
+          "rssKiB": 9360,
+          "fdCount": 8,
+          "cpuTicks": 0
+        },
+        "nginxWorkers": [
+          {
+            "rssKiB": 4552,
+            "fdCount": 109,
+            "cpuTicks": 1
+          }
+        ],
+        "appAndClientProcess": {
+          "rssKiB": 169536,
+          "fdCount": 142,
+          "cpuTicks": 1216
+        },
+        "downstreamEstablished": 50,
+        "upstreamEstablished": 50
+      }
+    },
+    {
+      "atSeconds": 48.67785496500437,
+      "database": {
+        "connections": 12,
+        "idleInTransaction": 0,
+        "idleTransactionOver2s": 0,
+        "maxTransactionAgeSeconds": 0.0
+      },
+      "processes": {
+        "nginxMaster": {
+          "rssKiB": 9360,
+          "fdCount": 8,
+          "cpuTicks": 0
+        },
+        "nginxWorkers": [
+          {
+            "rssKiB": 4552,
+            "fdCount": 109,
+            "cpuTicks": 1
+          }
+        ],
+        "appAndClientProcess": {
+          "rssKiB": 169512,
+          "fdCount": 142,
+          "cpuTicks": 1318
+        },
+        "downstreamEstablished": 50,
+        "upstreamEstablished": 50
+      }
+    },
+    {
+      "atSeconds": 53.6920598949946,
+      "database": {
+        "connections": 12,
+        "idleInTransaction": 0,
+        "idleTransactionOver2s": 0,
+        "maxTransactionAgeSeconds": 0.0
+      },
+      "processes": {
+        "nginxMaster": {
+          "rssKiB": 9360,
+          "fdCount": 8,
+          "cpuTicks": 0
+        },
+        "nginxWorkers": [
+          {
+            "rssKiB": 4552,
+            "fdCount": 109,
+            "cpuTicks": 1
+          }
+        ],
+        "appAndClientProcess": {
+          "rssKiB": 169516,
+          "fdCount": 142,
+          "cpuTicks": 1431
+        },
+        "downstreamEstablished": 50,
+        "upstreamEstablished": 50
+      }
+    },
+    {
+      "atSeconds": 58.706965724995825,
+      "database": {
+        "connections": 12,
+        "idleInTransaction": 0,
+        "idleTransactionOver2s": 0,
+        "maxTransactionAgeSeconds": 0.0
+      },
+      "processes": {
+        "nginxMaster": {
+          "rssKiB": 9360,
+          "fdCount": 8,
+          "cpuTicks": 0
+        },
+        "nginxWorkers": [
+          {
+            "rssKiB": 4552,
+            "fdCount": 109,
+            "cpuTicks": 1
+          }
+        ],
+        "appAndClientProcess": {
+          "rssKiB": 169524,
+          "fdCount": 142,
+          "cpuTicks": 1543
+        },
+        "downstreamEstablished": 50,
+        "upstreamEstablished": 50
+      }
+    },
+    {
+      "atSeconds": 63.718732327004545,
+      "database": {
+        "connections": 12,
+        "idleInTransaction": 0,
+        "idleTransactionOver2s": 0,
+        "maxTransactionAgeSeconds": 0.0
+      },
+      "processes": {
+        "nginxMaster": {
+          "rssKiB": 9360,
+          "fdCount": 8,
+          "cpuTicks": 0
+        },
+        "nginxWorkers": [
+          {
+            "rssKiB": 4552,
+            "fdCount": 109,
+            "cpuTicks": 1
+          }
+        ],
+        "appAndClientProcess": {
+          "rssKiB": 169524,
+          "fdCount": 142,
+          "cpuTicks": 1645
+        },
+        "downstreamEstablished": 50,
+        "upstreamEstablished": 50
+      }
+    }
+  ],
+  "cleanup": {
+    "ownNginxExited": true,
+    "ownUvicornExited": true,
+    "normalPortClosed": true,
+    "faultPortClosed": true,
+    "appPortClosed": true
+  },
+  "identities": 1,
+  "interpretation": "50 actual TCP SSE streams, not 50 distinct tenants",
+  "result": "PASS",
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "productionTls": "NOT_RUN",
+  "frontendF12": "PENDING",
+  "humanSignoff": "PENDING"
+}

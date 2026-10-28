@@ -76,6 +76,7 @@ def create_app(settings: Settings | None = None, mail_sender: MailSender | None 
     app.include_router(operations_router)
     if settings.identity_api_enabled:
         from yuliang.api.connections import router as connection_router
+        from yuliang.api.events import router as event_router
         from yuliang.api.platform_authorization import router as platform_router
         from yuliang.modules.identity.routes import router
         from yuliang.modules.identity.workspace_routes import router as workspace_router
@@ -86,6 +87,7 @@ def create_app(settings: Settings | None = None, mail_sender: MailSender | None 
         app.include_router(history_router)
         app.include_router(platform_router)
         app.include_router(connection_router)
+        app.include_router(event_router)
     if settings.admin_api_enabled:
         from yuliang.admin.routes import router as admin_router
 
@@ -101,7 +103,13 @@ def create_app(settings: Settings | None = None, mail_sender: MailSender | None 
         allow_origins=settings.allowed_origins,
         allow_credentials=True,
         allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-        allow_headers=["Content-Type", "X-CSRF-Token", "Idempotency-Key", "X-Yuliang-Client"],
+        allow_headers=[
+            "Content-Type",
+            "X-CSRF-Token",
+            "Idempotency-Key",
+            "X-Yuliang-Client",
+            "Last-Event-ID",
+        ],
         expose_headers=["X-Request-Id", "Retry-After"],
     )
 

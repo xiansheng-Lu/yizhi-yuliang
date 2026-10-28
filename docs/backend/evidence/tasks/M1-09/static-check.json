@@ -1,0 +1,31 @@
+{
+  "checkedAt": "2026-10-28T06:37:45.8895212Z",
+  "result": "PASS",
+  "implementationCommit": "5da50660be2a72db50eecafd160290e4ae3be34f",
+  "checks": [
+    {
+      "command": "uv run --frozen ruff format --check src tests scripts alembic",
+      "files": 292,
+      "result": "PASS"
+    },
+    {
+      "result": "PASS",
+      "command": "uv run --frozen ruff check src tests scripts alembic"
+    },
+    {
+      "sourceFiles": 237,
+      "command": "uv run --frozen mypy",
+      "result": "PASS"
+    },
+    {
+      "seconds": 5.42,
+      "command": "uv run --frozen pytest tests/unit tests/contract -q",
+      "count": 670,
+      "result": "PASS"
+    }
+  ],
+  "liveAcceptance": "NOT_RUN_EXTERNAL_E01",
+  "humanSignoff": "PENDING_BE_F07",
+  "platformCalls": 0,
+  "paidCalls": 0
+}

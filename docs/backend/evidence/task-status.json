@@ -4,7 +4,7 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "currentFocus": "M1-08",
+  "currentFocus": "M1-09",
   "tasks": {
     "R00-01": {
       "owner": "BE",
@@ -2672,6 +2672,55 @@
         "developmentHead": "0045_adq_asset_mirrors",
         "result": "PASS"
       }
+    },
+    "M1-09": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "scope": "ADQ资金/实时消耗与操作日志只读、分页档案与钱包口径单位证据；修正funds单页协议，不混入小店结算/微信豆",
+      "dependencyInput": "M1-08与M1-15b已有实际技术证据，M1-08已合并main 662a5fc；持续授权允许继续本地实现，E01/G0/E08不自动通过",
+      "delivery": "已交付ADQ资金/日志只读持久化、条件口径归一化、内部视图及Runtime接线；733全量集成通过，真实财务口径与P验收仍缺E01",
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS",
+          "live": "PENDING_E01"
+        },
+        {
+          "item": 2,
+          "technical": "PASS",
+          "live": "PENDING_E01"
+        },
+        {
+          "item": 3,
+          "technical": "PASS",
+          "live": "PENDING_E01"
+        }
+      ],
+      "evidence": "tasks/M1-09/README.md",
+      "review": {
+        "frontend": "PENDING_F07",
+        "backend": "PENDING"
+      },
+      "liveAcceptance": "NOT_RUN_EXTERNAL_E01",
+      "blockedBy": [
+        "E01",
+        "E08"
+      ],
+      "technicalVerification": {
+        "livePlatformCalls": 0,
+        "fullIntegration": 733,
+        "nativeHandoff": 8,
+        "assetRegression": 12,
+        "paidCalls": 0,
+        "evidence": "tasks/M1-09/verification.json",
+        "liveMeasureCoverage": "UNCONFIRMED_REQUIRES_REAL_FINANCIAL_SOURCE_EVIDENCE",
+        "unitAndContract": 670,
+        "result": "PASS",
+        "implementationCommit": "5da50660be2a72db50eecafd160290e4ae3be34f",
+        "financeIntegration": 16,
+        "developmentHead": "0046_adq_finance_reads",
+        "lifecycleSkipped": 1
+      }
     }
   },
   "gates": {
@@ -2778,7 +2827,7 @@
   },
   "nextTask": {
     "status": "NOT_STARTED",
-    "id": "M1-09"
+    "id": "M1-10"
   },
   "continuation": {
     "requestedOn": "2026-10-27",
@@ -2787,12 +2836,12 @@
     "environment": "WSL2 Ubuntu Docker; UV_PROJECT_ENVIRONMENT=/home/lenovo/.cache/yuliang-venv",
     "latestUserRequest": "补齐浏览器验收，然后按照后端任务卡继续后续的所有开发，需要资源再找我对接，不阻塞持续开发到完毕",
     "developmentPolicy": "缺人工/外部验收时记录并继续可独立技术准备；正式门禁、平台调用和付费仍按各自证据许可",
-    "lastCompletedTechnicalTask": "M1-08",
-    "nextTechnicalTask": "M1-09",
+    "lastCompletedTechnicalTask": "M1-09",
+    "nextTechnicalTask": "M1-10",
     "executionRules": "docs/backend/evidence/execution-rules.md",
-    "checkpoint": "M1-08完成654单元/契约、12镜像/5来源/8授权交接专项、717全量集成+1明确跳过；0045开发库26类记录0/NOLOGIN；继续M1-09，真实验收缺E01",
+    "checkpoint": "M1-09完成670单元/契约、16金融专项、12资产/8授权交接回归、733全量集成+1明确跳过；0046开发库30类记录0/NOLOGIN；继续M1-10日报与校准，本地技术不冒充真实财务口径和E01验收",
     "technicalPreparationQueue": [
-      "M1-09",
+      "M1-10",
       "M1-11",
       "M1-12",
       "M1-13",
@@ -2803,7 +2852,7 @@
     "deferredTechnicalDependencies": [
       {
         "task": "M1-18",
-        "reason": "M1-09/10/11/12/13镜像技术实现尚未交付；M1-08已技术通过但原生单位/真实验收仍待E01，不能伪造FrontendSnapshot",
+        "reason": "M1-10/11/12/13镜像技术实现尚未交付；M1-08/09已技术通过但真实单位/财务含义/平台验收仍待E01，不能伪造FrontendSnapshot",
         "unblock": "先完成对应真实规范镜像实现及技术验证，真实验收另保留"
       },
       {

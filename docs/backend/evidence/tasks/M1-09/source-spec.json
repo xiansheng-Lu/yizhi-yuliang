@@ -1,0 +1,112 @@
+{
+  "checkedAt": "2026-10-28T06:01:40.1737058Z",
+  "repository": "https://github.com/TencentAd/marketing-api-go-sdk",
+  "revision": "81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9",
+  "authority": "OFFICIAL_PINNED_SDK_NOT_LIVE_ACCOUNT_ACCEPTANCE",
+  "sources": [
+    {
+      "sha256": "f8409059915f1bf6d4ef315235c1c011da6a063d47359a862e7d36f31567dce6",
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/api/api_funds.go",
+      "path": "pkg/api/api_funds.go"
+    },
+    {
+      "sha256": "54f47b5293532f1ea3557bef0dc35acff20241a81bf865d4a9e3e7b3816cc945",
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/model/model_funds_get_list_struct.go",
+      "path": "pkg/model/model_funds_get_list_struct.go"
+    },
+    {
+      "sha256": "739cb24726903c3faa402a80c8bc2e7030f9cae497586eee08d8ca43de56781e",
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/model/model_funds_get_response_data.go",
+      "path": "pkg/model/model_funds_get_response_data.go"
+    },
+    {
+      "sha256": "b772ee1da7e569df2197be026fb7c2da6ab08c43a5103dcf42c702dd37656b9b",
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/model/model_account_type_map.go",
+      "path": "pkg/model/model_account_type_map.go"
+    },
+    {
+      "sha256": "63d9baf821893665ae6e704bcc950f9475860d0560fad83f522add46038aacce",
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/model/model_fund_status.go",
+      "path": "pkg/model/model_fund_status.go"
+    },
+    {
+      "sha256": "1bd06a2ece04704c88d8a4fb7d4bde1b1b6bbccaf2293b866c42e4307ee76044",
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/api/v3/api_operation_log_list.go",
+      "path": "pkg/api/v3/api_operation_log_list.go"
+    },
+    {
+      "sha256": "4fc10148b4740738aaeeef93a2c5e790999c4ee32f1d023c3f6c550ac451ae62",
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/model/v3/model_operation_log_list_get_response_data.go",
+      "path": "pkg/model/v3/model_operation_log_list_get_response_data.go"
+    },
+    {
+      "sha256": "b4fc1183f13b0f289a38ed7c41ce0093f491c27f67fe7f609a9585172e72bdb3",
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/model/v3/model_oplog_arr_struct.go",
+      "path": "pkg/model/v3/model_oplog_arr_struct.go"
+    },
+    {
+      "sha256": "de56ccf2d750dfd80048c784b918933877451fbb34aec791296c183971f9e4a1",
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/model/v3/model_operation_object_type.go",
+      "path": "pkg/model/v3/model_operation_object_type.go"
+    },
+    {
+      "sha256": "6cacffe36bbb311f1a733f9efed2af2e9f118533dfecb55e03594b3420c8de36",
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/model/v3/model_operation_action_type.go",
+      "path": "pkg/model/v3/model_operation_action_type.go"
+    },
+    {
+      "sha256": "d1162b5fbb006e4016b253e8ff80f88580a1e3cd56b140e56f919901652e5396",
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/model/v3/model_operator_platform_type.go",
+      "path": "pkg/model/v3/model_operator_platform_type.go"
+    }
+  ],
+  "confirmed": {
+    "operations": {
+      "path": "/v3.0/operation_log_list/get",
+      "parameters": [
+        "account_id",
+        "operation_object_type",
+        "start_date",
+        "end_date",
+        "page",
+        "page_size",
+        "fields"
+      ],
+      "catalogId": "e5a1f0279c6e45a91486",
+      "nativeLogId": "NOT_PROVIDED",
+      "piiExcludedFields": [
+        "fronted_operator",
+        "operation_object_name",
+        "operation_log",
+        "operation_info_list"
+      ],
+      "pagination": "data.page_info",
+      "method": "GET"
+    },
+    "funds": {
+      "unit": "UNCONFIRMED",
+      "path": "/v1.3/funds/get",
+      "fields": [
+        "fund_type",
+        "balance",
+        "fund_status",
+        "realtime_cost"
+      ],
+      "parameters": [
+        "account_id",
+        "fields"
+      ],
+      "integerType": "int64",
+      "pagination": "NONE",
+      "method": "GET"
+    }
+  },
+  "notConfirmed": [
+    "Currency/minor-unit semantics of raw balance and realtime_cost",
+    "Source paths and financial meanings for in-transit/unsettled/credit",
+    "Unit/timezone of operation created_time",
+    "Actual scopes/app/account/shop readonly permissions and production acceptance"
+  ],
+  "livePlatformCalls": 0,
+  "paidCalls": 0
+}

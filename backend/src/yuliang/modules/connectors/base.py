@@ -56,8 +56,13 @@ class GatewayContext:
     capability_version: int
     catalog_id: str
     catalog_sha256: str
+    authorization_version: int | None = None
 
     def __post_init__(self) -> None:
+        if self.authorization_version is not None and (
+            type(self.authorization_version) is not int or self.authorization_version <= 0
+        ):
+            raise ValueError("授权版本必须是已核对的正整数")
         if CONNECTOR_CONTEXTS.get(self.connector_id) != (self.provider, self.product_line):
             raise ValueError("连接器上下文不匹配")
         if type(self.capability_version) is not int or self.capability_version <= 0:

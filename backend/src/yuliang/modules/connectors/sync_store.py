@@ -102,6 +102,9 @@ class SyncStore:
                 [
                     ctx.identity.tenant_id,
                     str(ctx.account_id),
+                    str(ctx.shop_id),
+                    str(ctx.authorization_id),
+                    ctx.authorization_version,
                     ctx.native_account_id,
                     str(ctx.binding_id),
                     ctx.capability_version,
@@ -113,6 +116,8 @@ class SyncStore:
                     spec.key,
                     spec.path,
                     spec.method,
+                    spec.cursor_parameter,
+                    spec.initial_cursor,
                 ]
             ),
         )
@@ -141,7 +146,8 @@ class SyncStore:
         ):
             raise ValueError("同步参数账户不匹配")
         if spec.cursor_parameter:
-            if prepared.pop(spec.cursor_parameter, None) is not None:
+            initial = prepared.pop(spec.cursor_parameter, None)
+            if initial is not None and str(initial) != spec.initial_cursor:
                 raise ValueError("初始同步查询不能指定未经确认的分页游标")
         filters = self.codec.hash("filters-v1", canonical(prepared))
         context = self._context(ctx, spec)
@@ -348,7 +354,7 @@ class SyncStore:
             mode="json", by_alias=True
         )
         cursor = prepared.pop(spec.cursor_parameter, None) if spec.cursor_parameter else None
-        expected = permit.cursor.get_secret_value() if permit.cursor else None
+        expected = permit.cursor.get_secret_value() if permit.cursor else spec.initial_cursor
         if (None if cursor is None else str(cursor)) != expected or (
             self.codec.hash("filters-v1", canonical(prepared)) != source["filter_digest"]
         ):

@@ -250,6 +250,7 @@ def exchange(data: Any) -> HttpExchange:
 def test_read_protocol_preserves_version_and_signs_auth_outside_business_parameters() -> None:
     spec = read_spec("adq.campaigns", "a" * 20, "b" * 64)
     assert spec.path == "/v1.3/campaigns/get" and spec.max_read_attempts == 1
+    assert "pagination_mode" not in spec.parameters_model.model_fields
     request = native_signer(
         httpx.Request("GET", "https://api.e.qq.com/v1.3/campaigns/get?page=2"),
         SecretStr("synthetic"),

@@ -14,6 +14,8 @@ from sqlalchemy.orm import Session
 
 from yuliang.modules.access.service import require_shop_account
 from yuliang.modules.audit.service import record
+from yuliang.modules.capability.models import Binding
+from yuliang.modules.capability.route_sources import current_source
 from yuliang.modules.connectors.base import GatewayContext, ObjectRef
 from yuliang.modules.connectors.http import (
     ConnectorTransportError,
@@ -47,7 +49,7 @@ def _verify(session: Session, ctx: GatewayContext, spec: OperationSpec) -> None:
     )
     authorization = (
         session.execute(
-            text("""SELECT connector_id,provider,product_line,status,
+            text("""SELECT connector_id,provider,product_line,status,version,
         expires_at>clock_timestamp() AS current,account_id FROM provider_authorizations
         WHERE id=:id"""),
             {"id": ctx.authorization_id},
@@ -61,15 +63,19 @@ def _verify(session: Session, ctx: GatewayContext, spec: OperationSpec) -> None:
         or authorization["status"] != "ACTIVE"
         or not authorization["current"]
         or authorization["account_id"] not in (None, ctx.account_id)
+        or ctx.authorization_version is not None
+        and authorization["version"] != ctx.authorization_version
     ):
         raise ApiError(ErrorCode.CAPABILITY_UNAVAILABLE, "平台连接已失效或范围不匹配")
+    if ctx.authorization_version is not None and authorization is None:
+        raise ApiError(ErrorCode.CAPABILITY_UNAVAILABLE, "缺少已核对版本的实际授权")
     row = (
         session.execute(
             text("""
       SELECT b.*,a.native_id FROM capability_bindings b JOIN ad_accounts a
        ON (a.tenant_id,a.id)=(b.tenant_id,b.account_id)
-       JOIN catalog_head h ON h.catalog_sha256=b.catalog_sha256
       WHERE b.id=:id AND b.active AND a.deleted_at IS NULL
+       AND access.catalog_is_current(b.catalog_sha256,b.operation_kind)
     """),
             {"id": ctx.binding_id},
         )
@@ -113,6 +119,11 @@ def _verify(session: Session, ctx: GatewayContext, spec: OperationSpec) -> None:
             ErrorCode.CAPABILITY_UNAVAILABLE, "操作读写类型、方法或路径与已核对绑定不一致"
         )
     require_shop_account(session, ctx.identity, ctx.shop_id, ctx.account_id, row["permission_code"])
+    if row["provider"] == "tencent" and row["normalized_path"].startswith("/v1.3/"):
+        binding = Binding.model_validate({key: row[key] for key in Binding.model_fields})
+        now = session.execute(text("SELECT clock_timestamp()")).scalar_one()
+        if current_source(session, binding, now) is None:
+            raise ApiError(ErrorCode.CAPABILITY_UNAVAILABLE, "旧版只读路径缺少有效独立SDK依据")
 
 
 class PlatformArchive:
@@ -144,6 +155,7 @@ class PlatformArchive:
             "user": str(ctx.identity.user_id),
             "account": str(ctx.account_id),
             "authorization": str(ctx.authorization_id),
+            "authorization_version": ctx.authorization_version,
             "binding": str(ctx.binding_id),
             "version": ctx.capability_version,
             "catalog": ctx.catalog_sha256,
@@ -188,6 +200,18 @@ class PlatformArchive:
             if before_verify is not None:
                 before_verify(session)
             _verify(session, ctx, spec)
+            if (
+                target is not None
+                and spec.effect == "WRITE"
+                and session.execute(
+                    text("""SELECT EXISTS(SELECT 1 FROM campaigns WHERE account_id=:account
+                 AND native_id=:native AND kind='CAMPAIGN' AND protocol_version='1.3')"""),
+                    {"account": ctx.account_id, "native": target.native_id},
+                ).scalar_one()
+            ):
+                raise ApiError(
+                    ErrorCode.CAPABILITY_UNAVAILABLE, "旧版计划未核验写协议，不能作为营销单元执行"
+                )
             if before_persist is not None:
                 before_persist(session)
             if before_create is not None:

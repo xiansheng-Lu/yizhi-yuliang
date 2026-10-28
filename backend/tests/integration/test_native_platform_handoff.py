@@ -211,6 +211,7 @@ def test_http_self_credential_activation_and_reauthorization_use_current_session
         ),
     )
     target.ports[port.resource.id] = port
+    assert not target.adq_assets  # 空scope仍可授权；镜像同步保持关闭。
     data["app"].state.platform_runtime = target
     client = data["client"]
     path = f"/v1/connections/applications/{port.resource.id}/authorize"
@@ -263,6 +264,7 @@ def test_http_adq_callback_without_cookie_and_without_secret_query_in_server_sco
             headers={"X-CSRF-Token": challenge(client)},
         )
         assert response.status_code == 200, response.text
+        assert not target.adq_assets  # 授权回调可用，空scope不能装配镜像。
         query = parse_qs(urlsplit(response.json()["data"]["authorizationUrl"]).query)
         client.cookies.clear()
         response = client.get(

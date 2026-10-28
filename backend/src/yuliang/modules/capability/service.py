@@ -11,9 +11,16 @@ from yuliang.modules.access.service import require_shop_account
 from yuliang.modules.capability.models import (
     Binding,
     Evidence,
+    Phase,
     ValidationPermit,
     aggregate,
     proof_matches,
+)
+from yuliang.modules.capability.route_sources import (
+    ReadRouteSource,
+    current_source,
+    store_source,
+    validate_source,
 )
 from yuliang.platform.db import VerifiedIdentity
 from yuliang.platform.errors import ApiError, ErrorCode
@@ -24,23 +31,45 @@ def maintenance(connection: Connection) -> None:
         raise ValueError("能力证据与许可录入需要独立维护身份")
 
 
-def register_binding(connection: Connection, binding: Binding) -> None:
+def register_binding(
+    connection: Connection, binding: Binding, *, route_source: ReadRouteSource | None = None
+) -> None:
     maintenance(connection)
     source = (
         connection.execute(
             text(
-                "SELECT normalized_path,http_method FROM endpoint_catalog "
+                "SELECT normalized_path,http_method,record_json FROM endpoint_catalog "
                 "WHERE catalog_sha256=:sha AND catalog_id=:id AND provider=:provider"
             ),
             {"sha": binding.catalog_sha256, "id": binding.catalog_id, "provider": binding.provider},
         )
         .mappings()
-        .one()
+        .first()
     )
-    if (source["normalized_path"] and source["normalized_path"] != binding.normalized_path) or (
-        source["http_method"] != "UNKNOWN" and source["http_method"] != binding.http_method
-    ):
+    if source is None:
+        raise ValueError("能力绑定引用的目录不存在或不属于此来源版本")
+    mismatch = (
+        source["normalized_path"] and source["normalized_path"] != binding.normalized_path
+    ) or (source["http_method"] != "UNKNOWN" and source["http_method"] != binding.http_method)
+    if mismatch and route_source is None:
         raise ValueError("能力绑定与所引用目录的已知方法或路径不一致")
+    if source["record_json"].get("frontendExposed") is False and (
+        binding.operation_kind != "READ" or route_source is None
+    ):
+        raise ValueError("SDK补充目录仅允许有独立来源的只读绑定")
+    if (
+        binding.provider == "tencent"
+        and binding.normalized_path.startswith("/v1.3/")
+        and route_source is None
+    ):
+        raise ValueError("旧版接口须显式提供固定SDK只读路径依据")
+    if route_source is not None:
+        validate_source(
+            binding,
+            route_source,
+            source["record_json"],
+            connection.execute(text("SELECT clock_timestamp()")).scalar_one(),
+        )
     connection.execute(
         text("""
       INSERT INTO capability_bindings(id,tenant_id,account_id,connector_id,provider,product_line,
@@ -50,6 +79,8 @@ def register_binding(connection: Connection, binding: Binding) -> None:
     """),
         binding.model_dump(),
     )
+    if route_source is not None:
+        store_source(connection, binding, route_source)
 
 
 def record_evidence(connection: Connection, binding_id: UUID, evidence: Evidence) -> Evidence:
@@ -65,6 +96,20 @@ def record_evidence(connection: Connection, binding_id: UUID, evidence: Evidence
     binding = Binding.model_validate({key: row[key] for key in Binding.model_fields})
     if not proof_matches(binding, evidence) or evidence.checked_at > datetime.now(UTC):
         raise ValueError("证据类型或时间不符合对应读写上下文")
+    if (
+        evidence.phase == Phase.PATH
+        and evidence.result == "PASS"
+        and binding.provider == "tencent"
+        and binding.normalized_path.startswith("/v1.3/")
+    ):
+        source = current_source(connection, binding, datetime.now(UTC))
+        if (
+            source is None
+            or evidence.proof_ref != source.proof_ref
+            or evidence.checked_at < source.checked_at
+            or evidence.expires_at > source.expires_at
+        ):
+            raise ValueError("旧版只读路径阶段必须引用有效SDK来源并受其期限约束")
     existing = (
         connection.execute(
             text("SELECT * FROM capability_assertions WHERE id=:id"), {"id": evidence.id}
@@ -140,9 +185,10 @@ def evaluate_binding(
             raise
         return aggregate(binding, [], now=datetime.now(UTC), permitted=False)
     current = session.execute(
-        text("SELECT catalog_sha256 FROM catalog_head WHERE singleton")
-    ).scalar_one_or_none()
-    if current != binding.catalog_sha256:
+        text("SELECT access.catalog_is_current(:sha,:kind)"),
+        {"sha": binding.catalog_sha256, "kind": binding.operation_kind},
+    ).scalar_one()
+    if not current:
         return aggregate(binding, [], now=datetime.now(UTC)) | {
             "reason": "目录版本已变化，需重新绑定和取证"
         }

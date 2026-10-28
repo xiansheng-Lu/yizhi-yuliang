@@ -48,6 +48,10 @@ from yuliang.modules.connectors.native_reads import (
     native_signer,
 )
 from yuliang.modules.connectors.oauth import OAuthRejected, OAuthService, require_admin
+from yuliang.modules.connectors.plan_protocol import ARCHIVE as PLAN_ARCHIVE
+from yuliang.modules.connectors.plan_protocol import POLICY as PLAN_POLICY
+from yuliang.modules.connectors.plan_protocol import PlanLevel
+from yuliang.modules.connectors.plan_sync import AdqPlanSync
 from yuliang.modules.connectors.redaction import ArchivePolicy
 from yuliang.modules.connectors.registry import GatewayRegistry
 from yuliang.modules.connectors.resources import ApplicationResource, ResourceBundle
@@ -80,6 +84,7 @@ class PlatformRuntime:
         self.adq_assets: dict[UUID, AdqAssetSync] = {}
         self.adq_finance: dict[UUID, AdqFinanceSync] = {}
         self.adq_reports: dict[UUID, AdqReportSync] = {}
+        self.adq_plans: dict[UUID, AdqPlanSync] = {}
         self.shop_product_ids: dict[UUID, ShopProductIdSync] = {}
         self.shop_details: dict[UUID, ShopProductDetailSync] = {}
         self.shop_compass: dict[UUID, ShopCompassSync] = {}
@@ -206,6 +211,26 @@ class PlatformRuntime:
                     report_client,
                     self.token_for_read,
                     FactWriter(engine, settings.auth_audit_secret),
+                    item.readonly_interfaces,
+                    item.granted_scopes,
+                )
+                self.adq_plans[item.id] = AdqPlanSync(
+                    SyncStore(
+                        engine,
+                        CursorCodec(keys, bundle.key_version, audit_secret),
+                        policy=PLAN_POLICY,
+                    ),
+                    GovernedPlatformClient(
+                        RecordedPlatformClient(
+                            PlatformHttpClient(native_signer),
+                            PlatformArchive(engine, audit_secret),
+                            policy=PLAN_ARCHIVE,
+                            decoder=decode_verdict,
+                        ),
+                        governance,
+                        item.id,
+                    ),
+                    self.token_for_read,
                     item.readonly_interfaces,
                     item.granted_scopes,
                 )
@@ -608,3 +633,17 @@ class PlatformRuntime:
         if reader is None:
             raise OAuthRejected()
         return await reader.sync(ctx, batch_id, query)
+
+    async def sync_adq_plans(
+        self, ctx: GatewayContext, kind: PlanLevel, run_id: UUID
+    ) -> dict[str, Any]:
+        await self.token_for_read(ctx)
+        with business_transaction(self.engine, ctx.identity) as session:
+            app_id = session.execute(
+                text("SELECT application_id FROM provider_authorizations WHERE id=:id"),
+                dict(id=ctx.authorization_id),
+            ).scalar_one()
+        reader = self.adq_plans.get(app_id)
+        if reader is None:
+            raise OAuthRejected()
+        return await reader.sync(ctx, kind, run_id)

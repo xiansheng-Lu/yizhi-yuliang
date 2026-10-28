@@ -16,6 +16,7 @@ SDK_REVISION: Literal["81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9"] = (
 )
 ProfileName = Literal[
     "ADQ_CAMPAIGNS_V1_3_READ",
+    "ADQ_ADGROUPS_V1_3_READ",
     "ADQ_FUNDS_V1_3_READ",
     "ADQ_DAILY_REPORTS_V1_3_READ",
     "ADQ_HOURLY_REPORTS_V1_3_READ",
@@ -31,6 +32,12 @@ class RouteProfile:
 
 
 PROFILES = {
+    "ADQ_ADGROUPS_V1_3_READ": RouteProfile(
+        "adgroups/get",
+        "/v1.3/adgroups/get",
+        "pkg/api/api_adgroups.go",
+        "14c4726671b9d3ecb85c75553d8ad0723325cd1b7e6089bc1ff0500698061765",
+    ),
     "ADQ_CAMPAIGNS_V1_3_READ": RouteProfile(
         "campaigns/get",
         "/v1.3/campaigns/get",

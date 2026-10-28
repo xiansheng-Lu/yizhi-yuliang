@@ -2359,6 +2359,44 @@
         "settlement": 22,
         "migration": "0038_event_projections"
       }
+    },
+    "M1-06": {
+      "owner": "BE",
+      "status": "WAITING_RESOURCE",
+      "delivery": "ADQ原生OAuth换码、PG串行续期、固定回调、受控账户/计划/资金只读适配已交付；历史测试资源私有引用已采集，未执行真实授权",
+      "dependencyInput": "M1-05/M1-04既有通用基件；用户要求复用独立测试项目，并确认尚无业务租户且两账户属于不同店铺",
+      "technicalVerification": {
+        "result": "PASS",
+        "unitContractPassed": 609,
+        "targetedPostgresIntegrationPassed": 37,
+        "platformResponses": "SYNTHETIC_MOCKTRANSPORT",
+        "livePlatformCalls": 0
+      },
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F03"
+      },
+      "liveAcceptance": "NOT_EXECUTED_UNBOUND",
+      "evidence": "tasks/M1-06/README.md"
+    },
+    "M1-07": {
+      "owner": "BE",
+      "status": "WAITING_RESOURCE",
+      "delivery": "小店自研stable_token与权限/店铺隔离配置、受控店铺/商品标识/结算只读适配已交付；不虚构ISV链或商家回调，未执行真实授权",
+      "dependencyInput": "M1-05/M1-04既有通用基件；用户要求复用独立测试项目，并确认尚无业务租户且两账户属于不同店铺",
+      "technicalVerification": {
+        "result": "PASS",
+        "unitContractPassed": 609,
+        "targetedPostgresIntegrationPassed": 37,
+        "platformResponses": "SYNTHETIC_MOCKTRANSPORT",
+        "livePlatformCalls": 0
+      },
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F03"
+      },
+      "liveAcceptance": "NOT_EXECUTED_UNBOUND",
+      "evidence": "tasks/M1-07/README.md"
     }
   },
   "gates": {
@@ -2442,20 +2480,20 @@
     {
       "id": "E01",
       "status": "WAITING_RESOURCE",
-      "reason": "用户要求先提供配置清单，已交付resource-handoff清单和空模板并推送main ab2b975；实际应用凭据、scope和对象映射尚未提供",
+      "reason": "已从独立测试项目采集应用及本地凭据引用；用户确认尚无驭量业务租户，ADQ与小店对应不同店铺。实际业务映射、权限依据和唯一刷新者交接尚未完成，未执行真实联调",
       "affects": [
         "M1-06及相应真实ADQ验收"
       ],
-      "unblock": "安全配置实际应用凭据和HTTPS回调白名单，提供scope/账户映射与逐动作许可；不在聊天粘贴密钥"
+      "unblock": "建立实际租户与ADQ对应店铺/账户映射，核对已批准scope与只读接口，登记驭量应用实际HTTPS回调并完成单一刷新者交接；再执行明确范围的真实授权/只读验收"
     },
     {
       "id": "E02",
       "status": "WAITING_RESOURCE",
-      "reason": "用户要求先提供配置清单，已交付resource-handoff清单和空模板并推送main ab2b975；实际应用凭据、scope和对象映射尚未提供",
+      "reason": "已从独立测试项目采集应用及本地凭据引用；用户确认尚无驭量业务租户，ADQ与小店对应不同店铺。实际业务映射、权限依据和唯一刷新者交接尚未完成，未执行真实联调",
       "affects": [
         "M1-07及相应真实小店验收"
       ],
-      "unblock": "通过安全配置提供真实应用凭据、已登记HTTPS回调和授权店铺/scope映射；实际授权时按明确动作许可执行"
+      "unblock": "建立另一家实际店铺与租户/主体/小店AppID映射，核对自研模式与实际允许接口并完成单一刷新者交接；自研模式不额外要求不存在的外部OAuth回调，真实只读验收单列"
     }
   ],
   "rules": {
@@ -2541,8 +2579,15 @@
     "document": "resource-handoff/平台接入配置清单.md",
     "template": "resource-handoff/platform-inputs.template.json",
     "commit": "ab2b975",
-    "status": "CHECKLIST_DELIVERED_AWAITING_ACTUAL_INPUTS",
-    "runtimeConfiguration": "NOT_WIRED_BY_TEMPLATE",
-    "credentialsReceived": false
+    "status": "LOCAL_TEST_RESOURCES_COLLECTED_UNBOUND_ADAPTERS_IMPLEMENTED",
+    "runtimeConfiguration": "OPTIONAL_EXPLICIT_CONFIG_DISABLED",
+    "credentialsReceived": false,
+    "credentialReferencesReceived": true,
+    "businessTenantAssigned": false,
+    "shopRelationship": "DISTINCT_SHOPS",
+    "livePlatformCalls": 0,
+    "localPrivateResources": ".runtime/platform-config/resources.local.json",
+    "localPrivateChecklist": ".runtime/platform-config/inputs.local.json",
+    "adapterGuide": "resource-handoff/资源交接与原生适配说明.md"
   }
 }

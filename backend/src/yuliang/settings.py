@@ -1,6 +1,7 @@
 """进程启动配置：必填、显式校验、错误和repr隐藏凭据。"""
 
 from ipaddress import ip_network
+from pathlib import Path
 from typing import Literal
 from urllib.parse import urlsplit
 
@@ -30,6 +31,7 @@ class Settings(BaseSettings):
     email_code_secret: SecretStr | None = None
     email_daily_limit: int = Field(default=10, ge=1, le=100)
     admin_api_enabled: bool = False
+    platform_resources_file: Path | None = None
     admin_allowed_networks: list[str] = Field(default_factory=lambda: ["127.0.0.1/32", "::1/128"])
     worker_queue_prefix: str = Field(default="yuliang", pattern=r"^[a-z0-9][a-z0-9-]{0,63}$")
     operations_allowed_networks: list[str] = Field(
@@ -42,6 +44,8 @@ class Settings(BaseSettings):
             not self.identity_api_enabled or not self.admin_allowed_networks
         ):
             raise ValueError("管理入口需要身份接口与明确来源网段")
+        if self.platform_resources_file is not None and not self.identity_api_enabled:
+            raise ValueError("平台接入需要真实身份与会话接口")
         for network in self.admin_allowed_networks + self.operations_allowed_networks:
             ip_network(network)
         if self.identity_api_enabled:

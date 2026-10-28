@@ -85,11 +85,13 @@ class ConnectionService:
         audit_key: SecretStr,
         *,
         implemented_reads: frozenset[str] = frozenset(),
+        reauthorization_applications: frozenset[UUID] = frozenset(),
     ) -> None:
         if not implemented_reads <= {"adq", "wxpromo", "wxshop"}:
             raise ValueError("产品线尚未支持适配")
         self.engine, self.identity, self.session_id = engine, identity, session_id
         self.request_id, self.key, self.implemented_reads = request_id, audit_key, implemented_reads
+        self.reauthorization_applications = reauthorization_applications
 
     def _admin(self, session: Session) -> None:
         if not session.execute(
@@ -253,7 +255,8 @@ class ConnectionService:
                         "version": grant["version"],
                         "operations": operations,
                         "resources": health,
-                        "reauthorizationAvailable": False,
+                        "reauthorizationAvailable": grant["application_id"]
+                        in self.reauthorization_applications,
                     }
                 )
             connectors = []

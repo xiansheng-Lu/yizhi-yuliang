@@ -43,6 +43,9 @@ Action = Literal[
     "budget.observe",
     "budget.resolve",
     "execution.recover",
+    "approval.request",
+    "approval.manual",
+    "approval.policy",
 ]
 ObjectType = Literal[
     "user",
@@ -64,6 +67,7 @@ ObjectType = Literal[
     "budget_finalization",
     "budget_discrepancy",
     "execution_recovery",
+    "approval",
 ]
 ChangedField = Literal["displayName", "name", "status", "permissions", "scope"]
 

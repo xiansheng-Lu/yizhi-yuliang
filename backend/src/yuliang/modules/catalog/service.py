@@ -61,9 +61,13 @@ def link_authorization(
         raise ValueError("授权、账户或产品线不匹配")
     connection.execute(
         text("""INSERT INTO authorization_account_links(tenant_id,authorization_id,
-        account_id,provider,product_line,proof_ref)
-        VALUES(:tenant,:auth,:account,:provider,:product,:proof)
-        ON CONFLICT(tenant_id,authorization_id,account_id) DO NOTHING"""),
+        account_id,provider,product_line,proof_ref,native_id_snapshot)
+        VALUES(:tenant,:auth,:account,:provider,:product,:proof,:native)
+        ON CONFLICT(tenant_id,authorization_id,account_id) DO UPDATE
+        SET native_id_snapshot=EXCLUDED.native_id_snapshot,proof_ref=EXCLUDED.proof_ref,
+         verified_at=clock_timestamp()
+        WHERE authorization_account_links.native_id_snapshot
+         IS DISTINCT FROM EXCLUDED.native_id_snapshot"""),
         {
             "tenant": grant["tenant_id"],
             "auth": authorization_id,
@@ -71,6 +75,7 @@ def link_authorization(
             "provider": grant["provider"],
             "product": grant["product_line"],
             "proof": proof_ref,
+            "native": account["native_id"],
         },
     )
 

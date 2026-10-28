@@ -1,0 +1,63 @@
+{
+  "task": "M4-04",
+  "date": "2026-10-28",
+  "baseline": "70ab960",
+  "status": "TECHNICAL_AGGREGATOR_VERIFIED",
+  "postgres": {
+    "group": "overview-facts",
+    "passed": 4,
+    "seconds": 89.62,
+    "head": "0065_content_imports",
+    "fullMatchedNormalizedFacts": [
+      {
+        "count": 100,
+        "accounts": 2,
+        "days": 10,
+        "metrics": 5,
+        "spendMinor": 2000,
+        "gmvMinor": 6000,
+        "roi": 3,
+        "cpmMinor": 5000
+      },
+      {
+        "count": 5000,
+        "accounts": 10,
+        "days": 100,
+        "metrics": 5,
+        "spendMinor": 100000,
+        "gmvMinor": 300000,
+        "roi": 3,
+        "cpmMinor": 5000
+      }
+    ],
+    "independentSql": "COUNT and SUM by exact frozen account UUID list/date/DAY/ACCOUNT; actual sync/source/contracts path"
+  },
+  "unit": {
+    "passed": 4,
+    "seconds": 0.77
+  },
+  "ruff": "PASS",
+  "mypy": {
+    "result": "PASS",
+    "sourceFiles": 3
+  },
+  "frontend": {
+    "result": "PASS",
+    "actualOverviewHelpers": true,
+    "loaderWired": false,
+    "httpEndpointAdded": false
+  },
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "dbWindow": "RELEASED",
+  "migration": "NONE",
+  "manualSignoff": "PENDING",
+  "notAvailable": [
+    "canonical plan/live dimensions",
+    "status and traffic distributions",
+    "full funnel",
+    "orders/conversion",
+    "V8 full workspace",
+    "FE loader wiring"
+  ]
+}

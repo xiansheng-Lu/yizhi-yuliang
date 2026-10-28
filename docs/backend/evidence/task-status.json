@@ -4,7 +4,7 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "currentFocus": "M3-13a",
+  "currentFocus": "M3-15a",
   "tasks": {
     "R00-01": {
       "owner": "BE",
@@ -2849,6 +2849,68 @@
         "result": "PASS_LOCAL_TECHNICAL_SCOPE_ONLY"
       },
       "delivery": "订单/售后列表分页和详情最小观察、独立商家结算历史单位视图技术通过；未知财务/时间含义不做规范累计"
+    },
+    "M3-13a": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "evidence": "tasks/M3-13a/README.md",
+      "review": {
+        "frontend": "PENDING",
+        "backend": "PENDING"
+      },
+      "technicalVerification": {
+        "livePlatformCalls": 0,
+        "evidence": "tasks/M3-13a/verification.json",
+        "paidCalls": 0,
+        "result": "PASS_LOCAL_VERIFIED_SCOPE",
+        "combinedRegression": "commerce-content-verification.json"
+      },
+      "blockedBy": [
+        "E08"
+      ],
+      "delivery": "云文档五kind CRUD、独立版本历史/CAS冲突、店铺商品权限、在途引用删除守卫技术通过；F09云接线与素材引用另卡"
+    },
+    "M4-02": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "evidence": "tasks/M4-02/README.md",
+      "review": {
+        "frontend": "PENDING",
+        "backend": "PENDING"
+      },
+      "technicalVerification": {
+        "livePlatformCalls": 0,
+        "evidence": "tasks/M4-02/verification.json",
+        "paidCalls": 0,
+        "result": "PASS_LOCAL_VERIFIED_SCOPE",
+        "combinedRegression": "commerce-content-verification.json"
+      },
+      "blockedBy": [
+        "E08"
+      ],
+      "delivery": "日/连续七天/自然月规范事实覆盖、提交与Worker复检、缺覆盖持久失败技术通过；ADQ归因不替代小店经营"
+    },
+    "M3-08a": {
+      "owner": "BE",
+      "status": "IN_PROGRESS",
+      "evidence": "tasks/M3-08a/README.md",
+      "review": {
+        "frontend": "PENDING",
+        "backend": "PENDING"
+      },
+      "technicalVerification": {
+        "livePlatformCalls": 0,
+        "evidence": "tasks/M3-08a/verification.json",
+        "paidCalls": 0,
+        "result": "PASS_LOCAL_VERIFIED_SCOPE",
+        "combinedRegression": "commerce-content-verification.json"
+      },
+      "blockedBy": [
+        "E01",
+        "E08",
+        "M3-08a_OTHER_LOOKUP_KINDS"
+      ],
+      "delivery": "仅自定义人群受控完整来源分页/搜索/上下文签名游标与options HTTP切片通过；其他LookupKind未实现，不关闭整卡"
     }
   },
   "gates": {
@@ -2932,7 +2994,7 @@
     {
       "id": "E01",
       "status": "WAITING_RESOURCE",
-      "reason": "用户确认两个独立项目均属于yizhi租户且已有access_token和平台调用实现；待核对实际数据库租户/不同店铺/原生账户映射、scope与唯一刷新者交接。本轮未执行真实平台验收。",
+      "reason": "用户确认yizhi租户与两个项目现有token/API实现，并明确允许只读接口调用；正在复用原SDK/唯一服务核验。驭量内部店铺/账户映射、批准scope细目和财务口径仍逐项核对，不因此伪造平台全验收。",
       "affects": [
         "M1-06及相应真实ADQ验收"
       ],
@@ -2941,7 +3003,7 @@
     {
       "id": "E02",
       "status": "WAITING_RESOURCE",
-      "reason": "用户确认两个独立项目均属于yizhi租户且已有access_token和平台调用实现；待核对实际数据库租户/不同店铺/原生账户映射、scope与唯一刷新者交接。本轮未执行真实平台验收。",
+      "reason": "用户确认yizhi租户与两个项目现有token/API实现，并明确允许只读接口调用；正在复用原SDK/唯一服务核验。驭量内部店铺/账户映射、批准scope细目和财务口径仍逐项核对，不因此伪造平台全验收。",
       "affects": [
         "M1-07及相应真实小店验收"
       ],
@@ -2954,20 +3016,20 @@
     "offline": "离线通过不等于真实依赖、前端联调或平台验收通过"
   },
   "nextTask": {
-    "status": "IN_PROGRESS",
-    "id": "M3-13a"
+    "status": "READY",
+    "id": "M3-15a"
   },
   "continuation": {
     "requestedOn": "2026-10-27",
     "authorization": "持续推进后端任务卡，缺资源再找用户对接",
-    "heartbeat": "已在本聊天设置5分钟中断/空闲恢复；卡间立即推进",
+    "heartbeat": "本聊天多Agent连续推进；已启用5分钟中断/空闲恢复，ACTIVE，automation",
     "environment": "WSL2 Ubuntu Docker; UV_PROJECT_ENVIRONMENT=/home/lenovo/.cache/yuliang-venv",
     "latestUserRequest": "继续采用多agent模式持续开发，当前任务结束直接开启下一个任务，需要资源再找用户",
     "developmentPolicy": "缺人工/外部验收时记录并继续可独立技术准备；正式门禁、平台调用和付费仍按各自证据许可",
-    "lastCompletedTechnicalTask": "M1-13",
-    "nextTechnicalTask": "M3-13a",
+    "lastCompletedTechnicalTask": "M4-02",
+    "nextTechnicalTask": "M3-15a",
     "executionRules": "docs/backend/evidence/execution-rules.md",
-    "checkpoint": "M1-11详情5、M1-12罗盘7、M1-13订单8、外部token运行时5项专项通过；关联native8/商品4/sync14及726单元契约通过。已立即领取M3-13a/M3-08a/M4-02，未代替P验收和签字。",
+    "checkpoint": "第二批云稿5专项、覆盖17专项、人群7专项及755单元/契约、806全量设施+1跳过通过；0053开发库19表0行/NOLOGIN。下一素材上传、分析计算、推广目标切片。用户新授只读许可，原项目真实只读核验单列。",
     "technicalPreparationQueue": [
       "M3-13a",
       "M3-08a",
@@ -2993,7 +3055,13 @@
       }
     ],
     "integrationCheckpoint": "已整合前端frontend目录重构和M1-06/07原生适配；SSE迁移改为0040，保留0039令牌续期与资源未绑定门禁",
-    "multiAgentAuthorization": "2026-10-28用户明确授权多Agent持续开发，资源阻塞单列；BE负责人不变"
+    "multiAgentAuthorization": "2026-10-28用户明确授权多Agent持续开发，资源阻塞单列；BE负责人不变",
+    "nextReadyQueue": [
+      "M3-15a",
+      "M4-01b",
+      "M3-08a:targets",
+      "M1-18"
+    ]
   },
   "frontendIntegration": {
     "F01": {
@@ -3051,7 +3119,7 @@
       "evidence": "backend/tools/token-service-hardening/README.md",
       "productionSwitchover": false,
       "actualCredentialsReadByThisTask": false,
-      "readonlyValidationPermission": "NOT_RECEIVED",
+      "readonlyValidationPermission": "USER_APPROVED_READONLY_2026_10_28",
       "note": "用户确认两个项目均属于yizhi，店铺不同；凭据引用已采集，原服务唯一刷新模式新增受控运行时接线但未启用真实配置。",
       "nativeAdaptationCommit": "c70365467bef6ba05a3732c5249de13a6df3a1b5"
     },

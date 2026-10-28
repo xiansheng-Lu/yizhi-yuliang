@@ -24,9 +24,15 @@ from yuliang.platform.db import VerifiedIdentity, business_transaction
 from yuliang.platform.errors import ApiError, ErrorCode
 from yuliang.worker.app import KINDS, create_celery
 
+from .test_adq_reports import configuration_ready as configuration_ready
+from .test_adq_reports import contract, query
+from .test_adq_reports import governance as governance
+from .test_adq_reports import legacy as legacy
+from .test_adq_reports import oauth_ready as oauth_ready
+from .test_adq_reports import reports as reports
 from .test_capability_evidence import capability as capability
 from .test_identity_database import database as database
-from .test_password_sessions import challenge, sign_in
+from .test_password_sessions import challenge
 from .test_password_sessions import login_api as login_api
 
 pytestmark = pytest.mark.integration
@@ -34,9 +40,14 @@ PREFIX = "/v1/business-analysis"
 
 
 @pytest.fixture
-def analysis_ready(capability: dict[str, Any]) -> dict[str, Any]:
-    data = capability
-    sign_in(data)
+async def analysis_ready(reports: dict[str, Any]) -> dict[str, Any]:
+    data = reports
+    # configuration_ready已实际登录，不重复消费登录防护令牌
+    contract(data)
+    data["state"].update(cost=0, gmv=0)
+    await data["reader"].sync(
+        data["contexts"]["DAILY"], uuid4(), query(start_date="2026-10-01", end_date="2026-10-07")
+    )
     value = AnalysisCreate.model_validate(
         dict(
             query=dict(
@@ -44,7 +55,7 @@ def analysis_ready(capability: dict[str, Any]) -> dict[str, Any]:
                 platformId="adq",
                 startDate="2026-10-01",
                 endDate="2026-10-07",
-                dimensions=["ads", "shop"],
+                dimensions=["ads"],
                 timezone="Asia/Shanghai",
             ),
             idempotencyKey=str(uuid4()),
@@ -188,7 +199,7 @@ def test_same_key_race_and_reordered_dimensions_keep_original_task(
         tasks = list(pool.map(lambda _: service.create(value), range(2)))
     assert tasks[0] == tasks[1] and counts(data) == (1, 0, 0, 1)
     reordered = AnalysisCreate.model_validate(
-        value.model_dump() | {"query": value.query.model_dump() | {"dimensions": ("shop", "ads")}}
+        value.model_dump() | {"query": value.query.model_dump() | {"dimensions": ("ads",)}}
     )
     assert service.create(reordered) == tasks[0]
     changed = AnalysisCreate.model_validate(
@@ -453,3 +464,97 @@ def test_platform_link_requires_both_scopes_and_current_account_mask(
         )
     with pytest.raises(ApiError):
         data["analysis"].get(task.id)
+
+
+@pytest.mark.asyncio
+async def test_coverage_real_zero_missing_day_and_original_key(
+    analysis_ready: dict[str, Any],
+) -> None:
+    d = analysis_ready
+    original = d["analysis"].create(d["input"])
+    with d["maintenance"].begin() as owner:
+        owner.execute(text("SET LOCAL ROLE app_owner"))
+        owner.execute(
+            text("UPDATE metric_facts SET refund_policy='UNKNOWN' WHERE fact_date='2026-10-07'")
+        )
+    assert d["analysis"].create(d["input"]).id == original.id
+    missing = d["input"].model_copy(update=dict(idempotency_key=str(uuid4())))
+    with pytest.raises(ApiError) as err:
+        d["analysis"].create(missing)
+    assert err.value.code == ErrorCode.DATA_COVERAGE_INSUFFICIENT
+    assert any("2026-10-07" in row["message"] for row in err.value.details)
+    assert len(d["analysis"].tasks()) == 1
+
+
+def test_coverage_invalid_period_and_missing_dimension(analysis_ready: dict[str, Any]) -> None:
+    d = analysis_ready
+    for changes, code in [
+        (dict(end_date="2026-10-02"), ErrorCode.INVALID_INPUT),
+        (dict(dimensions=("live",)), ErrorCode.DATA_COVERAGE_INSUFFICIENT),
+    ]:
+        value = AnalysisCreate.model_validate(
+            d["input"].model_dump()
+            | dict(query=d["input"].query.model_dump() | changes, idempotency_key=str(uuid4()))
+        )
+        with pytest.raises(ApiError) as err:
+            d["analysis"].create(value)
+        assert err.value.code == code
+    assert not d["analysis"].tasks()
+
+
+def test_worker_rechecks_missing_facts_before_recording_delivery(
+    analysis_ready: dict[str, Any],
+    monkeypatch: Any,
+) -> None:
+    from yuliang.worker import tasks
+
+    d = analysis_ready
+    task = d["analysis"].create(d["input"])
+    _, payload = notice(d, task.id)
+    with d["maintenance"].begin() as owner:
+        owner.execute(text("SET LOCAL ROLE app_owner"))
+        owner.execute(
+            text("UPDATE metric_facts SET refund_policy='UNKNOWN' WHERE metric_name='spend_minor'")
+        )
+    monkeypatch.setattr(tasks, "engine", lambda: d["engine"])
+    result = tasks.accept_analysis.run(payload)
+    assert result["deliveryRecorded"] is True
+    failed = d["analysis"].get(task.id)
+    assert failed.status == "failed" and "DATA_COVERAGE_INSUFFICIENT" in str(failed.error)
+    with business_transaction(d["engine"], d["identity"]) as s:
+        assert s.execute(text("SELECT count(*) FROM analysis_deliveries")).scalar_one() == 1
+
+
+def test_advertising_facts_cannot_cover_shop_dimension(analysis_ready: dict[str, Any]) -> None:
+    d = analysis_ready
+    value = AnalysisCreate.model_validate(
+        d["input"].model_dump()
+        | dict(query=d["input"].query.model_dump() | dict(dimensions=("shop",)))
+    )
+    with pytest.raises(ApiError) as error:
+        d["analysis"].create(value)
+    assert error.value.code == ErrorCode.DATA_COVERAGE_INSUFFICIENT
+    assert not d["analysis"].tasks()
+
+
+@pytest.mark.parametrize("invalidate", ["expired_contract", "partial_run", "mixed_unit"])
+def test_coverage_rejects_incomplete_or_unconfirmed_source(
+    analysis_ready: dict[str, Any],
+    invalidate: str,
+) -> None:
+    d = analysis_ready
+    with d["maintenance"].begin() as owner:
+        owner.execute(text("SET LOCAL ROLE app_owner"))
+        if invalidate == "expired_contract":
+            owner.execute(text("UPDATE adq_report_contracts SET active=false"))
+        elif invalidate == "partial_run":
+            owner.execute(text("UPDATE sync_runs SET state='PARTIAL'"))
+        else:
+            owner.execute(
+                text("""UPDATE metric_facts SET refund_policy='NET_OF_REFUND'
+                WHERE fact_date='2026-10-07'""")
+            )
+    with pytest.raises(ApiError) as error:
+        d["analysis"].create(d["input"])
+    assert error.value.code == ErrorCode.DATA_COVERAGE_INSUFFICIENT
+    assert not d["analysis"].tasks()

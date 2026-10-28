@@ -106,6 +106,20 @@ def accept_analysis(payload: dict[str, Any]) -> dict[str, Any]:
     identity = VerifiedIdentity(item.tenant_id, item.membership_id, item.user_id)
 
     def receive(session: Any) -> None:
+        from yuliang.modules.analysis.service import AnalysisService
+        from yuliang.modules.reporting.coverage import require_coverage
+
+        query = AnalysisService._task(session, item.job_id).query
+        from yuliang.platform.errors import ApiError, ErrorCode
+
+        try:
+            require_coverage(session, query)
+        except ApiError as error:
+            if error.code != ErrorCode.DATA_COVERAGE_INSUFFICIENT:
+                raise
+            session.execute(
+                text("SELECT access.analysis_coverage_failed(:id)"), dict(id=item.job_id)
+            )
         session.execute(text("SELECT access.analysis_receive(:id)"), {"id": item.event_id})
 
     try:

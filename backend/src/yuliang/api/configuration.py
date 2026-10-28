@@ -57,3 +57,37 @@ def capabilities(request: Request) -> JSONResponse:
         request,
         actor.capabilities(context).model_dump(mode="json", by_alias=True, exclude_none=True),
     )
+
+
+@router.get("/options")
+def options(request: Request) -> JSONResponse:
+    actor = configuration(request)
+    values: dict[str, object] = dict(request.query_params)
+    if any(len(request.query_params.getlist(k)) != 1 for k in request.query_params):
+        raise ApiError(ErrorCode.INVALID_INPUT, "资源查询参数不能重复")
+    filters = {
+        key: str(values.pop(key, "")) for key in ("kind", "q", "cursor", "category", "parentId")
+    }
+    for key in ("targetIds", "placementIds"):
+        if key in values:
+            values[key] = str(values[key]).split(",") if values[key] else []
+    try:
+        context = ConfigurationContext.model_validate(values)
+    except ValidationError:
+        raise ApiError(ErrorCode.INVALID_INPUT, "资源上下文缺失或格式不合法") from None
+    runtime = getattr(request.app.state, "platform_runtime", None)
+    if runtime is None:
+        raise ApiError(ErrorCode.CAPABILITY_UNAVAILABLE, "资源来源尚未接入")
+    from uuid import UUID
+
+    result = runtime.lookup_options(
+        actor.identity,
+        context,
+        filters["kind"],
+        q=filters["q"],
+        cursor=filters["cursor"] or None,
+        category=filters["category"],
+        parent_id=filters["parentId"],
+        request_id=UUID(request.state.request_id),
+    )
+    return success(request, result)

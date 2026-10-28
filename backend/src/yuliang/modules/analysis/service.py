@@ -38,6 +38,16 @@ class AnalysisService:
     def create(self, value: AnalysisCreate) -> AnalysisTask:
         try:
             with business_transaction(self.engine, self.identity) as session:
+                session.execute(
+                    text("SELECT pg_advisory_xact_lock(hashtextextended(:key,760402))"),
+                    dict(
+                        key=f"{self.identity.tenant_id}|{self.identity.user_id}|{value.idempotency_key}"
+                    ),
+                )
+                existing = session.execute(
+                    text("SELECT id FROM analysis_tasks WHERE idempotency_key=:key"),
+                    dict(key=value.idempotency_key),
+                ).scalar_one_or_none()
                 identifier = session.execute(
                     text("SELECT access.analysis_admit(CAST(:query AS jsonb),:key)"),
                     {
@@ -45,6 +55,10 @@ class AnalysisService:
                         "key": value.idempotency_key,
                     },
                 ).scalar_one()
+                if existing is None:
+                    from yuliang.modules.reporting.coverage import require_coverage
+
+                    require_coverage(session, value.query)
                 return self._task(session, identifier)
         except DBAPIError as error:
             code = getattr(error.orig, "sqlstate", None)

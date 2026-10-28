@@ -1,0 +1,23 @@
+{
+  "supportedKind": [
+    "audiences"
+  ],
+  "unitPassed": 9,
+  "date": "2026-10-28",
+  "integrationSeconds": 8.24,
+  "unitSeconds": 0.37,
+  "paidCalls": 0,
+  "mypy": "PASS_NEW_SOURCE_ROUTE_AND_TESTS_7_FILES",
+  "integrationPassed": 7,
+  "sourceRevision": "81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9",
+  "humanReview": "PENDING_BE_F11",
+  "http": "REAL_SESSION_RUNTIME_DISPATCH_LOOKUP_SERVICE_PG_SYNTHETIC_APP_AND_HTTP",
+  "integrationCommand": "python scripts/test_infrastructure.py --group resource-lookups --details",
+  "liveAcceptance": "NOT_RUN_E01",
+  "result": "PASS_AUDIENCES_SLICE_ONLY",
+  "unsupportedKinds": "EXPLICIT_CAPABILITY_UNAVAILABLE",
+  "ruff": "PASS",
+  "platformCalls": 0,
+  "taskOverall": "PARTIAL_OTHER_LOOKUP_KINDS_NOT_IMPLEMENTED",
+  "migration": "0052_resource_lookups"
+}

@@ -1,0 +1,60 @@
+{
+  "checkedOn": "2026-10-28",
+  "liveCalls": 0,
+  "sourceType": "OFFICIAL_FIXED_SDK",
+  "response": "data.list customAudienceStruct plus page_info",
+  "request": "GET /v3.0/custom_audiences/get; account_id,page,page_size,fields",
+  "sources": [
+    {
+      "repository": "https://github.com/TencentAd/marketing-api-go-sdk",
+      "revision": "81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9",
+      "sha256": "a66e41365cb0206a614e5911e203fb54f5a1bcd662a429c47bed8420ceb86574",
+      "path": "pkg/api/v3/api_custom_audiences.go",
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/api/v3/api_custom_audiences.go"
+    },
+    {
+      "repository": "https://github.com/TencentAd/marketing-api-go-sdk",
+      "revision": "81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9",
+      "sha256": "306822690abfec83c4c9284a35777f7ca51eda950da025a7369df73f5500a56e",
+      "path": "pkg/model/v3/model_custom_audiences_get_response_data.go",
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/model/v3/model_custom_audiences_get_response_data.go"
+    },
+    {
+      "repository": "https://github.com/TencentAd/marketing-api-go-sdk",
+      "revision": "81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9",
+      "sha256": "93496b77894dc47360637853e51791007614cdb4859d54ccccb8df58703198e1",
+      "path": "pkg/model/v3/model_custom_audience_struct.go",
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/model/v3/model_custom_audience_struct.go"
+    },
+    {
+      "repository": "https://github.com/TencentAd/marketing-api-go-sdk",
+      "revision": "81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9",
+      "sha256": "1924d9371dda2a5d3c09460f5ca9b26ce8692c61f93d698d16bf1fa809f17878",
+      "path": "pkg/model/v3/model_audience_online_status.go",
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/model/v3/model_audience_online_status.go"
+    },
+    {
+      "repository": "https://github.com/TencentAd/marketing-api-go-sdk",
+      "revision": "81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9",
+      "sha256": "8017ab9df93d51af4ae9c99441c732768f54ba14bd5bb795cd1657ea778880d9",
+      "path": "pkg/model/v3/model_process_status.go",
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/model/v3/model_process_status.go"
+    },
+    {
+      "repository": "https://github.com/TencentAd/marketing-api-go-sdk",
+      "revision": "81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9",
+      "sha256": "350c37cfa686096c020022c3ae317e24f7ba1f3d826e7af3fbfc56a2b866f30b",
+      "path": "pkg/model/v3/model_page_info.go",
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/model/v3/model_page_info.go"
+    },
+    {
+      "revision": "81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9",
+      "repository": "https://github.com/TencentAd/marketing-api-go-sdk",
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/config/v3/configuration.go",
+      "path": "pkg/config/v3/configuration.go",
+      "sha256": "5be2b6f6ce9c7cdb13311f5a92b07420aff2d4d081f6136e9ab600bc5923bf19"
+    }
+  ],
+  "contextEligibility": "INDEPENDENT_EXACT_CONFIGURATION_CONTEXT_PROOF_REQUIRED",
+  "scope": "MUST_HAVE_INDEPENDENT_ACTUAL_SCOPE_PROOF"
+}

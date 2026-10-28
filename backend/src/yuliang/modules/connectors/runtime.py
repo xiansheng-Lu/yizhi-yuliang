@@ -1,6 +1,8 @@
 """按显式私有交接件装配原生授权和只读适配器；未就绪资源保持禁用。"""
 
 import base64
+import hashlib
+import hmac
 import json
 from datetime import date
 from pathlib import Path
@@ -11,6 +13,8 @@ from pydantic import SecretBytes, SecretStr
 from sqlalchemy import Engine, text
 from sqlalchemy.orm import Session
 
+from yuliang.modules.configuration.lookup_service import LookupService
+from yuliang.modules.configuration.models import ConfigurationContext
 from yuliang.modules.connectors.adq_assets import MIRROR_POLICY, AdqAssetSync, AssetKind
 from yuliang.modules.connectors.adq_finance import AdqFinanceSync
 from yuliang.modules.connectors.adq_finance_protocol import (
@@ -30,6 +34,8 @@ from yuliang.modules.connectors.external_tokens import ExternalTokenConfig, Exte
 from yuliang.modules.connectors.governance import PlatformGovernance, QuotaLimits
 from yuliang.modules.connectors.governed import GovernedPlatformClient
 from yuliang.modules.connectors.http import PlatformHttpClient
+from yuliang.modules.connectors.lookup_protocol import LOOKUP_ARCHIVE, LOOKUP_POLICY
+from yuliang.modules.connectors.lookup_sync import AudienceLookupSync
 from yuliang.modules.connectors.native_auth import NativeAuthorization
 from yuliang.modules.connectors.native_reads import (
     ReadOnlyNativeAdapter,
@@ -64,6 +70,7 @@ class PlatformRuntime:
         self.engine, self.bundle = engine, bundle
         self.oauth: OAuthService | None = None
         self.governance: PlatformGovernance | None = None
+        self.lookup_key: SecretStr | None = None
         self.registry = GatewayRegistry()
         self.adq_assets: dict[UUID, AdqAssetSync] = {}
         self.adq_finance: dict[UUID, AdqFinanceSync] = {}
@@ -72,6 +79,7 @@ class PlatformRuntime:
         self.shop_details: dict[UUID, ShopProductDetailSync] = {}
         self.shop_compass: dict[UUID, ShopCompassSync] = {}
         self.shop_orders: dict[UUID, ShopOrderSync] = {}
+        self.audience_lookups: dict[UUID, AudienceLookupSync] = {}
         self.ports = {
             item.id: NativeAuthorization(item) for item in bundle.applications if item.enabled
         }
@@ -93,6 +101,13 @@ class PlatformRuntime:
         ):
             raise ValueError("平台state密钥须独立且至少32字符")
         self.oauth = OAuthService(engine, state_key, TokenCipher(keys, bundle.key_version))
+        self.lookup_key = SecretStr(
+            hmac.new(
+                state_key.get_secret_value().encode(),
+                b"yuliang-resource-lookup-cursor-v1",
+                hashlib.sha256,
+            ).hexdigest()
+        )
         if settings.auth_audit_secret is None:
             raise ValueError("平台存档需要独立审计密钥")
         self.governance = PlatformGovernance.from_url(
@@ -186,6 +201,25 @@ class PlatformRuntime:
                     FactWriter(engine, settings.auth_audit_secret),
                     item.readonly_interfaces,
                     item.granted_scopes,
+                )
+                self.audience_lookups[item.id] = AudienceLookupSync(
+                    SyncStore(
+                        engine,
+                        CursorCodec(keys, bundle.key_version, audit_secret),
+                        policy=LOOKUP_POLICY,
+                    ),
+                    GovernedPlatformClient(
+                        RecordedPlatformClient(
+                            PlatformHttpClient(native_signer),
+                            PlatformArchive(engine, audit_secret),
+                            policy=LOOKUP_ARCHIVE,
+                            decoder=decode_verdict,
+                        ),
+                        governance,
+                        item.id,
+                    ),
+                    self.token_for_read,
+                    item.readonly_interfaces,
                 )
 
             if item.connector_id == "wxshop" and item.granted_scopes:
@@ -398,6 +432,56 @@ class PlatformRuntime:
         with business_transaction(self.engine, ctx.identity) as session:
             item, _ = self._read_resource(session, ctx)
             return item.id
+
+    def lookup_options(
+        self,
+        identity: VerifiedIdentity,
+        context: ConfigurationContext,
+        kind: str,
+        *,
+        request_id: UUID,
+        q: str = "",
+        cursor: str | None = None,
+        category: str = "",
+        parent_id: str = "",
+    ) -> dict[str, Any]:
+        from yuliang.platform.errors import ApiError, ErrorCode
+
+        candidates = [
+            self.audience_lookups[item.id]
+            for item in self.bundle.applications
+            if item.enabled
+            and item.tenant_id == identity.tenant_id
+            and item.connector_id == context.product
+            and item.account_id == context.account_id
+            and str(item.shop_id) == context.shop_id
+            and item.id in self.audience_lookups
+        ]
+        if len(candidates) != 1 or self.lookup_key is None:
+            raise ApiError(ErrorCode.CAPABILITY_UNAVAILABLE, "该资源范围尚未接入")
+        return LookupService(candidates[0], self.lookup_key).options(
+            identity,
+            context,
+            kind,
+            request_id=request_id,
+            q=q,
+            cursor=cursor,
+            category=category,
+            parent_id=parent_id,
+        )
+
+    async def sync_lookup_audiences(
+        self,
+        ctx: GatewayContext,
+        context: ConfigurationContext,
+        run_id: UUID,
+        *,
+        page_size: int = 100,
+    ) -> dict[str, Any]:
+        reader = self.audience_lookups.get(self._application_for_read(ctx))
+        if reader is None:
+            raise OAuthRejected()
+        return await reader.sync(ctx, context, run_id, page_size=page_size)
 
     async def sync_shop_detail(
         self, ctx: GatewayContext, run_id: UUID, product_id: str

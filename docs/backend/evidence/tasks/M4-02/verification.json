@@ -1,0 +1,20 @@
+{
+  "ruff": "PASS",
+  "result": "PASS_REAL_LOCAL_PG_HTTP_RABBITMQ_REDIS",
+  "mypySourceFiles": 7,
+  "integration": {
+    "passed": 17,
+    "command": "uv run --frozen python scripts/test_infrastructure.py --group analysis --details",
+    "seconds": 32.68
+  },
+  "date": "2026-10-28",
+  "review": "PENDING_BE_F08",
+  "paidCalls": 0,
+  "livePlatformCalls": 0,
+  "worker": "actual accept_analysis handler; failed persists for coverage change; computation not implemented",
+  "unit": {
+    "passed": 6,
+    "command": "uv run --frozen pytest tests/unit/test_analysis_coverage.py -q",
+    "seconds": 0.23
+  }
+}

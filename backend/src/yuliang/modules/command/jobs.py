@@ -248,8 +248,14 @@ class CommandJob(StrictJobModel):
             or self.execution_receipt.verification != "MATCHED"
             or self.execution_receipt.observed_value is None
             or self.execution_receipt.observed_value.kind != self.new_value.kind
+            or (
+                isinstance(self.new_value, MoneyValue | BooleanValue)
+                and self.execution_receipt.observed_value != self.new_value
+            )
         ):
             raise ValueError("成功必须有平台明确受理和独立匹配回执")
+        if handoff and (self.execution_receipt is not None or self.status == JobStatus.SUCCEEDED):
+            raise ValueError("人工交接申请不能声明平台回执或自动完成")
         if (
             (self.status == JobStatus.DRAFT and self.approval.state != "NOT_REQUESTED")
             or (self.status == JobStatus.PENDING_APPROVAL and self.approval.state != "PENDING")

@@ -80,6 +80,7 @@ def main() -> int:
             "settlement",
             "budget-governance",
             "execution-recovery",
+            "projections",
         ),
         default="all",
     )
@@ -125,6 +126,7 @@ def main() -> int:
             "tests/integration/test_execution_recovery.py",
             "tests/integration/test_execution_recovery_worker.py",
         ],
+        "projections": ["tests/integration/test_job_projections.py"],
         "parser": [
             "tests/integration/test_command_parse.py",
             "tests/integration/test_workspace.py",

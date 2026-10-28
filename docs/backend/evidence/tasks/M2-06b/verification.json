@@ -1,0 +1,78 @@
+{
+  "checkedAt": "2026-10-28T00:09:17.419Z",
+  "baseline": "bd17bc5",
+  "implementationCommit": "45dbd03c2bcb6bc969ccb3400cfd1e4683a7539a",
+  "result": "PASS_SHARED_V1_V8_PROJECTION_CONTRACT_AND_REAL_PG",
+  "checks": [
+    {
+      "command": "uv run --frozen ruff check .",
+      "result": "PASS"
+    },
+    {
+      "command": "uv run --frozen ruff format --check .",
+      "result": "PASS",
+      "count": 226
+    },
+    {
+      "command": "uv run --frozen mypy",
+      "result": "PASS",
+      "count": 181
+    },
+    {
+      "command": "uv run --frozen pytest tests/unit tests/contract -q",
+      "result": "PASS",
+      "count": 543,
+      "addedContract": 22
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --details",
+      "result": "PASS_WITH_EXPLICIT_LIFECYCLE_SKIP",
+      "count": 572,
+      "skipped": 1,
+      "note": "Full run collected before last-check timeline display condition; all other final implementation covered"
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --group projections --details",
+      "result": "PASS",
+      "count": 9,
+      "note": "Final rerun after last-check timeline condition and assertion; all final projection logic covered"
+    },
+    {
+      "command": "python docs/backend/tools/check_contracts.py",
+      "result": "PASS",
+      "frozenSources": 15,
+      "routes": 53
+    },
+    {
+      "command": "python docs/backend/tools/check_task_status.py --self-test",
+      "result": "PASS",
+      "invalidVariantsRejected": 13
+    }
+  ],
+  "database": {
+    "head": "0036_execution_recovery",
+    "newMigration": "NOT_APPLICABLE_READ_ONLY_CARD",
+    "migrationRoleCanLogin": false,
+    "developmentRows": {
+      "execution_recoveries": 0,
+      "execution_recovery_evidence": 0,
+      "execution_orders": 0,
+      "execution_attempts": 0,
+      "budget_job_finalizations": 0,
+      "command_jobs": 0
+    }
+  },
+  "trace": "trace.json",
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "notCovered": [
+    "F06 legacyExecution adapter still needs UNKNOWN/rejection mapping and browser QA",
+    "M2-05b lifecycle HTTP and full delivery workspace API assembly",
+    "M2-17 independent readback/window producer; UNKNOWN read input is explicit internal fixture",
+    "BE/FE named sign-off G0/E08"
+  ],
+  "review": {
+    "backend": "PENDING",
+    "frontend": "PENDING_F06"
+  }
+}

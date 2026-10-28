@@ -27,6 +27,7 @@ from yuliang.modules.command.jobs import (
     MoneyValue,
     RatioValue,
 )
+from yuliang.modules.command.projections import JobProjection, load_projection
 from yuliang.modules.connectors.base import GatewayContext, ObjectRef
 from yuliang.modules.connectors.freshness import ResourceFreshness
 from yuliang.modules.connectors.redaction import canonical, fingerprint
@@ -406,34 +407,31 @@ class JobApplications:
     def _project(session: Session, row: dict[str, Any]) -> CommandJob:
         if row["document"] is None:
             raise ApiError(ErrorCode.NO_DATA, "该标识尚无完整申请，不生成虚假任务")
-        history = [
-            dict(status=e.to_status, at=e.created_at, detail=e.detail)
-            for e in session.execute(
-                text(
-                    "SELECT to_status,created_at,detail FROM job_events "
-                    "WHERE job_id=:id ORDER BY id"
-                ),
-                {"id": row["id"]},
-            )
-        ]
-        return CommandJob.model_validate(row["document"] | {"history": history})
+        return load_projection(session, row).job
 
     def get(self, job_id: UUID) -> CommandJob:
         with business_transaction(self.engine, self.identity) as session:
-            row = (
-                session.execute(text("SELECT * FROM command_jobs WHERE id=:id"), {"id": job_id})
-                .mappings()
-                .first()
-            )
-            if row is None:
-                raise ApiError(ErrorCode.NO_DATA, "没有当前范围内的申请")
-            document = row["document"]
-            if document is None:
-                raise ApiError(ErrorCode.NO_DATA, "尚无完整申请")
-            self.target(
-                session,
-                CreateJobRequest.model_validate(
-                    {k: document[k] for k in CreateJobRequest.model_fields}
-                ),
-            )
-            return self._project(session, dict(row))
+            return self.read_projection(session, job_id).job
+
+    def projection(self, job_id: UUID) -> JobProjection:
+        with business_transaction(self.engine, self.identity) as session:
+            return self.read_projection(session, job_id)
+
+    def read_projection(self, session: Session, job_id: UUID) -> JobProjection:
+        row = (
+            session.execute(text("SELECT * FROM command_jobs WHERE id=:id"), {"id": job_id})
+            .mappings()
+            .first()
+        )
+        if row is None:
+            raise ApiError(ErrorCode.NO_DATA, "没有当前范围内的申请")
+        document = row["document"]
+        if document is None:
+            raise ApiError(ErrorCode.NO_DATA, "尚无完整申请")
+        self.target(
+            session,
+            CreateJobRequest.model_validate(
+                {k: document[k] for k in CreateJobRequest.model_fields}
+            ),
+        )
+        return load_projection(session, dict(row))

@@ -1,0 +1,1 @@
+{"status":"DRAFT","version":1,"scenarios":{"content_topic":{"kind":"planning","field":"body","schema":"content-body-v1"}},"inputByteLimit":8192,"outputTokenLimit":2048,"changeReason":"16册topic/planning分阶段：新增独立选题prompt_key，沿用planning.body，不改变原三场景v1；待BE/F10最终复核"}

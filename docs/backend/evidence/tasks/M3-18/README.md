@@ -43,3 +43,5 @@ access.content_ai_failure只接受真实request及安全枚举，NULL/未知原�
 本轮审查收口17专项（17.93秒，唯一窗口一次运行通过）另实际覆盖：actor-only RLS下同run同requestKey唯一冲突映射409 IDEMPOTENCY_MISMATCH、不返回A对象，B ai_invocations/quote/request整事务回滚；confirm与reply统一run→request→按UUID排序的全部RUN/input文档→相关历史/快照/SOP素材→费用锁，scope失败finalizer和cleanup只重入已持业务锁；两run共享真实MinIO素材及copywriting预算的受控并发证明B预算前已持asset锁、A回包等待业务锁时尚未进入fee_finish，释放B后两者均CANDIDATE且仅发送2次。没有DB/角色/费用权限放宽。root独立ai-ledger21通过6.45秒并验证0072同tenant actor边界，作为root证据引用，不冒充本子任务执行。窗口结束已明确释放root/beans。
 
 本批最终完整整合：1009集成通过、1可选重启跳过（953.14秒）；952单元/契约、240源码mypy/Ruff及0069至0072迁移Ruff通过，冻结源码哈希一致。开发库0072、48相关表仅5系统模板其余0，迁移角色NOLOGIN。详见../../ai-content-generation-verification.json；整卡未完成范围与BE/FE具名复核仍按上列保留。
+
+独立content_topic后续切片也已实际通过：系统模板brief确认→topic候选→人工采纳→planning解锁，6专项及原17回归通过，旧三提示hash不变。见[topic/README.md](topic/README.md)及对应验证/合同；本批975单元、相关36回归及241源码mypy/Ruff通过，真实付费0，整卡其余范围和BE/F10保留。

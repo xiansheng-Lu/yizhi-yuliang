@@ -36,7 +36,9 @@ class ContentPrompt:
 
 
 def load_content_prompt(scenario: Scenario) -> ContentPrompt:
-    root = Path(__file__).with_suffix("") / "v1"
+    directory = Path(__file__).with_suffix("")
+    # 只增加新prompt_key资源，不重写已发布三场景v1模板/hash。
+    root = directory / "topic" / "v1" if scenario == "content_topic" else directory / "v1"
     manifest = json.loads((root / "manifest.json").read_text(encoding="utf-8-sig"))
     definition = manifest["scenarios"][scenario]
     base = (root / "template.txt").read_text(encoding="utf-8-sig")

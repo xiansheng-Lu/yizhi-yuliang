@@ -71,32 +71,39 @@ def database() -> Iterator[dict[str, str]]:
     migration = database_url(local_url("YULIANG_TEST_MIGRATION_DATABASE_URL"), name)
     admin = database_url(source, name)
     with psycopg.connect(source, autocommit=True) as control:
+        # 与migrate_local共用集群级窗口：LOGIN是全局角色属性，不随测试库隔离。
+        # 保持管理员连接与锁直到全部夹具结束；另一测试/迁移不能中途恢复NOLOGIN。
+        control.execute("SET lock_timeout='45s'")
+        control.execute("SELECT pg_advisory_lock(760001)")
+        if control.execute(
+            "SELECT rolcanlogin FROM pg_roles WHERE rolname='app_migrate'"
+        ).fetchone() != (False,):
+            raise RuntimeError("已有未受锁管理的迁移窗口，先结束其他设施验证后重试")
         control.execute(sql.SQL("CREATE DATABASE {}").format(sql.Identifier(name)))
         control.execute("ALTER ROLE app_migrate LOGIN")
-    try:
-        with psycopg.connect(admin, autocommit=True) as setup:
-            setup.execute("REVOKE CREATE ON SCHEMA public FROM PUBLIC")
-            setup.execute("GRANT USAGE,CREATE ON SCHEMA public TO app_owner")
-            setup.execute("GRANT USAGE ON SCHEMA public TO app_login,auth_fn_owner")
-            setup.execute("CREATE SCHEMA auth AUTHORIZATION auth_fn_owner")
-            setup.execute("CREATE SCHEMA access AUTHORIZATION app_owner")
-            setup.execute("REVOKE ALL ON SCHEMA auth FROM PUBLIC")
-            setup.execute("GRANT USAGE ON SCHEMA auth TO app_auth")
-        checked_migrate(migration, "upgrade", "0001_identity_catalog")
-        # 中间版本也保持关闭：未开放策略，不能借迁移间隙访问业务表。
-        with psycopg.connect(database_url(local_url("YULIANG_TEST_DATABASE_URL"), name)) as app:
-            with pytest.raises(psycopg.errors.InsufficientPrivilege):
-                app.execute("SELECT * FROM shops")
-        checked_migrate(migration, "upgrade", "head")
-        yield {
-            "admin": admin,
-            "migration": migration,
-            "name": name,
-            "app": database_url(local_url("YULIANG_TEST_DATABASE_URL"), name, True),
-            "auth": database_url(local_url("YULIANG_TEST_AUTH_DATABASE_URL"), name, True),
-        }
-    finally:
-        with psycopg.connect(source, autocommit=True) as control:
+        try:
+            with psycopg.connect(admin, autocommit=True) as setup:
+                setup.execute("REVOKE CREATE ON SCHEMA public FROM PUBLIC")
+                setup.execute("GRANT USAGE,CREATE ON SCHEMA public TO app_owner")
+                setup.execute("GRANT USAGE ON SCHEMA public TO app_login,auth_fn_owner")
+                setup.execute("CREATE SCHEMA auth AUTHORIZATION auth_fn_owner")
+                setup.execute("CREATE SCHEMA access AUTHORIZATION app_owner")
+                setup.execute("REVOKE ALL ON SCHEMA auth FROM PUBLIC")
+                setup.execute("GRANT USAGE ON SCHEMA auth TO app_auth")
+            checked_migrate(migration, "upgrade", "0001_identity_catalog")
+            # 中间版本也保持关闭：未开放策略，不能借迁移间隙访问业务表。
+            with psycopg.connect(database_url(local_url("YULIANG_TEST_DATABASE_URL"), name)) as app:
+                with pytest.raises(psycopg.errors.InsufficientPrivilege):
+                    app.execute("SELECT * FROM shops")
+            checked_migrate(migration, "upgrade", "head")
+            yield {
+                "admin": admin,
+                "migration": migration,
+                "name": name,
+                "app": database_url(local_url("YULIANG_TEST_DATABASE_URL"), name, True),
+                "auth": database_url(local_url("YULIANG_TEST_AUTH_DATABASE_URL"), name, True),
+            }
+        finally:
             control.execute("ALTER ROLE app_migrate NOLOGIN")
             control.execute(
                 "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname=%s", [name]

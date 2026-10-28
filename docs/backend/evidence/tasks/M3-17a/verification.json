@@ -1,0 +1,83 @@
+{
+  "task": "M3-17a",
+  "date": "2026-10-28",
+  "baseline": "70ab960",
+  "status": "WAITING_REVIEW",
+  "technicalResult": "PASS_TEMPLATES_RUNS_STEPS_AND_REAL_SOP_INITIALIZATION",
+  "migration": "0064_workflow_templates_runs",
+  "downRevision": "0063_content_derivations",
+  "testedHeadIncludes": "0065",
+  "unit": {
+    "passed": 8,
+    "seconds": 0.23,
+    "command": "pytest -q tests/unit/test_content_workflows.py"
+  },
+  "integration": {
+    "passed": 8,
+    "seconds": 8.56,
+    "realPostgres": true,
+    "realCreateApp": true,
+    "command": "python scripts/test_infrastructure.py --group content-workflows --details"
+  },
+  "regression": {
+    "contentDocuments": {
+      "passed": 5,
+      "seconds": 7.23
+    },
+    "contentValidation": {
+      "passed": 5,
+      "seconds": 7.66
+    }
+  },
+  "ruff": "PASS",
+  "mypy": "PASS_3_SOURCE_2_TEST_FILES",
+  "dbWindow": "RELEASED",
+  "productIdentity": "commerce_products.id_from_V9_products_not_canonical_products.id",
+  "actualSOPEntry": "CREATE_RUN_INITIAL_PLANNING_ROOT_VALIDATION_AND_TRANSACTION",
+  "systemTemplates": 5,
+  "audioVideoUploadEnabled": false,
+  "externalPlatformCalls": 0,
+  "paidCalls": 0,
+  "notClaimed": [
+    "M3-17b execution acceptance skip redo",
+    "real F10 browser integration",
+    "actual generation business entrypoint",
+    "M3-16 whole task completion"
+  ],
+  "review": {
+    "backend": "PENDING",
+    "frontend": "PENDING"
+  },
+  "nextTask": "M3-17b",
+  "checkedAt": "2026-10-28T12:12:41.544569+00:00",
+  "integrationBeforeReadLimitFix": {
+    "passed": 6,
+    "seconds": 7.96,
+    "realPostgres": true,
+    "realCreateApp": true
+  },
+  "unitBeforeReadLimitFix": {
+    "passed": 8,
+    "seconds": 0.26
+  },
+  "readCompletenessFix": {
+    "result": "PASS",
+    "templates": {
+      "limit": 200,
+      "probe": 201,
+      "exactLimit": "FULL_ARRAY_LATEST_VERSION_VISIBLE",
+      "overflow": "HTTP422_INVALID_INPUT"
+    },
+    "runs": {
+      "limit": 100,
+      "probe": 101,
+      "exactLimit": "FULL_ARRAY",
+      "overflow": "HTTP422_INVALID_INPUT"
+    },
+    "responseContract": "UNCHANGED_ARRAY",
+    "permissionExpansion": false,
+    "ddlChanged": false,
+    "fixture": "APP_OWNER_REAL_BATCH_LEGAL_IMMUTABLE_ROWS",
+    "static": "RUFF_AND_MYPY_2_MODIFIED_FILES_PASS"
+  }
+}

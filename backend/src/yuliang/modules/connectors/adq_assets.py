@@ -8,10 +8,10 @@ from typing import Any, Literal
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, SecretStr
-from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from yuliang.modules.capability.service import evaluate_binding
+from yuliang.modules.connectors.adq_paging import verify_adq_page
+from yuliang.modules.connectors.adq_read_scope import require_adq_read
 from yuliang.modules.connectors.base import GatewayContext
 from yuliang.modules.connectors.governance import CallDeferred
 from yuliang.modules.connectors.governed import GovernedPlatformClient
@@ -119,21 +119,7 @@ def parse_assets(
     payload = json.loads(response.body).get("data")
     if not isinstance(payload, dict) or not isinstance(payload.get("list"), list):
         raise ValueError("资产响应缺少明确的列表")
-    info = payload.get("page_info")
-    if not isinstance(info, dict) or any(
-        type(info.get(k)) is not int for k in ("page", "page_size", "total_number", "total_page")
-    ):
-        raise ValueError("资产响应缺少精确的分页总量依据")
-    page, size, total, pages = (
-        info[k] for k in ("page", "page_size", "total_number", "total_page")
-    )
-    if (page, size) != (requested_page, page_size) or not 0 <= total <= 100000 * page_size:
-        raise ValueError("资产响应页码、页大小或总量与请求不匹配")
-    expected_pages = (total + size - 1) // size
-    if pages != expected_pages and not (total == 0 and pages == 1):
-        raise ValueError("资产分页总数与总条目数不一致")
-    if page > max(1, pages) or len(payload["list"]) != max(0, min(size, total - (page - 1) * size)):
-        raise ValueError("资产分页出现缺页或条目计数不符")
+    _, pages = verify_adq_page(payload, requested_page, page_size)
     records = []
     for row in payload["list"]:
         if not isinstance(row, dict):
@@ -174,17 +160,17 @@ def parse_assets(
             target_binding="UNCONFIRMED",
         )
         records.append(MirrorRecord(native_id=native, values=values))
-    terminal = page >= pages
+    terminal = requested_page >= pages
     return AssetPage(
         SyncPage(
             tuple(records),
-            None if terminal else SecretStr(str(page + 1)),
+            None if terminal else SecretStr(str(requested_page + 1)),
             terminal,
             response.received_at,
         ),
-        page,
-        size,
-        total,
+        requested_page,
+        page_size,
+        int(payload["page_info"]["total_number"]),
         pages,
     )
 
@@ -206,29 +192,7 @@ class AdqAssetSync:
         self.allowed, self.scopes = frozenset(allowed_interfaces), frozenset(required_scopes)
 
     def _scope(self, session: Session, ctx: GatewayContext) -> int:
-        grant = session.execute(
-            text("""SELECT p.version,p.scopes,p.application_id FROM provider_authorizations p
-        JOIN authorization_account_links l ON l.tenant_id=p.tenant_id AND l.authorization_id=p.id
-        JOIN ad_accounts a ON (a.tenant_id,a.id)=(l.tenant_id,l.account_id)
-        WHERE p.id=:grant AND a.id=:account AND a.native_id=:native
-         AND l.native_id_snapshot=a.native_id AND a.status='AUTHORIZED' AND a.deleted_at IS NULL
-         AND p.status='ACTIVE' AND p.expires_at>clock_timestamp()
-         AND p.connector_id='adq' AND p.provider='tencent' AND p.product_line='adq'"""),
-            dict(grant=ctx.authorization_id, account=ctx.account_id, native=ctx.native_account_id),
-        ).first()
-        state = evaluate_binding(session, ctx.identity, ctx.shop_id, ctx.binding_id)
-        if (
-            grant is None
-            or grant.application_id != self.client.application_id
-            or not self.scopes <= set(grant.scopes)
-            or state["status"] != "AUTHORIZED"
-        ):
-            raise ApiError(
-                ErrorCode.CAPABILITY_UNAVAILABLE, "账户关联、scope或六阶段只读证据未就绪"
-            )
-        if ctx.authorization_version is not None and ctx.authorization_version != grant.version:
-            raise SyncConflict("AUTHORIZATION_CHANGED")
-        return int(grant.version)
+        return require_adq_read(session, ctx, self.client.application_id, self.scopes)
 
     async def sync(
         self, ctx: GatewayContext, kind: AssetKind, run_id: UUID, *, page_size: int = 100

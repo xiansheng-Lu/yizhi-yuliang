@@ -45,6 +45,11 @@ class AdqPage(LegacyAdqPage):
     pagination_mode: str = "PAGINATION_MODE_NORMAL"
 
 
+class AdqFundsRead(ReadParameters):
+    account_id: str
+    fields: list[str]
+
+
 class ProductPage(ReadParameters):
     page_size: int = Field(default=100, ge=1, le=100)
     next_key: str = Field(default="", max_length=2048)
@@ -76,7 +81,7 @@ READS: dict[str, tuple[str, Literal["GET", "POST"], str, type[BaseModel], tuple[
         "adq",
         "GET",
         "/v1.3/funds/get",
-        AdqPage,
+        AdqFundsRead,
         ("fund_type", "balance", "fund_status", "realtime_cost"),
         "list",
     ),
@@ -150,11 +155,12 @@ def parse_page(operation: str, response: HttpExchange, page: int = 1) -> Platfor
         if not isinstance(payload, dict) or not isinstance(payload.get("list"), list):
             raise ValueError("ADQ响应缺少明确的list，不能当作空数据")
         rows = payload["list"]
-        info = payload.get("page_info", {})
-        if not isinstance(info, dict) or type(info.get("total_page")) is not int:
-            raise ValueError("缺少分页总数，不能宣告同步完整")
-        if info["total_page"] > page:
-            cursor = str(page + 1)
+        if operation != "adq.funds":
+            info = payload.get("page_info", {})
+            if not isinstance(info, dict) or type(info.get("total_page")) is not int:
+                raise ValueError("缺少分页总数，不能宣告同步完整")
+            if info["total_page"] > page:
+                cursor = str(page + 1)
     elif selector == "product_ids":
         if not isinstance(data.get("product_ids"), list) or "next_key" not in data:
             raise ValueError("商品列表或分页终止标识缺失")

@@ -91,6 +91,7 @@ def main() -> int:
             "read-routes",
             "adq-assets",
             "native-handoff",
+            "adq-finance",
         ),
         default="all",
     )
@@ -147,6 +148,7 @@ def main() -> int:
         "read-routes": ["tests/integration/test_read_route_sources.py"],
         "adq-assets": ["tests/integration/test_adq_asset_mirrors.py"],
         "native-handoff": ["tests/integration/test_native_platform_handoff.py"],
+        "adq-finance": ["tests/integration/test_adq_finance_reads.py"],
         "parser": [
             "tests/integration/test_command_parse.py",
             "tests/integration/test_workspace.py",

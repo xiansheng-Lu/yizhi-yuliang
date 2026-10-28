@@ -1,0 +1,1112 @@
+--- a/.env.example
++++ b/.env.example
+@@ -58,3 +58,11 @@
+ # 强制刷新节流（本服务自定义的本地保护，非官方限额；ADQ 刷新不会顶掉旧 token）
+ ADQ_FORCE_MIN_INTERVAL=10
+ ADQ_FORCE_DAILY_LIMIT=200
++
++# 必填：密钥文件在私有目录中，用 tools/manage_security.py init-key 创建，切勿提交。
++TOKEN_ENCRYPTION_KEY_FILE=
++TOKEN_KEY_VERSION=v1
++TOKEN_TENANT_ID=
++# ADQ_CALLBACK_CHECK_STATE 不再允许关闭。固定 HTTPS 回调必须与登记地址一致。
++# 仅本机 mock 允许 TOKEN_ALLOW_LOOPBACK_CALLBACK=1；正式配置保持为空。
++TOKEN_ALLOW_LOOPBACK_CALLBACK=
+--- a/.gitignore
++++ b/.gitignore
+@@ -11,3 +11,7 @@
+ 
+ # 凭据与 token 快照（含密钥，本地留存）
+ data/
++
++# 私有加密密钥和进程锁
++.runtime/
++*.owner.lock
+--- /dev/null
++++ b/cache/security.py
+@@ -0,0 +1,115 @@
++"""Local token-service security: AES-GCM envelopes and lifetime process ownership.
++
++Keys are supplied out of band via TOKEN_ENCRYPTION_KEY_FILE (JSON map of
++version -> base64 32-byte key). Never creates or silently replaces keys/data.
++"""
++import base64
++import json
++import os
++import secrets
++from pathlib import Path
++from cryptography.hazmat.primitives.ciphers.aead import AESGCM
++
++
++class LegacyPlaintextError(RuntimeError):
++    pass
++
++
++class SecureJSON:
++    def __init__(self, context):
++        key_file = os.environ.get("TOKEN_ENCRYPTION_KEY_FILE", "")
++        self.version = os.environ.get("TOKEN_KEY_VERSION", "")
++        self.tenant = os.environ.get("TOKEN_TENANT_ID", "")
++        if not key_file or not self.version or not self.tenant:
++            raise RuntimeError("需要 TOKEN_ENCRYPTION_KEY_FILE / TOKEN_KEY_VERSION / TOKEN_TENANT_ID")
++        try:
++            self.keys = json.loads(Path(key_file).read_text(encoding="utf-8"))
++            for key in self.keys.values():
++                if len(base64.b64decode(key, validate=True)) != 32:
++                    raise ValueError()
++            if self.version not in self.keys:
++                raise ValueError()
++        except Exception:
++            raise RuntimeError("令牌加密密钥文件无效") from None
++        self.context = self.tenant + ":" + context
++
++    def read(self, path):
++        envelope = json.loads(Path(path).read_text(encoding="utf-8"))
++        if not isinstance(envelope, dict) or envelope.get("format") != "token-aesgcm-v1":
++            raise LegacyPlaintextError("拒绝读取旧明文凭据；请停服后执行显式加密迁移")
++        try:
++            version = envelope["key_version"]
++            aad = (self.context + ":" + version).encode()
++            raw = AESGCM(base64.b64decode(self.keys[version], validate=True)).decrypt(
++                base64.b64decode(envelope["nonce"], validate=True),
++                base64.b64decode(envelope["ciphertext"], validate=True), aad)
++            return json.loads(raw)
++        except Exception:
++            raise RuntimeError("令牌密文不可读取：密钥、版本、身份上下文或完整性不匹配") from None
++
++    def write(self, path, payload):
++        path = Path(path)
++        path.parent.mkdir(parents=True, exist_ok=True)
++        nonce = secrets.token_bytes(12)
++        aad = (self.context + ":" + self.version).encode()
++        ciphertext = AESGCM(base64.b64decode(self.keys[self.version], validate=True)).encrypt(
++            nonce, json.dumps(payload, ensure_ascii=False).encode(), aad)
++        envelope = {"format": "token-aesgcm-v1", "key_version": self.version,
++                    "nonce": base64.b64encode(nonce).decode(),
++                    "ciphertext": base64.b64encode(ciphertext).decode()}
++        tmp = path.with_name(path.name + "." + secrets.token_hex(8) + ".tmp")
++        try:
++            fd = os.open(tmp, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
++            with os.fdopen(fd, "w", encoding="utf-8") as stream:
++                json.dump(envelope, stream)
++                stream.flush()
++                os.fsync(stream.fileno())
++            os.replace(tmp, path)
++        finally:
++            tmp.unlink(missing_ok=True)
++
++
++class ProcessOwner:
++    """OS-held lifetime lock: second owner fails closed; crash releases lock.
++
++    Shared local filesystem only. All service instances for the same app must
++    share this path; multi-host/network-filesystem deployment is unsupported.
++    """
++    def __init__(self, path):
++        self.path = Path(path)
++        self.stream = None
++
++    def acquire(self):
++        if self.stream is not None:
++            return self
++        self.path.parent.mkdir(parents=True, exist_ok=True)
++        stream = self.path.open("a+b")
++        stream.seek(0, 2)
++        if stream.tell() == 0:
++            stream.write(b"0")
++            stream.flush()
++        stream.seek(0)
++        try:
++            if os.name == "nt":
++                import msvcrt
++                msvcrt.locking(stream.fileno(), msvcrt.LK_NBLCK, 1)
++            else:
++                import fcntl
++                fcntl.flock(stream.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
++        except OSError:
++            stream.close()
++            raise RuntimeError("同一应用已有令牌服务进程；请复用唯一托管入口") from None
++        self.stream = stream
++        return self
++
++    def close(self):
++        if self.stream is not None:
++            if os.name == "nt":
++                import msvcrt
++                self.stream.seek(0)
++                msvcrt.locking(self.stream.fileno(), msvcrt.LK_UNLCK, 1)
++            else:
++                import fcntl
++                fcntl.flock(self.stream.fileno(), fcntl.LOCK_UN)
++            self.stream.close()
++            self.stream = None
+--- a/cache/token_cache.py
++++ b/cache/token_cache.py
+@@ -31,6 +31,7 @@
+ from __future__ import annotations
+ 
+ import json
++from .security import SecureJSON
+ import logging
+ import os
+ import threading
+@@ -90,6 +91,7 @@
+         backoff_cap: float = 60.0,
+         persist_path: Optional[str] = None,
+         appid: str = "",
++        cipher_context: Optional[str] = None,
+         clock: Callable[[], float] = time.time,
+     ) -> None:
+         if margin < 0:
+@@ -104,6 +106,7 @@
+         self._backoff_cap = float(backoff_cap)
+         self._persist_path = persist_path or None
+         self._appid = appid
++        self._cipher = SecureJSON(cipher_context or "access-token:" + appid) if persist_path else None
+         self._clock = clock
+ 
+         self._cond = threading.Condition(threading.Lock())
+@@ -171,16 +174,17 @@
+ 
+             try:
+                 new_snap, err = self._fetch_once(force=False)
++                if new_snap is not None:
++                    self._apply_success(new_snap)
++                else:
++                    self._apply_failure(err)
+             finally:
+                 with self._cond:
+                     self._inflight = False
+                     self._cond.notify_all()
+ 
+             if new_snap is not None:
+-                self._apply_success(new_snap)
+                 return new_snap.token
+-
+-            self._apply_failure(err)
+             cur = self._snapshot
+             if allow_stale and cur is not None and self._clock() < cur.expire_at:
+                 return cur.token  # 刷新失败但旧 token 还在真实有效期内
+@@ -216,16 +220,17 @@
+ 
+             try:
+                 new_snap, err = self._fetch_once(force=force)
++                if new_snap is not None:
++                    self._apply_success(new_snap)
++                else:
++                    self._apply_failure(err)
+             finally:
+                 with self._cond:
+                     self._inflight = False
+                     self._cond.notify_all()
+ 
+             if new_snap is not None:
+-                self._apply_success(new_snap)
+                 return new_snap.token
+-
+-            self._apply_failure(err)
+             raise TokenCacheError(
+                 "刷新 access_token 失败",
+                 retry_after=max(1, int(self._next_attempt_at - self._clock())),
+@@ -322,8 +327,8 @@
+             return False
+         path = Path(self._persist_path)
+         try:
+-            data = json.loads(path.read_text(encoding="utf-8"))
+-        except (OSError, ValueError):
++            data = self._cipher.read(path)
++        except FileNotFoundError:
+             return False
+         if not isinstance(data, dict) or data.get("appid") != self._appid:
+             return False
+@@ -360,10 +365,7 @@
+                 "appid": self._appid,
+                 "saved_at": self._clock(),
+             }
+-            path = Path(self._persist_path)
+-            tmp = path.with_name(path.name + ".tmp")
+-            tmp.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+-            os.replace(tmp, path)  # 原子替换，避免半行文件
++            self._cipher.write(self._persist_path, payload)
+         except OSError as exc:
+             log.warning("token 持久化失败（不影响使用）：%s", exc)
+ 
+@@ -454,13 +456,13 @@
+                     self._inflight = True
+                 try:
+                     new_snap, err = self._fetch_once(force=False)
++                    if new_snap is not None:
++                        self._apply_success(new_snap)
++                    else:
++                        self._apply_failure(err)
+                 finally:
+                     with self._cond:
+                         self._inflight = False
+                         self._cond.notify_all()
+-                if new_snap is not None:
+-                    self._apply_success(new_snap)
+-                else:
+-                    self._apply_failure(err)
+             except Exception:  # noqa: BLE001 - 守护线程不能死
+                 log.exception("后台预热线程异常")
+--- /dev/null
++++ b/docs/token-security.md
+@@ -0,0 +1,75 @@
++# 令牌服务安全接入与迁移
++
++本修复只加固两个独立令牌项目，不声明驭量 M1-06/M1-07 已接线或 E01/E02 已验收。
++
++## 配置与身份
++
++服务必填原平台凭据及 API Key（ADQ_TOKEN_API_KEY / WX_TOKEN_API_KEY），并设置：
++
++- TOKEN_TENANT_ID：该服务实例所属的内部租户标识；一个实例只服务一个租户。
++- TOKEN_ENCRYPTION_KEY_FILE：私有 JSON 密钥环绝对路径，内容为版本到 base64 32 字节密钥的映射。
++- TOKEN_KEY_VERSION：当前写入版本，密钥环可保留旧版本用于解密和显式重加密。
++
++应用 Secret 继续通过本地私有配置或部署密钥管理提供；不会写入令牌密文文件。
++私有密钥文件和 .env 均不提交。生产需备份密钥环；丢失后不能恢复旧密文。
++首次生成：`python tools/manage_security.py init-key .runtime/token-keys.json --version v1`。
++该命令拒绝覆盖现有文件，POSIX 使用 0600；Windows 在写密钥前移除继承权限并仅授予当前用户。
++部署使用其他服务账号时，由管理员在私有渠道明确授予该账号读取权限。
++
++ADQ 授权入口必须经可信后端调用：带 X-API-Key 与 X-Actor-ID（后端从已验证会话取得）。
++X-Actor-ID 本身不是登录凭据；本服务不实现驭量用户登录或替代其租户权限校验。
++回调必须使用服务端固定 HTTPS 地址，state 绑定租户、应用、发起人及回调地址，单次消费。
++不允许客户端指定 state 或其他回调，旧的关闭 state 校验开关无效。
++state 仅存内存，服务重启后未完成的授权需要重新发起，拒绝绕过。
++TOKEN_ALLOW_LOOPBACK_CALLBACK=1 仅用于隔离的本机 mock，正式部署不设置。
++
++## 先停旧服务再迁移
++
++本次没有读取、迁移、重写真实 .env 或 token 文件，也没有重启真实服务。
++旧版本不持有新进程锁，因此迁移前必须明确停止所有旧 token 服务和直连 SDK 实例。
++设置上述环境变量后执行以下命令。迁移使用同一 owner-lock；锁被占用时不修改源文件。
++只迁移原路径，不自动备份明文；已有备份、日志等历史副本需按原密钥管理制度处理。
++
++### ADQ
++
++使用 ADQ_DATA_DIR 的绝对路径，假定为 `D:/codex/tencent-adq/data`；将 APP_ID、ACCOUNT_ID 替换为实际值。
++
++```powershell
++python tools/manage_security.py migrate data/adq_credentials.json --context "adq-credentials:APP_ID" --owner-lock data/.token-service.owner.lock
++python tools/manage_security.py migrate data/token_ACCOUNT_ID.json --context "adq-access-token:APP_ID:ACCOUNT_ID" --owner-lock data/.token-service.owner.lock
++```
++
++每个已有账户快照分别迁移。固定回调地址的 path 必须与 ADQ_CALLBACK_PATH 一致。
++凭据/快照完整性或身份不匹配时拒绝启动，不会静默清空后覆盖；即便密文身份不匹配也不会读取上游重新覆盖。
++授权换码和后续刷新写回的 refresh_token 都加密保存；平台返回轮换 refresh_token 时先保存新值。
++
++### 微信小店
++
++默认缓存为项目根 token_cache.json，使用其绝对路径作为锁路径前缀：
++
++```powershell
++python tools/manage_security.py migrate token_cache.json --context "access-token:APP_ID" --owner-lock "D:/codex/wx_shop/token_cache.json.owner.lock"
++```
++
++SDK、dashboard 采集器及只读探针统一设置 WX_TOKEN_SERVICE_URL、WX_TOKEN_API_KEY。
++SDK 默认访问托管入口；不再用 AppID/Secret 隐式创建第二个刷新者。
++只有独立工具/mock 显式传 allow_direct_token=True 才可直连，禁止与该应用的托管服务并行。
++直连缓存严格使用响应 expires_in（不再写死 7200），短 TTL 提前量不超过半衰期，并发请求复用同一刷新结果。
++
++## 部署边界
++
++每个应用指定唯一数据目录/缓存路径、一个进程、一个 worker，业务方可有多个进程。
++进程锁持有至退出，第二个服务进程拒绝启动；进程崩溃后操作系统释放锁。
++生产默认监听回环，外部访问通过受控 HTTPS 反代；ServiceTokenProvider 拒绝远程明文 HTTP。
++此方案只支持单机本地文件系统；多个主机或不同数据目录不会共享锁，不能部署为多副本。
++需要多机时应继续使用唯一托管服务入口，而非给每台业务机部署刷新者。
++HTTP raw token、刷新、ADQ 授权管理接口强制鉴权，响应标注 Cache-Control: no-store。
++
++## 本地验证（仅合成凭据与 mock）
++
++```powershell
++python -m unittest discover -s tests -p "test_*.py" -q
++python tests/smoke_test.py
++```
++
++两个项目冒烟测试默认使用相同 mock 端口，按顺序运行。
+--- a/README.md
++++ b/README.md
+@@ -1,3 +1,9 @@
++> **2026-10-28 安全接入更新**：令牌服务必须配置 API Key、`TOKEN_TENANT_ID`、
++> `TOKEN_ENCRYPTION_KEY_FILE`、`TOKEN_KEY_VERSION`；未配置时拒绝启动。
++> 旧明文文件不会自动读取或覆盖，请先停服，按 `docs/token-security.md` 显式迁移。
++> 同一应用只部署一个令牌托管进程；所有业务进程访问其鉴权 HTTP 入口。
++> 多机、网络文件系统和多个独立数据目录部署不受此进程锁保护，禁止据此横向扩容。
++
+ # 腾讯广告 ADQ access_token 托管服务（第三方应用 OAuth 2.0 模式）
+ 
+ 面向**腾讯营销开放平台（Marketing API / 腾讯广告 ADQ）第三方应用**的 token 托管服务：引导广告主完成一次 OAuth 2.0 授权后，自动换取并托管 `access_token`，过期前自动用 `refresh_token` 续期，业务系统只需一个 HTTP 请求即可随时拿到指定账号的有效 token。
+@@ -78,7 +84,7 @@
+ 
+ ### 授权流程（第三方应用的本质步骤，每个广告主只需做一次）
+ 
+-1. **生成授权链接**：`GET /api/auth/url`（或用页面上的按钮），得到
++1. **生成授权链接**：`GET /api/auth/url`（需 `X-API-Key` 与可信后端传入的 `X-Actor-ID`），得到
+    `https://developers.e.qq.com/oauth/authorize?client_id=...&redirect_uri=...&state=...&scope=...&account_type=...`；
+ 2. **广告主授权**：在浏览器打开该链接，用推广账号（QQ 登录或微信扫码）登录并同意授权；
+ 3. **回调带 code**：广点通 302 跳转到 `ADQ_REDIRECT_URI`，URL 上带 `authorization_code`（**5 分钟有效，一次性**）和 `state`；
+@@ -177,7 +183,7 @@
+ 3. **失败退避与降级**：刷新失败按 5s→10s→20s→40s→60s 指数退避重试；失败期间旧 token 在**真实过期前**仍可正常返回（优雅降级）；一旦真实过期且仍刷不到，`/api/token` **立即**返回 `503`（附错误原因与 `retry_after`，不死等退避窗口），恢复由后台线程按退避节奏驱动。
+ 4. **持久化**：`data/adq_credentials.json` 存 refresh_token 与账号信息（原子落盘），`data/token_<account_id>.json` 存 access_token 快照；进程重启后自动复用未过期的 token 并恢复后台续约，重启瞬间无空窗。
+ 5. **重新授权检测**：上游返回 `11009/11010/11011/11012/11013`（授权码过期/refresh_token 失效等）时，错误信息标记 `need_reauth: true`，`/health` 的 `accounts_need_reauth` 与页面会明确提示重新授权；重新走一遍 `/api/auth/url` 流程即可覆盖旧凭据。
+-6. **state 防 CSRF**：生成授权链接时签发随机 state（10 分钟有效），回调时校验（`ADQ_CALLBACK_CHECK_STATE=0` 可关闭）。
++6. **state 防 CSRF**：生成授权链接时签发随机 state（10 分钟有效），回调时校验（强制校验，不再支持关闭）。
+ 
+ ## 测试
+ 
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -1,2 +1,3 @@
+ flask>=3.0
+ requests>=2.31
++cryptography>=43.0
+--- a/services/adq_token_service.py
++++ b/services/adq_token_service.py
+@@ -38,9 +38,11 @@
+ import time
+ import uuid
+ import json
++import secrets
++import atexit
+ from datetime import datetime
+ from pathlib import Path
+-from urllib.parse import urlencode
++from urllib.parse import urlencode, urlsplit
+ 
+ import requests
+ from flask import Flask, jsonify, request
+@@ -48,6 +50,7 @@
+ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # 项目根目录，确保 cache 包可导入
+ 
+ from cache.token_cache import AccessTokenCache, TokenCacheError
++from cache.security import SecureJSON, ProcessOwner
+ 
+ PROJECT_ROOT = Path(__file__).resolve().parents[1]
+ 
+@@ -116,7 +119,7 @@
+ SCOPE = _env_str("ADQ_SCOPE")                         # 授权范围，空 = 应用全部权限
+ ACCOUNT_TYPE = _env_str("ADQ_ACCOUNT_TYPE", "ACCOUNT_TYPE_QQ")  # QQ 号 / 微信号授权
+ CALLBACK_PATH = _env_str("ADQ_CALLBACK_PATH", "/api/auth/callback")
+-CHECK_STATE = _env_bool("ADQ_CALLBACK_CHECK_STATE", True)       # 回调校验 state 防 CSRF
++# state 校验强制开启，旧 ADQ_CALLBACK_CHECK_STATE 禁用开关不再生效。
+ 
+ HOST = _env_str("HOST", "127.0.0.1")
+ PORT = _env_int("PORT", 8080)
+@@ -127,7 +130,7 @@
+ MAX_BACKOFF = _env_int("ADQ_TOKEN_MAX_BACKOFF", 60)          # 失败退避上限（秒）
+ 
+ DATA_DIR = _env_str("ADQ_DATA_DIR") or str(PROJECT_ROOT / "data")
+-DATA_DIR = str(Path(DATA_DIR))  # 相对路径统一落在项目根，不随启动目录漂移
++DATA_DIR = str((PROJECT_ROOT / DATA_DIR).resolve())  # 相对路径统一落在项目根，不随启动目录漂移
+ CREDENTIALS_FILE = str(Path(DATA_DIR) / "adq_credentials.json")  # refresh_token 等（含密钥，勿外泄）
+ 
+ API_KEY = _env_str("ADQ_TOKEN_API_KEY")                 # 置空则不鉴权（仅限本地调试）
+@@ -247,24 +250,26 @@
+ 
+     def __init__(self, path: str):
+         self.path = Path(path)
++        self._cipher = SecureJSON("adq-credentials:" + CLIENT_ID)
+         self._lock = threading.Lock()
+         self._data = {"accounts": {}}
+         self._load()
+ 
+     def _load(self) -> None:
+         try:
+-            raw = json.loads(self.path.read_text(encoding="utf-8"))
++            raw = self._cipher.read(self.path)
+             if isinstance(raw, dict) and isinstance(raw.get("accounts"), dict):
+                 self._data = raw
+-        except (OSError, ValueError):
++        except FileNotFoundError:
+             pass
+ 
+     def _save(self) -> None:
+-        self.path.parent.mkdir(parents=True, exist_ok=True)
+-        tmp = self.path.with_name(self.path.name + ".tmp")
+-        tmp.write_text(json.dumps(self._data, ensure_ascii=False, indent=1),
+-                       encoding="utf-8")
+-        os.replace(tmp, self.path)  # 原子替换，避免半文件
++        self._cipher.write(self.path, self._data)
++
++    def attach_context(self, account_id, context):
++        with self._lock:
++            self._data["accounts"][account_id]["authorization_context"] = context
++            self._save()
+ 
+     def upsert(self, account_id: str, *, refresh_token: str,
+                refresh_token_expires_in: int = DEFAULT_REFRESH_EXPIRES_IN,
+@@ -320,6 +325,18 @@
+             self._save()
+ 
+ 
++# Acquire ownership before loading credentials, including WSGI imports.
++if not API_KEY:
++    raise RuntimeError("必须配置 ADQ_TOKEN_API_KEY，拒绝启动无鉴权令牌入口")
++_redirect = urlsplit(REDIRECT_URI)
++_test_callback = (os.environ.get("TOKEN_ALLOW_LOOPBACK_CALLBACK") == "1"
++                  and _redirect.scheme == "http" and _redirect.hostname in ("127.0.0.1", "localhost"))
++if (not REDIRECT_URI or _redirect.username or _redirect.password or _redirect.query or _redirect.fragment
++        or not _redirect.hostname or not (_test_callback or (_redirect.scheme == "https"
++        and _redirect.port in (None, 443)))):
++    raise RuntimeError("需要固定 HTTPS 回调地址；本地 mock 需显式允许回环地址")
++_OWNER = ProcessOwner(Path(DATA_DIR) / ".token-service.owner.lock").acquire()
++atexit.register(_OWNER.close)
+ STORE = CredentialStore(CREDENTIALS_FILE)
+ 
+ 
+@@ -362,12 +379,12 @@
+         try:
+             resp = _http_get(TOKEN_URL, params)
+         except requests.RequestException as exc:
+-            raise AdqError(-1, f"网络请求失败：{exc}", stage="network") from exc
++            raise AdqError(-1, "上游网络请求失败", stage="network") from exc
+ 
+         try:
+             data = resp.json()
+         except ValueError as exc:
+-            raise AdqError(-1, f"响应不是合法 JSON：{resp.text[:200]}",
++            raise AdqError(-1, "上游响应不是合法 JSON",
+                            stage="network") from exc
+ 
+         code = data.get("code", 0) or 0
+@@ -377,8 +394,13 @@
+             raise AdqError(code, message, stage="api", need_reauth=code in REAUTH_CODES)
+ 
+         # 续期响应可能不返回 refresh_token_expires_in；返回则按之顺延，否则按默认值顺延
+-        STORE.touch_refresh_expiry(
+-            account_id, int(payload.get("refresh_token_expires_in") or DEFAULT_REFRESH_EXPIRES_IN))
++        if payload.get("refresh_token"):
++            STORE.upsert(account_id, refresh_token=payload["refresh_token"],
++                         refresh_token_expires_in=int(payload.get("refresh_token_expires_in")
++                                                      or DEFAULT_REFRESH_EXPIRES_IN), source="refresh")
++        else:
++            STORE.touch_refresh_expiry(
++                account_id, int(payload.get("refresh_token_expires_in") or DEFAULT_REFRESH_EXPIRES_IN))
+         return payload["access_token"], int(payload.get("access_token_expires_in") or DEFAULT_EXPIRES_IN)
+ 
+     return fetcher
+@@ -404,12 +426,12 @@
+     try:
+         resp = _http_get(TOKEN_URL, params)
+     except requests.RequestException as exc:
+-        raise AdqError(-1, f"网络请求失败：{exc}", stage="network") from exc
++        raise AdqError(-1, "上游网络请求失败", stage="network") from exc
+ 
+     try:
+         data = resp.json()
+     except ValueError as exc:
+-        raise AdqError(-1, f"响应不是合法 JSON：{resp.text[:200]}",
++        raise AdqError(-1, "上游响应不是合法 JSON",
+                        stage="network") from exc
+ 
+     code = data.get("code", 0) or 0
+@@ -457,6 +479,7 @@
+                     backoff_cap=MAX_BACKOFF,
+                     persist_path=persist,
+                     appid=account_id,  # 持久化文件归属校验键
++                    cipher_context=f"adq-access-token:{CLIENT_ID}:{account_id}",
+                 )
+                 self._caches[account_id] = cache
+             return cache
+@@ -529,9 +552,7 @@
+ 
+ 
+ def _authorized() -> bool:
+-    if not API_KEY:
+-        return True
+-    return request.headers.get("X-API-Key", "") == API_KEY
++    return bool(API_KEY) and secrets.compare_digest(request.headers.get("X-API-Key", ""), API_KEY)
+ 
+ 
+ # --------------------------------------------------------------------------- #
+@@ -543,21 +564,28 @@
+ _STATE_TTL = 600            # state 有效期 10 分钟
+ 
+ 
+-def _new_state() -> str:
+-    state = uuid.uuid4().hex
++def _new_state(actor_id: str) -> str:
++    state = secrets.token_urlsafe(48)
+     now = time.time()
++    context = {"issued_at": now, "actor_id": actor_id,
++               "tenant_id": os.environ["TOKEN_TENANT_ID"], "app_id": CLIENT_ID,
++               "redirect_uri": REDIRECT_URI}
+     with _states_lock:
+-        # 清理过期 state
+-        for k in [k for k, ts in _states.items() if now - ts > _STATE_TTL]:
++        for k in [k for k, item in _states.items() if now - item["issued_at"] > _STATE_TTL]:
+             _states.pop(k, None)
+-        _states[state] = now
++        _states[state] = context
+     return state
+ 
+ 
+-def _consume_state(state: str) -> bool:
++def _consume_state(state: str):
+     with _states_lock:
+-        ts = _states.pop(state, None)
+-    return ts is not None and time.time() - ts <= _STATE_TTL
++        context = _states.pop(state, None)
++    if not context or not 0 <= time.time() - context["issued_at"] <= _STATE_TTL:
++        return None
++    if (context["tenant_id"] != os.environ["TOKEN_TENANT_ID"]
++            or context["app_id"] != CLIENT_ID or context["redirect_uri"] != REDIRECT_URI):
++        return None
++    return context
+ 
+ 
+ def build_authorize_url(redirect_uri: str, state: str,
+@@ -582,36 +610,50 @@
+ 
+ def _do_exchange(authorization_code: str, redirect_uri: str, state: str):
+     """校验 state 并兑换授权码，返回 (account_id, account_info)。"""
+-    if CHECK_STATE and state:
+-        if not _consume_state(state):
+-            raise AdqError(-1, "state 校验失败（非本服务签发或已过期），请重新生成授权链接",
+-                           stage="local", need_reauth=True)
++    if not state or redirect_uri != REDIRECT_URI:
++        raise AdqError(-1, "缺失 state 或回调地址不匹配，请重新发起授权", stage="local")
++    context = _consume_state(state)
++    if not context:
++        raise AdqError(-1, "state 无效、已使用或已过期，请重新发起授权", stage="local")
+     account_id, info, payload = exchange_authorization_code(authorization_code, redirect_uri)
+     _bind_account(account_id, payload, "oauth")
++    STORE.attach_context(account_id, context)
+     return account_id, info
+ 
+ 
+ # --------------------------------------------------------------------------- #
+ # HTTP 接口
+ # --------------------------------------------------------------------------- #
++
++
++@app.before_request
++def protect_management():
++    protected = request.path in {"/api/auth/url", "/api/auth/exchange", "/api/accounts", "/api/token/refresh"}
++    protected = protected or (request.path == "/api/token" and request.args.get("raw") == "1")
++    protected = protected or request.method == "DELETE"
++    if protected and not _authorized():
++        return jsonify({"ok": False, "message": "Unauthorized"}), 401
++
++
++@app.after_request
++def private_response(response):
++    response.headers["Cache-Control"] = "no-store"
++    return response
+ 
+ 
+ @app.get("/api/auth/url")
+ def api_auth_url():
+     """生成 OAuth 2.0 授权链接。广告主在浏览器打开并同意授权后，
+     会跳转到 ADQ_REDIRECT_URI 并带上 authorization_code。"""
+-    redirect_uri = request.args.get("redirect_uri") or REDIRECT_URI
+-    if not redirect_uri:
+-        return jsonify({"ok": False, "stage": "config",
+-                        "message": "未配置 ADQ_REDIRECT_URI，请通过 ?redirect_uri= 参数传入"
+-                                   "（主域需与开发者官网应用登记的回调主域一致）"}), 400
+-    scope = request.args.get("scope") or SCOPE
+-    account_type = request.args.get("account_type") or ACCOUNT_TYPE
+-    state = request.args.get("state") or _new_state()
+-    if request.args.get("state"):
+-        # 调用方自报的 state 也登记一份，保证回调校验能通过
+-        with _states_lock:
+-            _states[state] = time.time()
++    redirect_uri = REDIRECT_URI
++    actor_id = request.headers.get("X-Actor-ID", "").strip()
++    if not redirect_uri or not actor_id or len(actor_id) > 128:
++        return jsonify({"ok": False, "message": "需要固定回调地址与可信后端传入的 X-Actor-ID"}), 400
++    if request.args.get("state") or request.args.get("redirect_uri", REDIRECT_URI) != REDIRECT_URI:
++        return jsonify({"ok": False, "message": "不允许覆盖 state 或回调地址"}), 400
++    scope = SCOPE
++    account_type = ACCOUNT_TYPE
++    state = _new_state(actor_id)
+     url = build_authorize_url(redirect_uri, state, scope, account_type)
+     return jsonify({
+         "ok": True,
+@@ -932,8 +974,9 @@
+   <div class="card">
+     <h2>① OAuth 2.0 授权（第三方应用必做一次）</h2>
+     <div>
+-      <input id="redirect_uri" placeholder="回调地址 ADQ_REDIRECT_URI（留空用默认）">
+-      <input id="scope" placeholder="授权范围 scope（留空=全部权限）" style="width:200px">
++      <input id="redirect_uri" readonly placeholder="回调地址由服务端固定配置">
++      <input id="actor_id" placeholder="本地管理员标识（正式接入由后端验证身份后传入）" style="width:280px">
++      <input id="scope" readonly placeholder="授权范围由服务端固定配置" style="width:200px">
+     </div>
+     <button onclick="genAuthUrl()">生成授权链接</button>
+     <button class="gray" onclick="copyText(document.getElementById('auth_url').value)">复制链接</button>
+@@ -942,6 +985,7 @@
+     <p class="tip">授权码有效期 5 分钟；授权完成后自动跳转回调并绑定账号。
+     本地联调无法接收回调时，可从跳转 URL 中取 <code>authorization_code</code>，粘贴到下方手动兑换：</p>
+     <div style="margin-top:8px">
++      <input id="auth_state" placeholder="授权链接对应的 state（生成后自动填入）" style="width:300px">
+       <input id="auth_code" placeholder="authorization_code" style="width:300px">
+       <button class="gray" onclick="exchangeCode()">手动兑换</button>
+     </div>
+@@ -1034,12 +1078,15 @@
+   const ru = document.getElementById('redirect_uri').value.trim();
+   const sc = document.getElementById('scope').value.trim();
+   if(ru) params.set('redirect_uri', ru);
+-  if(sc) params.set('scope', sc);
++  // scope is fixed server-side; platform-approved permissions are not client selectable.
+   try{
+-    const r = await fetch('/api/auth/url' + (params.toString() ? '?' + params : ''));
++    const headers = apiHeaders();
++    headers['X-Actor-ID'] = document.getElementById('actor_id').value.trim();
++    const r = await fetch('/api/auth/url' + (params.toString() ? '?' + params : ''), {headers});
+     const d = await r.json();
+     out.textContent = JSON.stringify(d, null, 2);
+-    if(d.ok) document.getElementById('auth_url').value = d.authorize_url;
++    if(d.ok){ document.getElementById('auth_url').value = d.authorize_url;
++      document.getElementById('auth_state').value = d.state; }
+   }catch(e){ out.textContent = '请求异常：' + e; }
+ }
+ function copyText(text){
+@@ -1059,7 +1106,7 @@
+   try{
+     const r = await fetch('/api/auth/exchange', {method:'POST',
+       headers:{'Content-Type':'application/json', ...apiHeaders()},
+-      body: JSON.stringify({authorization_code: code, redirect_uri: ru})});
++      body: JSON.stringify({authorization_code: code, redirect_uri: ru, state: document.getElementById('auth_state').value.trim()})});
+     out.textContent = 'HTTP ' + r.status + '\\n' + JSON.stringify(await r.json(), null, 2);
+   }catch(e){ out.textContent = '请求异常：' + e; }
+   refreshStatus();
+--- /dev/null
++++ b/tests/security_fixture.py
+@@ -0,0 +1,14 @@
++"""Ephemeral synthetic keys, never load or modify live runtime credentials."""
++import base64
++import json
++import os
++import tempfile
++from pathlib import Path
++
++_TMP = tempfile.TemporaryDirectory(prefix="token-security-test-")
++KEY_FILE = Path(_TMP.name) / "keys.json"
++KEY_FILE.write_text(json.dumps({"test-v1": base64.b64encode(b"T" * 32).decode()}))
++
++def configure():
++    os.environ.update(TOKEN_ENCRYPTION_KEY_FILE=str(KEY_FILE), TOKEN_KEY_VERSION="test-v1",
++                      TOKEN_TENANT_ID="test-tenant")
+--- a/tests/smoke_test.py
++++ b/tests/smoke_test.py
+@@ -16,6 +16,8 @@
+ """
+ 
+ import os
++import json
++import base64
+ import socket
+ import subprocess
+ import sys
+@@ -87,7 +89,7 @@
+ 
+ 
+ def account_status(account_id):
+-    for a in requests.get(f"{BASE}/api/accounts", timeout=5).json().get("accounts", []):
++    for a in requests.get(f"{BASE}/api/accounts", headers={"X-API-Key": KEY}, timeout=5).json().get("accounts", []):
+         if a["account_id"] == account_id:
+             return a
+     return None
+@@ -99,7 +101,11 @@
+         return 2
+ 
+     tmp = Path(tempfile.mkdtemp(prefix="adqtoken_"))
++    key_file = tmp / "keys.json"
++    key_file.write_text(json.dumps({"test-v1": base64.b64encode(b"T" * 32).decode()}))
+     env = dict(os.environ)
++    env.update(TOKEN_ENCRYPTION_KEY_FILE=str(key_file), TOKEN_KEY_VERSION="test-v1",
++               TOKEN_TENANT_ID="test-tenant", TOKEN_ALLOW_LOOPBACK_CALLBACK="1")
+     env.update({
+         "ADQ_CLIENT_ID": "mock-client-001",
+         "ADQ_CLIENT_SECRET": "mock-secret-001",
+@@ -283,7 +289,8 @@
+         # ---------- T6 OAuth 全流程（授权链接 → 302 回调 → 自动绑定） ----------
+         mock_control(reset=None)  # 清空统计（保留 refresh_tokens / 账号池轮询游标）
+         r = requests.get(f"{BASE}/api/auth/url",
+-                         params={"redirect_uri": f"{BASE}/api/auth/callback"}, timeout=5)
++                         params={"redirect_uri": f"{BASE}/api/auth/callback"},
++                         headers={"X-API-Key": KEY, "X-Actor-ID": "test-admin"}, timeout=5)
+         auth = r.json()
+         check("T6 生成授权链接", auth.get("ok") and "/oauth/authorize" in auth.get("authorize_url", ""),
+               f"url={auth.get('authorize_url', '')[:80]}...")
+@@ -296,7 +303,8 @@
+ 
+         # 第二次授权 → mock 账号池第二个账号（新账号绑定）
+         r = requests.get(f"{BASE}/api/auth/url",
+-                         params={"redirect_uri": f"{BASE}/api/auth/callback"}, timeout=5)
++                         params={"redirect_uri": f"{BASE}/api/auth/callback"},
++                         headers={"X-API-Key": KEY, "X-Actor-ID": "test-admin"}, timeout=5)
+         auth2 = r.json()
+         r2 = requests.get(auth2["authorize_url"], allow_redirects=True, timeout=15)
+         check("T6 第二个账号授权绑定",
+@@ -304,7 +312,7 @@
+               f"final_url={r2.url[:90]}")
+ 
+         accounts = {a["account_id"] for a in
+-                    requests.get(f"{BASE}/api/accounts", timeout=5).json().get("accounts", [])}
++                    requests.get(f"{BASE}/api/accounts", headers={"X-API-Key": KEY}, timeout=5).json().get("accounts", [])}
+         check("T6 账号列表包含两个授权账号", {ACCOUNT_A, ACCOUNT_B} <= accounts,
+               f"accounts={sorted(accounts)}")
+ 
+--- /dev/null
++++ b/tests/test_oauth_security.py
+@@ -0,0 +1,105 @@
++import importlib.util
++import os
++import tempfile
++import time
++import unittest
++from pathlib import Path
++from unittest.mock import patch
++from tests.security_fixture import KEY_FILE
++
++
++class OAuthSecurityTests(unittest.TestCase):
++    @classmethod
++    def setUpClass(cls):
++        cls.tmp = tempfile.TemporaryDirectory()
++        cls.env = patch.dict(os.environ, TOKEN_ENCRYPTION_KEY_FILE=str(KEY_FILE),
++            TOKEN_KEY_VERSION="test-v1", TOKEN_TENANT_ID="test-tenant", ADQ_CLIENT_ID="test-app",
++            ADQ_CLIENT_SECRET="synthetic-secret", ADQ_TOKEN_API_KEY="synthetic-api-key",
++            ADQ_DATA_DIR=cls.tmp.name, ADQ_CALLBACK_PATH="/api/auth/callback", ADQ_REDIRECT_URI="https://callback.example.test/adq",
++            ADQ_TOKEN_URL="http://127.0.0.1:1/oauth/token", ADQ_REFRESH_TOKEN="")
++        cls.env.start()
++        spec = importlib.util.spec_from_file_location("isolated_adq_service",
++            Path(__file__).resolve().parents[1] / "services/adq_token_service.py")
++        cls.svc = importlib.util.module_from_spec(spec)
++        spec.loader.exec_module(cls.svc)
++        cls.client = cls.svc.app.test_client()
++        cls.headers = {"X-API-Key": "synthetic-api-key", "X-Actor-ID": "verified-admin"}
++
++    @classmethod
++    def tearDownClass(cls):
++        cls.svc._OWNER.close()
++        cls.env.stop()
++        cls.tmp.cleanup()
++
++    def test_missing_state_never_calls_upstream(self):
++        with patch.object(self.svc, "exchange_authorization_code") as exchange:
++            with self.assertRaises(self.svc.AdqError):
++                self.svc._do_exchange("synthetic-code", self.svc.REDIRECT_URI, "")
++            exchange.assert_not_called()
++
++    def test_invalid_state_never_calls_upstream(self):
++        with patch.object(self.svc, "exchange_authorization_code") as exchange:
++            with self.assertRaises(self.svc.AdqError):
++                self.svc._do_exchange("synthetic-code", self.svc.REDIRECT_URI, "unknown")
++            exchange.assert_not_called()
++
++    def test_state_is_single_use_and_keeps_actor_context(self):
++        state = self.svc._new_state("verified-admin")
++        payload = {"access_token": "synthetic-access", "access_token_expires_in": 100}
++        with patch.object(self.svc, "exchange_authorization_code", return_value=("account", {}, payload)), \
++             patch.object(self.svc, "_bind_account"), \
++             patch.object(self.svc.STORE, "attach_context") as attach:
++            self.svc._do_exchange("synthetic-code", self.svc.REDIRECT_URI, state)
++            self.assertEqual(attach.call_args.args[1]["actor_id"], "verified-admin")
++            self.assertEqual(attach.call_args.args[1]["tenant_id"], "test-tenant")
++            with self.assertRaises(self.svc.AdqError):
++                self.svc._do_exchange("synthetic-code", self.svc.REDIRECT_URI, state)
++
++    def test_expired_state_rejected(self):
++        state = self.svc._new_state("admin")
++        self.svc._states[state]["issued_at"] = time.time() - 601
++        self.assertIsNone(self.svc._consume_state(state))
++
++    def test_wrong_application_state_rejected(self):
++        state = self.svc._new_state("admin")
++        self.svc._states[state]["app_id"] = "other-app"
++        self.assertIsNone(self.svc._consume_state(state))
++
++    def test_authorization_requires_api_key_and_actor(self):
++        self.assertEqual(self.client.get("/api/auth/url").status_code, 401)
++        self.assertEqual(self.client.get("/api/auth/url", headers={"X-API-Key":"synthetic-api-key"}).status_code, 400)
++        self.assertEqual(self.client.get("/api/auth/url", headers=self.headers).status_code, 200)
++
++    def test_client_cannot_register_state_or_override_callback(self):
++        for query in ("state=chosen", "redirect_uri=https://other.example.test"):
++            response = self.client.get("/api/auth/url?" + query, headers=self.headers)
++            self.assertEqual(response.status_code, 400)
++
++    def test_manual_exchange_requires_api_key(self):
++        response = self.client.post("/api/auth/exchange", json={"authorization_code":"synthetic"})
++        self.assertEqual(response.status_code, 401)
++        self.assertEqual(response.headers["Cache-Control"], "no-store")
++
++    def test_refresh_token_rotation_persisted(self):
++        response = unittest.mock.Mock()
++        response.json.return_value = {"code":0, "data":{"access_token":"new-access",
++            "access_token_expires_in":100, "refresh_token":"rotated-refresh", "refresh_token_expires_in":200}}
++        with patch.object(self.svc.STORE, "get", return_value={"refresh_token":"old-refresh"}), \
++             patch.object(self.svc, "_http_get", return_value=response), \
++             patch.object(self.svc.STORE, "upsert") as save:
++            self.svc.make_fetcher("account")()
++            self.assertEqual(save.call_args.kwargs["refresh_token"], "rotated-refresh")
++
++    def test_callback_without_state_does_not_exchange(self):
++        with patch.object(self.svc, "exchange_authorization_code") as exchange:
++            response = self.client.get("/api/auth/callback?authorization_code=synthetic")
++            self.assertNotEqual(response.status_code, 200)
++            exchange.assert_not_called()
++
++    def test_callback_with_fixed_state_works_without_browser_api_key(self):
++        state = self.svc._new_state("verified-admin")
++        payload = {"access_token":"synthetic", "access_token_expires_in":100}
++        with patch.object(self.svc, "exchange_authorization_code", return_value=("account", {}, payload)), \
++             patch.object(self.svc, "_bind_account"), patch.object(self.svc.STORE, "attach_context"):
++            response = self.client.get("/api/auth/callback", query_string={"authorization_code":"synthetic", "state":state})
++            self.assertEqual(response.status_code, 200)
+--- /dev/null
++++ b/tests/test_security.py
+@@ -0,0 +1,126 @@
++import json
++import os
++import subprocess
++import sys
++import tempfile
++import unittest
++from pathlib import Path
++from unittest.mock import patch
++from cache.security import SecureJSON, ProcessOwner, LegacyPlaintextError
++from tests.security_fixture import KEY_FILE
++
++
++class SecurityTests(unittest.TestCase):
++    def setUp(self):
++        self.tmp = tempfile.TemporaryDirectory()
++        self.addCleanup(self.tmp.cleanup)
++        self.path = Path(self.tmp.name) / "token.json"
++        env = patch.dict(os.environ, TOKEN_ENCRYPTION_KEY_FILE=str(KEY_FILE),
++                         TOKEN_KEY_VERSION="test-v1", TOKEN_TENANT_ID="tenant-one")
++        env.start()
++        self.addCleanup(env.stop)
++
++    def test_roundtrip_no_plaintext(self):
++        cipher = SecureJSON("wxshop:app-one")
++        cipher.write(self.path, {"access_token": "synthetic-token", "refresh_token": "synthetic-refresh"})
++        raw = self.path.read_text()
++        self.assertNotIn("synthetic-token", raw)
++        self.assertNotIn("synthetic-refresh", raw)
++        self.assertEqual(json.loads(raw)["key_version"], "test-v1")
++        self.assertEqual(cipher.read(self.path)["access_token"], "synthetic-token")
++
++    def test_wrong_tenant_rejected(self):
++        SecureJSON("app-one").write(self.path, {"token": "synthetic"})
++        with patch.dict(os.environ, TOKEN_TENANT_ID="tenant-two"):
++            with self.assertRaises(RuntimeError):
++                SecureJSON("app-one").read(self.path)
++
++    def test_wrong_application_rejected(self):
++        SecureJSON("app-one").write(self.path, {"token": "synthetic"})
++        with self.assertRaises(RuntimeError):
++            SecureJSON("app-two").read(self.path)
++
++    def test_tampering_rejected(self):
++        cipher = SecureJSON("app")
++        cipher.write(self.path, {"token": "synthetic"})
++        data = json.loads(self.path.read_text())
++        data["ciphertext"] = "AAAA"
++        self.path.write_text(json.dumps(data))
++        with self.assertRaises(RuntimeError):
++            cipher.read(self.path)
++
++    def test_unknown_version_rejected(self):
++        cipher = SecureJSON("app")
++        cipher.write(self.path, {"token": "synthetic"})
++        data = json.loads(self.path.read_text())
++        data["key_version"] = "missing"
++        self.path.write_text(json.dumps(data))
++        with self.assertRaises(RuntimeError):
++            cipher.read(self.path)
++
++    def test_legacy_plaintext_requires_explicit_migration(self):
++        raw = '{"token":"synthetic"}'
++        self.path.write_text(raw)
++        with self.assertRaises(LegacyPlaintextError):
++            SecureJSON("app").read(self.path)
++        self.assertEqual(self.path.read_text(), raw)
++
++    def test_missing_key_configuration_rejected(self):
++        with patch.dict(os.environ, TOKEN_ENCRYPTION_KEY_FILE=""):
++            with self.assertRaises(RuntimeError):
++                SecureJSON("app")
++
++    def test_new_nonce_for_each_write(self):
++        cipher = SecureJSON("app")
++        cipher.write(self.path, {"token": "synthetic"})
++        old = self.path.read_text()
++        cipher.write(self.path, {"token": "synthetic"})
++        self.assertNotEqual(self.path.read_text(), old)
++
++    def test_process_owner_exclusion_and_release(self):
++        lock = self.path.with_suffix(".lock")
++        owner = ProcessOwner(lock).acquire()
++        script = "from cache.security import ProcessOwner; import sys; ProcessOwner(sys.argv[1]).acquire()"
++        try:
++            result = subprocess.run([sys.executable, "-c", script, str(lock)],
++                                    capture_output=True, timeout=10)
++            self.assertNotEqual(result.returncode, 0)
++            self.assertIn("RuntimeError", result.stderr.decode())
++        finally:
++            owner.close()
++        result = subprocess.run([sys.executable, "-c", script, str(lock)], capture_output=True, timeout=10)
++        self.assertEqual(result.returncode, 0, result.stderr.decode())
++
++    def test_key_initialization_and_offline_migration(self):
++        from tools.manage_security import init_key, migrate
++        key = Path(self.tmp.name) / "new-keys.json"
++        init_key(key, "v2")
++        with self.assertRaises(FileExistsError):
++            init_key(key, "v2")
++        self.path.write_text('{"token":"synthetic", "appid":"app"}')
++        with patch.dict(os.environ, TOKEN_ENCRYPTION_KEY_FILE=str(key), TOKEN_KEY_VERSION="v2"):
++            migrate(self.path, "access-token:app", str(self.path) + ".lock")
++            self.assertEqual(SecureJSON("access-token:app").read(self.path)["token"], "synthetic")
++            self.assertNotIn("synthetic", self.path.read_text())
++
++    def test_migration_refuses_live_owner_without_touching_file(self):
++        from tools.manage_security import migrate
++        raw = '{"token":"synthetic"}'
++        self.path.write_text(raw)
++        owner = ProcessOwner(str(self.path) + ".lock").acquire()
++        try:
++            with self.assertRaises(RuntimeError):
++                migrate(self.path, "app", str(self.path) + ".lock")
++            self.assertEqual(self.path.read_text(), raw)
++        finally:
++            owner.close()
++
++    def test_service_refuses_startup_without_api_key(self):
++        root = Path(__file__).resolve().parents[1]
++        service = next((root / "services").glob("*_token_service.py"))
++        env = dict(os.environ)
++        env.update(ADQ_TOKEN_API_KEY="", WX_TOKEN_API_KEY="")
++        result = subprocess.run([sys.executable, str(service)], env=env,
++                                capture_output=True, timeout=10)
++        self.assertNotEqual(result.returncode, 0)
++        self.assertIn(b"TOKEN_API_KEY", result.stderr)
+--- a/tests/test_token_cache.py
++++ b/tests/test_token_cache.py
+@@ -25,6 +25,9 @@
+ from pathlib import Path
+ 
+ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # 项目根目录，确保 cache 包可导入
++
++from tests.security_fixture import configure
++configure()
+ 
+ from cache.token_cache import AccessTokenCache, TokenCacheError
+ 
+@@ -259,10 +262,10 @@
+ 
+         # appid 不一致：不复用
+         fetcher3 = FakeFetcher(self.clock, ttl=7200)
+-        cache3 = AccessTokenCache(fetcher3, margin=300, persist_path=path,
+-                                  appid="wxother9999", clock=self.clock)
+-        cache3.get()
+-        self.assertEqual(fetcher3.calls, 1)
++        with self.assertRaises(RuntimeError):
++            AccessTokenCache(fetcher3, margin=300, persist_path=path,
++                             appid="wxother9999", clock=self.clock)
++        self.assertEqual(fetcher3.calls, 0)
+ 
+     def test_expired_persisted_token_not_reused(self):
+         path = str(Path(self.tmpdir.name) / "token_cache.json")
+@@ -284,14 +287,14 @@
+         self.assertEqual(cache2.get(), "reloaded-0001")
+         self.assertEqual(fetcher2.calls, 1)
+ 
+-    def test_corrupted_file_ignored(self):
++    def test_corrupted_file_rejected(self):
+         path = Path(self.tmpdir.name) / "token_cache.json"
+         path.write_text("{not json", encoding="utf-8")
+         fetcher = FakeFetcher(self.clock, ttl=7200)
+-        cache = AccessTokenCache(fetcher, margin=300, persist_path=str(path),
+-                                 appid="wxappid0001", clock=self.clock)
+-        self.assertEqual(cache.get(), "token-0001")
+-        self.assertEqual(fetcher.calls, 1)
++        with self.assertRaises(ValueError):
++            AccessTokenCache(fetcher, margin=300, persist_path=str(path),
++                             appid="wxappid0001", clock=self.clock)
++        self.assertEqual(fetcher.calls, 0)
+ 
+ 
+ class TestClockRollback(TokenCacheTestBase):
+--- /dev/null
++++ b/tools/manage_security.py
+@@ -0,0 +1,71 @@
++"""Explicit offline key initialization / plaintext migration. Never prints secrets."""
++import argparse
++import base64
++import csv
++import io
++import json
++import os
++import secrets
++import subprocess
++import sys
++from pathlib import Path
++sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
++from cache.security import ProcessOwner, SecureJSON
++
++
++def init_key(path, version):
++    path = Path(path)
++    path.parent.mkdir(parents=True, exist_ok=True)
++    fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
++    try:
++        # Tighten Windows ACL before writing key material (chmod alone is insufficient).
++        if os.name == "nt":
++            result = subprocess.run(["whoami", "/user", "/fo", "csv", "/nh"],
++                                    check=True, capture_output=True, text=True)
++            sid = next(csv.reader(io.StringIO(result.stdout)))[1]
++            subprocess.run(["icacls", str(path), "/inheritance:r", "/grant:r", "*" + sid + ":(F)"],
++                           check=True, capture_output=True)
++        with os.fdopen(fd, "w", encoding="utf-8") as stream:
++            fd = None
++            json.dump({version: base64.b64encode(secrets.token_bytes(32)).decode()}, stream)
++    finally:
++        if fd is not None:
++            os.close(fd)
++
++
++def migrate(path, context, owner_lock):
++    path = Path(path)
++    cipher = SecureJSON(context)
++    owner = ProcessOwner(owner_lock).acquire()
++    try:
++        payload = json.loads(path.read_text(encoding="utf-8"))
++        if payload.get("format") == "token-aesgcm-v1":
++            payload = cipher.read(path)  # Also permits explicit re-encryption to current key version.
++        elif not (isinstance(payload, dict) and ("accounts" in payload or "token" in payload)):
++            raise RuntimeError("源文件不是已知凭据或令牌快照，拒绝覆盖")
++        cipher.write(path, payload)
++        cipher.read(path)  # Authenticate the replaced envelope before reporting success.
++    finally:
++        owner.close()
++
++
++def main():
++    parser = argparse.ArgumentParser(description=__doc__)
++    commands = parser.add_subparsers(dest="command", required=True)
++    init = commands.add_parser("init-key")
++    init.add_argument("path")
++    init.add_argument("--version", default="v1")
++    migration = commands.add_parser("migrate")
++    migration.add_argument("path")
++    migration.add_argument("--context", required=True)
++    migration.add_argument("--owner-lock", required=True)
++    args = parser.parse_args()
++    if args.command == "init-key":
++        init_key(args.path, args.version)
++    else:
++        migrate(args.path, args.context, args.owner_lock)
++    print("完成；未输出密钥或令牌")
++
++
++if __name__ == "__main__":
++    main()

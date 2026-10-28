@@ -1,0 +1,96 @@
+{
+  "format": "platform-resource-handoff-v1",
+  "purpose": "RESOURCE_COLLECTION_ONLY_NOT_RUNTIME_CONFIG",
+  "containsSecrets": false,
+  "adq": {
+    "connectorId": "adq",
+    "provider": "tencent",
+    "productLine": "adq",
+    "application": {
+      "appId": null,
+      "name": null,
+      "actualAuthorizationMode": null,
+      "environment": null,
+      "availableStatus": null,
+      "secretMaterialRef": null
+    },
+    "callback": {
+      "registeredHttpsUrl": null,
+      "availableHttpsDomainIfNotRegistered": null,
+      "whitelistRegistrationStatus": null,
+      "evidenceLocalPath": null
+    },
+    "permissions": {
+      "actuallyGrantedScopeCodes": null,
+      "scopeEvidenceLocalPath": null,
+      "knownUnavailableCapabilities": null,
+      "extraNetworkRequirements": null
+    },
+    "accountMapping": null,
+    "accountMappingItemShape": {
+      "platformAccountId": null,
+      "businessTenantName": null,
+      "businessShopName": null,
+      "actualAuthorizationStatus": null,
+      "testPlanIds": null,
+      "testStatisticDateRange": null
+    },
+    "authorizationCoordinatorRole": null,
+    "readonlyValidationApproval": {
+      "confirmed": false,
+      "allowedAccountIds": null,
+      "allowedOperations": null,
+      "validWindow": null,
+      "frequencyLimitIfAny": null,
+      "approvalReference": null
+    }
+  },
+  "wxshop": {
+    "connectorId": "wxshop",
+    "provider": "wxshop",
+    "productLine": "wxshop",
+    "application": {
+      "appId": null,
+      "name": null,
+      "actualAuthorizationMode": null,
+      "environment": null,
+      "availableStatus": null,
+      "secretMaterialRef": null,
+      "modeSpecificOfficialRequirementsRef": null
+    },
+    "callback": {
+      "registeredHttpsUrl": null,
+      "availableHttpsDomainIfNotRegistered": null,
+      "whitelistRegistrationStatus": null,
+      "evidenceLocalPath": null,
+      "modeSpecificSecretMaterialRefIfRequired": null
+    },
+    "permissions": {
+      "actuallyGrantedScopeCodes": null,
+      "allowedInterfacesEvidenceLocalPath": null,
+      "knownUnavailableCapabilities": null,
+      "extraNetworkRequirements": null
+    },
+    "shopMapping": null,
+    "shopMappingItemShape": {
+      "platformShopId": null,
+      "platformShopAppIdIfApplicable": null,
+      "businessTenantName": null,
+      "businessShopName": null,
+      "merchantSubjectReference": null,
+      "actualAuthorizationStatus": null,
+      "authorizationExpiresAtIfKnown": null,
+      "readonlyDataAvailable": null
+    },
+    "authorizationCoordinatorRole": null,
+    "readonlyValidationApproval": {
+      "confirmed": false,
+      "allowedShopIds": null,
+      "allowedOperations": null,
+      "validWindow": null,
+      "frequencyLimitIfAny": null,
+      "approvalReference": null
+    }
+  },
+  "livePlatformWriteApproval": "NOT_GRANTED_BY_THIS_TEMPLATE"
+}

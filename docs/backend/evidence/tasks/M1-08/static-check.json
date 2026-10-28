@@ -1,0 +1,55 @@
+{
+  "checkedAt": "2026-10-28T05:48:54.6295625Z",
+  "result": "PASS",
+  "implementationCommit": "b198a3dfd6b8f9221f40cbfb8f2f2ba8f9de0482",
+  "checks": [
+    {
+      "files": 283,
+      "result": "PASS",
+      "command": "uv run --frozen ruff format --check src tests scripts alembic"
+    },
+    {
+      "result": "PASS",
+      "command": "uv run --frozen ruff check src tests scripts alembic"
+    },
+    {
+      "sourceFiles": 229,
+      "result": "PASS",
+      "command": "uv run --frozen mypy"
+    },
+    {
+      "passed": 654,
+      "result": "PASS",
+      "command": "uv run --frozen pytest tests/unit tests/contract -q"
+    },
+    {
+      "frozenSources": 15,
+      "routes": 53,
+      "result": "PASS",
+      "command": "python docs/backend/tools/check_contracts.py"
+    },
+    {
+      "exportedTypes": 133,
+      "routes": 53,
+      "result": "PASS",
+      "frozenSources": 15,
+      "callSites": 56,
+      "command": "node docs/backend/tools/freeze_frontend_surface.mjs"
+    },
+    {
+      "goldenChecks": 45,
+      "result": "PASS",
+      "command": "node node_modules/tsx/dist/cli.mjs --tsconfig frontend/tsconfig.json docs/backend/tools/check_frontend_contracts.ts"
+    },
+    {
+      "nodes": 156,
+      "result": "PASS",
+      "command": "python docs/backend/tools/check_plan.py",
+      "cards": 149
+    }
+  ],
+  "liveAcceptance": "NOT_RUN_EXTERNAL_E01",
+  "humanSignoff": "PENDING_BE_F04_F07",
+  "platformCalls": 0,
+  "paidCalls": 0
+}

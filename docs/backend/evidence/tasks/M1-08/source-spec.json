@@ -1,0 +1,102 @@
+{
+  "checkedAt": "2026-10-28T05:38:56.9511289Z",
+  "repository": "https://github.com/TencentAd/marketing-api-go-sdk",
+  "revision": "81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9",
+  "authority": "OFFICIAL_SDK_SOURCE_NOT_LIVE_ACCOUNT_ACCEPTANCE",
+  "sources": [
+    {
+      "path": "pkg/api/api_campaigns.go",
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/api/api_campaigns.go",
+      "sha256": "9c1787c3601621ad5a7829064d209cebc21c53d7c90f758df740eb821687985e"
+    },
+    {
+      "path": "pkg/config/configuration.go",
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/config/configuration.go",
+      "sha256": "594305fbf699f3306b66c85f036ef3abe64c6a29d7de324c3b0afb9917211226"
+    },
+    {
+      "path": "pkg/model/model_campaigns_get_list_struct.go",
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/model/model_campaigns_get_list_struct.go",
+      "sha256": "895d3980fdbb3aa69744264c9aed5e35c9fc7dad3014fa664674d8792eb5e228"
+    },
+    {
+      "path": "pkg/model/model_campaigns_get_response_data.go",
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/model/model_campaigns_get_response_data.go",
+      "sha256": "ab480c6b4e9b346f352b6c1d57e76b29fb8a2093c30e798a1d9287b4958e23fa"
+    },
+    {
+      "path": "pkg/model/model_page_info.go",
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/model/model_page_info.go",
+      "sha256": "c6b39c5522e82a4967f29c57f11f490d2e8db50a385fac6f582f8450dbf619ec"
+    },
+    {
+      "path": "pkg/model/v3/model_advertiser_get_list_struct.go",
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/model/v3/model_advertiser_get_list_struct.go",
+      "sha256": "8eeb0f08b02bddd0bbe493c10dac56183fd9950753256a1c9ec1b83615a60c6c"
+    },
+    {
+      "path": "pkg/model/v3/model_advertiser_get_response_data.go",
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/model/v3/model_advertiser_get_response_data.go",
+      "sha256": "c9f81a7b58c8819e4f956a1fcb84594e7e2a0d8eb0fb2f097b7b01d3dd0123e9"
+    },
+    {
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/api/v3/api_advertiser.go",
+      "path": "pkg/api/v3/api_advertiser.go",
+      "sha256": "6d5e9e9125ea2a354843ebfe0fc6cb34aac280e11d590fad9e91c38a74cdd36c"
+    }
+  ],
+  "confirmed": {
+    "campaigns": {
+      "sdkVersion": "1.3",
+      "method": "GET",
+      "relativePath": "/campaigns/get",
+      "basePathInGeneratedSdk": "https://sandbox-api.e.qq.com/v1.3",
+      "requiredAccountIdType": "int64",
+      "fields": [
+        "campaign_id",
+        "campaign_name",
+        "configured_status",
+        "daily_budget"
+      ],
+      "responseList": "data.list",
+      "pagination": "data.page_info",
+      "identifierType": "int64"
+    },
+    "advertiser": {
+      "modelSdkVersion": "3.0",
+      "fields": [
+        "account_id",
+        "daily_budget",
+        "system_status",
+        "business_alias"
+      ],
+      "responseList": "data.list",
+      "pagination": "data.page_info",
+      "apiSdkVersion": "3.0",
+      "relativePath": "/advertiser/get"
+    },
+    "pageFields": [
+      "page",
+      "page_size",
+      "total_number",
+      "total_page"
+    ]
+  },
+  "notConfirmedByTheseModels": [
+    "CNY versus minor-unit meaning of native budget integers",
+    "Unit/timezone of native numeric timestamps",
+    "Actual scopes granted to current applications/accounts",
+    "Live production availability for actual account and shop mapping"
+  ],
+  "livePlatformCalls": 0,
+  "paidCalls": 0,
+  "catalogFinding": {
+    "baseRecordCount": 1818,
+    "frontendExposed": false,
+    "supplement": "official-sdk-read-catalog-v1",
+    "campaignsGetListed": false,
+    "originalHeadReplaced": false,
+    "writeEnabled": false,
+    "adgroupsGetIsDifferentHierarchy": true
+  }
+}

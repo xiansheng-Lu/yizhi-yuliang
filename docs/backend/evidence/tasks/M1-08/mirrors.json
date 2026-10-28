@@ -1,0 +1,122 @@
+{
+  "source": "ACTUAL_LOCAL_PG_GOVERNED_HTTP_MOCK_SYNTHETIC_IDENTITIES",
+  "livePlatformCalls": 0,
+  "paidCalls": 0,
+  "firstRunId": "c4c286f6-bcc4-427e-8329-4d6be5e0f0e0",
+  "firstResult": {
+    "runId": "c4c286f6-bcc4-427e-8329-4d6be5e0f0e0",
+    "sourceId": "16e02207-dd49-40bc-bddf-c298a1df3693",
+    "state": "SUCCESS",
+    "confirmedPages": 2,
+    "itemsCount": 3,
+    "sourceVersion": 2
+  },
+  "traceIds": [
+    {
+      "request_id": "35a489d4-5902-4301-bf4c-7d38d123c01b",
+      "outbound_id": "8de4c707-4e26-4bea-befd-13d3b9fcb09b",
+      "run_id": "c4c286f6-bcc4-427e-8329-4d6be5e0f0e0",
+      "page_no": 0,
+      "catalog_id": "97993a4f2262f9306c8c",
+      "normalized_path": "/v1.3/campaigns/get"
+    },
+    {
+      "request_id": "35a489d4-5902-4301-bf4c-7d38d123c01b",
+      "outbound_id": "fd9272dd-55af-47c9-87e7-0c3f2ccbf50a",
+      "run_id": "c4c286f6-bcc4-427e-8329-4d6be5e0f0e0",
+      "page_no": 1,
+      "catalog_id": "97993a4f2262f9306c8c",
+      "normalized_path": "/v1.3/campaigns/get"
+    },
+    {
+      "request_id": "35a489d4-5902-4301-bf4c-7d38d123c01b",
+      "outbound_id": "d66897b1-341f-4e7e-8bfa-328309605e3a",
+      "run_id": "dbe21277-c534-4ceb-b25d-059f970d1371",
+      "page_no": 0,
+      "catalog_id": "97993a4f2262f9306c8c",
+      "normalized_path": "/v1.3/campaigns/get"
+    },
+    {
+      "request_id": "35a489d4-5902-4301-bf4c-7d38d123c01b",
+      "outbound_id": "41efc122-2aaf-41ef-94a3-8f5cce75af0c",
+      "run_id": "dbe21277-c534-4ceb-b25d-059f970d1371",
+      "page_no": 1,
+      "catalog_id": "97993a4f2262f9306c8c",
+      "normalized_path": "/v1.3/campaigns/get"
+    },
+    {
+      "request_id": "35a489d4-5902-4301-bf4c-7d38d123c01b",
+      "outbound_id": "4e1a30aa-34ca-470e-8eb6-f6f8e8baa8a3",
+      "run_id": "070faa5a-cbdf-498d-9aa6-7aa167c5a3f5",
+      "page_no": 0,
+      "catalog_id": "97993a4f2262f9306c8c",
+      "normalized_path": "/v1.3/campaigns/get"
+    },
+    {
+      "request_id": "35a489d4-5902-4301-bf4c-7d38d123c01b",
+      "outbound_id": "9d293e22-9624-44d2-ba4f-c12a29de700d",
+      "run_id": "070faa5a-cbdf-498d-9aa6-7aa167c5a3f5",
+      "page_no": 1,
+      "catalog_id": "97993a4f2262f9306c8c",
+      "normalized_path": "/v1.3/campaigns/get"
+    }
+  ],
+  "exampleMirror": {
+    "id": "ab2c20b7-1c2b-4774-ac23-b236351c1ced",
+    "native_id": "9007199254740993",
+    "config": {
+      "kind": "CAMPAIGN",
+      "label": "合成计划甲",
+      "currency": null,
+      "native_id": "9007199254740993",
+      "budget_unit": "UNCONFIRMED",
+      "budget_minor": null,
+      "native_status": "AD_STATUS_NORMAL",
+      "target_binding": "UNCONFIRMED",
+      "protocol_version": "1.3",
+      "native_daily_budget": "9007199254740997"
+    },
+    "version": 1,
+    "fetched_at": "2026-10-28 05:42:58.140398+00:00",
+    "source_updated_at": null,
+    "outbound_id": "8de4c707-4e26-4bea-befd-13d3b9fcb09b",
+    "bound": true,
+    "authorization": "AUTHORIZED",
+    "executable": false
+  },
+  "configurationRevision": {
+    "id": 4,
+    "tenant_id": 1,
+    "asset_id": "ab2c20b7-1c2b-4774-ac23-b236351c1ced",
+    "version": 2,
+    "before_json": {
+      "kind": "CAMPAIGN",
+      "label": "合成计划甲",
+      "currency": null,
+      "native_id": "9007199254740993",
+      "budget_unit": "UNCONFIRMED",
+      "budget_minor": null,
+      "native_status": "AD_STATUS_NORMAL",
+      "target_binding": "UNCONFIRMED",
+      "protocol_version": "1.3",
+      "native_daily_budget": "9007199254740997"
+    },
+    "after_json": {
+      "kind": "CAMPAIGN",
+      "label": "合成计划甲",
+      "currency": null,
+      "native_id": "9007199254740993",
+      "budget_unit": "UNCONFIRMED",
+      "budget_minor": null,
+      "native_status": "AD_STATUS_NORMAL",
+      "target_binding": "UNCONFIRMED",
+      "protocol_version": "1.3",
+      "native_daily_budget": "350"
+    },
+    "change_source": "PLATFORM_READ",
+    "run_id": "070faa5a-cbdf-498d-9aa6-7aa167c5a3f5",
+    "page_no": 0,
+    "outbound_id": "4e1a30aa-34ca-470e-8eb6-f6f8e8baa8a3",
+    "fetched_at": "2026-10-28 05:42:58.366161+00:00"
+  }
+}

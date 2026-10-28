@@ -499,3 +499,13 @@ def test_maintenance_rejects_cross_account_grant_and_mismatched_source(
             text("UPDATE capability_bindings SET revision=revision+1 WHERE id=:id"),
             {"id": data["read_binding"].id},
         )
+
+
+def test_empty_optional_shop_uses_visible_pair_without_reusing_specific_shop_proof(
+    configuration_ready: dict[str, Any],
+) -> None:
+    data = configuration_ready
+    record(data, proof(data))
+    context = data["context"].model_copy(update={"shop_id": ""})
+    view = data["configuration"].capabilities(context)
+    assert view.context_key == context.context_key and view.fields["budget"].state == "UNCONFIRMED"

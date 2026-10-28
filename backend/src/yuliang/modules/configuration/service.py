@@ -235,7 +235,7 @@ class ConfigurationService:
                 session.execute(
                     text(
                         VISIBLE_PAIRS + " AND a.id=:account AND a.entity_id=:entity "
-                        "AND (:shop IS NULL OR s.id=:shop) ORDER BY s.id"
+                        "AND (CAST(:shop AS uuid) IS NULL OR s.id=:shop) ORDER BY s.id"
                     ),
                     {
                         "provider": provider,

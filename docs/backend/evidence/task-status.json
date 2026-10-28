@@ -4,7 +4,7 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "currentFocus": "M4-01a",
+  "currentFocus": "M3-11a",
   "tasks": {
     "R00-01": {
       "owner": "BE",
@@ -2535,7 +2535,52 @@
         "paidCalls": 0
       },
       "implementationCommit": "d55fc2b",
-      "git": "COMMITTED_LOCAL"
+      "git": "COMMITTED",
+      "syncVerification": "git merge-base --is-ancestor d55fc2b origin/main"
+    },
+    "M4-01a": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "scope": "分析任务受理、持久队列、原键恢复与私有历史查询",
+      "dependencyInput": "M0-15队列与Worker、M0-12身份和范围、M1-15b事实技术证据已交付；另复用M0-16a/b的Outbox/Inbox，按持续授权实施；计算与周期覆盖仍归后续卡",
+      "delivery": "持久分析受理、原键恢复、私有任务/结果历史、实际Outbox/Inbox与RabbitMQ/prefork投递通过；未伪造分析计算/阶段结果",
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS",
+          "review": "PENDING_BE_F08"
+        },
+        {
+          "item": 2,
+          "technical": "PASS",
+          "review": "PENDING_BE_F08"
+        },
+        {
+          "item": 3,
+          "technical": "PASS",
+          "review": "PENDING_BE_F08"
+        }
+      ],
+      "evidence": "tasks/M4-01a/README.md",
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F08"
+      },
+      "implementationCommit": "ec45f67",
+      "git": "COMMITTED",
+      "technicalVerification": {
+        "result": "PASS_REAL_PG_HTTP_RABBITMQ_PREFORK",
+        "unitAndContract": 654,
+        "infrastructure": 683,
+        "skipped": 1,
+        "dedicated": 10,
+        "migration": "0042_analysis_admission",
+        "actualFrontendConsumer": "API_ANALYSIS_ADAPTER_INJECTED_FETCH",
+        "computation": "PENDING_M4_02_M4_01B",
+        "platformCalls": 0,
+        "paidCalls": 0
+      },
+      "syncVerification": "git merge-base --is-ancestor ec45f67 origin/main"
     }
   },
   "gates": {
@@ -2641,7 +2686,7 @@
     "offline": "离线通过不等于真实依赖、前端联调或平台验收通过"
   },
   "nextTask": {
-    "id": "M4-01a",
+    "id": "M3-11a",
     "status": "NOT_STARTED"
   },
   "continuation": {
@@ -2651,14 +2696,14 @@
     "environment": "WSL2 Ubuntu Docker; UV_PROJECT_ENVIRONMENT=/home/lenovo/.cache/yuliang-venv",
     "latestUserRequest": "补齐浏览器验收，然后按照后端任务卡继续后续的所有开发，需要资源再找我对接，不阻塞持续开发到完毕",
     "developmentPolicy": "缺人工/外部验收时记录并继续可独立技术准备；正式门禁、平台调用和付费仍按各自证据许可",
-    "lastCompletedTechnicalTask": "M3-07",
-    "nextTechnicalTask": "M4-01a",
+    "lastCompletedTechnicalTask": "M4-01a",
+    "nextTechnicalTask": "M3-11a",
     "executionRules": "docs/backend/evidence/execution-rules.md",
-    "checkpoint": "M3-07完成637单元/契约、21专项、672全量集成+1明确跳过；0041开发库无合成业务记录，真实AdvertisingService契约通过；继续分析受理与历史",
+    "checkpoint": "分析受理654单元/契约、10实际PG/HTTP/MQ专项、683全量集成+1明确跳过通过；0042开发库18类业务记录为0/NOLOGIN；继续平台资源上下文",
     "technicalPreparationQueue": [
-      "M4-01a"
+      "M3-11a"
     ],
-    "routingReason": "M4-09a/09b具备真实技术依赖；重新核对全部149卡，M3-07依赖M1-02/17、M4-01a依赖M0-15/12和M1-15b均已技术交付，可继续独立准备；不以空Snapshot跨过缺失镜像代码",
+    "routingReason": "M3-11a依赖M3-07/M1-17的实际技术证据已具备；M4-02缺M1-10/12/13报表技术输入，先补依赖再接分析计算，不用空结果跳过技术依赖",
     "deferredTechnicalDependencies": [
       {
         "task": "M1-18",
@@ -2669,6 +2714,11 @@
         "task": "M2-05b",
         "reason": "直接依赖M1-18尚无技术输入",
         "unblock": "M1-18实际投影与scope持久化技术通过后装配生命周期HTTP"
+      },
+      {
+        "task": "M4-02/M4-01b",
+        "reason": "M1-10/12/13报表镜像与周期覆盖技术实现尚未交付；相应真实验收另缺E01/E02",
+        "unblock": "先实现并验证报表事实来源和覆盖守卫，再执行实际分析计算"
       }
     ],
     "integrationCheckpoint": "已整合前端frontend目录重构和M1-06/07原生适配；SSE迁移改为0040，保留0039令牌续期与资源未绑定门禁"

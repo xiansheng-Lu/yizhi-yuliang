@@ -1,0 +1,41 @@
+{
+  "taskId": "a8e2d4d0-ed05-4017-bf80-d33e7d5c756d",
+  "eventId": "387824a6-df96-44ab-b901-a53009ffc7a5",
+  "transport": "REAL_RABBITMQ_PREFORK_WORKER_REDIS_PG",
+  "first": {
+    "taskId": "a8e2d4d0-ed05-4017-bf80-d33e7d5c756d",
+    "eventId": "387824a6-df96-44ab-b901-a53009ffc7a5",
+    "deliveryRecorded": true
+  },
+  "duplicate": {
+    "taskId": "a8e2d4d0-ed05-4017-bf80-d33e7d5c756d",
+    "eventId": "387824a6-df96-44ab-b901-a53009ffc7a5",
+    "deliveryRecorded": false
+  },
+  "forgedMessage": "REJECTED_VALUE_ERROR",
+  "taskBeforeAndAfter": {
+    "id": "a8e2d4d0-ed05-4017-bf80-d33e7d5c756d",
+    "query": {
+      "shopId": "6b804abc-4f97-45f8-a8dc-d2aac7c51338",
+      "platformId": "adq",
+      "startDate": "2026-10-01",
+      "endDate": "2026-10-07",
+      "dimensions": [
+        "ads",
+        "shop"
+      ],
+      "timezone": "Asia/Shanghai"
+    },
+    "status": "queued",
+    "progress": 0,
+    "createdAt": "2026-10-28T04:08:25.762874Z"
+  },
+  "counts": [
+    1,
+    0,
+    1,
+    1
+  ],
+  "platformCalls": 0,
+  "paidCalls": 0
+}

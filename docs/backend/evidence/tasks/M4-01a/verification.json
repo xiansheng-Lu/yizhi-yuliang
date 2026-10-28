@@ -1,0 +1,130 @@
+{
+  "checkedAt": "2026-10-28T04:17:27.163Z",
+  "baseline": "df3cf897264bab79a008eca196df89dfb62ee2b5",
+  "implementationCommit": "ec45f67e8890a56895ba984a7319a0ff464dd6f4",
+  "configurationFix": "d35a9e4",
+  "result": "PASS_REAL_PG_HTTP_MQ_PREFORK_ADMISSION_ORIGINAL_KEY_AND_PRIVATE_HISTORY",
+  "checks": [
+    {
+      "command": "uv run --frozen ruff check src tests scripts alembic",
+      "result": "PASS"
+    },
+    {
+      "command": "uv run --frozen ruff format --check src tests scripts alembic",
+      "result": "PASS",
+      "count": 269
+    },
+    {
+      "command": "uv run --frozen mypy",
+      "result": "PASS",
+      "count": 218
+    },
+    {
+      "command": "uv run --frozen pytest tests/unit tests/contract -q",
+      "result": "PASS",
+      "count": 654
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --group analysis --details",
+      "result": "PASS",
+      "count": 10,
+      "seconds": 14.21
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --group configuration --details",
+      "result": "PASS",
+      "count": 22,
+      "seconds": 11.59
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --details",
+      "result": "PASS_WITH_EXPLICIT_LIFECYCLE_SKIP",
+      "count": 683,
+      "skipped": 1,
+      "seconds": 431.36
+    },
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --tsconfig frontend/tsconfig.json backend/scripts/check_analysis_frontend.mts docs/backend/evidence/tasks/M4-01a/task.json",
+      "result": "PASS",
+      "artifact": "frontend-check.json"
+    },
+    {
+      "command": "python docs/backend/tools/check_task_status.py --self-test",
+      "result": "PASS",
+      "registered": 66,
+      "invalidVariantsRejected": 13
+    },
+    {
+      "command": "python docs/backend/tools/check_plan.py",
+      "result": "PASS",
+      "cards": 149,
+      "nodes": 156
+    },
+    {
+      "command": "python docs/backend/tools/check_contracts.py",
+      "result": "PASS",
+      "frozenSources": 15,
+      "routes": 53
+    },
+    {
+      "command": "node docs/backend/tools/freeze_frontend_surface.mjs",
+      "result": "PASS",
+      "calls": 56,
+      "types": 133,
+      "routes": 53,
+      "frozenSources": 15,
+      "write": false
+    },
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --tsconfig frontend/tsconfig.json docs/backend/tools/check_frontend_contracts.ts",
+      "result": "PASS",
+      "count": 45
+    },
+    {
+      "command": "uv run --frozen python scripts/migrate_local.py upgrade",
+      "result": "PASS"
+    }
+  ],
+  "database": {
+    "head": "0042_analysis_admission",
+    "migrationRoleCanLogin": false,
+    "developmentRows": {
+      "analysis_tasks": 0,
+      "analysis_results": 0,
+      "analysis_deliveries": 0,
+      "configuration_field_assertions": 0,
+      "event_resource_heads": 0,
+      "capability_event_deadlines": 0,
+      "event_source_outbox": 0,
+      "event_stream_heads": 0,
+      "event_projections": 0,
+      "approvals": 0,
+      "approval_decisions": 0,
+      "server_approval_permits": 0,
+      "execution_recoveries": 0,
+      "execution_recovery_evidence": 0,
+      "execution_orders": 0,
+      "execution_attempts": 0,
+      "budget_job_finalizations": 0,
+      "command_jobs": 0
+    }
+  },
+  "traces": [
+    "task.json",
+    "queue.json",
+    "frontend-check.json",
+    "development.json"
+  ],
+  "status": "WAITING_REVIEW",
+  "humanSignoff": "PENDING_BE_F08",
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "frontendBrowser": "NOT_RUN",
+  "computation": "NOT_IMPLEMENTED_PENDING_M4_02_M4_01B",
+  "limits": [
+    "All identities and scopes in tests are synthetic",
+    "Delivery receipt does not advance computation progress",
+    "Results list reads actual empty database; no mock analysis result",
+    "No FrontendSnapshot delivery or real platform acceptance is claimed"
+  ]
+}

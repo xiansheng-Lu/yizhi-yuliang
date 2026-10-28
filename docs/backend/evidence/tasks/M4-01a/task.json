@@ -1,0 +1,76 @@
+{
+  "task": {
+    "id": "4c0f7ea7-16d1-46ab-a876-3a7d58741b44",
+    "query": {
+      "shopId": "c678c4a7-eeed-42d6-a0a6-f8d35bce1d62",
+      "platformId": "adq",
+      "startDate": "2026-10-01",
+      "endDate": "2026-10-07",
+      "dimensions": [
+        "ads",
+        "shop"
+      ],
+      "timezone": "Asia/Shanghai"
+    },
+    "status": "queued",
+    "progress": 0,
+    "createdAt": "2026-10-28T04:08:23.150441Z"
+  },
+  "input": {
+    "query": {
+      "shopId": "c678c4a7-eeed-42d6-a0a6-f8d35bce1d62",
+      "platformId": "adq",
+      "startDate": "2026-10-01",
+      "endDate": "2026-10-07",
+      "dimensions": [
+        "ads",
+        "shop"
+      ],
+      "timezone": "Asia/Shanghai"
+    },
+    "idempotencyKey": "4aac8b9d-9ff9-4765-8aad-a71839b70ac2"
+  },
+  "identity": {
+    "userId": "e0b4c821-1be1-43fa-be16-8dd880772745",
+    "displayName": "User",
+    "email": "e0b4c821-1be1-43fa-be16-8dd880772745@example.invalid",
+    "tenantId": "1",
+    "shopIds": [
+      "c678c4a7-eeed-42d6-a0a6-f8d35bce1d62"
+    ],
+    "permissions": [
+      "budget.edit",
+      "content.write",
+      "overview.read",
+      "plan.write",
+      "snapshot.read",
+      "task.create"
+    ],
+    "workspacePages": [
+      "analytics",
+      "assets",
+      "budgets",
+      "command",
+      "decisions",
+      "editing",
+      "executions",
+      "experiments",
+      "goals",
+      "graphics",
+      "monitor",
+      "overview",
+      "planning",
+      "plans",
+      "products",
+      "reports",
+      "scripts",
+      "tasks",
+      "videos"
+    ],
+    "mode": "API"
+  },
+  "results": [],
+  "scope": "SYNTHETIC_IDENTITIES_ACTUAL_PG_COOKIE_HTTP_NO_COMPUTATION",
+  "platformCalls": 0,
+  "paidCalls": 0
+}

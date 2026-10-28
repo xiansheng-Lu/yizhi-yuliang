@@ -117,5 +117,15 @@
     "All test identities, authorizations and field proofs are explicitly synthetic",
     "No creation executor, upload or estimate channel is granted",
     "Real resources remain unbound to actual business tenant and distinct shops"
-  ]
+  ],
+  "followup": {
+    "checkedAt": "2026-10-28T04:17:27.163Z",
+    "implementationCommit": "d35a9e4",
+    "problem": "Empty optional shop triggered PostgreSQL ambiguous parameter typing",
+    "resolution": "Explicit uuid cast, full context still distinguishes empty versus selected shop",
+    "configurationChecks": 22,
+    "infrastructure": 683,
+    "skipped": 1,
+    "evidence": "../M4-01a/verification.json"
+  }
 }

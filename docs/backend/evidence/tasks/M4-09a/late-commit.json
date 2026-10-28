@@ -1,0 +1,57 @@
+{
+  "input": "REAL_LOCAL_PG_APPLICATIONS_OUTBOX_AND_PROJECTOR",
+  "lateSourceId": 2,
+  "earlySourceId": 3,
+  "beforeLateCommit": {
+    "head_seq": 1,
+    "retained_from_seq": 1,
+    "cursor": "2:1",
+    "events": [
+      {
+        "seq": 1,
+        "source_event_id": "c897a6f1-a8a1-4fdd-87f4-f1055a5a9eef",
+        "event": "job.changed",
+        "data": {
+          "tenantId": "2",
+          "entityType": "command_job",
+          "entityId": "7712a36e-28d3-4ca0-8876-4a83afac96ec",
+          "version": 1,
+          "changes": {
+            "status": "BLOCKED"
+          },
+          "at": "2026-10-28T01:42:09.037138Z"
+        }
+      }
+    ],
+    "has_more": false,
+    "resync_reason": null
+  },
+  "afterLateCommit": {
+    "head_seq": 2,
+    "retained_from_seq": 1,
+    "cursor": "2:2",
+    "events": [
+      {
+        "seq": 2,
+        "source_event_id": "c8a61e0d-c006-47a0-993b-b16c265b3526",
+        "event": "job.changed",
+        "data": {
+          "tenantId": "2",
+          "entityType": "command_job",
+          "entityId": "2d268a16-d02e-4601-a323-78020df3a393",
+          "version": 1,
+          "changes": {
+            "status": "BLOCKED"
+          },
+          "at": "2026-10-28T01:42:08.991780Z"
+        }
+      }
+    ],
+    "has_more": false,
+    "resync_reason": null
+  },
+  "requestId": "ff2b1be4-6424-497b-a3bc-ae8f4052efbe",
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "humanSignoff": "PENDING"
+}

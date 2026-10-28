@@ -4,7 +4,7 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "currentFocus": "M2-17a",
+  "currentFocus": "M4-09a",
   "tasks": {
     "R00-01": {
       "owner": "BE",
@@ -2316,6 +2316,49 @@
         "migration": "0037_approval_service",
         "comparisonEvidenceLevel": "E0"
       }
+    },
+    "M4-09a": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "scope": "原子业务事件Outbox、按租户提交序投影、源事件去重及7天保留水位",
+      "dependencyInput": "M0-16b可靠消息与M2-06b真实状态投影技术证据已交付；持续授权继续，G0/E08保留",
+      "delivery": "三类真实核心业务Outbox、租户提交序投影、源去重和七天保留/游标已技术验证；SSE与会话生命周期归M4-09b",
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS",
+          "review": "PENDING_BE_FE_F12"
+        },
+        {
+          "item": 2,
+          "technical": "PASS",
+          "review": "PENDING_BE_FE_F12"
+        },
+        {
+          "item": 3,
+          "technical": "PASS",
+          "review": "PENDING_BE_FE_F12"
+        }
+      ],
+      "evidence": "tasks/M4-09a/README.md",
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F12"
+      },
+      "implementationCommit": "d1de32e4056de96035dab286685af361f6e85a27",
+      "git": "COMMITTED",
+      "syncVerification": "git merge-base --is-ancestor d1de32e4056de96035dab286685af361f6e85a27 origin/main",
+      "technicalVerification": {
+        "result": "PASS",
+        "unitContract": 582,
+        "integration": 623,
+        "skipped": 1,
+        "dedicatedEvents": 18,
+        "transitions": 30,
+        "risk": 14,
+        "settlement": 22,
+        "migration": "0038_event_projections"
+      }
     }
   },
   "gates": {
@@ -2421,7 +2464,7 @@
     "offline": "离线通过不等于真实依赖、前端联调或平台验收通过"
   },
   "nextTask": {
-    "id": "M4-09a",
+    "id": "M4-09b",
     "status": "READY_FOR_TECHNICAL_PREPARATION"
   },
   "continuation": {
@@ -2431,15 +2474,16 @@
     "environment": "WSL2 Ubuntu Docker; UV_PROJECT_ENVIRONMENT=/home/lenovo/.cache/yuliang-venv",
     "latestUserRequest": "补齐浏览器验收，然后按照后端任务卡继续后续的所有开发，需要资源再找我对接，不阻塞持续开发到完毕",
     "developmentPolicy": "缺人工/外部验收时记录并继续可独立技术准备；正式门禁、平台调用和付费仍按各自证据许可",
-    "lastCompletedTechnicalTask": "M2-17a",
-    "nextTechnicalTask": "M4-09a",
+    "lastCompletedTechnicalTask": "M4-09a",
+    "nextTechnicalTask": "M4-09b",
     "executionRules": "docs/backend/evidence/execution-rules.md",
-    "checkpoint": "独立GET读回与E0比较通过605项集成；后续运行核验仍依赖实际写适配，先持久事件投影",
+    "checkpoint": "事件投影18项专用/623项全量集成通过，0038开发库空数据，继续核心SSE",
     "technicalPreparationQueue": [
-      "M4-09a",
-      "M4-09b"
+      "M4-09b",
+      "M3-07",
+      "M4-01a"
     ],
-    "routingReason": "M2-17a依赖M2-13b/M1-03b已有实际技术证据，M4-09a依赖M0-16b/M2-06b已就绪；不以空Snapshot跨过缺失镜像代码",
+    "routingReason": "M4-09a/09b具备真实技术依赖；重新核对全部149卡，M3-07依赖M1-02/17、M4-01a依赖M0-15/12和M1-15b均已技术交付，可继续独立准备；不以空Snapshot跨过缺失镜像代码",
     "deferredTechnicalDependencies": [
       {
         "task": "M1-18",

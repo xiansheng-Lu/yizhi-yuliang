@@ -1,0 +1,237 @@
+{
+  "source": "SYNTHETIC_HTTP_REAL_PG_SCOPE_AND_MEASURES",
+  "livePlatformCalls": 0,
+  "paidCalls": 0,
+  "result": {
+    "runId": "d98eec5c-a243-41d2-863f-1684c2d707d3",
+    "sourceId": "8671b9b4-7176-433a-a431-846fec6a3725",
+    "state": "SUCCESS",
+    "confirmedPages": 1,
+    "itemsCount": 3,
+    "sourceVersion": 1
+  },
+  "beforeProof": {
+    "sourceId": "8671b9b4-7176-433a-a431-846fec6a3725",
+    "accountId": "60d57f21-7779-45c8-b5c2-07b43e2b8761",
+    "provider": "tencent",
+    "productLine": "adq",
+    "budgetUsable": false,
+    "measures": {
+      "BALANCE": {
+        "valueMinor": null,
+        "currency": null,
+        "state": "UNCONFIRMED",
+        "reason": "METRIC_SOURCE_OR_UNIT_UNCONFIRMED",
+        "proofId": null
+      },
+      "IN_TRANSIT": {
+        "valueMinor": null,
+        "currency": null,
+        "state": "UNCONFIRMED",
+        "reason": "METRIC_SOURCE_OR_UNIT_UNCONFIRMED",
+        "proofId": null
+      },
+      "UNSETTLED": {
+        "valueMinor": null,
+        "currency": null,
+        "state": "UNCONFIRMED",
+        "reason": "METRIC_SOURCE_OR_UNIT_UNCONFIRMED",
+        "proofId": null
+      },
+      "CREDIT": {
+        "valueMinor": null,
+        "currency": null,
+        "state": "UNCONFIRMED",
+        "reason": "METRIC_SOURCE_OR_UNIT_UNCONFIRMED",
+        "proofId": null
+      },
+      "REALTIME_COST": {
+        "valueMinor": null,
+        "currency": null,
+        "state": "UNCONFIRMED",
+        "reason": "METRIC_SOURCE_OR_UNIT_UNCONFIRMED",
+        "proofId": null
+      }
+    },
+    "rawFunds": [
+      {
+        "tenant_id": 1,
+        "account_id": "60d57f21-7779-45c8-b5c2-07b43e2b8761",
+        "run_id": "d98eec5c-a243-41d2-863f-1684c2d707d3",
+        "page_no": 0,
+        "kind": "FUNDS",
+        "fund_type": "FUND_TYPE_CASH",
+        "native_balance": "1000",
+        "native_realtime_cost": "20",
+        "fund_status": "FUND_STATUS_NORMAL",
+        "unit_state": "UNCONFIRMED",
+        "outbound_id": "b0f12d24-da1c-4538-9e3e-a608a689ab96",
+        "fetched_at": "2026-10-28 06:21:37.047079+00:00",
+        "request_id": "9162a34f-9d78-41a1-9c03-1377cb05029b"
+      },
+      {
+        "tenant_id": 1,
+        "account_id": "60d57f21-7779-45c8-b5c2-07b43e2b8761",
+        "run_id": "d98eec5c-a243-41d2-863f-1684c2d707d3",
+        "page_no": 0,
+        "kind": "FUNDS",
+        "fund_type": "FUND_TYPE_CREDIT_ROLL",
+        "native_balance": "-50",
+        "native_realtime_cost": null,
+        "fund_status": null,
+        "unit_state": "UNCONFIRMED",
+        "outbound_id": "b0f12d24-da1c-4538-9e3e-a608a689ab96",
+        "fetched_at": "2026-10-28 06:21:37.047079+00:00",
+        "request_id": "9162a34f-9d78-41a1-9c03-1377cb05029b"
+      },
+      {
+        "tenant_id": 1,
+        "account_id": "60d57f21-7779-45c8-b5c2-07b43e2b8761",
+        "run_id": "d98eec5c-a243-41d2-863f-1684c2d707d3",
+        "page_no": 0,
+        "kind": "FUNDS",
+        "fund_type": "FUND_TYPE_GIFT",
+        "native_balance": "0",
+        "native_realtime_cost": null,
+        "fund_status": null,
+        "unit_state": "UNCONFIRMED",
+        "outbound_id": "b0f12d24-da1c-4538-9e3e-a608a689ab96",
+        "fetched_at": "2026-10-28 06:21:37.047079+00:00",
+        "request_id": "9162a34f-9d78-41a1-9c03-1377cb05029b"
+      }
+    ],
+    "freshness": {
+      "sourceId": "8671b9b4-7176-433a-a431-846fec6a3725",
+      "resourceKey": "adq.finance.funds",
+      "status": "UNKNOWN",
+      "reason": "POLICY_UNCONFIGURED",
+      "dataAvailable": true,
+      "sourceUpdatedAt": null,
+      "fetchedAt": "2026-10-28 06:21:37.047079+00:00",
+      "queriedAt": "2026-10-28 06:21:37.086302+00:00",
+      "maxAgeSeconds": null,
+      "refreshSeconds": null,
+      "clock": null,
+      "ageSeconds": null,
+      "successRunId": "d98eec5c-a243-41d2-863f-1684c2d707d3",
+      "policyRevision": null,
+      "authorizationState": "ACTIVE",
+      "authorizationExpiresAt": "2026-10-28 07:21:36.895519+00:00"
+    }
+  },
+  "afterProof": {
+    "sourceId": "8671b9b4-7176-433a-a431-846fec6a3725",
+    "accountId": "60d57f21-7779-45c8-b5c2-07b43e2b8761",
+    "provider": "tencent",
+    "productLine": "adq",
+    "budgetUsable": false,
+    "measures": {
+      "BALANCE": {
+        "valueMinor": 1000,
+        "currency": "CNY",
+        "state": "AVAILABLE",
+        "reason": "VERIFIED_SOURCE_MEASURE",
+        "proofId": "4524afed-9799-4126-b202-b89902765325"
+      },
+      "IN_TRANSIT": {
+        "valueMinor": null,
+        "currency": null,
+        "state": "UNCONFIRMED",
+        "reason": "METRIC_SOURCE_OR_UNIT_UNCONFIRMED",
+        "proofId": null
+      },
+      "UNSETTLED": {
+        "valueMinor": null,
+        "currency": null,
+        "state": "UNCONFIRMED",
+        "reason": "METRIC_SOURCE_OR_UNIT_UNCONFIRMED",
+        "proofId": null
+      },
+      "CREDIT": {
+        "valueMinor": null,
+        "currency": null,
+        "state": "UNCONFIRMED",
+        "reason": "METRIC_SOURCE_OR_UNIT_UNCONFIRMED",
+        "proofId": null
+      },
+      "REALTIME_COST": {
+        "valueMinor": 20,
+        "currency": "CNY",
+        "state": "AVAILABLE",
+        "reason": "VERIFIED_SOURCE_MEASURE",
+        "proofId": "853ea0d8-33b2-4408-8f18-4977ac5d28d9"
+      }
+    },
+    "rawFunds": [
+      {
+        "tenant_id": 1,
+        "account_id": "60d57f21-7779-45c8-b5c2-07b43e2b8761",
+        "run_id": "d98eec5c-a243-41d2-863f-1684c2d707d3",
+        "page_no": 0,
+        "kind": "FUNDS",
+        "fund_type": "FUND_TYPE_CASH",
+        "native_balance": "1000",
+        "native_realtime_cost": "20",
+        "fund_status": "FUND_STATUS_NORMAL",
+        "unit_state": "UNCONFIRMED",
+        "outbound_id": "b0f12d24-da1c-4538-9e3e-a608a689ab96",
+        "fetched_at": "2026-10-28 06:21:37.047079+00:00",
+        "request_id": "9162a34f-9d78-41a1-9c03-1377cb05029b"
+      },
+      {
+        "tenant_id": 1,
+        "account_id": "60d57f21-7779-45c8-b5c2-07b43e2b8761",
+        "run_id": "d98eec5c-a243-41d2-863f-1684c2d707d3",
+        "page_no": 0,
+        "kind": "FUNDS",
+        "fund_type": "FUND_TYPE_CREDIT_ROLL",
+        "native_balance": "-50",
+        "native_realtime_cost": null,
+        "fund_status": null,
+        "unit_state": "UNCONFIRMED",
+        "outbound_id": "b0f12d24-da1c-4538-9e3e-a608a689ab96",
+        "fetched_at": "2026-10-28 06:21:37.047079+00:00",
+        "request_id": "9162a34f-9d78-41a1-9c03-1377cb05029b"
+      },
+      {
+        "tenant_id": 1,
+        "account_id": "60d57f21-7779-45c8-b5c2-07b43e2b8761",
+        "run_id": "d98eec5c-a243-41d2-863f-1684c2d707d3",
+        "page_no": 0,
+        "kind": "FUNDS",
+        "fund_type": "FUND_TYPE_GIFT",
+        "native_balance": "0",
+        "native_realtime_cost": null,
+        "fund_status": null,
+        "unit_state": "UNCONFIRMED",
+        "outbound_id": "b0f12d24-da1c-4538-9e3e-a608a689ab96",
+        "fetched_at": "2026-10-28 06:21:37.047079+00:00",
+        "request_id": "9162a34f-9d78-41a1-9c03-1377cb05029b"
+      }
+    ],
+    "freshness": {
+      "sourceId": "8671b9b4-7176-433a-a431-846fec6a3725",
+      "resourceKey": "adq.wallet",
+      "status": "FRESH",
+      "reason": null,
+      "dataAvailable": true,
+      "sourceUpdatedAt": null,
+      "fetchedAt": "2026-10-28 06:21:37.047079+00:00",
+      "queriedAt": "2026-10-28 06:21:37.151212+00:00",
+      "maxAgeSeconds": 3600,
+      "refreshSeconds": 1800,
+      "clock": "FETCHED",
+      "ageSeconds": 1,
+      "successRunId": "d98eec5c-a243-41d2-863f-1684c2d707d3",
+      "policyRevision": 1,
+      "authorizationState": "ACTIVE",
+      "authorizationExpiresAt": "2026-10-28 07:21:36.895519+00:00"
+    }
+  },
+  "trace": {
+    "request_id": "9162a34f-9d78-41a1-9c03-1377cb05029b",
+    "outbound_id": "b0f12d24-da1c-4538-9e3e-a608a689ab96",
+    "run_id": "d98eec5c-a243-41d2-863f-1684c2d707d3",
+    "rows_digest": "905cf3db592c450e3bd53988bf3cd8695c416fd51ea73ff4e4e93a0b623e3758"
+  }
+}

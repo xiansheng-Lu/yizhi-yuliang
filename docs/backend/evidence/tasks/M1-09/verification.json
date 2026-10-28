@@ -1,0 +1,138 @@
+{
+  "checkedAt": "2026-10-28T06:42:49.3005655Z",
+  "baseline": "662a5fc84cc3bbd8d63cb4c15d117b08aef5b45b",
+  "implementationCommit": "5da50660be2a72db50eecafd160290e4ae3be34f",
+  "result": "PASS_LOCAL_PG_ADQ_FUNDS_OPERATIONS_PROVENANCE_AND_CONDITIONAL_MEASURE_NORMALIZATION",
+  "checks": [
+    {
+      "result": "PASS",
+      "seconds": 11.42,
+      "command": "uv run --frozen python scripts/test_infrastructure.py --group adq-finance --details",
+      "count": 16
+    },
+    {
+      "result": "PASS",
+      "seconds": 9.15,
+      "command": "uv run --frozen python scripts/test_infrastructure.py --group adq-assets --details",
+      "count": 12
+    },
+    {
+      "result": "PASS",
+      "seconds": 4.94,
+      "command": "uv run --frozen python scripts/test_infrastructure.py --group native-handoff --details",
+      "count": 8
+    },
+    {
+      "result": "PASS_WITH_EXPLICIT_LIFECYCLE_SKIP",
+      "seconds": 473.27,
+      "command": "uv run --frozen python scripts/test_infrastructure.py --details",
+      "skipped": 1,
+      "count": 733
+    },
+    {
+      "result": "PASS",
+      "rejectedVariants": 13,
+      "command": "python docs/backend/tools/check_task_status.py --self-test",
+      "registered": 69
+    },
+    {
+      "result": "PASS",
+      "cards": 149,
+      "command": "python docs/backend/tools/check_plan.py",
+      "nodes": 156
+    },
+    {
+      "result": "PASS",
+      "frozenSources": 15,
+      "command": "python docs/backend/tools/check_contracts.py",
+      "routes": 53
+    },
+    {
+      "write": false,
+      "exportedTypes": 133,
+      "command": "node docs/backend/tools/freeze_frontend_surface.mjs",
+      "callSites": 56,
+      "result": "PASS",
+      "routes": 53
+    },
+    {
+      "result": "PASS",
+      "command": "node node_modules/tsx/dist/cli.mjs --tsconfig frontend/tsconfig.json docs/backend/tools/check_frontend_contracts.ts",
+      "goldenChecks": 45
+    }
+  ],
+  "staticChecks": "static-check.json",
+  "development": {
+    "head": "0046_adq_finance_reads",
+    "migrationRoleCanLogin": false,
+    "developmentRows": {
+      "adq_finance_pages": 0,
+      "adq_fund_observations": 0,
+      "adq_operation_observations": 0,
+      "adq_wallet_measure_proofs": 0,
+      "sdk_read_catalogs": 0,
+      "capability_route_sources": 0,
+      "adq_asset_pages": 0,
+      "adq_asset_mirrors": 0,
+      "adq_asset_observations": 0,
+      "adq_asset_versions": 0,
+      "adq_campaign_shop_links": 0,
+      "integration_operation_assertions": 0,
+      "analysis_tasks": 0,
+      "analysis_results": 0,
+      "analysis_deliveries": 0,
+      "configuration_field_assertions": 0,
+      "event_resource_heads": 0,
+      "capability_event_deadlines": 0,
+      "event_source_outbox": 0,
+      "event_stream_heads": 0,
+      "event_projections": 0,
+      "approvals": 0,
+      "approval_decisions": 0,
+      "server_approval_permits": 0,
+      "execution_recoveries": 0,
+      "execution_recovery_evidence": 0,
+      "execution_orders": 0,
+      "execution_attempts": 0,
+      "budget_job_finalizations": 0,
+      "command_jobs": 0
+    }
+  },
+  "traces": [
+    "wallet.json",
+    "source-spec.json"
+  ],
+  "status": "WAITING_REVIEW",
+  "humanSignoff": "PENDING_BE_F07",
+  "liveAcceptance": "NOT_RUN_EXTERNAL_E01",
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "frontendBrowser": "NOT_RUN_THIS_CARD",
+  "limitations": [
+    "Provider HTTP, all identities and all financial classification/unit proofs are synthetic",
+    "Pinned SDK confirms only raw balance/realtime_cost int64, not live financial units or all wallet meanings",
+    "Unconfigured wallet measures remain null and UNCONFIRMED; missing required funds/fields never become zero",
+    "Unlisted upstream source paths require a separate implemented verified adapter before mapping",
+    "Native log ID and native timestamp unit are not provided/confirmed; observations do not invent them",
+    "Wallet amounts do not confer budget eligibility; budgetUsable is always false",
+    "Internal server runtime/read views are wired; no new public HTTP, scheduler, business request or actual platform write",
+    "Private applications remain unbound to actual business tenant/shops and disabled"
+  ],
+  "defects": [
+    {
+      "resolution": "Fixed account_id/fields-only parameters and explicit data.list terminal parser",
+      "layer": "FUNDS_REQUEST_AND_RESPONSE_SCHEMA",
+      "problem": "Previous native reader reused ADQ numeric pagination for SDK single-page funds/get"
+    },
+    {
+      "resolution": "Extract common helpers; 12 asset and 8 authorization handoff regressions pass",
+      "layer": "SHARED_SCOPE_AND_PAGINATION",
+      "problem": "Asset and finance readers need identical authorization-version/native-link and strict page fences"
+    },
+    {
+      "resolution": "Import the original projector from its defining module; production code unchanged",
+      "layer": "MYPY_TEST_PATCH_TARGET",
+      "problem": "Implicit import alias was not a public module export for the test patch"
+    }
+  ]
+}

@@ -282,6 +282,30 @@ def test_adq_page_and_wx_cursor_do_not_fake_completeness() -> None:
     assert page.records == () and page.next_cursor is None
 
 
+def test_funds_is_explicit_single_page_and_missing_fields_are_not_zero() -> None:
+    spec = read_spec("adq.funds", "a" * 20, "b" * 64)
+    assert set(spec.parameters_model.model_fields) == {"account_id", "fields"}
+    page = parse_page(
+        "adq.funds",
+        exchange(
+            {
+                "code": 0,
+                "data": {
+                    "list": [
+                        {
+                            "fund_type": "FUND_TYPE_CASH",
+                            "balance": 123,
+                            "fund_status": "FUND_STATUS_NORMAL",
+                        }
+                    ]
+                },
+            }
+        ),
+    )
+    assert page.next_cursor is None and page.records[0]["balance"] == 123
+    assert "realtime_cost" not in page.records[0]
+
+
 def test_missing_money_is_not_zero_and_shop_pii_is_omitted() -> None:
     with pytest.raises(ValueError):
         parse_page("wxshop.balance", exchange({"errcode": 0}))

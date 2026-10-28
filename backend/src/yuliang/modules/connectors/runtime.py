@@ -10,6 +10,12 @@ from pydantic import SecretBytes, SecretStr
 from sqlalchemy import Engine, text
 
 from yuliang.modules.connectors.adq_assets import MIRROR_POLICY, AdqAssetSync, AssetKind
+from yuliang.modules.connectors.adq_finance import AdqFinanceSync
+from yuliang.modules.connectors.adq_finance_protocol import (
+    FINANCE_ARCHIVE_POLICY,
+    FINANCE_MIRROR_POLICY,
+    OperationQuery,
+)
 from yuliang.modules.connectors.archive import PlatformArchive, RecordedPlatformClient
 from yuliang.modules.connectors.base import GatewayContext
 from yuliang.modules.connectors.governance import PlatformGovernance, QuotaLimits
@@ -38,6 +44,7 @@ class PlatformRuntime:
         self.governance: PlatformGovernance | None = None
         self.registry = GatewayRegistry()
         self.adq_assets: dict[UUID, AdqAssetSync] = {}
+        self.adq_finance: dict[UUID, AdqFinanceSync] = {}
         self.ports = {
             item.id: NativeAuthorization(item) for item in bundle.applications if item.enabled
         }
@@ -107,6 +114,27 @@ class PlatformRuntime:
                     self.token_for_read,
                     item.readonly_interfaces,
                     item.granted_scopes or (),
+                )
+                finance_client = GovernedPlatformClient(
+                    RecordedPlatformClient(
+                        PlatformHttpClient(native_signer),
+                        PlatformArchive(engine, settings.auth_audit_secret),
+                        policy=FINANCE_ARCHIVE_POLICY,
+                        decoder=decode_verdict,
+                    ),
+                    self.governance,
+                    item.id,
+                )
+                self.adq_finance[item.id] = AdqFinanceSync(
+                    SyncStore(
+                        engine,
+                        CursorCodec(keys, bundle.key_version, settings.auth_audit_secret),
+                        policy=FINANCE_MIRROR_POLICY,
+                    ),
+                    finance_client,
+                    self.token_for_read,
+                    item.readonly_interfaces,
+                    item.granted_scopes,
                 )
 
     @classmethod
@@ -208,3 +236,21 @@ class PlatformRuntime:
         if reader is None:
             raise OAuthRejected()
         return await reader.sync(ctx, kind, run_id)
+
+    async def sync_adq_finance(
+        self, ctx: GatewayContext, run_id: UUID, query: OperationQuery | None = None
+    ) -> dict[str, Any]:
+        await self.token_for_read(ctx)
+        with business_transaction(self.engine, ctx.identity) as session:
+            app_id = session.execute(
+                text("SELECT application_id FROM provider_authorizations WHERE id=:id"),
+                {"id": ctx.authorization_id},
+            ).scalar_one()
+        reader = self.adq_finance.get(app_id)
+        if reader is None:
+            raise OAuthRejected()
+        return (
+            await reader.sync_funds(ctx, run_id)
+            if query is None
+            else await reader.sync_operations(ctx, run_id, query)
+        )

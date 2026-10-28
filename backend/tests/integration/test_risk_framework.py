@@ -30,6 +30,7 @@ from .test_capability_evidence import capability as capability
 from .test_capability_evidence import populate
 from .test_identity_database import database as database
 from .test_job_applications import applications as applications
+from .test_job_transitions import synthetic_initial_notice
 from .test_oauth_vault import oauth_ready as oauth_ready
 from .test_password_sessions import login_api as login_api
 from .test_platform_governance import governance as governance
@@ -116,6 +117,7 @@ def seed(data: dict[str, Any], stage: RiskStage) -> CommandJob:
     )
     with data["maintenance"].begin() as owner:
         owner.execute(text("SET LOCAL ROLE app_owner"))
+        synthetic_initial_notice(owner, job)
         owner.execute(
             text(
                 "UPDATE command_jobs SET status=:status,document=CAST(:document AS jsonb) "

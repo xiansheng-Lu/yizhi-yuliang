@@ -2,13 +2,17 @@
 
 import base64
 import hashlib
+import hmac
+import json
 import logging
 import re
+import secrets
 import tempfile
 from collections.abc import Iterator
 from contextlib import contextmanager
 from contextvars import ContextVar
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from datetime import UTC, datetime
 from typing import Any, Protocol, cast
 from urllib.parse import urlsplit
 from uuid import UUID
@@ -83,6 +87,13 @@ class VerifiedBlob:
     sha256: str
 
 
+@dataclass(frozen=True)
+class VersionCheck:
+    checked_at: datetime
+    token: str = field(repr=False)
+    context: tuple[str, str, int, str, str, UUID] | None = field(default=None, repr=False)
+
+
 class BlobStore:
     def __init__(
         self,
@@ -109,6 +120,7 @@ class BlobStore:
         ):
             raise ValueError("对象存储须为显式可信私有端点和合法桶")
         self.bucket = bucket
+        self._attest_key = secrets.token_bytes(32)
         with private_blob_logs():
             self.client = cast(
                 S3Client,
@@ -263,8 +275,89 @@ class BlobStore:
             except (ClientError, BotoCoreError):
                 raise BlobError("OBJECT_UNAVAILABLE") from None
 
-    def download_url(self, key: str, version: str, *, expires: int = 60) -> str:
+    def check_version(
+        self, key: str, version: str, size: int, mime: str, sha256: str, asset: UUID
+    ) -> VersionCheck:
+        """仅核对已确认的精确版本；不回退最新对象，也不把可签名当可读。"""
         self._key(key)
+        if not version or version == "null":
+            raise BlobError("VERSION_REQUIRED")
+        self.check_bucket()
+        with private_blob_logs():
+            try:
+                head = self.client.head_object(
+                    Bucket=self.bucket, Key=key, VersionId=version, ChecksumMode="ENABLED"
+                )
+                if (
+                    head.get("VersionId") != version
+                    or head.get("ContentLength") != size
+                    or head.get("ContentType") != mime
+                    or head.get("Metadata", {}).get("upload-id") != str(asset)
+                ):
+                    raise BlobError("VERSION_METADATA_MISMATCH")
+                checksum = head.get("ChecksumSHA256")
+                if checksum is not None and checksum != base64.b64encode(
+                    bytes.fromhex(sha256)
+                ).decode("ascii"):
+                    raise BlobError("VERSION_CHECKSUM_MISMATCH")
+            except (ClientError, BotoCoreError):
+                raise BlobError("VERSION_UNREADABLE") from None
+
+        checked = datetime.now(UTC)
+        return VersionCheck(
+            checked,
+            self._version_token(key, version, size, mime, sha256, asset, checked),
+            (key, version, size, mime, sha256, asset),
+        )
+
+    def _version_token(
+        self,
+        key: str,
+        version: str,
+        size: int,
+        mime: str,
+        sha256: str,
+        asset: UUID,
+        checked: datetime,
+    ) -> str:
+        raw = json.dumps(
+            [self.bucket, key, version, size, mime, sha256, str(asset), checked.isoformat()],
+            separators=(",", ":"),
+        ).encode()
+        return hmac.new(self._attest_key, raw, hashlib.sha256).hexdigest()
+
+    def valid_version_check(
+        self,
+        check: VersionCheck,
+        key: str,
+        version: str,
+        size: int,
+        mime: str,
+        sha256: str,
+        asset: UUID,
+    ) -> bool:
+        if (
+            re.fullmatch(r"[0-9a-f]{64}", check.token) is None
+            or check.checked_at.tzinfo is None
+            or not 0 <= (datetime.now(UTC) - check.checked_at).total_seconds() <= 60
+        ):
+            return False
+        return hmac.compare_digest(
+            check.token,
+            self._version_token(key, version, size, mime, sha256, asset, check.checked_at),
+        )
+
+    def download_url(
+        self, key: str, version: str, *, expires: int = 60, check: VersionCheck | None = None
+    ) -> str:
+        self._key(key)
+        if (
+            check is None
+            or check.context is None
+            or check.context[:2] != (key, version)
+            or not self.valid_version_check(check, *check.context)
+        ):
+            raise BlobError("VERIFIED_VERSION_REQUIRED")
         if not version or version == "null" or not 1 <= expires <= 300:
             raise ValueError("下载版本或有效期非法")
         with private_blob_logs():

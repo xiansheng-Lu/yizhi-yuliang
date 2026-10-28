@@ -1,0 +1,75 @@
+{
+  "date": "2026-10-28",
+  "baseline": "739b721",
+  "branch": "codex/backend-comparison-assets",
+  "result": "PASS_COMBINED_FULL",
+  "environment": "WSL Ubuntu Python3.13; real local PG Redis RabbitMQ MinIO; synthetic upstream/identities in isolated databases",
+  "checks": [
+    {
+      "command": "ruff check src tests scripts",
+      "result": "PASS"
+    },
+    {
+      "command": "mypy src",
+      "result": "PASS",
+      "sourceFiles": 199
+    },
+    {
+      "command": "pytest -m \"unit or contract\" -q",
+      "passed": 818,
+      "deselected": 868,
+      "seconds": 9.61
+    },
+    {
+      "command": "python scripts/test_infrastructure.py --group all --details",
+      "passed": 865,
+      "skipped": 1,
+      "seconds": 647.22,
+      "scope": "final frozen source, including public anonymous HTTP origin fix",
+      "skip": "optional infrastructure lifecycle restart, disabled by default"
+    }
+  ],
+  "dedicated": {
+    "comparisonDistinctPGCases": 13,
+    "analysisRegression": 26,
+    "draftRegression": 4,
+    "contentAssets": 9,
+    "contentUploadsRegression": 7,
+    "contentDocumentsRegression": 5,
+    "frontendSnapshot": 7,
+    "profileRegression": 2,
+    "reportPublications": 6
+  },
+  "frontendConsumers": {
+    "analysisComparison": "PASS_ACTUAL_TS_PREVIOUS_RANGE_AND_WEIGHTED_POINT_VALUE",
+    "snapshot": "PASS_ACTUAL_API_CLIENT_AND_REPORT_CONSUMERS",
+    "publication": "PASS_ACTUAL_API_CLIENT_API_ANALYSIS_ADAPTER",
+    "transport": "captured real PG/HTTP values with injected fetch, no additional real platform calls",
+    "browserUI": "NOT_RUN"
+  },
+  "development": "comparison-assets-development.json",
+  "migrationHead": "0061_report_publications",
+  "taskStatus": {
+    "M4-01b": "WAITING_REVIEW",
+    "M3-15b": "WAITING_REVIEW",
+    "M1-18": "IN_PROGRESS_INCOMPLETE_PRODUCTION_PROJECTIONS",
+    "M4-06a": "WAITING_REVIEW",
+    "M4-06b": "WAITING_REVIEW"
+  },
+  "paidCalls": 0,
+  "livePlatformCalls": 0,
+  "platformBusinessWriteCalls": 0,
+  "notClaimed": [
+    "named BE FE acceptance",
+    "real platform financial semantics and full scope",
+    "yuliang production tenant/shop/account binding",
+    "public HTTPS deployment",
+    "full plan/live/replay snapshot",
+    "audio/video or actual generation SOP delivery asset producers"
+  ],
+  "nextTechnicalTasks": [
+    "M3-16",
+    "M1-18 remaining plan projections",
+    "M1-19 confirmed read contracts"
+  ]
+}

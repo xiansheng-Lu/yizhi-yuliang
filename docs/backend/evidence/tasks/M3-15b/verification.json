@@ -1,0 +1,16 @@
+{
+ "task":"M3-15b","date":"2026-10-28","baseline":"739b721","status":"WAITING_REVIEW",
+ "technicalResult":"PASS_REAL_POSTGRES_MINIO_HTTP_ASSET_READ_REFERENCE_ARCHIVE",
+ "migration":"0059_content_asset_references",
+ "integration":{"passed":9,"seconds":9.78,"exclusiveWindow":true},
+ "regression":{"contentUploads":{"passed":7,"seconds":10.43},"contentDocuments":{"passed":5,"seconds":7.35}},
+ "unit":{"dedicated":3,"withDocumentRegression":17},
+ "ruff":"PASS","mypy":"PASS_CONTENT_BLOB_RELATED_TESTS",
+ "realStore":true,"realPostgres":true,"realCreateAppRouter":true,"manualTestRouterRegistration":false,
+ "scope":["confirmed PNG JPEG WebP and UTF8 text","team scope separate from actor upload plan","HEAD exact VersionId and attested signing","atomic document version references","runtime SQL archive-reference guards","removed product new reference rejection"],
+ "notClaimed":["F09 browser cloud UI","production object storage acceptance","audio video duration readiness","actual GENERATION SOP DELIVERY producers integrated"],
+ "livePlatformCalls":0,"paidCalls":0,
+ "review":{"backend":"PENDING","frontend":"PENDING_F09"},
+ "commands":["python scripts/test_infrastructure.py --group content-assets --details","python scripts/test_infrastructure.py --group content-uploads --details","python scripts/test_infrastructure.py --group content-documents --details"],
+ "nextTechnicalTask":"M3-16"
+}

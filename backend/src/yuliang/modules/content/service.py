@@ -9,7 +9,9 @@ from uuid import UUID, uuid4
 from sqlalchemy import Engine, text
 from sqlalchemy.orm import Session
 
+from yuliang.infrastructure.blob import BlobStore
 from yuliang.modules.access.service import require_shop_account
+from yuliang.modules.content.asset_models import AssetProof, document_assets
 from yuliang.modules.content.models import Document, Kind
 from yuliang.platform.db import VerifiedIdentity, business_transaction
 from yuliang.platform.errors import ApiError, ErrorCode
@@ -23,9 +25,15 @@ class DocumentConflict(ApiError):
 
 class ContentService:
     def __init__(
-        self, engine: Engine, identity: VerifiedIdentity, shop_id: UUID | None = None
+        self,
+        engine: Engine,
+        identity: VerifiedIdentity,
+        shop_id: UUID | None = None,
+        *,
+        blob: BlobStore | None = None,
     ) -> None:
         self.engine, self.identity, self.shop = engine, identity, shop_id
+        self.blob = blob
 
     def _shop(self, s: Session, shop: UUID, write: bool) -> None:
         permission = "content.write" if write else "overview.read"
@@ -59,7 +67,10 @@ class ContentService:
         except ValueError:
             raise ApiError(ErrorCode.INVALID_INPUT, "商品ID格式非法") from None
         row = (
-            s.execute(text("SELECT * FROM commerce_products WHERE id=:id"), dict(id=product_uuid))
+            s.execute(
+                text("SELECT * FROM commerce_products WHERE id=:id AND deleted_at IS NULL"),
+                dict(id=product_uuid),
+            )
             .mappings()
             .first()
         )
@@ -103,10 +114,26 @@ class ContentService:
     def save(self, identifier: UUID, document: Document) -> dict[str, Any]:
         if str(identifier) != document.id:
             raise ApiError(ErrorCode.INVALID_INPUT, "路径与文档ID不一致")
-        with business_transaction(self.engine, self.identity) as s:
-            return self._save(s, identifier, document)
+        document = Document.model_validate(document.model_dump())
+        proofs = None
+        if document_assets(document):
+            if self.shop is None:
+                raise ApiError(ErrorCode.CAPABILITY_UNAVAILABLE, "素材文档需明确店铺和存储守卫")
+            from yuliang.modules.content.assets import AssetService
 
-    def _save(self, s: Session, identifier: UUID, document: Document) -> dict[str, Any]:
+            proofs = AssetService(
+                self.engine, self.identity, self.shop, self.blob
+            ).prepare_document(document)
+        with business_transaction(self.engine, self.identity) as s:
+            return self._save(s, identifier, document, proofs)
+
+    def _save(
+        self,
+        s: Session,
+        identifier: UUID,
+        document: Document,
+        proofs: dict[UUID, AssetProof] | None = None,
+    ) -> dict[str, Any]:
         self._lock(s, identifier)
         old = (
             s.execute(text("SELECT * FROM content_documents WHERE id=:id"), dict(id=identifier))
@@ -156,6 +183,10 @@ class ContentService:
             if document.version != 1:
                 raise ApiError(ErrorCode.INVALID_INPUT, "新文档版本须为1")
             revision = 1
+        from yuliang.modules.content.assets import AssetService
+
+        asset_service = AssetService(self.engine, self.identity, shop, self.blob)
+        asset_service.validate_document(s, document, proofs)
         value = document.model_dump(exclude_none=True)
         value["parentId"] = document.parentId
         value["version"] = revision
@@ -196,6 +227,7 @@ class ContentService:
             ),
             parameters,
         )
+        asset_service.register_document(s, identifier, revision, proofs)
         return value
 
     def delete(self, identifier: UUID, version: int) -> None:
@@ -269,12 +301,11 @@ class ContentService:
 
     def review(self, identifier: UUID, version: int) -> dict[str, Any]:
         with business_transaction(self.engine, self.identity) as s:
-            self._lock(s, identifier)
             row = self._row(s, identifier, True)
             current = Document.model_validate(row["payload"])
-            return self._save(
-                s, identifier, current.model_copy(update=dict(version=version, status="review"))
-            )
+        return self.save(
+            identifier, current.model_copy(update=dict(version=version, status="review"))
+        )
 
     def flow(self, identifier: UUID, kind: Kind) -> dict[str, Any]:
         with business_transaction(self.engine, self.identity) as s:
@@ -347,7 +378,7 @@ class ContentService:
                         ("result", 695, "成片输出"),
                     ]
                 ]
-            return self._save(s, UUID(value.id), Document.model_validate(value.model_dump()))
+        return self.save(UUID(value.id), Document.model_validate(value.model_dump()))
 
     def reference(
         self,

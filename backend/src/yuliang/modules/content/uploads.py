@@ -130,8 +130,10 @@ class UploadService:
                 dict(id=identifier),
             )
             .mappings()
-            .one()
+            .one_or_none()
         )
+        if row is None:
+            raise ApiError(ErrorCode.RESOURCE_TERMINAL, "素材已归档，原上传不会重复创建")
         return dict(
             id=str(row["id"]),
             name=row["name"],

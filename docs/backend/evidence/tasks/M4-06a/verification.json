@@ -1,0 +1,59 @@
+{
+  "date": "2026-10-28",
+  "baseline": "739b721",
+  "owner": "BE",
+  "status": "WAITING_REVIEW",
+  "result": "PASS_LOCAL_PG_REDIS_HTTP_FRONTEND_CONSUMER",
+  "migration": "0061_report_publications",
+  "integration": {
+    "command": "python scripts/test_infrastructure.py --group report-publications --details",
+    "passed": 6,
+    "seconds": 13.91
+  },
+  "unit": {
+    "command": "pytest tests/unit/test_report_publications.py -q",
+    "passed": 7,
+    "seconds": 0.5
+  },
+  "frontend": {
+    "command": "node node_modules/tsx/dist/cli.mjs --tsconfig frontend/tsconfig.json backend/scripts/check_publication_frontend.mts .runtime/publication-capture.json",
+    "result": "PASS",
+    "actualApiClient": true,
+    "actualApiAnalysisAdapter": true,
+    "actualPGResponse": true,
+    "transportReplay": true,
+    "fetches": 4,
+    "rawTokensInEvidence": false
+  },
+  "realLoopbackHTTP": {
+    "server": "uvicorn actual loopback socket",
+    "anonymousCookieCount": 0,
+    "status": 200,
+    "explicitOrigin": true,
+    "proxyHeaders": false
+  },
+  "covered": [
+    "version/key concurrent idempotency and replay after draft edit",
+    "immutable snapshot and authenticated export",
+    "current role/scope and CSRF; client origin override rejected",
+    "hash-only token storage; report ID binding; no directory/management access",
+    "revoke and expiry unified 404; HTTP429 Retry-After",
+    "HTML escaping, hidden modules excluded and no internal ID footer",
+    "explicit disabled configuration cannot generate fake URL"
+  ],
+  "ruff": "PASS",
+  "mypy": "PASS_PUBLICATION_SOURCES",
+  "review": "PENDING_BE_F08_F13",
+  "browserAcceptance": "NOT_RUN",
+  "publicDeployment": "NOT_RUN",
+  "paidCalls": 0,
+  "livePlatformCalls": 0,
+  "notes": [
+    "Public read deliberately does not consume identity Cookie or authenticated Origin restrictions",
+    "Independent public origin/link key absent by default; no production configuration changed",
+    "Management revocation does not automatically invalidate deliberate public capability; explicit report revoke/expiry does",
+    "Single-key link regeneration; preserve existing key before rotation"
+  ],
+  "platformBusinessWriteCalls": 0,
+  "localPublicationWrites": "EXECUTED_IN_ISOLATED_TEST_DATABASE"
+}

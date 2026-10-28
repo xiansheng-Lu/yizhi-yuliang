@@ -24,6 +24,7 @@ from yuliang.platform.errors import (
 from yuliang.platform.middleware import RequestContextMiddleware
 from yuliang.platform.probes import ProbeService
 from yuliang.platform.security.oauth_callback import OAuthCallbackPrivacy
+from yuliang.platform.security.public_report import PublicReportPrivacy
 from yuliang.settings import Settings
 
 
@@ -87,7 +88,9 @@ def create_app(settings: Settings | None = None, mail_sender: MailSender | None 
         from yuliang.api.events import router as event_router
         from yuliang.api.integrations import router as integration_router
         from yuliang.api.platform_authorization import router as platform_router
+        from yuliang.modules.analysis.publication_routes import router as publication_router
         from yuliang.modules.analysis.routes import router as analysis_router
+        from yuliang.modules.content.assets_routes import router as content_assets_router
         from yuliang.modules.content.routes import router as content_router
         from yuliang.modules.content.uploads_routes import router as content_uploads_router
         from yuliang.modules.identity.routes import router
@@ -103,8 +106,10 @@ def create_app(settings: Settings | None = None, mail_sender: MailSender | None 
         app.include_router(integration_router)
         app.include_router(event_router)
         app.include_router(analysis_router)
+        app.include_router(publication_router)
         app.include_router(content_router)
         app.include_router(content_uploads_router)
+        app.include_router(content_assets_router)
     if settings.admin_api_enabled:
         from yuliang.admin.routes import router as admin_router
 
@@ -115,6 +120,7 @@ def create_app(settings: Settings | None = None, mail_sender: MailSender | None 
     app.add_exception_handler(Exception, unhandled_error_handler)
     app.add_middleware(RequestContextMiddleware)
     app.add_middleware(OAuthCallbackPrivacy)
+    app.add_middleware(PublicReportPrivacy)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.allowed_origins,

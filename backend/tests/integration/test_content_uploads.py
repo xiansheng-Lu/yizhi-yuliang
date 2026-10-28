@@ -238,7 +238,15 @@ async def test_private_download_expiry_and_utf8_actual_decode(
             .mappings()
             .one()
         )
-    url = blob.download_url(row["object_key"], row["object_version"], expires=1)
+    checked = blob.check_version(
+        row["object_key"],
+        row["object_version"],
+        row["size_bytes"],
+        row["mime"],
+        row["sha256"],
+        identifier,
+    )
+    url = blob.download_url(row["object_key"], row["object_version"], expires=1, check=checked)
     with private_blob_logs():
         assert httpx.get(url.split("?")[0], trust_env=False).status_code == 403
         assert httpx.get(url, trust_env=False).content == body

@@ -2914,20 +2914,25 @@
     },
     "M4-01b": {
       "owner": "BE",
-      "status": "IN_PROGRESS",
-      "delivery": "本期计算、阶段fence与原快照恢复通过；比较期未实现，最高优先续卡，不将未查询当缺覆盖",
+      "status": "WAITING_REVIEW",
+      "delivery": "本期/前期/同比实际覆盖读取、同一RR快照冻结、原账户范围与恢复均验证；真实PG结果与现有TS消费者对齐",
       "review": {
         "backend": "PENDING",
         "frontend": "PENDING_F08"
       },
       "evidence": "tasks/M4-01b/README.md",
-      "comparisonStatus": "NOT_IMPLEMENTED",
+      "comparisonStatus": "PASS_REAL_LOCAL_PG",
       "technicalVerification": {
-        "result": "PASS_CURRENT_PERIOD_SLICE_ONLY",
-        "combinedRegression": "assets-analysis-verification.json",
-        "comparison": "NOT_IMPLEMENTED",
-        "evidence": "tasks/M4-01b/verification.json"
-      }
+        "result": "PASS_LOCAL_VERIFIED_SCOPE",
+        "evidence": "tasks/M4-01b/verification.json",
+        "combinedRegression": "comparison-assets-verification.json",
+        "paidCalls": 0,
+        "livePlatformCalls": 0,
+        "distinctComparisonCases": 13
+      },
+      "blockedBy": [
+        "E08"
+      ]
     },
     "M3-15a": {
       "owner": "BE",
@@ -2988,6 +2993,98 @@
         "E08"
       ],
       "delivery": "报告草稿版本/CAS/不可变分析证据/历史与转义预览通过；公开发布另卡"
+    },
+    "M3-15b": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "delivery": "已确认图片/文本团队读取、实际固定版本短签、文档原子引用与SQL归档互斥通过；音视频及后卡生产者接线保留",
+      "dependencyInput": "依赖已有实际本地技术证据；用户2026-10-28授权持续研发，保留人工/平台验收门禁",
+      "evidence": "tasks/M3-15b/README.md",
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING"
+      },
+      "technicalVerification": {
+        "result": "PASS_LOCAL_VERIFIED_SCOPE",
+        "evidence": "tasks/M3-15b/verification.json",
+        "combinedRegression": "comparison-assets-verification.json",
+        "paidCalls": 0,
+        "livePlatformCalls": 0
+      },
+      "blockedBy": [
+        "E08"
+      ]
+    },
+    "M1-18": {
+      "owner": "BE",
+      "status": "IN_PROGRESS",
+      "delivery": "目录/scope/revision与已确认商品、任务/策略投影及真实前端消费者通过；plan/live/replay生产投影尚不完整，整卡IN_PROGRESS",
+      "dependencyInput": "依赖已有实际本地技术证据；用户2026-10-28授权持续研发，保留人工/平台验收门禁",
+      "evidence": "tasks/M1-18/README.md",
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING"
+      },
+      "technicalVerification": {
+        "result": "PASS_SCOPE_DIRECTORY_CONFIRMED_PRODUCT_SLICE_ONLY",
+        "integrationPassed": 7,
+        "evidence": "tasks/M1-18/verification.json",
+        "combinedRegression": "comparison-assets-verification.json",
+        "paidCalls": 0,
+        "livePlatformCalls": 0
+      },
+      "remainingImplementation": [
+        "plans normative budget/bid/ROI/status/source time",
+        "liveSessions true source timestamps/status/metrics",
+        "replay producers and read projections",
+        "connector read capability projection remains conservative UNKNOWN"
+      ]
+    },
+    "M4-06a": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "delivery": "固定版本发布/幂等及能力链接真实本机HTTP、吊销/过期/限流/转义导出通过；公网/浏览器与人工复核待验",
+      "dependencyInput": "依赖已有实际本地技术证据；用户2026-10-28授权持续研发，保留人工/平台验收门禁",
+      "evidence": "tasks/M4-06a/README.md",
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING"
+      },
+      "technicalVerification": {
+        "result": "PASS_LOCAL_VERIFIED_SCOPE",
+        "evidence": "tasks/M4-06a/verification.json",
+        "combinedRegression": "comparison-assets-verification.json",
+        "paidCalls": 0,
+        "livePlatformCalls": 0,
+        "browserAcceptance": "NOT_RUN",
+        "publicDeployment": "NOT_RUN"
+      },
+      "blockedBy": [
+        "E08"
+      ]
+    },
+    "M4-06b": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "delivery": "固定版本发布/幂等及能力链接真实本机HTTP、吊销/过期/限流/转义导出通过；公网/浏览器与人工复核待验",
+      "dependencyInput": "依赖已有实际本地技术证据；用户2026-10-28授权持续研发，保留人工/平台验收门禁",
+      "evidence": "tasks/M4-06b/README.md",
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING"
+      },
+      "technicalVerification": {
+        "result": "PASS_LOCAL_VERIFIED_SCOPE",
+        "evidence": "tasks/M4-06b/verification.json",
+        "combinedRegression": "comparison-assets-verification.json",
+        "paidCalls": 0,
+        "livePlatformCalls": 0,
+        "browserAcceptance": "NOT_RUN",
+        "publicDeployment": "NOT_RUN"
+      },
+      "blockedBy": [
+        "E08"
+      ]
     }
   },
   "gates": {
@@ -3099,10 +3196,7 @@
     "done": "全部适用DoD与复核通过后才记DONE",
     "offline": "离线通过不等于真实依赖、前端联调或平台验收通过"
   },
-  "nextTask": {
-    "status": "IN_PROGRESS",
-    "id": "M4-01b"
-  },
+  "nextTask": "本批865集成/818单元通过，合并main同步后新分支直接推进M3-16及M1-18/M1-19",
   "continuation": {
     "requestedOn": "2026-10-27",
     "authorization": "持续推进后端任务卡，缺资源再找用户对接",
@@ -3110,44 +3204,45 @@
     "environment": "WSL2 Ubuntu Docker; UV_PROJECT_ENVIRONMENT=/home/lenovo/.cache/yuliang-venv",
     "latestUserRequest": "继续采用多agent模式持续开发，当前任务结束直接开启下一个任务，需要资源再找用户",
     "developmentPolicy": "缺人工/外部验收时记录并继续可独立技术准备；正式门禁、平台调用和付费仍按各自证据许可",
-    "lastCompletedTechnicalTask": "M4-02",
-    "nextTechnicalTask": "M4-01b:comparison",
+    "lastCompletedTechnicalTask": "M4-01b/M3-15b/M4-06a/M4-06b",
+    "nextTechnicalTask": "M3-16; M1-18 remaining projections and M1-19 contract slices",
     "executionRules": "docs/backend/evidence/execution-rules.md",
-    "checkpoint": "第三批本期分析/规则证据/草稿、私有图片文本上传、targets技术切片通过；796单元，827全量+1跳过后安全/前端比例补强专项26分析+4草稿通过。比较期未实现，M4-01b IN_PROGRESS优先续卡。原服务安全迁移已获准执行，累计10次只读业务成功但runtime内部映射未验收。",
+    "checkpoint": "本批完整集成865通过+1可选重启跳过，818单元/契约，199源码mypy及Ruff通过；默认开发库0061，28相关表0行，迁移角色NOLOGIN。M4-01b/M3-15b/M4-06a/b待人工，M1-18仍部分生产投影未完成。",
     "technicalPreparationQueue": [
-      "M3-13a",
-      "M3-08a",
-      "M4-02",
-      "M1-18"
+      "M3-16",
+      "M1-18:remaining-projections",
+      "M1-19",
+      "M4-04",
+      "M3-08a:remaining-kinds"
     ],
     "routingReason": "重新核对149卡，M1-06/07原生适配已有实际技术证据，M1-08与后续镜像可做本地实现与合成端口/真实PG集成；按持续授权不等待实际租户/店铺绑定，但P验收必须保留E01/E02，不能把合成测试当真平台",
     "deferredTechnicalDependencies": [
       {
         "task": "M1-18",
-        "reason": "M1-10/11/12/13镜像技术实现尚未交付；M1-08/09已技术通过但真实单位/财务含义/平台验收仍待E01，不能伪造FrontendSnapshot",
-        "unblock": "先完成对应真实规范镜像实现及技术验证，真实验收另保留"
+        "reason": "规范计划必填预算/出价/ROI/状态/源时间、真实场次/回放生产投影尚缺实现；未知字段不可伪造",
+        "unblock": "从真实SDK/独立单位证据补实际投影，或由BE/FE审阅nullable契约；非等待用户说继续"
+      },
+      {
+        "task": "M1-19/M4-04",
+        "reason": "按具体已具备技术输入的读取切片推进；完整快照/历史事实及冻结客户端边界须逐项对齐，不能用单日截断集合假装完整历史",
+        "unblock": "先完成匹配真实消费者的规范读链；跨平台未知口径明确拒绝/警告"
       },
       {
         "task": "M2-05b",
-        "reason": "直接依赖M1-18尚无技术输入",
-        "unblock": "M1-18实际投影与scope持久化技术通过后装配生命周期HTTP"
-      },
-      {
-        "task": "M4-02/M4-01b",
-        "reason": "M1-10/12/13报表镜像与周期覆盖技术实现尚未交付；相应真实验收另缺E01/E02",
-        "unblock": "先实现并验证报表事实来源和覆盖守卫，再执行实际分析计算"
+        "reason": "完整M1-18尚未技术交付，生命周期HTTP不能靠空快照冒充接线",
+        "unblock": "所依赖真实投影与scope验证后接线"
       }
     ],
     "integrationCheckpoint": "已整合前端frontend目录重构和M1-06/07原生适配；SSE迁移改为0040，保留0039令牌续期与资源未绑定门禁",
     "multiAgentAuthorization": "2026-10-28用户明确授权多Agent持续开发，资源阻塞单列；BE负责人不变",
     "nextReadyQueue": [
-      "M4-01b:comparison",
-      "M3-15b",
-      "M1-18",
-      "M4-06a",
+      "M3-16",
+      "M1-18:remaining-projections",
+      "M1-19:confirmed-read-contracts",
       "M3-08a:remaining-kinds"
     ],
-    "latestVerification": "assets-analysis-verification.json"
+    "latestVerification": "assets-analysis-verification.json",
+    "combinedRegression": "comparison-assets-verification.json"
   },
   "frontendIntegration": {
     "F01": {
@@ -3218,9 +3313,10 @@
     "adapterGuide": "resource-handoff/资源交接与原生适配说明.md",
     "businessTenantName": "yizhi",
     "businessTenantConfirmation": "USER_CONFIRMED_2026_10_28_BOTH_PROJECTS_BELONG_TO_YIZHI",
-    "existingTokenAndApiImplementation": "USER_CONFIRMED_PRESENT_NOT_LIVE_REVERIFIED",
+    "existingTokenAndApiImplementation": "ORIGINAL_SDK_SAMPLED_LIVE_READONLY_VERIFIED; YULIANG_MAPPING_PENDING",
     "databaseTenantBinding": "PENDING_VERIFICATION",
-    "liveReadonlyCheck": "BLOCKED_LOCAL_SECURE_TOKEN_SERVICE_CONFIGURATION; PLATFORM_CALLS_0",
-    "securityInitialization": "USER_APPROVED_EXECUTED_AND_VERIFIED; 3_ENCRYPTED_MIGRATIONS; LOOPBACK_UNIQUE_SERVICES"
+    "liveReadonlyCheck": "PASS_ORIGINAL_SDK_10_READONLY_CALLS; YULIANG_RUNTIME_ACCEPTANCE_NOT_RUN",
+    "securityInitialization": "USER_APPROVED_EXECUTED_AND_VERIFIED; 3_ENCRYPTED_MIGRATIONS; LOOPBACK_UNIQUE_SERVICES",
+    "rawCredentialsInChat": false
   }
 }

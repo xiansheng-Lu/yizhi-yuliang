@@ -1,0 +1,482 @@
+{
+  "result": {
+    "id": "1528d20b-fd06-4544-86a9-6f4072fe333a",
+    "query": {
+      "shopId": "5411ef84-6e97-4e3a-84d1-3a4b95e187aa",
+      "endDate": "2026-10-07",
+      "timezone": "Asia/Shanghai",
+      "startDate": "2026-10-01",
+      "dimensions": [
+        "ads"
+      ],
+      "platformId": "adq"
+    },
+    "rules": {
+      "minViews": 1000,
+      "roiFloor": 3,
+      "minSpendMinor": 100000,
+      "declinePercent": 20,
+      "spendRisePercent": 30
+    },
+    "points": [
+      {
+        "date": "2026-10-01",
+        "values": {
+          "ads.cpa": null,
+          "ads.cpc": 20.0,
+          "ads.ctr": 0.25,
+          "ads.gmv": 300,
+          "ads.roi": 3.0,
+          "ads.spend": 100,
+          "ads.clicks": 5,
+          "ads.orders": null,
+          "ads.impressions": 20
+        }
+      },
+      {
+        "date": "2026-10-02",
+        "values": {
+          "ads.cpa": null,
+          "ads.cpc": 20.0,
+          "ads.ctr": 0.25,
+          "ads.gmv": 300,
+          "ads.roi": 3.0,
+          "ads.spend": 100,
+          "ads.clicks": 5,
+          "ads.orders": null,
+          "ads.impressions": 20
+        }
+      },
+      {
+        "date": "2026-10-03",
+        "values": {
+          "ads.cpa": null,
+          "ads.cpc": 20.0,
+          "ads.ctr": 0.25,
+          "ads.gmv": 300,
+          "ads.roi": 3.0,
+          "ads.spend": 100,
+          "ads.clicks": 5,
+          "ads.orders": null,
+          "ads.impressions": 20
+        }
+      },
+      {
+        "date": "2026-10-04",
+        "values": {
+          "ads.cpa": null,
+          "ads.cpc": 20.0,
+          "ads.ctr": 0.25,
+          "ads.gmv": 300,
+          "ads.roi": 3.0,
+          "ads.spend": 100,
+          "ads.clicks": 5,
+          "ads.orders": null,
+          "ads.impressions": 20
+        }
+      },
+      {
+        "date": "2026-10-05",
+        "values": {
+          "ads.cpa": null,
+          "ads.cpc": 20.0,
+          "ads.ctr": 0.25,
+          "ads.gmv": 300,
+          "ads.roi": 3.0,
+          "ads.spend": 100,
+          "ads.clicks": 5,
+          "ads.orders": null,
+          "ads.impressions": 20
+        }
+      },
+      {
+        "date": "2026-10-06",
+        "values": {
+          "ads.cpa": null,
+          "ads.cpc": 20.0,
+          "ads.ctr": 0.25,
+          "ads.gmv": 300,
+          "ads.roi": 3.0,
+          "ads.spend": 100,
+          "ads.clicks": 5,
+          "ads.orders": null,
+          "ads.impressions": 20
+        }
+      },
+      {
+        "date": "2026-10-07",
+        "values": {
+          "ads.cpa": null,
+          "ads.cpc": 20.0,
+          "ads.ctr": 0.25,
+          "ads.gmv": 300,
+          "ads.roi": 3.0,
+          "ads.spend": 100,
+          "ads.clicks": 5,
+          "ads.orders": null,
+          "ads.impressions": 20
+        }
+      }
+    ],
+    "source": "API",
+    "taskId": "aa823156-5b18-4637-ba20-02c81f8efbd2",
+    "metrics": [
+      {
+        "id": "ads.spend",
+        "name": "广告消耗",
+        "unit": "minor",
+        "value": 700,
+        "reason": null,
+        "status": "ready",
+        "yearAgo": 1400,
+        "previous": 700,
+        "dimension": "ads",
+        "definition": "规范spend_minor同口径合计"
+      },
+      {
+        "id": "ads.gmv",
+        "name": "广告归因GMV",
+        "unit": "minor",
+        "value": 2100,
+        "reason": null,
+        "status": "ready",
+        "yearAgo": 2100,
+        "previous": 1400,
+        "dimension": "ads",
+        "definition": "规范paid_gmv_minor同口径合计"
+      },
+      {
+        "id": "ads.roi",
+        "name": "投放ROI",
+        "unit": "ratio",
+        "value": 3.0,
+        "reason": null,
+        "status": "ready",
+        "yearAgo": 1.5,
+        "previous": 2.0,
+        "dimension": "ads",
+        "numerator": "ads.gmv",
+        "definition": "规范paid_gmv_minor ÷ 同范围spend_minor",
+        "denominator": "ads.spend"
+      },
+      {
+        "id": "ads.ctr",
+        "name": "点击率",
+        "unit": "rate",
+        "value": 0.25,
+        "reason": null,
+        "status": "ready",
+        "yearAgo": 0.25,
+        "previous": 0.25,
+        "dimension": "ads",
+        "numerator": "ads.clicks",
+        "definition": "规范clicks ÷ 同范围impressions",
+        "denominator": "ads.impressions"
+      },
+      {
+        "id": "ads.cpc",
+        "name": "点击成本",
+        "unit": "minor",
+        "value": 20.0,
+        "reason": null,
+        "status": "ready",
+        "yearAgo": 40.0,
+        "previous": 20.0,
+        "dimension": "ads",
+        "numerator": "ads.spend",
+        "definition": "规范spend_minor ÷ 同范围clicks",
+        "denominator": "ads.clicks"
+      },
+      {
+        "id": "ads.cpa",
+        "name": "成交成本",
+        "unit": "minor",
+        "value": null,
+        "reason": "缺少明确分子/分母或分母非正，未补零；前期:缺少明确分子/分母或分母非正，未补零；去年同期:缺少明确分子/分母或分母非正，未补零",
+        "status": "empty",
+        "yearAgo": null,
+        "previous": null,
+        "dimension": "ads",
+        "numerator": "ads.spend",
+        "definition": "规范spend_minor ÷ 同范围attributed_order_count",
+        "denominator": "ads.orders"
+      }
+    ],
+    "coverage": "本期及比较期已按原账户范围实际核对；比较来源完整；previous=等长紧邻前期；yearAgo=去年起日夹至有效日，日/周保持等长，完整自然月按去年同月；不做日均归一化",
+    "insights": [
+      {
+        "id": "rules-ads.spend",
+        "kind": "conclusion",
+        "title": "已核对广告消耗",
+        "action": "核对来源口径及本期表现后制定下一步验证。",
+        "evidence": "本期广告消耗=700分；依据冻结事实fact:10@r2/run:9f7e1892-8a7c-52a1-bb82-b35739e7b1ec/page:0；fact:15@r2/run:b56ffc5d-4508-535f-9ed6-940765f28be0/page:0；fact:18@r2/run:a94130d3-121e-5dc3-a9f0-c23a2eb19f20/page:0；fact:21@r2/run:a0819425-321f-5647-b4bf-f191b663a818/page:0；fact:25@r2/run:0ddbd5f7-2be0-5717-8257-9d5500ea1265/page:0；fact:3@r2/run:de5ed310-6e2c-551e-ab50-84c49664b9aa/page:0；fact:8@r2/run:34aec286-f214-5d99-afa6-4742cf4069af/page:0",
+        "metricId": "ads.spend",
+        "priority": "P3",
+        "direction": "仅说明本期同口径观测，不推断利润或增长因果。",
+        "verificationMetric": "ads.spend"
+      },
+      {
+        "id": "rules-ads.gmv",
+        "kind": "conclusion",
+        "title": "已核对广告归因GMV",
+        "action": "核对来源口径及本期表现后制定下一步验证。",
+        "evidence": "本期广告归因GMV=2100分；依据冻结事实fact:16@r2/run:b56ffc5d-4508-535f-9ed6-940765f28be0/page:0；fact:19@r2/run:a94130d3-121e-5dc3-a9f0-c23a2eb19f20/page:0；fact:22@r2/run:a0819425-321f-5647-b4bf-f191b663a818/page:0；fact:28@r2/run:0ddbd5f7-2be0-5717-8257-9d5500ea1265/page:0；fact:4@r2/run:de5ed310-6e2c-551e-ab50-84c49664b9aa/page:0；fact:5@r2/run:34aec286-f214-5d99-afa6-4742cf4069af/page:0；fact:9@r2/run:9f7e1892-8a7c-52a1-bb82-b35739e7b1ec/page:0",
+        "metricId": "ads.gmv",
+        "priority": "P3",
+        "direction": "仅说明本期同口径观测，不推断利润或增长因果。",
+        "verificationMetric": "ads.gmv"
+      },
+      {
+        "id": "rules-ads.roi",
+        "kind": "conclusion",
+        "title": "已核对投放ROI",
+        "action": "核对来源口径及本期表现后制定下一步验证。",
+        "evidence": "本期投放ROI=3.0；依据冻结事实fact:10@r2/run:9f7e1892-8a7c-52a1-bb82-b35739e7b1ec/page:0；fact:15@r2/run:b56ffc5d-4508-535f-9ed6-940765f28be0/page:0；fact:16@r2/run:b56ffc5d-4508-535f-9ed6-940765f28be0/page:0；fact:18@r2/run:a94130d3-121e-5dc3-a9f0-c23a2eb19f20/page:0；fact:19@r2/run:a94130d3-121e-5dc3-a9f0-c23a2eb19f20/page:0；fact:21@r2/run:a0819425-321f-5647-b4bf-f191b663a818/page:0；fact:22@r2/run:a0819425-321f-5647-b4bf-f191b663a818/page:0；fact:25@r2/run:0ddbd5f7-2be0-5717-8257-9d5500ea1265/page:0；fact:28@r2/run:0ddbd5f7-2be0-5717-8257-9d5500ea1265/page:0；fact:3@r2/run:de5ed310-6e2c-551e-ab50-84c49664b9aa/page:0；fact:4@r2/run:de5ed310-6e2c-551e-ab50-84c49664b9aa/page:0；fact:5@r2/run:34aec286-f214-5d99-afa6-4742cf4069af/page:0；fact:8@r2/run:34aec286-f214-5d99-afa6-4742cf4069af/page:0；fact:9@r2/run:9f7e1892-8a7c-52a1-bb82-b35739e7b1ec/page:0",
+        "metricId": "ads.roi",
+        "priority": "P3",
+        "direction": "仅说明本期同口径观测，不推断利润或增长因果。",
+        "verificationMetric": "ads.roi"
+      }
+    ],
+    "sections": [
+      {
+        "id": "ads",
+        "rows": [],
+        "title": "投流分析",
+        "advice": "核对原始来源后制定后续行动。",
+        "topics": [
+          "已确认来源汇总"
+        ],
+        "dimension": "ads",
+        "metricIds": [
+          "ads.spend",
+          "ads.gmv",
+          "ads.roi",
+          "ads.ctr",
+          "ads.cpc",
+          "ads.cpa"
+        ],
+        "conclusion": "已按所选周期核对规范事实。",
+        "limitation": "账户级数据，不制造计划/商品排名；比较期同口径来源完整；previous=等长紧邻前期；yearAgo=去年起日夹至有效日，日/周保持等长，完整自然月按去年同月；不做日均归一化"
+      }
+    ],
+    "shopName": "Shop",
+    "createdAt": "2026-10-28T10:31:40.381378+00:00",
+    "updatedAt": null,
+    "comparison": {
+      "yearAgo": {
+        "endDate": "2025-10-07",
+        "startDate": "2025-10-01"
+      },
+      "previous": {
+        "endDate": "2026-09-30",
+        "startDate": "2026-09-24"
+      }
+    },
+    "attribution": "产品线独立计算；归因/退款/币种口径来自冻结事实",
+    "completeness": "partial",
+    "platformName": "adq",
+    "insightSource": "rules",
+    "schemaVersion": "business-analysis-v1",
+    "yearAgoPoints": [
+      {
+        "date": "2025-10-01",
+        "values": {
+          "ads.cpa": null,
+          "ads.cpc": 40.0,
+          "ads.ctr": 0.25,
+          "ads.gmv": 300,
+          "ads.roi": 1.5,
+          "ads.spend": 200,
+          "ads.clicks": 5,
+          "ads.orders": null,
+          "ads.impressions": 20
+        }
+      },
+      {
+        "date": "2025-10-02",
+        "values": {
+          "ads.cpa": null,
+          "ads.cpc": 40.0,
+          "ads.ctr": 0.25,
+          "ads.gmv": 300,
+          "ads.roi": 1.5,
+          "ads.spend": 200,
+          "ads.clicks": 5,
+          "ads.orders": null,
+          "ads.impressions": 20
+        }
+      },
+      {
+        "date": "2025-10-03",
+        "values": {
+          "ads.cpa": null,
+          "ads.cpc": 40.0,
+          "ads.ctr": 0.25,
+          "ads.gmv": 300,
+          "ads.roi": 1.5,
+          "ads.spend": 200,
+          "ads.clicks": 5,
+          "ads.orders": null,
+          "ads.impressions": 20
+        }
+      },
+      {
+        "date": "2025-10-04",
+        "values": {
+          "ads.cpa": null,
+          "ads.cpc": 40.0,
+          "ads.ctr": 0.25,
+          "ads.gmv": 300,
+          "ads.roi": 1.5,
+          "ads.spend": 200,
+          "ads.clicks": 5,
+          "ads.orders": null,
+          "ads.impressions": 20
+        }
+      },
+      {
+        "date": "2025-10-05",
+        "values": {
+          "ads.cpa": null,
+          "ads.cpc": 40.0,
+          "ads.ctr": 0.25,
+          "ads.gmv": 300,
+          "ads.roi": 1.5,
+          "ads.spend": 200,
+          "ads.clicks": 5,
+          "ads.orders": null,
+          "ads.impressions": 20
+        }
+      },
+      {
+        "date": "2025-10-06",
+        "values": {
+          "ads.cpa": null,
+          "ads.cpc": 40.0,
+          "ads.ctr": 0.25,
+          "ads.gmv": 300,
+          "ads.roi": 1.5,
+          "ads.spend": 200,
+          "ads.clicks": 5,
+          "ads.orders": null,
+          "ads.impressions": 20
+        }
+      },
+      {
+        "date": "2025-10-07",
+        "values": {
+          "ads.cpa": null,
+          "ads.cpc": 40.0,
+          "ads.ctr": 0.25,
+          "ads.gmv": 300,
+          "ads.roi": 1.5,
+          "ads.spend": 200,
+          "ads.clicks": 5,
+          "ads.orders": null,
+          "ads.impressions": 20
+        }
+      }
+    ],
+    "previousPoints": [
+      {
+        "date": "2026-09-24",
+        "values": {
+          "ads.cpa": null,
+          "ads.cpc": 20.0,
+          "ads.ctr": 0.25,
+          "ads.gmv": 200,
+          "ads.roi": 2.0,
+          "ads.spend": 100,
+          "ads.clicks": 5,
+          "ads.orders": null,
+          "ads.impressions": 20
+        }
+      },
+      {
+        "date": "2026-09-25",
+        "values": {
+          "ads.cpa": null,
+          "ads.cpc": 20.0,
+          "ads.ctr": 0.25,
+          "ads.gmv": 200,
+          "ads.roi": 2.0,
+          "ads.spend": 100,
+          "ads.clicks": 5,
+          "ads.orders": null,
+          "ads.impressions": 20
+        }
+      },
+      {
+        "date": "2026-09-26",
+        "values": {
+          "ads.cpa": null,
+          "ads.cpc": 20.0,
+          "ads.ctr": 0.25,
+          "ads.gmv": 200,
+          "ads.roi": 2.0,
+          "ads.spend": 100,
+          "ads.clicks": 5,
+          "ads.orders": null,
+          "ads.impressions": 20
+        }
+      },
+      {
+        "date": "2026-09-27",
+        "values": {
+          "ads.cpa": null,
+          "ads.cpc": 20.0,
+          "ads.ctr": 0.25,
+          "ads.gmv": 200,
+          "ads.roi": 2.0,
+          "ads.spend": 100,
+          "ads.clicks": 5,
+          "ads.orders": null,
+          "ads.impressions": 20
+        }
+      },
+      {
+        "date": "2026-09-28",
+        "values": {
+          "ads.cpa": null,
+          "ads.cpc": 20.0,
+          "ads.ctr": 0.25,
+          "ads.gmv": 200,
+          "ads.roi": 2.0,
+          "ads.spend": 100,
+          "ads.clicks": 5,
+          "ads.orders": null,
+          "ads.impressions": 20
+        }
+      },
+      {
+        "date": "2026-09-29",
+        "values": {
+          "ads.cpa": null,
+          "ads.cpc": 20.0,
+          "ads.ctr": 0.25,
+          "ads.gmv": 200,
+          "ads.roi": 2.0,
+          "ads.spend": 100,
+          "ads.clicks": 5,
+          "ads.orders": null,
+          "ads.impressions": 20
+        }
+      },
+      {
+        "date": "2026-09-30",
+        "values": {
+          "ads.cpa": null,
+          "ads.cpc": 20.0,
+          "ads.ctr": 0.25,
+          "ads.gmv": 200,
+          "ads.roi": 2.0,
+          "ads.spend": 100,
+          "ads.clicks": 5,
+          "ads.orders": null,
+          "ads.impressions": 20
+        }
+      }
+    ]
+  }
+}

@@ -1,8 +1,8 @@
 {
   "result": {
-    "id": "1001e785-36cc-4e09-bd0e-d1220b72f7e3",
+    "id": "080a454e-717c-4804-8ccd-1615e6a4e5da",
     "query": {
-      "shopId": "277a2671-8930-468d-9457-52458debfc68",
+      "shopId": "d6417af1-7bb3-4cd6-8fd1-a55056e1784c",
       "endDate": "2026-10-11",
       "timezone": "Asia/Shanghai",
       "startDate": "2026-10-05",
@@ -119,14 +119,14 @@
       }
     ],
     "source": "API",
-    "taskId": "268bcafa-1bec-4282-a3f7-251cd7690cbe",
+    "taskId": "59968d79-02f0-4d04-a723-1e530ad54506",
     "metrics": [
       {
         "id": "ads.spend",
         "name": "广告消耗",
         "unit": "minor",
         "value": 1000,
-        "reason": null,
+        "reason": "前期:2026-09-28:spend_minor:缺失或口径不唯一；2026-09-28:paid_gmv_minor:缺失或口径不唯一；2026-09-28:impressions:缺失或口径不唯一；去年同期:2025-10-05:spend_minor:缺失或口径不唯一；2025-10-05:paid_gmv_minor:缺失或口径不唯一；2025-10-05:impressions:缺失或口径不唯一",
         "status": "ready",
         "yearAgo": null,
         "previous": null,
@@ -138,7 +138,7 @@
         "name": "广告归因GMV",
         "unit": "minor",
         "value": 1900,
-        "reason": null,
+        "reason": "前期:2026-09-28:spend_minor:缺失或口径不唯一；2026-09-28:paid_gmv_minor:缺失或口径不唯一；2026-09-28:impressions:缺失或口径不唯一；去年同期:2025-10-05:spend_minor:缺失或口径不唯一；2025-10-05:paid_gmv_minor:缺失或口径不唯一；2025-10-05:impressions:缺失或口径不唯一",
         "status": "ready",
         "yearAgo": null,
         "previous": null,
@@ -150,7 +150,7 @@
         "name": "投放ROI",
         "unit": "ratio",
         "value": 1.9,
-        "reason": null,
+        "reason": "前期:2026-09-28:spend_minor:缺失或口径不唯一；2026-09-28:paid_gmv_minor:缺失或口径不唯一；2026-09-28:impressions:缺失或口径不唯一；去年同期:2025-10-05:spend_minor:缺失或口径不唯一；2025-10-05:paid_gmv_minor:缺失或口径不唯一；2025-10-05:impressions:缺失或口径不唯一",
         "status": "ready",
         "yearAgo": null,
         "previous": null,
@@ -164,7 +164,7 @@
         "name": "点击率",
         "unit": "rate",
         "value": 0.25,
-        "reason": null,
+        "reason": "前期:2026-09-28:spend_minor:缺失或口径不唯一；2026-09-28:paid_gmv_minor:缺失或口径不唯一；2026-09-28:impressions:缺失或口径不唯一；去年同期:2025-10-05:spend_minor:缺失或口径不唯一；2025-10-05:paid_gmv_minor:缺失或口径不唯一；2025-10-05:impressions:缺失或口径不唯一",
         "status": "ready",
         "yearAgo": null,
         "previous": null,
@@ -178,7 +178,7 @@
         "name": "点击成本",
         "unit": "minor",
         "value": 28.571429,
-        "reason": null,
+        "reason": "前期:2026-09-28:spend_minor:缺失或口径不唯一；2026-09-28:paid_gmv_minor:缺失或口径不唯一；2026-09-28:impressions:缺失或口径不唯一；去年同期:2025-10-05:spend_minor:缺失或口径不唯一；2025-10-05:paid_gmv_minor:缺失或口径不唯一；2025-10-05:impressions:缺失或口径不唯一",
         "status": "ready",
         "yearAgo": null,
         "previous": null,
@@ -192,7 +192,7 @@
         "name": "成交成本",
         "unit": "minor",
         "value": null,
-        "reason": "缺少明确分子/分母或分母非正，未补零",
+        "reason": "缺少明确分子/分母或分母非正，未补零；前期:2026-09-28:spend_minor:缺失或口径不唯一；2026-09-28:paid_gmv_minor:缺失或口径不唯一；2026-09-28:impressions:缺失或口径不唯一；去年同期:2025-10-05:spend_minor:缺失或口径不唯一；2025-10-05:paid_gmv_minor:缺失或口径不唯一；2025-10-05:impressions:缺失或口径不唯一",
         "status": "empty",
         "yearAgo": null,
         "previous": null,
@@ -202,14 +202,14 @@
         "denominator": "ads.orders"
       }
     ],
-    "coverage": "本期按实际日期、账户及规范合同完整覆盖；比较期计算尚未实现",
+    "coverage": "本期及比较期已按原账户范围实际核对；previous:2026-09-28:spend_minor:缺失或口径不唯一；2026-09-28:paid_gmv_minor:缺失或口径不唯一；2026-09-28:impressions:缺失或口径不唯一；yearAgo:2025-10-05:spend_minor:缺失或口径不唯一；2025-10-05:paid_gmv_minor:缺失或口径不唯一；2025-10-05:impressions:缺失或口径不唯一；previous=等长紧邻前期；yearAgo=去年起日夹至有效日，日/周保持等长，完整自然月按去年同月；不做日均归一化",
     "insights": [
       {
         "id": "rules-ads.spend",
         "kind": "conclusion",
         "title": "已核对广告消耗",
         "action": "核对来源口径及本期表现后制定下一步验证。",
-        "evidence": "本期广告消耗=1000分；依据冻结事实fact:724@r2/run:12de6aec-2170-5d04-8d0c-24a9cd57dcc3/page:0；fact:731@r2/run:3292fa53-6179-5a86-81ef-35bed82f2064/page:0；fact:734@r2/run:a351f740-367b-536a-8553-921899a79d06/page:0；fact:740@r1/run:8b09ed56-8e9b-5001-a81c-37bef37af0b3/page:0；fact:743@r1/run:1ab18dc4-1c1c-54ad-81a5-30fb563ff0d1/page:0；fact:746@r1/run:b0b01c77-a0b8-51bf-961e-39b1517edbd7/page:0；fact:751@r1/run:0480812f-babe-58d4-b8aa-510b6aac637b/page:0",
+        "evidence": "本期广告消耗=1000分；依据冻结事实fact:726@r2/run:eb20a911-8959-59ec-b3de-a7fce42767a1/page:0；fact:728@r2/run:ac8cac1d-0b27-59d7-8c36-de2fed4ebbba/page:0；fact:733@r2/run:1f7627b1-9363-56cf-97bc-f9fdb1efab13/page:0；fact:740@r1/run:1213e169-4dbb-561f-839b-58daecb92da9/page:0；fact:745@r1/run:a30bf7ae-97ff-5f17-aa0b-0a8cdd489bb4/page:0；fact:749@r1/run:ef15e1d3-cc39-5fe3-a79a-d92f8963e4d7/page:0；fact:750@r1/run:d5e2d6bf-576d-5718-abde-3f5d0a073d0c/page:0",
         "metricId": "ads.spend",
         "priority": "P3",
         "direction": "仅说明本期同口径观测，不推断利润或增长因果。",
@@ -220,7 +220,7 @@
         "kind": "conclusion",
         "title": "已核对广告归因GMV",
         "action": "核对来源口径及本期表现后制定下一步验证。",
-        "evidence": "本期广告归因GMV=1900分；依据冻结事实fact:725@r2/run:12de6aec-2170-5d04-8d0c-24a9cd57dcc3/page:0；fact:729@r2/run:3292fa53-6179-5a86-81ef-35bed82f2064/page:0；fact:733@r2/run:a351f740-367b-536a-8553-921899a79d06/page:0；fact:741@r1/run:8b09ed56-8e9b-5001-a81c-37bef37af0b3/page:0；fact:742@r1/run:1ab18dc4-1c1c-54ad-81a5-30fb563ff0d1/page:0；fact:747@r1/run:b0b01c77-a0b8-51bf-961e-39b1517edbd7/page:0；fact:752@r1/run:0480812f-babe-58d4-b8aa-510b6aac637b/page:0",
+        "evidence": "本期广告归因GMV=1900分；依据冻结事实fact:725@r2/run:eb20a911-8959-59ec-b3de-a7fce42767a1/page:0；fact:730@r2/run:ac8cac1d-0b27-59d7-8c36-de2fed4ebbba/page:0；fact:734@r2/run:1f7627b1-9363-56cf-97bc-f9fdb1efab13/page:0；fact:739@r1/run:1213e169-4dbb-561f-839b-58daecb92da9/page:0；fact:743@r1/run:a30bf7ae-97ff-5f17-aa0b-0a8cdd489bb4/page:0；fact:746@r1/run:ef15e1d3-cc39-5fe3-a79a-d92f8963e4d7/page:0；fact:752@r1/run:d5e2d6bf-576d-5718-abde-3f5d0a073d0c/page:0",
         "metricId": "ads.gmv",
         "priority": "P3",
         "direction": "仅说明本期同口径观测，不推断利润或增长因果。",
@@ -231,7 +231,7 @@
         "kind": "conclusion",
         "title": "已核对投放ROI",
         "action": "核对来源口径及本期表现后制定下一步验证。",
-        "evidence": "本期投放ROI=1.9；依据冻结事实fact:724@r2/run:12de6aec-2170-5d04-8d0c-24a9cd57dcc3/page:0；fact:725@r2/run:12de6aec-2170-5d04-8d0c-24a9cd57dcc3/page:0；fact:729@r2/run:3292fa53-6179-5a86-81ef-35bed82f2064/page:0；fact:731@r2/run:3292fa53-6179-5a86-81ef-35bed82f2064/page:0；fact:733@r2/run:a351f740-367b-536a-8553-921899a79d06/page:0；fact:734@r2/run:a351f740-367b-536a-8553-921899a79d06/page:0；fact:740@r1/run:8b09ed56-8e9b-5001-a81c-37bef37af0b3/page:0；fact:741@r1/run:8b09ed56-8e9b-5001-a81c-37bef37af0b3/page:0；fact:742@r1/run:1ab18dc4-1c1c-54ad-81a5-30fb563ff0d1/page:0；fact:743@r1/run:1ab18dc4-1c1c-54ad-81a5-30fb563ff0d1/page:0；fact:746@r1/run:b0b01c77-a0b8-51bf-961e-39b1517edbd7/page:0；fact:747@r1/run:b0b01c77-a0b8-51bf-961e-39b1517edbd7/page:0；fact:751@r1/run:0480812f-babe-58d4-b8aa-510b6aac637b/page:0；fact:752@r1/run:0480812f-babe-58d4-b8aa-510b6aac637b/page:0",
+        "evidence": "本期投放ROI=1.9；依据冻结事实fact:725@r2/run:eb20a911-8959-59ec-b3de-a7fce42767a1/page:0；fact:726@r2/run:eb20a911-8959-59ec-b3de-a7fce42767a1/page:0；fact:728@r2/run:ac8cac1d-0b27-59d7-8c36-de2fed4ebbba/page:0；fact:730@r2/run:ac8cac1d-0b27-59d7-8c36-de2fed4ebbba/page:0；fact:733@r2/run:1f7627b1-9363-56cf-97bc-f9fdb1efab13/page:0；fact:734@r2/run:1f7627b1-9363-56cf-97bc-f9fdb1efab13/page:0；fact:739@r1/run:1213e169-4dbb-561f-839b-58daecb92da9/page:0；fact:740@r1/run:1213e169-4dbb-561f-839b-58daecb92da9/page:0；fact:743@r1/run:a30bf7ae-97ff-5f17-aa0b-0a8cdd489bb4/page:0；fact:745@r1/run:a30bf7ae-97ff-5f17-aa0b-0a8cdd489bb4/page:0；fact:746@r1/run:ef15e1d3-cc39-5fe3-a79a-d92f8963e4d7/page:0；fact:749@r1/run:ef15e1d3-cc39-5fe3-a79a-d92f8963e4d7/page:0；fact:750@r1/run:d5e2d6bf-576d-5718-abde-3f5d0a073d0c/page:0；fact:752@r1/run:d5e2d6bf-576d-5718-abde-3f5d0a073d0c/page:0",
         "metricId": "ads.roi",
         "priority": "P3",
         "direction": "仅说明本期同口径观测，不推断利润或增长因果。",
@@ -257,11 +257,11 @@
           "ads.cpa"
         ],
         "conclusion": "已按所选周期核对规范事实。",
-        "limitation": "账户级数据，不制造计划/商品排名；比较期计算尚未实现，暂不计算同比环比。"
+        "limitation": "账户级数据，不制造计划/商品排名；previous:2026-09-28:spend_minor:缺失或口径不唯一；2026-09-28:paid_gmv_minor:缺失或口径不唯一；2026-09-28:impressions:缺失或口径不唯一；yearAgo:2025-10-05:spend_minor:缺失或口径不唯一；2025-10-05:paid_gmv_minor:缺失或口径不唯一；2025-10-05:impressions:缺失或口径不唯一；previous=等长紧邻前期；yearAgo=去年起日夹至有效日，日/周保持等长，完整自然月按去年同月；不做日均归一化"
       }
     ],
     "shopName": "Shop",
-    "createdAt": "2026-10-28T09:50:03.309698+00:00",
+    "createdAt": "2026-10-28T10:30:23.739899+00:00",
     "updatedAt": null,
     "comparison": {
       "yearAgo": null,

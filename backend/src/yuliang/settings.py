@@ -41,6 +41,10 @@ class Settings(BaseSettings):
     blob_region: str = Field(default="us-east-1", pattern=r"^[a-z0-9][a-z0-9-]{0,62}$")
     blob_upload_ttl_seconds: int = Field(default=300, ge=1, le=900)
     blob_download_ttl_seconds: int = Field(default=60, ge=1, le=300)
+    report_public_origin: str | None = None
+    report_link_secret: SecretStr | None = None
+    report_public_ttl_seconds: int = Field(default=2592000, ge=60, le=31536000)
+    report_public_reads_per_minute: int = Field(default=60, ge=1, le=600)
     admin_allowed_networks: list[str] = Field(default_factory=lambda: ["127.0.0.1/32", "::1/128"])
     worker_queue_prefix: str = Field(default="yuliang", pattern=r"^[a-z0-9][a-z0-9-]{0,63}$")
     operations_allowed_networks: list[str] = Field(
@@ -49,6 +53,34 @@ class Settings(BaseSettings):
 
     @model_validator(mode="after")
     def auth_rollout_requirements(self) -> "Settings":
+        if self.report_public_origin is not None or self.report_link_secret is not None:
+            if (
+                not self.identity_api_enabled
+                or not self.report_public_origin
+                or not self.report_link_secret
+            ):
+                raise ValueError("报告发布需要身份接口、明确公开源与独立链接密钥")
+            origin = urlsplit(self.report_public_origin)
+            if (
+                origin.scheme not in {"http", "https"}
+                or not origin.hostname
+                or origin.username
+                or origin.password
+                or origin.path
+                or origin.query
+                or origin.fragment
+                or "*" in self.report_public_origin
+                or re.fullmatch(r"https?://[^/?#@\s]+", self.report_public_origin) is None
+                or origin.scheme == "http"
+                and (
+                    self.environment not in {"local", "test"}
+                    or origin.hostname not in {"127.0.0.1", "::1", "localhost", "testserver"}
+                )
+                or len(self.report_link_secret.get_secret_value().strip()) < 32
+                or self.report_link_secret
+                in (self.session_secret, self.auth_audit_secret, self.email_code_secret)
+            ):
+                raise ValueError("报告公开源需精确HTTPS源及独立密钥；HTTP仅供本地测试")
         if self.blob_enabled:
             if not (
                 self.identity_api_enabled

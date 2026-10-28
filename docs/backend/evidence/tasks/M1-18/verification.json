@@ -1,0 +1,28 @@
+{
+  "profileRegressionSeconds": 4.4,
+  "remainingGaps": [
+    "REQUIRED_PLAN_FIELDS_UNIT_STATUS_SOURCE_TIME",
+    "LIVE_PLATFORM_SOURCE_TIMES_AND_METRICS",
+    "REPLAY_PRODUCER_AND_TABLE_NOT_IMPLEMENTED",
+    "MULTI_SKU_FRONTEND_CARDINALITY_CONTRACT",
+    "REAL_BUSINESS_MAPPING_AND_PLATFORM_ACCEPTANCE"
+  ],
+  "frontendConsumer": "PASS_ACTUAL_APICLIENT_AND_REPORTING_CONSUMERS",
+  "unitPassed": 6,
+  "membershipGuard": "NARROW_SECURITY_DEFINER_CURRENT_ACTOR_TENANT_VERSION_ONLY_NO_USERS_TABLE_GRANT",
+  "profileSelection": "test_password_sessions.py -k m0_12 or m0_14",
+  "profileRegressionPassed": 2,
+  "taskStatus": "IN_PROGRESS",
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "integrationSeconds": 6.99,
+  "review": "PENDING_BE_F02_F04_F05",
+  "unitSeconds": 0.39,
+  "migration": "0060_frontend_snapshot",
+  "integrationPassed": 7,
+  "ruff": "PASS",
+  "integrationCommand": "python scripts/test_infrastructure.py --group frontend-snapshot --details",
+  "result": "PASS_SCOPE_DIRECTORY_AND_CONFIRMED_PRODUCT_SLICE_ONLY",
+  "date": "2026-10-28",
+  "mypy": "PASS_SRC_PLUS_CARD_TESTS"
+}

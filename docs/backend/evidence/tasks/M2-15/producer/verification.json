@@ -1,0 +1,70 @@
+{
+  "task": "M2-15",
+  "slice": "RELIABLE_APPROVAL_OUTBOX_PRODUCER",
+  "cardStatus": "IN_PROGRESS",
+  "sliceResult": "PASS_REAL_PG_APPROVAL_ORIGIN_AND_ATOMIC_OUTBOX",
+  "verifiedAtUtc": "2026-10-28T16:31:19Z",
+  "localDate": "2026-10-29",
+  "baseMain": "94834e2b4247058e44bc9a13e6c73f602b0577f0",
+  "migration": "0076_approval_execution_events",
+  "downRevision": "0075_execution_evidence_reads",
+  "testedHead": "0077_approved_dispatch_worker",
+  "integration": {
+    "command": "python scripts/test_infrastructure.py --group approval-execution-outbox --details",
+    "passed": 18,
+    "failed": 0,
+    "seconds": 16.4,
+    "firstAttempt": true,
+    "runtimeOrFixtureFixes": 0,
+    "databaseWindow": "EXPLICITLY_RELEASED"
+  },
+  "unit": {
+    "command": "python -m pytest tests/unit/test_approval_outbox.py -q",
+    "passed": 4,
+    "seconds": 0.62
+  },
+  "static": {
+    "ruff": "PASS",
+    "mypy": "PASS",
+    "files": 4
+  },
+  "eventType": "yuliang.system.approved_execution",
+  "subject": "Original approvals requester A, never approving actor B",
+  "source": "Immutable approval_execution_events linked to actual decision/job approved version/member/outbox",
+  "idempotency": "Stable server-derived event UUID plus unique decision and job/version; old review version conflict unchanged",
+  "originAndContext": {
+    "load_approved_origin": "Safe persisted IDs and subject_active only; inactive principal limited to downstream blocked facts",
+    "load_approved_event": "Active original subject, actual immutable source and exact five-ID envelope; no CLAIM granted"
+  },
+  "checks": [
+    "A creates B approves and event executes as A",
+    "Concurrent approvals only one actual decision/source/event",
+    "REJECT emits none; old-version replay emits none",
+    "Audit and money fault rollback leaves no partial decision/job/source/outbox",
+    "Runtime cannot call renamed approval core or insert source row",
+    "Tenant-scoped arbitrary outbox insert cannot forge approved event",
+    "All five broker identity/address fields checked against actual source",
+    "Inactive original subject remains explainable origin but active context denied",
+    "Local sender confirmation-loss retry preserves identical original event",
+    "Origin and event identity immutable",
+    "Maintenance-only actual old core historical decision is not backfilled"
+  ],
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "celeryHelperProcessesStarted": 0,
+  "rabbitWorkerValidation": "SEPARATE_INDEPENDENT_PIPELINE_GROUP_NOT_CLAIMED_HERE",
+  "notClaimed": [
+    "Production WRITE serializer/profile enabled",
+    "Real platform write acceptance",
+    "Entire M2-15 production completion",
+    "F06 browser sign-off"
+  ],
+  "finalCombinedRegression": {
+    "result": "PASS_COMBINED_FULL",
+    "passed": 1098,
+    "skipped": 1,
+    "seconds": 1144.62,
+    "evidence": "../../../approved-execution-verification.json",
+    "latestSourceAfterScopedRecoveryPublisherFix": true
+  }
+}

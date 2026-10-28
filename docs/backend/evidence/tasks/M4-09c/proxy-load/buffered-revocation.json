@@ -1,0 +1,21 @@
+{
+  "result": "PASS",
+  "actualNginx": true,
+  "actualPollBarrier": true,
+  "receivedEventTypes": [
+    "event: resync"
+  ],
+  "bufferedAnalysisLeakCount": 0,
+  "cleanup": {
+    "ownNginxExited": true,
+    "ownUvicornExited": true,
+    "normalPortClosed": true,
+    "faultPortClosed": true,
+    "appPortClosed": true
+  },
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "productionTls": "NOT_RUN",
+  "frontendF12": "PENDING",
+  "humanSignoff": "PENDING"
+}

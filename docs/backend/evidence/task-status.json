@@ -4,7 +4,7 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "currentFocus": "M2-11b",
+  "currentFocus": "M2-06b",
   "tasks": {
     "R00-01": {
       "owner": "BE",
@@ -2191,6 +2191,47 @@
       "implementationCommit": "632991ab25a5ee1fa56a69dc768e82bdeec8c7f4",
       "git": "COMMITTED",
       "syncVerification": "git merge-base --is-ancestor 632991ab25a5ee1fa56a69dc768e82bdeec8c7f4 origin/main"
+    },
+    "M2-06b": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "scope": "以同一查询投影输出V1任务与V8执行视图，UNKNOWN双来源和平台成功断言；不提前改计划值",
+      "dependencyInput": "M2-06a/13b/11b实际技术输入，G0/E08与F06最终联调保留",
+      "delivery": "V1/V8共用MVCC事实投影、UNKNOWN双来源、受理/匹配与人工交接保护，F06兼容入口和页面接线仍待验收",
+      "dod": [
+        {
+          "item": 1,
+          "technical": "PASS",
+          "review": "PENDING_BE_FE_F06"
+        },
+        {
+          "item": 2,
+          "technical": "PASS",
+          "review": "PENDING_BE_FE_F06"
+        },
+        {
+          "item": 3,
+          "technical": "PASS",
+          "review": "PENDING_BE_FE_F06"
+        }
+      ],
+      "evidence": "tasks/M2-06b/README.md",
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F06"
+      },
+      "technicalVerification": {
+        "result": "PASS",
+        "unitContract": 543,
+        "addedContract": 22,
+        "integration": 572,
+        "skipped": 1,
+        "dedicatedProjection": 9,
+        "frozenSources": 15
+      },
+      "implementationCommit": "45dbd03c2bcb6bc969ccb3400cfd1e4683a7539a",
+      "git": "COMMITTED",
+      "syncVerification": "git merge-base --is-ancestor 45dbd03c2bcb6bc969ccb3400cfd1e4683a7539a origin/main"
     }
   },
   "gates": {
@@ -2296,7 +2337,7 @@
     "offline": "离线通过不等于真实依赖、前端联调或平台验收通过"
   },
   "nextTask": {
-    "id": "M2-06b",
+    "id": "M2-14",
     "status": "READY_FOR_TECHNICAL_PREPARATION"
   },
   "continuation": {
@@ -2306,12 +2347,11 @@
     "environment": "WSL2 Ubuntu Docker; UV_PROJECT_ENVIRONMENT=/home/lenovo/.cache/yuliang-venv",
     "latestUserRequest": "补齐浏览器验收，然后按照后端任务卡继续后续的所有开发，需要资源再找我对接，不阻塞持续开发到完毕",
     "developmentPolicy": "缺人工/外部验收时记录并继续可独立技术准备；正式门禁、平台调用和付费仍按各自证据许可",
-    "lastCompletedTechnicalTask": "M2-11b",
-    "nextTechnicalTask": "M2-06b",
+    "lastCompletedTechnicalTask": "M2-06b",
+    "nextTechnicalTask": "M2-14",
     "executionRules": "docs/backend/evidence/execution-rules.md",
-    "checkpoint": "恢复器/未发送E1/真实Worker失联重投技术通过，继续V1/V8投影",
+    "checkpoint": "统一投影技术通过，继续通用审批及真实权限/意图绑定；F06兼容入口缺项已交接",
     "technicalPreparationQueue": [
-      "M2-06b",
       "M2-14",
       "M1-18",
       "M2-05b"

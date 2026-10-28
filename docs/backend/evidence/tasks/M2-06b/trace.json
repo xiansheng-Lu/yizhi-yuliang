@@ -1,0 +1,21 @@
+{
+  "jobId": "ab846eef-b40e-41a6-986c-56201b885410",
+  "attemptId": "e6eec766-c4e0-4853-bb49-fbc3bc891c34",
+  "executionId": "f585d117-27bb-47ef-b921-0443497da48e",
+  "requestId": "0af86419-6d19-46e1-b9d9-debdc1ad4202",
+  "v1Status": "VERIFYING",
+  "v8Status": "UNKNOWN",
+  "receipt": {
+    "receipt_id": "3daad935-a131-5dd1-9800-291f65bfdbfb",
+    "source": "PLATFORM",
+    "platform_receipt_id": null,
+    "accepted": true,
+    "received_at": "2026-10-28T00:01:13.193680Z",
+    "verification": "UNKNOWN",
+    "observed_value": null,
+    "verified_at": null
+  },
+  "realPlatformCalls": 0,
+  "paidCalls": 0,
+  "input": "REAL_PG_AND_MOCK_ACK_WITH_EXPLICIT_INTERNAL_UNKNOWN_FIXTURE"
+}

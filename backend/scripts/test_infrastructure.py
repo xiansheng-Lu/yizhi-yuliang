@@ -85,6 +85,7 @@ def main() -> int:
             "readback",
             "events",
             "sse",
+            "configuration",
         ),
         default="all",
     )
@@ -135,6 +136,7 @@ def main() -> int:
         "readback": ["tests/integration/test_independent_readback.py"],
         "events": ["tests/integration/test_event_projections.py"],
         "sse": ["tests/integration/test_core_sse.py", "tests/integration/test_connector_events.py"],
+        "configuration": ["tests/integration/test_configuration_context.py"],
         "parser": [
             "tests/integration/test_command_parse.py",
             "tests/integration/test_workspace.py",

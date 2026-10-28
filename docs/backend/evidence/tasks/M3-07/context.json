@@ -1,0 +1,350 @@
+{
+  "catalog": {
+    "contractVersion": "advertising-v9.0",
+    "source": "API",
+    "tenantId": "1",
+    "product": "adq",
+    "accounts": [
+      {
+        "id": "fe2d5b91-26bf-4d04-847e-9f49311e3ce4",
+        "name": "Synthetic",
+        "businessEntityId": "55367d08-677f-4404-b3cc-ee7a317c83d5",
+        "shopIds": [
+          "48bd06b3-bcf9-4a81-a8b1-13cd88598179"
+        ],
+        "authorization": "AUTHORIZED",
+        "writable": false
+      }
+    ],
+    "entities": [
+      {
+        "id": "55367d08-677f-4404-b3cc-ee7a317c83d5",
+        "name": "Synthetic entity"
+      }
+    ],
+    "shops": [
+      {
+        "id": "48bd06b3-bcf9-4a81-a8b1-13cd88598179",
+        "name": "Shop",
+        "businessEntityId": "55367d08-677f-4404-b3cc-ee7a317c83d5"
+      }
+    ],
+    "reason": "当前范围的实际主体/账户/店铺；创建执行通道仍未开放"
+  },
+  "capability": {
+    "contractVersion": "advertising-v9.0",
+    "source": "API",
+    "tenantId": "1",
+    "contextKey": "[\"adq\",\"ADQ\",\"55367d08-677f-4404-b3cc-ee7a317c83d5\",\"fe2d5b91-26bf-4d04-847e-9f49311e3ce4\",\"48bd06b3-bcf9-4a81-a8b1-13cd88598179\",\"objective-A\",\"\",\"\",[\"target-A\"],[\"placement-A\"],\"\",\"\",\"\",\"\",\"\"]",
+    "version": "cfg1.cb851655e6bf8a6e2039d345c78412d5f8f971b235def192407ee04e9a086620",
+    "checkedAt": "2026-10-28T03:42:56.948114Z",
+    "expiresAt": "2026-10-28T03:43:56.948114Z",
+    "fields": {
+      "name": {
+        "state": "PUBLIC",
+        "reason": "应用草稿名称；不代表平台计划名称限制或写入许可已核验",
+        "valueType": "TEXT"
+      },
+      "account": {
+        "state": "UNCONFIRMED",
+        "reason": "该目标/版位的字段规范尚未核对",
+        "valueType": "SELECT"
+      },
+      "shop": {
+        "state": "UNCONFIRMED",
+        "reason": "该目标/版位的字段规范尚未核对",
+        "valueType": "SELECT"
+      },
+      "objective": {
+        "state": "UNCONFIRMED",
+        "reason": "该目标/版位的字段规范尚未核对",
+        "valueType": "SELECT"
+      },
+      "target": {
+        "state": "UNCONFIRMED",
+        "reason": "该目标/版位的字段规范尚未核对",
+        "valueType": "MULTI_SELECT"
+      },
+      "placement": {
+        "state": "UNCONFIRMED",
+        "reason": "该目标/版位的字段规范尚未核对",
+        "valueType": "MULTI_SELECT"
+      },
+      "optimization": {
+        "state": "UNCONFIRMED",
+        "reason": "该目标/版位的字段规范尚未核对",
+        "valueType": "SELECT"
+      },
+      "strategy": {
+        "state": "UNCONFIRMED",
+        "reason": "该目标/版位的字段规范尚未核对",
+        "valueType": "SELECT"
+      },
+      "targetingMode": {
+        "state": "UNCONFIRMED",
+        "reason": "该目标/版位的字段规范尚未核对",
+        "valueType": "SELECT"
+      },
+      "region": {
+        "state": "UNCONFIRMED",
+        "reason": "该目标/版位的字段规范尚未核对",
+        "valueType": "MULTI_SELECT"
+      },
+      "locationType": {
+        "state": "UNCONFIRMED",
+        "reason": "该目标/版位的字段规范尚未核对",
+        "valueType": "SELECT"
+      },
+      "age": {
+        "state": "UNCONFIRMED",
+        "reason": "该目标/版位的字段规范尚未核对",
+        "valueType": "RANGE"
+      },
+      "gender": {
+        "state": "UNCONFIRMED",
+        "reason": "该目标/版位的字段规范尚未核对",
+        "valueType": "SELECT"
+      },
+      "interest": {
+        "state": "UNCONFIRMED",
+        "reason": "该目标/版位的字段规范尚未核对",
+        "valueType": "MULTI_SELECT"
+      },
+      "behavior": {
+        "state": "UNCONFIRMED",
+        "reason": "该目标/版位的字段规范尚未核对",
+        "valueType": "MULTI_SELECT"
+      },
+      "intention": {
+        "state": "UNCONFIRMED",
+        "reason": "该目标/版位的字段规范尚未核对",
+        "valueType": "MULTI_SELECT"
+      },
+      "keyword": {
+        "state": "UNCONFIRMED",
+        "reason": "该目标/版位的字段规范尚未核对",
+        "valueType": "MULTI_SELECT"
+      },
+      "behaviorScene": {
+        "state": "UNCONFIRMED",
+        "reason": "该目标/版位的字段规范尚未核对",
+        "valueType": "MULTI_SELECT"
+      },
+      "behaviorWindow": {
+        "state": "UNCONFIRMED",
+        "reason": "该目标/版位的字段规范尚未核对",
+        "valueType": "SELECT"
+      },
+      "behaviorIntensity": {
+        "state": "UNCONFIRMED",
+        "reason": "该目标/版位的字段规范尚未核对",
+        "valueType": "SELECT"
+      },
+      "customAudience": {
+        "state": "UNCONFIRMED",
+        "reason": "该目标/版位的字段规范尚未核对",
+        "valueType": "MULTI_SELECT"
+      },
+      "expansion": {
+        "state": "UNCONFIRMED",
+        "reason": "该目标/版位的字段规范尚未核对",
+        "valueType": "SELECT"
+      },
+      "hardConstraints": {
+        "state": "UNCONFIRMED",
+        "reason": "该目标/版位的字段规范尚未核对",
+        "valueType": "MULTI_SELECT"
+      },
+      "template": {
+        "state": "UNCONFIRMED",
+        "reason": "该目标/版位的字段规范尚未核对",
+        "valueType": "SELECT"
+      },
+      "creators": {
+        "state": "UNCONFIRMED",
+        "reason": "该目标/版位的字段规范尚未核对",
+        "valueType": "MULTI_SELECT"
+      },
+      "groups": {
+        "state": "UNCONFIRMED",
+        "reason": "该目标/版位的字段规范尚未核对",
+        "valueType": "MULTI_SELECT"
+      },
+      "budgetType": {
+        "state": "UNCONFIRMED",
+        "reason": "该目标/版位的字段规范尚未核对",
+        "valueType": "SELECT"
+      },
+      "budget": {
+        "state": "AVAILABLE",
+        "reason": "合成字段核对依据",
+        "valueType": "INTEGER",
+        "min": 0.0,
+        "max": 100000.0,
+        "step": 1.0,
+        "precision": 0,
+        "unit": "CNY_MINOR"
+      },
+      "bidMode": {
+        "state": "UNCONFIRMED",
+        "reason": "该目标/版位的字段规范尚未核对",
+        "valueType": "SELECT"
+      },
+      "bid": {
+        "state": "UNCONFIRMED",
+        "reason": "该目标/版位的字段规范尚未核对",
+        "valueType": "DECIMAL"
+      },
+      "schedule": {
+        "state": "UNCONFIRMED",
+        "reason": "该目标/版位的字段规范尚未核对",
+        "valueType": "TEXT"
+      },
+      "timeSlots": {
+        "state": "UNCONFIRMED",
+        "reason": "该目标/版位的字段规范尚未核对",
+        "valueType": "MULTI_SELECT"
+      },
+      "creative": {
+        "state": "UNCONFIRMED",
+        "reason": "该目标/版位的字段规范尚未核对",
+        "valueType": "MEDIA"
+      },
+      "title": {
+        "state": "UNCONFIRMED",
+        "reason": "该目标/版位的字段规范尚未核对",
+        "valueType": "TEXT"
+      },
+      "copy": {
+        "state": "UNCONFIRMED",
+        "reason": "该目标/版位的字段规范尚未核对",
+        "valueType": "TEXT"
+      },
+      "portrait": {
+        "state": "UNCONFIRMED",
+        "reason": "该目标/版位的字段规范尚未核对",
+        "valueType": "MEDIA"
+      },
+      "duration": {
+        "state": "UNCONFIRMED",
+        "reason": "该目标/版位的字段规范尚未核对",
+        "valueType": "INTEGER"
+      },
+      "orderType": {
+        "state": "UNCONFIRMED",
+        "reason": "该目标/版位的字段规范尚未核对",
+        "valueType": "SELECT"
+      },
+      "fundType": {
+        "state": "UNCONFIRMED",
+        "reason": "该目标/版位的字段规范尚未核对",
+        "valueType": "SELECT"
+      },
+      "deliveryMode": {
+        "state": "UNCONFIRMED",
+        "reason": "该目标/版位的字段规范尚未核对",
+        "valueType": "SELECT"
+      },
+      "creativeMethod": {
+        "state": "UNCONFIRMED",
+        "reason": "该目标/版位的字段规范尚未核对",
+        "valueType": "SELECT"
+      },
+      "productRange": {
+        "state": "UNCONFIRMED",
+        "reason": "该目标/版位的字段规范尚未核对",
+        "valueType": "MULTI_SELECT"
+      }
+    },
+    "authorization": "NOT_INTEGRATED",
+    "writeChannel": "NONE",
+    "writePermission": "plan.write",
+    "audienceManagement": "MANUAL",
+    "estimateSupported": false,
+    "uploadSupported": false,
+    "currency": "CNY",
+    "reason": "字段按完整配置上下文核对；创建执行通道尚未交付",
+    "apiVersion": "UNCONFIRMED",
+    "verification": {
+      "catalogIds": [],
+      "pathVerified": false,
+      "applicationScopeGranted": false,
+      "accountAuthorized": false,
+      "backendIntegrated": false,
+      "requestSchemaVerified": false,
+      "executionVerified": false,
+      "proofId": "",
+      "checkedAt": "2026-10-28T03:42:56.948114Z"
+    }
+  },
+  "context": {
+    "product": "adq",
+    "scenario": "ADQ",
+    "businessEntityId": "55367d08-677f-4404-b3cc-ee7a317c83d5",
+    "accountId": "fe2d5b91-26bf-4d04-847e-9f49311e3ce4",
+    "shopId": "48bd06b3-bcf9-4a81-a8b1-13cd88598179",
+    "objectiveId": "objective-A",
+    "optimizationId": "",
+    "strategyId": "",
+    "targetIds": [
+      "target-A"
+    ],
+    "placementIds": [
+      "placement-A"
+    ],
+    "bidModeId": "",
+    "orderTypeId": "",
+    "fundTypeId": "",
+    "deliveryModeId": "",
+    "creativeMethodId": ""
+  },
+  "identity": {
+    "userId": "a0de19ea-8ea4-4986-9e36-c98511d3abe6",
+    "displayName": "User",
+    "email": "a0de19ea-8ea4-4986-9e36-c98511d3abe6@example.invalid",
+    "tenantId": "1",
+    "shopIds": [
+      "48bd06b3-bcf9-4a81-a8b1-13cd88598179"
+    ],
+    "permissions": [
+      "access.manage",
+      "budget.edit",
+      "connection.manage",
+      "content.write",
+      "goal.edit",
+      "overview.read",
+      "plan.write",
+      "policy.edit",
+      "report.publish",
+      "snapshot.read",
+      "task.approve",
+      "task.create"
+    ],
+    "workspacePages": [
+      "analytics",
+      "assets",
+      "budgets",
+      "command",
+      "decisions",
+      "editing",
+      "executions",
+      "experiments",
+      "goals",
+      "graphics",
+      "monitor",
+      "overview",
+      "planning",
+      "plans",
+      "products",
+      "reports",
+      "scripts",
+      "tasks",
+      "videos"
+    ],
+    "mode": "API"
+  },
+  "input": "SYNTHETIC_IDENTITIES_AUTHORIZATION_FIELD_PROOFS_REAL_PG_HTTP",
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "humanSignoff": "PENDING"
+}

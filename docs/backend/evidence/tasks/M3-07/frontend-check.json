@@ -1,0 +1,1 @@
+{"result":"PASS","actualAdvertisingService":true,"validCatalogs":1,"validCapabilities":1,"fields":42,"fieldStates":6,"invalidResponsesRejected":6,"injectedFetchCalls":14,"realNetworkCalls":0,"clock":"RECORDED_HTTP_CHECKED_AT","browserAcceptance":"NOT_RUN","platformAcceptance":"NOT_RUN"}

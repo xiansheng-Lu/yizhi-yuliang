@@ -75,6 +75,7 @@ def create_app(settings: Settings | None = None, mail_sender: MailSender | None 
     app.state.settings = settings
     app.include_router(operations_router)
     if settings.identity_api_enabled:
+        from yuliang.api.configuration import router as configuration_router
         from yuliang.api.connections import router as connection_router
         from yuliang.api.events import router as event_router
         from yuliang.api.platform_authorization import router as platform_router
@@ -87,6 +88,7 @@ def create_app(settings: Settings | None = None, mail_sender: MailSender | None 
         app.include_router(history_router)
         app.include_router(platform_router)
         app.include_router(connection_router)
+        app.include_router(configuration_router)
         app.include_router(event_router)
     if settings.admin_api_enabled:
         from yuliang.admin.routes import router as admin_router

@@ -1,0 +1,60 @@
+{
+  "task": "M3-13b",
+  "status": "IN_PROGRESS",
+  "checkedAt": "2026-10-28T12:00:06.888045+00:00",
+  "unit": {
+    "passed": 7,
+    "seconds": 0.52,
+    "result": "PASS",
+    "command": "pytest -q tests/unit/test_content_imports.py"
+  },
+  "integration": {
+    "passed": 13,
+    "seconds": 12.52,
+    "result": "PASS",
+    "command": "python scripts/test_infrastructure.py --group content-imports --details",
+    "infrastructure": [
+      "PostgreSQL",
+      "MinIO",
+      "FastAPI cookie/CSRF HTTP"
+    ],
+    "firstRun": {
+      "passed": 4,
+      "failed": 7,
+      "reason": "SELECT FOR UPDATE required UPDATE privilege on intentionally immutable imports table",
+      "fix": "Use existing actor/key advisory transaction lock and SELECT; no privilege expansion",
+      "retest": "11 PASS"
+    },
+    "reviewFixes": "review-fixes.json"
+  },
+  "static": {
+    "ruff": "PASS",
+    "mypy": "PASS",
+    "files": 5
+  },
+  "dbWindow": "RELEASED_TO_ROOT_AND_REPORTS",
+  "realBrowserIndexedDB": "NOT_RUN",
+  "frontendF09": "NOT_WIRED",
+  "crossDeviceUI": "NOT_VERIFIED",
+  "realPlatformCalls": 0,
+  "businessPlatformWrites": 0,
+  "originalTokenConfigurationChanges": 0,
+  "integrationBeforeReviewFixes": {
+    "passed": 11,
+    "seconds": 11.55,
+    "result": "PASS",
+    "command": "python scripts/test_infrastructure.py --group content-imports --details",
+    "infrastructure": [
+      "PostgreSQL",
+      "MinIO",
+      "FastAPI cookie/CSRF HTTP"
+    ],
+    "firstRun": {
+      "passed": 4,
+      "failed": 7,
+      "reason": "SELECT FOR UPDATE required UPDATE privilege on intentionally immutable imports table",
+      "fix": "Use existing actor/key advisory transaction lock and SELECT; no privilege expansion",
+      "retest": "11 PASS"
+    }
+  }
+}

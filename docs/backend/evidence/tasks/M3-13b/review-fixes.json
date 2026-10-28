@@ -1,0 +1,17 @@
+{
+  "date": "2026-10-28",
+  "reviewer": "reports agent",
+  "scope": ["imports_service.py", "test_content_imports.py"],
+  "fixes": ["share normal editor document lock before create-only target check", "return completed receipt before historical asset HEAD after current owner/shop/product permission checks"],
+  "postgresMinio": {"group": "content-imports", "passed": 13, "seconds": 12.52},
+  "unit": {"passed": 7, "seconds": 0.52},
+  "ruff": "PASS",
+  "mypy": "PASS",
+  "newCases": ["ordinary editor versus import deterministic barrier", "HEAD offline successful receipt replay and permission revocation rejection"],
+  "dbWindow": "RELEASED",
+  "code": "FROZEN",
+  "migrationChanged": false,
+  "livePlatformCalls": 0,
+  "paidCalls": 0,
+  "browserAcceptance": "PENDING"
+}

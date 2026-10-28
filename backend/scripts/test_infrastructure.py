@@ -103,6 +103,10 @@ def main() -> int:
             "content-uploads",
             "lookup-targets",
             "report-drafts",
+            "analysis-comparisons",
+            "content-assets",
+            "frontend-snapshot",
+            "report-publications",
         ),
         default="all",
     )
@@ -171,6 +175,10 @@ def main() -> int:
         "content-uploads": ["tests/integration/test_content_uploads.py"],
         "lookup-targets": ["tests/integration/test_lookup_targets.py"],
         "report-drafts": ["tests/integration/test_report_drafts.py"],
+        "analysis-comparisons": ["tests/integration/test_analysis_comparisons.py"],
+        "content-assets": ["tests/integration/test_content_assets.py"],
+        "frontend-snapshot": ["tests/integration/test_frontend_snapshot.py"],
+        "report-publications": ["tests/integration/test_report_publications.py"],
         "parser": [
             "tests/integration/test_command_parse.py",
             "tests/integration/test_workspace.py",

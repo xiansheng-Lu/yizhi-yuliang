@@ -5,7 +5,7 @@
   "status": "IN_PROGRESS",
   "sliceStatus": "TECH_VERIFIED_WAITING_REVIEW",
   "technicalResult": "PASS_SHARED_STRUCTURE_LIBRARY_AND_REAL_SAVE_GUARD_SLICE",
-  "wholeTaskDoD": "PENDING_REAL_GENERATION_FULL_SOP_EXECUTE_ACCEPT_AND_NAMED_REVIEW",
+  "wholeTaskDoD": "PENDING_REAL_MODEL_GENERATION_ENTRYPOINTS_AND_NAMED_REVIEW",
   "unit": {
     "dedicatedPassed": 21,
     "seconds": 0.53
@@ -39,10 +39,11 @@
   ],
   "actualBusinessEntrypoints": [
     "SAVE_AND_INTERNAL_SAVE_REVIEW_FLOW",
-    "SOP_ROOT_PLANNING_CREATE_REAL_HTTP_AND_PG"
+    "SOP_ROOT_PLANNING_CREATE_REAL_HTTP_AND_PG",
+    "SOP_MANUAL_REVIEW_EXECUTE_ACCEPT_REDO_REAL_HTTP_AND_PG"
   ],
   "notClaimed": [
-    "actual generation or full SOP execute/accept business routes integrated",
+    "actual model or supplier generation business entrypoints integrated",
     "real audio video duration probing",
     "account-link persistence and delivery integration",
     "full F09 F10 browser acceptance"
@@ -57,11 +58,18 @@
     "backend": "PENDING",
     "frontend": "PENDING_F09_F10"
   },
-  "nextTechnicalTask": "M3-17b",
+  "nextTechnicalTask": "M3-18/M3-19a",
   "sopRootEntry": {
     "result": "PASS",
     "task": "M3-17a",
     "integrationPassed": 8,
     "evidence": "../M3-17a/verification.json"
+  },
+  "sopExecutionEntry": {
+    "result": "PASS_MANUAL_REVIEW_SLICE",
+    "task": "M3-17b",
+    "integrationPassed": 12,
+    "evidence": "../M3-17b/verification.json",
+    "sharedFlowRegressionPassed": 8
   }
 }

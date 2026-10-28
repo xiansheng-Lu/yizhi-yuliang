@@ -114,6 +114,9 @@ def main() -> int:
             "content-workflows",
             "content-imports",
             "overview-facts",
+            "workflow-execution",
+            "content-account-links",
+            "content-analysis-events",
         ),
         default="all",
     )
@@ -193,6 +196,9 @@ def main() -> int:
         "content-workflows": ["tests/integration/test_content_workflows.py"],
         "content-imports": ["tests/integration/test_content_imports.py"],
         "overview-facts": ["tests/integration/test_overview_facts.py"],
+        "workflow-execution": ["tests/integration/test_workflow_execution.py"],
+        "content-account-links": ["tests/integration/test_content_account_links.py"],
+        "content-analysis-events": ["tests/integration/test_content_analysis_events.py"],
         "parser": [
             "tests/integration/test_command_parse.py",
             "tests/integration/test_workspace.py",

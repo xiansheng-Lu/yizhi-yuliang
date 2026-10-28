@@ -4,7 +4,7 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "currentFocus": "M4-04",
+  "currentFocus": "M3-17b",
   "tasks": {
     "R00-01": {
       "owner": "BE",
@@ -3098,7 +3098,7 @@
     "M3-16": {
       "owner": "BE",
       "status": "IN_PROGRESS",
-      "delivery": "共享库、实际SAVE/导入及SOP根文档初始化守卫已验证；GENERATION和SOP执行/采纳仍待实现，整卡IN_PROGRESS",
+      "delivery": "共享库、真实SAVE/导入/SOP根初始化及MANUAL/REVIEW执行采纳/派生守卫已验证；实际模型与生成业务入口仍待实现，整卡IN_PROGRESS",
       "dependencyInput": "M3-13a/M3-15a/15b实际技术基线已通过；真实生成/SOP生产者后卡接线",
       "evidence": "tasks/M3-16/README.md",
       "review": {
@@ -3113,7 +3113,8 @@
         "paidCalls": 0,
         "livePlatformCalls": 0
       },
-      "sopRootEntryIntegration": "PASS_REAL_HTTP_PLANNING_ROOT_CREATE; generation and later SOP execute/accept not complete"
+      "sopRootEntryIntegration": "PASS_REAL_HTTP_PLANNING_ROOT_CREATE; generation and later SOP execute/accept not complete",
+      "sopExecutionIntegration": "PASS_REAL_MANUAL_EXECUTE_ACCEPT_REDO; actual GENERATION and AI_ASSISTED producer still absent"
     },
     "M1-19": {
       "owner": "BE",
@@ -3223,6 +3224,66 @@
         "paidCalls": 0,
         "livePlatformCalls": 0,
         "combinedRegression": "workflows-import-overview-verification.json"
+      }
+    },
+    "M3-17b": {
+      "owner": "BE",
+      "status": "IN_PROGRESS",
+      "delivery": "真实人工候选/采纳、可选skip与依赖闭包redo；V1模板兼容V2提案，缺AI/生成明确拒绝",
+      "dependencyInput": "M3-17a与M3-14真实技术PASS、591447d完整916集成通过；Flow同事务入口本批已实际落地待PG",
+      "evidence": "tasks/M3-17b/README.md",
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F10"
+      },
+      "technicalVerification": {
+        "result": "PASS_REVIEWED_TECHNICAL_SLICE_COMBINED_FULL",
+        "integrationPassed": 12,
+        "unitPassed": 12,
+        "evidence": "tasks/M3-17b/verification.json",
+        "paidCalls": 0,
+        "livePlatformCalls": 0,
+        "combinedRegression": "workflow-execution-links-verification.json"
+      }
+    },
+    "M3-20a": {
+      "owner": "BE",
+      "status": "IN_PROGRESS",
+      "delivery": "保存/取消素材账号交接意图及明确平台上传/审核来源缺口，不触平台上传",
+      "dependencyInput": "M3-15b素材与M3-11a上下文实际技术PASS；当前固定版本素材和scope服务可复用",
+      "evidence": "tasks/M3-20a/README.md",
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F09_F11"
+      },
+      "technicalVerification": {
+        "result": "PASS_REVIEWED_TECHNICAL_SLICE_COMBINED_FULL",
+        "integrationPassed": 14,
+        "unitPassed": 8,
+        "evidence": "tasks/M3-20a/verification.json",
+        "paidCalls": 0,
+        "livePlatformCalls": 0,
+        "combinedRegression": "workflow-execution-links-verification.json"
+      }
+    },
+    "M4-09c": {
+      "owner": "BE",
+      "status": "IN_PROGRESS",
+      "delivery": "分析阶段/结果变化与workflow revision真实领域事件切片；整卡内容生成/代理/F12仍未完成",
+      "dependencyInput": "M4-03与M4-09b技术PASS；analysis真实任务/冻结结果与持久事件流已实现",
+      "evidence": "tasks/M4-09c/README.md",
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F12"
+      },
+      "technicalVerification": {
+        "result": "PASS_REVIEWED_TECHNICAL_SLICE_COMBINED_FULL",
+        "integrationPassed": 9,
+        "unitPassed": 6,
+        "evidence": "tasks/M4-09c/verification.json",
+        "paidCalls": 0,
+        "livePlatformCalls": 0,
+        "combinedRegression": "workflow-execution-links-verification.json"
       }
     }
   },
@@ -3335,7 +3396,7 @@
     "done": "全部适用DoD与复核通过后才记DONE",
     "offline": "离线通过不等于真实依赖、前端联调或平台验收通过"
   },
-  "nextTask": "主干同步后新分支并行M3-17b执行采纳/重做、M3-20a交接意图、M4-09c分析事件切片；不等待用户再次说继续",
+  "nextTask": "完成本批主干同步后新分支直接开发M3-18/M3-19a及本地真实代理/50连接验收；不复用已耗尽的模型付费许可",
   "continuation": {
     "requestedOn": "2026-10-27",
     "authorization": "持续推进后端任务卡，缺资源再找用户对接",
@@ -3343,14 +3404,14 @@
     "environment": "WSL2 Ubuntu Docker; UV_PROJECT_ENVIRONMENT=/home/lenovo/.cache/yuliang-venv",
     "latestUserRequest": "继续采用多agent模式持续开发，当前任务结束直接开启下一个任务，需要资源再找用户",
     "developmentPolicy": "缺人工/外部验收时记录并继续可独立技术准备；正式门禁、平台调用和付费仍按各自证据许可",
-    "lastCompletedTechnicalTask": "M3-17a; backend slices M3-13b/M4-04 and SOP root integration M3-16",
-    "nextTechnicalTask": "M3-17b / M3-20a / M4-09c:analysis-events after main sync on new branch",
+    "lastCompletedTechnicalTask": "M3-17b manual execution; M3-20a intent; M4-09c analysis/workflow event slices",
+    "nextTechnicalTask": "M3-18 / M3-19a / M4-09c local proxy and 50-connection test after main sync on new branch",
     "executionRules": "docs/backend/evidence/execution-rules.md",
-    "checkpoint": "最终916集成通过+1可选重启跳过（792.45s），893单元/契约通过；221源码mypy、Ruff与0064/0065迁移Ruff通过。开发库0065，37相关表仅5系统模板行，其余0；迁移角色NOLOGIN。三项交叉审查问题已修并被最终全量覆盖。",
+    "checkpoint": "最终954集成通过/1可选重启跳过（826.45s），919单元/契约（9.85s）、228源码mypy与Ruff及0066/67/68迁移Ruff通过。默认开发库0068，44相关表仅5系统模板，其余0，app_migrate NOLOGIN。三技术切片仍有实际生成/平台/前端/代理负载缺口，整卡IN_PROGRESS；待主干同步后立即下一批。",
     "technicalPreparationQueue": [
-      "M3-17b",
-      "M3-20a",
-      "M4-09c:analysis-events"
+      "M3-18",
+      "M3-19a",
+      "M4-09c:local-proxy-load"
     ],
     "routingReason": "重新核对149卡，M1-06/07原生适配已有实际技术证据，M1-08与后续镜像可做本地实现与合成端口/真实PG集成；按持续授权不等待实际租户/店铺绑定，但P验收必须保留E01/E02，不能把合成测试当真平台",
     "deferredTechnicalDependencies": [
@@ -3373,26 +3434,68 @@
     "integrationCheckpoint": "已整合前端frontend目录重构和M1-06/07原生适配；SSE迁移改为0040，保留0039令牌续期与资源未绑定门禁",
     "multiAgentAuthorization": "2026-10-28用户明确授权多Agent持续开发，资源阻塞单列；BE负责人不变",
     "nextReadyQueue": [
-      "M3-17b",
-      "M3-20a",
-      "M4-09c:analysis-events"
+      "M3-18",
+      "M3-19a",
+      "M4-09c:local-proxy-load"
     ],
-    "latestVerification": "workflows-import-overview-verification.json",
-    "combinedRegression": "workflows-import-overview-verification.json",
-    "activeBranch": "codex/backend-workflows-import-overview",
-    "lastRemoteMain": "70ab960d589963440cafa4d4dac56a5c026b75f8",
+    "latestVerification": "workflow-execution-links-verification.json",
+    "combinedRegression": "workflow-execution-links-verification.json",
+    "activeBranch": "codex/backend-workflow-execution-links-events",
+    "lastRemoteMain": "591447df0a4d4b102d66143a3d5e5e4960a3be8f",
     "activeAgents": {
-      "commerce": "M3-17b readiness complete, awaiting new branch intake",
-      "beans": "M3-20a readiness complete, awaiting new branch intake",
-      "reports": "M4-09c analysis-event readiness complete, awaiting new branch intake"
+      "commerce": "read-only M3-18 readiness, no source/DB",
+      "beans": "read-only M3-19a readiness, no source/DB",
+      "reports": "read-only M4-09c proxy/load readiness, no source/DB"
     },
-    "databaseWindow": "RELEASED_AFTER_ROOT_FINAL_FULL_AND_DEV_MIGRATION; new windows require current explicit grant",
+    "databaseWindow": "RELEASED_AFTER_ROOT_FINAL_FULL_AND_DEV_0068; new DB window requires current explicit grant",
     "lastAbortedCombinedRegression": {
       "passedBeforeInterrupt": 117,
       "skipped": 1,
       "seconds": 88.33,
       "reason": "Cross-review uncovered import concurrency/replay and list completeness defects; graceful SIGINT before final fixes, not final verification",
       "finalResultClaimed": false
+    },
+    "migrationReservations": {
+      "0066": "workflow_execution; down0065_content_imports; commerce",
+      "0067": "content_account_links; down0066_workflow_execution; beans",
+      "0068": "content_analysis_events; down0067_content_account_links; reports with root public integration review"
+    },
+    "currentTargetedVerification": {
+      "sopExecution": 12,
+      "sopTemplatesRegression": 8,
+      "contentFlowsRegression": 8,
+      "accountLinks": 14,
+      "analysisWorkflowEvents": 9,
+      "unitContract": 919,
+      "mypySourceFiles": 228,
+      "combined": "PASS_954_PLUS_1_OPTIONAL_SKIP",
+      "finalStatic": {
+        "ruff": "PASS",
+        "mypySourceFiles": 228,
+        "unitContractPassed": 919,
+        "deselected": 957,
+        "seconds": 9.85,
+        "combined": "PASS_954_PLUS_1_OPTIONAL_SKIP"
+      }
+    },
+    "currentReviewFixes": {
+      "derivedCandidate": "FIXED_AND_PG_PASS: frozen derived document consumed by Flow prepared entry, same ID/version1/full payload; graphics/videos NEW prompt/node tests passed",
+      "actionHistory": "FIXED_AND_PG_PASS: current action included in immutable response/replay, 1001st write refused before state/event changes",
+      "sseFingerprint": "FIXED_AND_REAL_SSE_PASS: shop status/platform and account provider/product_line added; already-buffered unauthorized frames refused, resync closes stream",
+      "flowPrepared": "ROOT content-flows8 PASS7.84s, caller rollback/create-only/prepared original payload replays tested",
+      "fullRegression": "SESSION96111_RUNNING; prior main 591447d 916-pass not reused as this branch result"
+    },
+    "pendingCombinedRegression": {
+      "session": 96111,
+      "branch": "codex/backend-workflow-execution-links-events",
+      "baseline": "591447df0a4d4b102d66143a3d5e5e4960a3be8f",
+      "result": "PASS",
+      "migrationHead": "0068_content_analysis_events",
+      "sourceFreeze": ".runtime/workflow-execution-links-source-freeze.json",
+      "finalEvidence": "workflow-execution-links-verification.json",
+      "passed": 954,
+      "skipped": 1,
+      "seconds": 826.45
     }
   },
   "frontendIntegration": {

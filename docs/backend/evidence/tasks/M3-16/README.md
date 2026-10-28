@@ -43,3 +43,7 @@ DoD1的本地结构规则与合成可信时长比较已有证据，真实音视�
 ## 本批新增实际业务入口证据
 
 M3-17a真实create_app/Cookie/CSRF及PG开线已验证根planning文档实际调用validate_content(purpose=SOP)，文档、run、steps与引用同事务。修后8项专项通过，详见../M3-17a/verification.json；M3-13b导入同样复用_Save实际守卫，13项专项通过并保留F09浏览器缺口。整卡仍IN_PROGRESS，不将初始化当成步骤执行或供应商生成。
+
+## SOP执行切片新增证据
+
+本批M3-17b真实MANUAL/REVIEW execute→持久冻结候选→人工accept及闭包redo已通过12项PG/HTTP，执行/采纳实际调用purpose=SOP，素材及正文守卫保留。Flow同事务prepared子稿严格创建、原键/版本与外层回滚8项回归通过；954项最终完整集成通过。GENERATION与AI_ASSISTED生产者仍未实现，M3-16整卡IN_PROGRESS；先前“尚待SOP执行”的文字是此前保存/根初始化阶段边界，以本段新增事实为准，不把人工切片当模型或供应商调用。

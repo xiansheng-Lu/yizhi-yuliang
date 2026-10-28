@@ -1,0 +1,94 @@
+{
+  "task": "M2-18b",
+  "slice": "CURRENT_OWN_JOB_READ_ONLY_EXECUTION_EVIDENCE",
+  "status": "IN_PROGRESS",
+  "sliceResult": "PASS_REAL_PG_REDIS_EXISTING_PRODUCERS",
+  "verifiedAtUtc": "2026-10-28T16:02:59Z",
+  "localDate": "2026-10-29",
+  "baseMain": "30ec5f50e8fe546b6652a2a7b4a3219594e97335",
+  "migrationHead": "0075_execution_evidence_reads",
+  "downRevision": "0074_resource_query_cursors",
+  "authorization": "Existing 2026-10-28 development authorization continued; no quota reset",
+  "unit": {
+    "command": "python -m pytest tests/unit/test_execution_evidence_models.py -q",
+    "passed": 8,
+    "seconds": 0.29,
+    "runAfterOutcomeAndValidationErrorHardening": true
+  },
+  "integration": {
+    "command": "python scripts/test_infrastructure.py --group execution-evidence-reads --details",
+    "passed": 16,
+    "seconds": 16.01,
+    "producers": [
+      "ExecutionOrders",
+      "ExecutionReceipts",
+      "ExecutionRecovery",
+      "IndependentReadback"
+    ],
+    "upstream": "Explicit synthetic HTTP transport; not actual platform",
+    "databaseWindow": "EXPLICITLY_RELEASED"
+  },
+  "firstAttempt": {
+    "passed": 15,
+    "failed": 1,
+    "seconds": 17.32,
+    "cause": "Fixture attempted hard DELETE of entity_links referenced by actual command_jobs FK",
+    "sqlstate": "23503",
+    "fix": "Assert FK protection and preserved history, then use legal shop soft deletion for current-scope denial",
+    "changedRuntimeGuardOrSql": false
+  },
+  "static": {
+    "ruff": "PASS",
+    "format": "PASS",
+    "mypy": "PASS",
+    "files": 5
+  },
+  "security": {
+    "actorBoundary": "Original actor own job only; same-tenant different actor denied",
+    "permission": "Existing snapshot.read and active member plus actual current entity/shop/account scope",
+    "usesClaimOrExecutePermission": false,
+    "addsRolePermissions": false,
+    "changesExistingRls": false,
+    "isolation": "REPEATABLE READ READ ONLY",
+    "unknownRecoveryOutcome": "UNRECOGNIZED plus fixed warning, no raw free text",
+    "invalidModel": "Fixed DATA_COVERAGE_INSUFFICIENT without validation input/error text",
+    "excluded": [
+      "raw",
+      "payload",
+      "headers",
+      "token",
+      "dispatch_secret",
+      "fence",
+      "hash",
+      "wire",
+      "platform_request_key"
+    ],
+    "maxRowsPerCollection": 1000,
+    "overLimit": "Explicit DATA_COVERAGE_INSUFFICIENT; no silent truncation"
+  },
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "newHttpEndpoints": 0,
+  "notClaimed": [
+    "Frozen frontend attempts contract",
+    "HTTP or browser F06/F13 integration",
+    "Manual reconciliation write interface",
+    "Whole M2-18b completion",
+    "New platform acceptance",
+    "E2 from readback transport alone"
+  ],
+  "priorKernelEvidence": [
+    "../M2-13b/README.md",
+    "../M2-11b/README.md",
+    "../M2-17a/README.md"
+  ],
+  "relatedRegression": {
+    "passed": 25,
+    "seconds": 24.53,
+    "evidence": "query-evidence-verification.json"
+  },
+  "combinedUnitContract": {
+    "passed": 989,
+    "seconds": 10.83
+  }
+}

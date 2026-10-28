@@ -3,8 +3,8 @@ import { readFileSync } from "node:fs";
 import assert from "node:assert/strict";
 import { createRequire } from "node:module";
 
-const { ApiClient }: typeof import("../../src/services/api-client.ts") =
-  createRequire(import.meta.url)("../../src/services/api-client.ts");
+const { ApiClient }: typeof import("../../frontend/src/services/api-client.ts") =
+  createRequire(import.meta.url)("../../frontend/src/services/api-client.ts");
 
 const trace = JSON.parse(readFileSync(process.argv[2], "utf8"));
 const sample = trace.job;

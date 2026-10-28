@@ -4,9 +4,9 @@ name: 后端基础门禁
 on:
   push:
     branches: [main]
-    paths: ["backend/**", "docs/backend/**", "src/**", ".github/workflows/backend-ci.yml"]
+    paths: ["backend/**", "docs/backend/**", "frontend/**", ".github/workflows/backend-ci.yml"]
   pull_request:
-    paths: ["backend/**", "docs/backend/**", "src/**", ".github/workflows/backend-ci.yml"]
+    paths: ["backend/**", "docs/backend/**", "frontend/**", ".github/workflows/backend-ci.yml"]
   workflow_dispatch:
 
 permissions:
@@ -50,7 +50,7 @@ jobs:
           uv run --frozen pytest tests/unit tests/contract -q
       - name: 冻结规格与任务状态守卫
         run: |
-          uv run --frozen python ../docs/backend/tools/check_contracts.py
+          uv run --frozen python tools/check_contracts.py
           uv run --frozen python ../docs/backend/tools/check_database_auth.py --self-test
           uv run --frozen python ../docs/backend/tools/check_funds_recovery.py --self-test
           uv run --frozen python ../docs/backend/tools/check_plan.py

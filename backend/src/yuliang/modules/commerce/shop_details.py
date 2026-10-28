@@ -201,9 +201,17 @@ def product_view(session: Session, ctx: GatewayContext, product_id: str) -> dict
         ),
         dict(shop=ctx.shop_id, account=ctx.account_id, native=product_id),
     ).scalar_one()
-    latest_run = session.execute(text('SELECT state,started_at FROM sync_runs WHERE source_id=:source '
-                                      'ORDER BY started_at DESC,id DESC LIMIT 1'),
-                                 dict(source=row['source_id'])).mappings().one()
+    latest_run = (
+        session.execute(
+            text(
+                "SELECT state,started_at FROM sync_runs WHERE source_id=:source "
+                "ORDER BY started_at DESC,id DESC LIMIT 1"
+            ),
+            dict(source=row["source_id"]),
+        )
+        .mappings()
+        .one()
+    )
     raw = row["payload"]
     state = proof.status_mapping.get(raw["native_status"], "UNKNOWN") if proof else "UNKNOWN"
     skus = []
@@ -230,8 +238,11 @@ def product_view(session: Session, ctx: GatewayContext, product_id: str) -> dict
         deleted=state == "RECYCLED",
         skuPresence=raw["sku_presence"],
         skus=skus,
-        freshness='UPSTREAM_ERROR' if latest_run['state'] in {'PARTIAL','FAILED','RATE_LIMITED'} else 'UNCONFIRMED_NO_POLICY',
-        lastRunState=latest_run['state'],lastAttemptAt=latest_run['started_at'].isoformat(),
+        freshness="UPSTREAM_ERROR"
+        if latest_run["state"] in {"PARTIAL", "FAILED", "RATE_LIMITED"}
+        else "UNCONFIRMED_NO_POLICY",
+        lastRunState=latest_run["state"],
+        lastAttemptAt=latest_run["started_at"].isoformat(),
         sourceAt=None,
         fetchedAt=row["fetched_at"].isoformat(),
         runId=str(row["run_id"]),

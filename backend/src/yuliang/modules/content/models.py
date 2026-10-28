@@ -161,8 +161,11 @@ class Document(Model):
             + [v.assetId for b in self.boards for v in b.layers]
             + [a for m in self.messages or [] for a in m.assetIds or []]
         )
-        if any(asset_ids):
-            raise ValueError("素材引用须待M3-15b可用资产校验，当前仅保存无素材云稿")
+        if len(set(v for v in asset_ids if v)) > 32:
+            raise ValueError("单文档最多引用32个已确认素材")
+        for value in asset_ids:
+            if value:
+                UUID(value)
         for message in self.messages or []:
             datetime.fromisoformat(message.createdAt.replace("Z", "+00:00"))
         UUID(self.id)

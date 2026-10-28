@@ -7,6 +7,7 @@ from uuid import UUID
 from fastapi import APIRouter, Request
 from starlette.responses import JSONResponse
 
+from yuliang.infrastructure.blob import BlobStore
 from yuliang.modules.content.models import Document, DocumentDelete, Kind
 from yuliang.modules.content.service import ContentService, DocumentConflict
 from yuliang.modules.identity.routes import SESSION_COOKIE, service
@@ -32,8 +33,12 @@ def content(request: Request) -> ContentService:
         shop = UUID(raw)
     except ValueError:
         raise ApiError(ErrorCode.INVALID_INPUT, "X-Shop-Id格式非法") from None
+    blob = getattr(request.app.state, "blob_store", None)
     return ContentService(
-        instance.app, VerifiedIdentity(row["tenant_id"], row["membership_id"], row["user_id"]), shop
+        instance.app,
+        VerifiedIdentity(row["tenant_id"], row["membership_id"], row["user_id"]),
+        shop,
+        blob=blob if isinstance(blob, BlobStore) else None,
     )
 
 

@@ -93,8 +93,10 @@ def create_app(settings: Settings | None = None, mail_sender: MailSender | None 
         from yuliang.modules.analysis.routes import router as analysis_router
         from yuliang.modules.content.assets_routes import router as content_assets_router
         from yuliang.modules.content.flows_routes import router as content_flows_router
+        from yuliang.modules.content.imports_routes import router as content_imports_router
         from yuliang.modules.content.routes import router as content_router
         from yuliang.modules.content.uploads_routes import router as content_uploads_router
+        from yuliang.modules.content.workflows_routes import router as content_workflows_router
         from yuliang.modules.identity.routes import router
         from yuliang.modules.identity.workspace_routes import router as workspace_router
         from yuliang.modules.workspace.routes import router as history_router
@@ -114,6 +116,8 @@ def create_app(settings: Settings | None = None, mail_sender: MailSender | None 
         app.include_router(content_uploads_router)
         app.include_router(content_assets_router)
         app.include_router(content_flows_router)
+        app.include_router(content_workflows_router)
+        app.include_router(content_imports_router)
     if settings.admin_api_enabled:
         from yuliang.admin.routes import router as admin_router
 

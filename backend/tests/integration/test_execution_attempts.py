@@ -238,7 +238,16 @@ async def test_no_dispatch_without_original_admission_or_frozen_wire(
 
 @pytest.mark.parametrize(
     "mutation",
-    ["fence", "expired", "authorization", "policy", "capability", "old_value", "contract"],
+    [
+        "fence",
+        "expired",
+        "authorization",
+        "policy",
+        "capability",
+        "old_value",
+        "contract",
+        "hierarchy",
+    ],
 )
 async def test_changed_eligibility_stops_before_root(
     budget_ready: dict[str, Any], mutation: str
@@ -254,6 +263,7 @@ async def test_changed_eligibility_stops_before_root(
         "old_value": "UPDATE sync_resource_mirrors SET projection="
         "jsonb_set(projection,'{data,budget_minor}','101'::jsonb)",
         "contract": "UPDATE resource_freshness_policies SET revision=revision+1",
+        "hierarchy": "UPDATE campaigns SET kind='CAMPAIGN',protocol_version='1.3'",
     }
     with data["maintenance"].begin() as owner:
         owner.execute(text("SET LOCAL ROLE app_owner"))
@@ -305,6 +315,18 @@ def test_unregistered_serializer_closed_without_claim(budget_ready: dict[str, An
         )
     assert raised.value.code == ErrorCode.CAPABILITY_UNAVAILABLE
     assert counts(data)[:2] == (0, 0)
+
+
+def test_legacy_campaign_is_not_registered_as_v3_adgroup_write(
+    budget_ready: dict[str, Any],
+) -> None:
+    data = budget_ready
+    with data["maintenance"].begin() as owner:
+        owner.execute(text("SET LOCAL ROLE app_owner"))
+        owner.execute(text("UPDATE campaigns SET kind='CAMPAIGN',protocol_version='1.3'"))
+    with pytest.raises(ApiError) as denied:
+        prepare(data)
+    assert denied.value.code == ErrorCode.FORBIDDEN and counts(data)[:2] == (0, 0)
 
 
 def test_runtime_and_owner_cannot_overwrite_old_attempt_identity(

@@ -8,6 +8,7 @@ from sqlalchemy import Engine, text
 from sqlalchemy.orm import Session
 
 from yuliang.modules.capability.models import Binding, Evidence, Phase, aggregate
+from yuliang.modules.capability.route_sources import current_source
 from yuliang.modules.configuration.integration_models import (
     IntegrationAccount,
     IntegrationContext,
@@ -95,11 +96,13 @@ class IntegrationService:
             return None, None
         source = session.execute(
             text(
-                "SELECT normalized_path,http_method FROM endpoint_catalog "
+                "SELECT normalized_path,http_method,record_json FROM endpoint_catalog "
                 "WHERE catalog_sha256=:sha AND catalog_id=:id AND provider=:provider"
             ),
-            {"sha": head, "id": binding.catalog_id, "provider": binding.provider},
+            {"sha": binding.catalog_sha256, "id": binding.catalog_id, "provider": binding.provider},
         ).first()
+        if source is not None and source.record_json.get("frontendExposed") is False:
+            return None, None
         evidence: dict[VerificationStage, StageEvidence] = {
             "directory": StageEvidence(
                 verified=source is not None,
@@ -210,12 +213,16 @@ class IntegrationService:
                 checked_at=phase_item.checked_at if phase_item is not None else None,
                 reason=reason,
             )
-        if source is not None and (
-            source.normalized_path != binding.normalized_path
-            or (
-                source.http_method not in {None, "UNKNOWN"}
-                and source.http_method != binding.http_method
+        if (
+            source is not None
+            and (
+                source.normalized_path != binding.normalized_path
+                or (
+                    source.http_method not in {None, "UNKNOWN"}
+                    and source.http_method != binding.http_method
+                )
             )
+            and current_source(session, binding, now) is None
         ):
             for stage in PHASES:
                 evidence[stage] = StageEvidence(

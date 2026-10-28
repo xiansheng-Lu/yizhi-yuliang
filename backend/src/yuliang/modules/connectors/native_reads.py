@@ -34,12 +34,15 @@ class ReadParameters(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
 
-class AdqPage(ReadParameters):
+class LegacyAdqPage(ReadParameters):
     account_id: str
     fields: list[str]
-    pagination_mode: str = "PAGINATION_MODE_NORMAL"
     page: int = Field(default=1, ge=1, le=100000)
     page_size: int = Field(default=100, ge=1, le=100)
+
+
+class AdqPage(LegacyAdqPage):
+    pagination_mode: str = "PAGINATION_MODE_NORMAL"
 
 
 class ProductPage(ReadParameters):
@@ -65,7 +68,7 @@ READS: dict[str, tuple[str, Literal["GET", "POST"], str, type[BaseModel], tuple[
         "adq",
         "GET",
         "/v1.3/campaigns/get",
-        AdqPage,
+        LegacyAdqPage,
         ("campaign_id", "campaign_name", "configured_status", "daily_budget"),
         "list",
     ),

@@ -88,6 +88,9 @@ def main() -> int:
             "configuration",
             "analysis",
             "integration-context",
+            "read-routes",
+            "adq-assets",
+            "native-handoff",
         ),
         default="all",
     )
@@ -141,6 +144,9 @@ def main() -> int:
         "configuration": ["tests/integration/test_configuration_context.py"],
         "analysis": ["tests/integration/test_analysis_admission.py"],
         "integration-context": ["tests/integration/test_integration_context.py"],
+        "read-routes": ["tests/integration/test_read_route_sources.py"],
+        "adq-assets": ["tests/integration/test_adq_asset_mirrors.py"],
+        "native-handoff": ["tests/integration/test_native_platform_handoff.py"],
         "parser": [
             "tests/integration/test_command_parse.py",
             "tests/integration/test_workspace.py",

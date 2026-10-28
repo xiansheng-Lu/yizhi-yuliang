@@ -9,6 +9,7 @@ from uuid import UUID
 from pydantic import SecretBytes, SecretStr
 from sqlalchemy import Engine, text
 
+from yuliang.modules.connectors.adq_assets import MIRROR_POLICY, AdqAssetSync, AssetKind
 from yuliang.modules.connectors.archive import PlatformArchive, RecordedPlatformClient
 from yuliang.modules.connectors.base import GatewayContext
 from yuliang.modules.connectors.governance import PlatformGovernance, QuotaLimits
@@ -23,6 +24,8 @@ from yuliang.modules.connectors.native_reads import (
 from yuliang.modules.connectors.oauth import OAuthRejected, OAuthService, require_admin
 from yuliang.modules.connectors.registry import GatewayRegistry
 from yuliang.modules.connectors.resources import ApplicationResource, ResourceBundle
+from yuliang.modules.connectors.sync_cursor import CursorCodec
+from yuliang.modules.connectors.sync_store import SyncStore
 from yuliang.modules.connectors.token_cipher import Ciphertext, TokenCipher, TokenContext
 from yuliang.platform.db import VerifiedIdentity, business_transaction
 from yuliang.settings import Settings
@@ -34,6 +37,7 @@ class PlatformRuntime:
         self.oauth: OAuthService | None = None
         self.governance: PlatformGovernance | None = None
         self.registry = GatewayRegistry()
+        self.adq_assets: dict[UUID, AdqAssetSync] = {}
         self.ports = {
             item.id: NativeAuthorization(item) for item in bundle.applications if item.enabled
         }
@@ -92,6 +96,18 @@ class PlatformRuntime:
                     client, self.token_for_read, item.connector_id, item.readonly_interfaces
                 ),
             )
+            if item.connector_id == "adq" and item.granted_scopes:
+                self.adq_assets[item.id] = AdqAssetSync(
+                    SyncStore(
+                        engine,
+                        CursorCodec(keys, bundle.key_version, settings.auth_audit_secret),
+                        policy=MIRROR_POLICY,
+                    ),
+                    client,
+                    self.token_for_read,
+                    item.readonly_interfaces,
+                    item.granted_scopes or (),
+                )
 
     @classmethod
     def load(cls, engine: Engine, settings: Settings, path: Path) -> "PlatformRuntime":
@@ -177,3 +193,18 @@ class PlatformRuntime:
                 "access",
                 Ciphertext(row["key_version"], row["access_token_enc"]),
             )
+
+    async def sync_adq_assets(
+        self, ctx: GatewayContext, kind: AssetKind, run_id: UUID
+    ) -> dict[str, Any]:
+        # 受控服务端入口；不接受URL、账户身份、路由或任意query覆盖。
+        await self.token_for_read(ctx)
+        with business_transaction(self.engine, ctx.identity) as session:
+            app_id = session.execute(
+                text("SELECT application_id FROM provider_authorizations WHERE id=:id"),
+                {"id": ctx.authorization_id},
+            ).scalar_one()
+        reader = self.adq_assets.get(app_id)
+        if reader is None:
+            raise OAuthRejected()
+        return await reader.sync(ctx, kind, run_id)

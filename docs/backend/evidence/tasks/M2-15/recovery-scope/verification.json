@@ -1,0 +1,42 @@
+{
+  "task": "M2-15",
+  "slice": "SYSTEM_RECOVERY_PUBLISH_CURRENT_JOB_ISOLATION",
+  "result": "PASS_REAL_PG_ACTUAL_TASK_ENTRY_LOCAL_SENDER",
+  "verifiedAtUtc": "2026-10-28T17:08:52Z",
+  "localDate": "2026-10-29",
+  "baseMain": "94834e2b4247058e44bc9a13e6c73f602b0577f0",
+  "head": "0077_approved_dispatch_worker",
+  "command": "python scripts/test_infrastructure.py --group recovery-publish-scope --details",
+  "passed": 2,
+  "failed": 0,
+  "seconds": 6.97,
+  "firstAttempt": true,
+  "runtimeOrFixtureFixes": 0,
+  "databaseWindow": "EXPLICITLY_RELEASED",
+  "sourceProducer": "Actual approved jobs, ExecutionOrders, archived HTTP timeout and Recovery",
+  "assertions": [
+    "Earlier pending X with revoked shop scope does not block authorized Y current recovery",
+    "Y stays WAITING and only its own successor is published; no Y AUTH_BLOCKED proof",
+    "X recovery row and outbox publish attempts remain unchanged",
+    "Revoking Y itself blocks only Y and performs no sender call",
+    "No additional physical HTTP send during recovery"
+  ],
+  "static": {
+    "ruff": "PASS",
+    "mypy": "PASS",
+    "files": 1
+  },
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "celeryHelperProcessesStarted": 0,
+  "mqValidation": "LOCAL_CALLBACK_ONLY; independent real pipeline covered separately",
+  "extraOldWorkerOrFullRuns": 0,
+  "finalCombinedRegression": {
+    "result": "PASS_COMBINED_FULL",
+    "passed": 1098,
+    "skipped": 1,
+    "seconds": 1144.62,
+    "evidence": "../../../approved-execution-verification.json",
+    "latestSourceAfterScopedRecoveryPublisherFix": true
+  }
+}

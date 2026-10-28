@@ -1,0 +1,41 @@
+{
+  "task": "M3-14",
+  "status": "WAITING_REVIEW",
+  "date": "2026-10-28",
+  "baseline": "d0caf14",
+  "migration": "0063_content_derivations",
+  "result": "PASS_FINAL_COMBINED_FULL",
+  "unit": {
+    "passed": 9,
+    "seconds": 0.62
+  },
+  "postgres_http": {
+    "passed": 5,
+    "seconds": 6.82,
+    "group": "content-flows",
+    "note": "later child-edit/forged-relation assertions and query guard included in current full regression"
+  },
+  "frontend": {
+    "result": "PASS",
+    "actualPGChildren": 5,
+    "actualFrontendFlowDocument": true,
+    "actualFrontendValidateContent": true,
+    "browserAcceptance": "NOT_RUN",
+    "capturePrivate": true
+  },
+  "covered": [
+    "parent/child history same transaction and injected-failure rollback",
+    "five kind inheritance and freshly generated IDs match actual TS",
+    "concurrent stable key returns one first-version child",
+    "parent edits cannot change original key response",
+    "stale version, changed payload key, scope and terminal child refused",
+    "runtime mutation of derivation links refused",
+    "child independent edits do not change first-version replay",
+    "raw runtime SQL mismatched relation rejected 22023"
+  ],
+  "paidCalls": 0,
+  "livePlatformCalls": 0,
+  "platformBusinessWriteCalls": 0,
+  "review": "PENDING_BE_F09",
+  "combinedRegression": "content-plan-verification.json"
+}

@@ -1,0 +1,17 @@
+{
+ "task":"M3-16","date":"2026-10-28","baseline":"d0caf14","status":"IN_PROGRESS",
+ "sliceStatus":"TECH_VERIFIED_WAITING_REVIEW",
+ "technicalResult":"PASS_SHARED_STRUCTURE_LIBRARY_AND_REAL_SAVE_GUARD_SLICE",
+ "wholeTaskDoD":"PENDING_REAL_GENERATION_SOP_ENTRYPOINTS_AND_NAMED_REVIEW",
+ "unit":{"dedicatedPassed":21,"seconds":0.53},
+ "integration":{"passed":5,"seconds":6.70,"realCreateApp":true,"realPostgres":true,"actualImageStoreCase":true},
+ "regression":{"contentDocuments":{"passed":5,"seconds":6.62},"contentAssets":{"passed":9,"seconds":10.10}},
+ "ruff":"PASS","mypy":"PASS_7_CHANGED_SCOPE_FILES",
+ "migration":"NONE","livePlatformCalls":0,"paidCalls":0,
+ "purposeLibrary":["SAVE","GENERATION","SOP"],
+ "actualBusinessEntrypoints":["SAVE_AND_INTERNAL_SAVE_REVIEW_FLOW"],
+ "notClaimed":["actual generation or SOP business routes integrated","real audio video duration probing","account-link persistence and delivery integration","full F09 F10 browser acceptance"],
+ "rules":{"coordinates":"FINITE_ZERO_NEGATIVE_ALLOWED_FRONTEND_COMPATIBILITY_PENDING_NAMED_SPEC_REVIEW","caption":"EXISTING_CAPTION_REQUIRES_NONBLANK_TEXT_EMPTY_COLLECTION_ALLOWED","skill":"LABEL_ONLY_NOT_EXECUTION_GRANT","mediaTolerance":"0.01_DECIMAL_SYNTHETIC_U_ONLY"},
+ "review":{"backend":"PENDING","frontend":"PENDING_F09_F10"},
+ "nextTechnicalTask":"M3-14"
+}

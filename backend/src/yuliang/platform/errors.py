@@ -114,6 +114,17 @@ async def api_error_handler(request: Request, exc: ApiError) -> JSONResponse:
 
 
 async def validation_error_handler(request: Request, exc: RequestValidationError) -> JSONResponse:
+    if request.url.path.startswith("/v1/content/documents"):
+        from yuliang.modules.content.validation_errors import schema_details
+
+        return failure(
+            request,
+            ApiError(
+                ErrorCode.INVALID_INPUT,
+                "内容校验未通过",
+                details=schema_details(exc.errors(), exc.body),
+            ),
+        )
     details = [
         {"field": ".".join(str(part) for part in item["loc"][:5]), "reason": "字段格式不正确"}
         for item in exc.errors()[:20]

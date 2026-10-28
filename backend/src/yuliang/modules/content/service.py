@@ -1,9 +1,8 @@
 """云稿独立版本、商品范围和在途引用；不使用本地容器revision。"""
 
 import json
-import re
 from datetime import UTC, datetime
-from typing import Any, Literal, cast
+from typing import Any, Literal
 from uuid import UUID, uuid4
 
 from sqlalchemy import Engine, text
@@ -13,6 +12,7 @@ from yuliang.infrastructure.blob import BlobStore
 from yuliang.modules.access.service import require_shop_account
 from yuliang.modules.content.asset_models import AssetProof, document_assets
 from yuliang.modules.content.models import Document, Kind
+from yuliang.modules.content.validation import validate_content
 from yuliang.platform.db import VerifiedIdentity, business_transaction
 from yuliang.platform.errors import ApiError, ErrorCode
 
@@ -114,7 +114,7 @@ class ContentService:
     def save(self, identifier: UUID, document: Document) -> dict[str, Any]:
         if str(identifier) != document.id:
             raise ApiError(ErrorCode.INVALID_INPUT, "路径与文档ID不一致")
-        document = Document.model_validate(document.model_dump())
+        document = validate_content(document)
         proofs = None
         if document_assets(document):
             if self.shop is None:
@@ -134,6 +134,15 @@ class ContentService:
         document: Document,
         proofs: dict[UUID, AssetProof] | None = None,
     ) -> dict[str, Any]:
+        document = validate_content(document)
+        if str(identifier) != document.id:
+            from yuliang.modules.content.validation_errors import detail
+
+            raise ApiError(
+                ErrorCode.INVALID_INPUT,
+                "内容校验未通过",
+                details=[detail("id", "ID_MISMATCH", document.model_dump())],
+            )
         self._lock(s, identifier)
         old = (
             s.execute(text("SELECT * FROM content_documents WHERE id=:id"), dict(id=identifier))
@@ -302,83 +311,22 @@ class ContentService:
     def review(self, identifier: UUID, version: int) -> dict[str, Any]:
         with business_transaction(self.engine, self.identity) as s:
             row = self._row(s, identifier, True)
-            current = Document.model_validate(row["payload"])
+            current = validate_content(row["payload"])
         return self.save(
             identifier, current.model_copy(update=dict(version=version, status="review"))
         )
 
     def flow(self, identifier: UUID, kind: Kind) -> dict[str, Any]:
-        with business_transaction(self.engine, self.identity) as s:
-            row = self._row(s, identifier, True)
-            old = Document.model_validate(row["payload"])
-            value = old.model_copy(
-                deep=True,
-                update=dict(
-                    id=str(uuid4()),
-                    kind=kind,
-                    parentId=str(identifier),
-                    version=1,
-                    status="draft",
-                    messages=None,
-                    nodes=[],
-                    edges=[],
-                    boards=[],
-                    clips=[],
-                ),
-            )
-            names = {
-                "planning": "策划",
-                "scripts": "脚本",
-                "videos": "视频",
-                "graphics": "图文",
-                "editing": "剪辑",
-            }
-            value.title = re.sub(r" · (脚本|视频|图文|剪辑)$", "", old.title) + " · " + names[kind]
-            value.prompt = ""
-            if kind != "editing":
-                from yuliang.modules.content.models import Settings
+        """兼容既有内部调用；公共派生必须提供用户稳定请求键和父版本。"""
+        from yuliang.modules.content.flows import FlowCreate, FlowService
 
-                value.settings = Settings(
-                    ratio="9:16", duration=15, resolution="1080P", skill="口播精剪"
-                )
-            for scene in value.scenes:
-                scene.id = str(uuid4())
-            if kind == "graphics":
-                from yuliang.modules.content.models import Board
-
-                value.boards = [
-                    Board(
-                        id=str(uuid4()),
-                        name="画板 01",
-                        width=1080,
-                        height=1350,
-                        background="#ffffff",
-                        layers=[],
-                    )
-                ]
-                value.prompt = "\n".join(x for x in [old.brief.sellingPoints, old.body] if x)
-            if kind == "videos":
-                from yuliang.modules.content.models import Node
-
-                textvalue = (
-                    "\n\n".join(f"{v.visual}\n{v.narration}" for v in old.scenes) or old.body
-                )
-                value.nodes = [
-                    Node(
-                        id=str(uuid4()),
-                        type=cast(Literal["reference", "direction", "generate", "result"], t),
-                        x=x,
-                        y=60,
-                        text=tx,
-                        assetId="",
-                    )
-                    for t, x, tx in [
-                        ("reference", 35, "商品与参考素材"),
-                        ("generate", 365, textvalue),
-                        ("result", 695, "成片输出"),
-                    ]
-                ]
-        return self.save(UUID(value.id), Document.model_validate(value.model_dump()))
+        with business_transaction(self.engine, self.identity) as session:
+            current = self._row(session, identifier, True)
+            version = current["revision"]
+        return FlowService(self).create(
+            identifier,
+            FlowCreate(kind=kind, version=version, idempotency_key="internal:" + uuid4().hex),
+        )
 
     def reference(
         self,

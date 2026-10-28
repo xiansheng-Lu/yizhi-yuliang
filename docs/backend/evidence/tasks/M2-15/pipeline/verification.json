@@ -1,0 +1,71 @@
+{
+  "result": "PASS_LOCAL_SYNTHETIC_REAL_PIPELINE",
+  "head": "0077_approved_dispatch_worker",
+  "testsPassed": 7,
+  "pytestSeconds": 75.99,
+  "realRabbit": true,
+  "realPreforkWorker": true,
+  "realLoopbackTcpHttp": true,
+  "productionWorkerHandler": true,
+  "productionInitialRecoveryHandoff": true,
+  "testManuallyPublishesRecovery": false,
+  "productionRegistry": "EMPTY_CLOSED",
+  "testOnlyClockAcceleration": "EXISTING_GUARD_RECOVERY_OUTBOX_DUE_BEFORE_CHILD_EXIT",
+  "cases": {
+    "requesterAReviewerBDoubleWorker": {
+      "physicalWrites": 1,
+      "orders": 1,
+      "attempts": 1
+    },
+    "defaultClosed": {
+      "physicalWrites": 0,
+      "orders": 0,
+      "attempts": 0
+    },
+    "approvalPublishConfirmationLost": {
+      "physicalWrites": 1,
+      "orders": 1,
+      "attempts": 1
+    },
+    "forgedJobThenOriginalEnvelope": {
+      "forgedRequeue": false,
+      "forgedPhysicalWrites": 0,
+      "originalPhysicalWrites": 1
+    },
+    "currentAuthorizationRevoked": {
+      "physicalWrites": 0,
+      "orders": 0,
+      "attempts": 0
+    },
+    "sentBeforeWireChildExit": {
+      "physicalWrites": 0,
+      "inspectorKind": "NOT_SENT",
+      "evidenceLevel": "E1",
+      "networkAttempts": 0
+    },
+    "wireBeforeResponsePersistChildExit": {
+      "physicalWrites": 1,
+      "inspectorKind": "UNKNOWN",
+      "evidenceLevel": "E0",
+      "networkAttempts": 1,
+      "recoveryPublishConfirmationLostOnce": true
+    }
+  },
+  "static": {
+    "ruff": "PASS",
+    "pythonCompile": "PASS"
+  },
+  "realPlatformCalls": 0,
+  "paidCalls": 0,
+  "humanSignoff": "PENDING",
+  "realWriteProfileAndPlatformAcceptance": "NOT_VERIFIED",
+  "cleanupEvidence": "cleanup.json",
+  "finalCombinedRegression": {
+    "result": "PASS_COMBINED_FULL",
+    "passed": 1098,
+    "skipped": 1,
+    "seconds": 1144.62,
+    "evidence": "../../../approved-execution-verification.json",
+    "latestSourceAfterScopedRecoveryPublisherFix": true
+  }
+}

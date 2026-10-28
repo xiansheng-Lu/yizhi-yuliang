@@ -1,4 +1,4 @@
-"""四队列应用；只读系统任务可重投，外部副作用任务不自动重放。"""
+"""四队列；已登记副作用任务重投仅核对，平台写不自动重发。"""
 
 from celery import Celery  # type: ignore[import-untyped]
 from kombu import Exchange, Queue  # type: ignore[import-untyped]
@@ -33,8 +33,14 @@ def create_celery(settings: Settings) -> Celery:
         task_default_exchange_type="direct",
         task_default_routing_key=queues["system"],
         task_routes={
-            f"yuliang.{kind.replace('-', '_')}.*": {"queue": name, "routing_key": name}
-            for kind, name in queues.items()
+            "yuliang.system.approved_execution": {
+                "queue": queues["execute"],
+                "routing_key": queues["execute"],
+            },
+            **{
+                f"yuliang.{kind.replace('-', '_')}.*": {"queue": name, "routing_key": name}
+                for kind, name in queues.items()
+            },
         },
         task_acks_late=True,
         task_default_delivery_mode="persistent",

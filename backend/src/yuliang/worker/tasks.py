@@ -71,6 +71,50 @@ def unavailable(payload: dict[str, Any]) -> None:
     raise RuntimeError("执行器尚未接入；未调用平台/供应商且不自动重试")
 
 
+def approved_execution_runtime() -> Any:
+    """服务器显式装配入口；默认无生产WRITE适配，消息不能覆盖此工厂。"""
+    return None
+
+
+@app.task(
+    bind=True,
+    name="yuliang.system.approved_execution",
+    reject_on_worker_lost=True,
+    autoretry_for=(),
+    max_retries=0,
+)  # type: ignore[untyped-decorator]
+def approved_execution(self: Any, payload: dict[str, Any]) -> dict[str, Any]:
+    from yuliang.modules.execution.dispatch_service import (
+        ApprovedExecutionDispatch,
+        DispatchMessageRejected,
+    )
+    from yuliang.modules.execution.recovery_schedule import celery_recovery_sender
+
+    try:
+        item = message(payload)
+    except ValueError:
+        raise Reject("执行消息结构无效，拒绝非持久申请", requeue=False) from None
+    settings = app.conf.yuliang_settings
+    try:
+        service = ApprovedExecutionDispatch(
+            engine(),
+            settings.auth_audit_secret or settings.session_secret,
+            approved_execution_runtime(),
+        )
+        result = service.handle(item)
+        handoff = service.publish_recovery(item, celery_recovery_sender(app))
+    except DispatchMessageRejected:
+        raise Reject("执行消息与真实批准来源不符", requeue=False) from None
+    except Exception:
+        time.sleep(1)
+        raise Reject("执行事实未完成，保留原事件核对", requeue=True) from None
+    return result | {
+        "recoveryDelivery": handoff,
+        "workerPid": os.getpid(),
+        "redelivered": bool((self.request.delivery_info or {}).get("redelivered")),
+    }
+
+
 @app.task(
     name="yuliang.execute.guard", autoretry_for=(), max_retries=0, reject_on_worker_lost=False
 )  # type: ignore[untyped-decorator]
@@ -220,7 +264,7 @@ def recover_execution(self: Any, payload: dict[str, Any]) -> dict[str, Any]:
     )
     from yuliang.modules.execution.recovery_schedule import (
         celery_recovery_sender,
-        publish_schedules,
+        publish_schedule,
     )
     from yuliang.platform.errors import ApiError, ErrorCode
 
@@ -289,8 +333,27 @@ def recover_execution(self: Any, payload: dict[str, Any]) -> dict[str, Any]:
         holder["result"] = RecoveryResult.model_validate(value)
     result = holder["result"]
     if result.state in {"DUE", "WAITING"}:
+        next_event = None
         try:
-            publish_schedules(engine(), identity, celery_recovery_sender(app))
+            with business_transaction(engine(), identity) as session:
+                current = session.execute(
+                    text("""SELECT current_event_id,state FROM execution_recoveries
+                    WHERE id=:id AND job_id=:job AND actor_id=:user
+                    AND membership_id=:member"""),
+                    dict(
+                        id=result.recovery_id,
+                        job=item.job_id,
+                        user=item.user_id,
+                        member=item.membership_id,
+                    ),
+                ).first()
+            if current is None:
+                raise ValueError("原恢复任务不可核对")
+            if current.state in {"DUE", "WAITING"}:
+                next_event = current.current_event_id
+                if next_event is None:
+                    raise ValueError("原恢复任务缺持久后继事件")
+                publish_schedule(engine(), identity, next_event, celery_recovery_sender(app))
             with business_transaction(engine(), identity) as session:
                 pending = session.execute(
                     text("""SELECT count(*) FROM execution_recoveries r
@@ -299,9 +362,9 @@ def recover_execution(self: Any, payload: dict[str, Any]) -> dict[str, Any]:
                     {"id": result.recovery_id},
                 ).scalar_one()
         except ApiError as error:
-            if error.code != ErrorCode.FORBIDDEN:
+            if error.code != ErrorCode.FORBIDDEN or next_event is None:
                 raise Reject("后继调度尚未确认", requeue=True) from None
-            result = service.blocked(result.next_event_id or item.event_id, "AUTH_REVOKED")
+            result = service.blocked(next_event, "AUTH_REVOKED")
             pending = 0
         except Exception:
             time.sleep(1)

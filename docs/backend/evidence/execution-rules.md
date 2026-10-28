@@ -137,3 +137,9 @@ main bf2b2f6已合并推送，1009集成/1跳过及952单元通过。新本地co
 main30ec5f5已实际合并推送；新本地codex/backend-query-continuation正式领取M1-19分页/0074和M2-18b本人job脱敏readservice/0075。复用当前snapshot.read/RBAC与双scope，不扩跨actor，不借CLAIM/EXECUTE，不造未冻结FE端点；随机cursor selector仅DB私有定位，每页重验当前scope和同一完整来源，禁止借OAuth/费用/会话签名密钥。三个Agent边界已明确，当前无DB授权。每组冻结后串行0074→0075，真实平台/paid0；06/12伙伴改动保留。
 
 本批最终收口：本批分页13/53.67s+旧查询14/15.37s、独立执行证据16/16.01s、相关25/24.53s与989单元/契约10.83s通过，244源码mypy/Ruff通过。真实TS消费12页1101条无重漏/排序及重放一致。默认开发库0075、50相关表仅5系统模板其余0，迁移角色NOLOGIN，DB已释放。准备中文提交合并main推送后继续可靠批准producer/worker本地技术切片，真实平台/paid0。迁移标识先查≤32/唯一/父链，补快速静态守卫；旧空集合断言现在同时核真实SUCCESS/0行/完整批次，不删除新来源元数据来迁就旧测试。
+
+## 可靠批准producer与派发编排下一批
+
+main94834e2已推送，立即新本地codex/backend-approved-execution-outbox；beans0076/commerce0077/reports真实设施管线，root共享Worker与execute队列路由/runner/台账/Git。原actor A与审批B严格区分；默认生产registry空且持久阻断，消息不授发送权。旧内核真实复用，SENT后丢内存ticket不重新WRITE，HTTP出consume事务。当前没有DB/MQ/process授权，冻结后串行；28日授权跨本地29日延续，不重置历史付费许可。06/12伙伴各2新增保留。
+
+本批最终完整实证：本批完整1098集成/1可选重启跳过1144.62s，999单元/契约9.68s、247源码mypy/Ruff通过；producer18/dispatch-handoff13/真实Rabbit与Inspector7/双job2已验证并纳最新full。开发库0077、52相关表仅5系统模板其余0、迁移角色NOLOGIN，旧审批core应用不可执行。默认生产WRITE registry仍空、平台/paid0。准备中文提交合并main推送后新分支继续人工依据/结构化时间线。初始恢复必须ACK前确认发布；后继只处理当前recovery，不能批扫另一撤权job再误标当前任务。真实Inspector证明E1/UNKNOWN；所有未执行/失败历史在子证据保留。

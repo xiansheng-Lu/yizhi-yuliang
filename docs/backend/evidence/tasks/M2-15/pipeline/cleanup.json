@@ -1,0 +1,9 @@
+{
+  "result": "PASS",
+  "ownedLoopbackPortsChecked": 7,
+  "ownedLoopbackPortsClosed": 7,
+  "ownedWorkerProcessesRemaining": 0,
+  "ownedQueuesAbsent": 14,
+  "ownedExchangesAbsent": 7,
+  "existingServicesModified": false
+}

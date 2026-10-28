@@ -1,10 +1,10 @@
 # 最新恢复入口
 
-2026-10-28：最新main **30ec5f50e8fe546b6652a2a7b4a3219594e97335**已合并推送且远程核对一致，topic-adgroup-verification.json有实际专项/相关回归与975单元证据；上批1009仅是bf2b2f6全量基线，不冒新分支结果。默认库0073、48相关表仅5系统模板其余0，迁移角色NOLOGIN。
+2026-10-29：最新main **94834e2b4247058e44bc9a13e6c73f602b0577f0**已合并推送并核远程一致，query-evidence-verification.json有989单元/244源码mypy、分页13+旧查询14/reader16/相关25及TS12页1101条实际证据；默认库0075，50相关表仅5系统模板其余0，NOLOGIN。
 
-**codex/backend-query-continuation**本批技术通过：本批分页13/53.67s+旧查询14/15.37s、独立执行证据16/16.01s、相关25/24.53s与989单元/契约10.83s通过，244源码mypy/Ruff通过。真实TS消费12页1101条无重漏/排序及重放一致。默认开发库0075、50相关表仅5系统模板其余0，迁移角色NOLOGIN，DB已释放。准备中文提交合并main推送后继续可靠批准producer/worker本地技术切片，真实平台/paid0。
+**codex/backend-approved-execution-outbox**本批完整技术验证通过：本批完整1098集成/1可选重启跳过1144.62s，999单元/契约9.68s、247源码mypy/Ruff通过；producer18/dispatch-handoff13/真实Rabbit与Inspector7/双job2已验证并纳最新full。开发库0077、52相关表仅5系统模板其余0、迁移角色NOLOGIN，旧审批core应用不可执行。默认生产WRITE registry仍空、平台/paid0。准备中文提交合并main推送后新分支继续人工依据/结构化时间线。
 
-稳定分页固定100/完整源最多10000，当前private selector每页重验身份/来源；执行证据严格本人snapshot.read/当前scope，内部service无新HTTP/人工改成功。下一技术输入已核：真实审批/执行内核存在，缺稳定APPROVE来源→可靠outbox→正式worker编排；可在默认生产WRITE关闭下用真实Rabbit与loopback验证，不能重写内核或把synthetic serializer冒官方WRITE协议。
+下一实际输入已核：M2-18b可追加本人未验证人工说明并同事务审计，不能作为E1/E2或解冻依据；M2-20可读已有持久事实构造内部结构化时间线，无冻结FE新接口时不冒接线。M2-19虽然有FE原key合同与守卫，真实失败全部retryable=false，尚无生产阳性分类依据，不能静默开放按钮或把NOT_SENT升级为可重试。
 
 用户的V8只读可空契约问题仍待答复，具体reviewable方案见resource-handoff/v8-plan-contract-gap.md。当前前端冻结契约未改，不默认选项被确认；该缺口只影响完整M1-18/V8 workspace，不阻塞上列任务。M1-18/M1-19/M3-16未实现项继续IN_PROGRESS，M3-14已技术通过待人工。
 

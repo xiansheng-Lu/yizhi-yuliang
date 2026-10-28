@@ -1,0 +1,62 @@
+{
+  "taskId": "M2-15",
+  "slice": "APPROVED_EXECUTION_DISPATCH_KERNEL",
+  "status": "TECH_VERIFIED",
+  "wholeTaskAcceptance": "NOT_CLAIMED",
+  "head": "0077_approved_dispatch_worker",
+  "unit": {
+    "passed": 3,
+    "seconds": 0.79
+  },
+  "integration": {
+    "passed": 13,
+    "seconds": 14.0
+  },
+  "static": {
+    "ruff": "PASS",
+    "mypy": "PASS",
+    "sourceFiles": 2
+  },
+  "historicalRuns": [
+    {
+      "passed": 10,
+      "failed": 0,
+      "seconds": 11.56,
+      "reason": "safe outcome exclusion baseline before initial recovery publisher handoff"
+    },
+    {
+      "passed": 8,
+      "failed": 2,
+      "seconds": 13.11,
+      "reason": "fixture counted prerequisite READ and expiry violated existing created_at constraint"
+    },
+    {
+      "passed": 10,
+      "failed": 0,
+      "seconds": 12.16,
+      "reason": "fixture fixes, before final recovery response whitelist"
+    }
+  ],
+  "finalSecurityCheck": "Old sensitive-style free recovery outcome excluded from Celery safe response; actual PG assertion passed",
+  "databaseWindow": "RELEASED",
+  "sourceSqlTests": "FROZEN",
+  "handoffFix": "publish_recovery targets actual attempt current event; publish_schedule outside DB transaction; pending confirm retains original task; 3 new PG cases passed in complete 13-case first run, 14.00s",
+  "independentRabbitLoopback": "PENDING_INDEPENDENT_AGENT",
+  "productionRuntime": "EMPTY_CLOSED",
+  "actualPlatformCalls": 0,
+  "paidCalls": 0,
+  "remainingGates": [
+    "independent Rabbit and loopback pipeline",
+    "BE/F06 review",
+    "verified production WRITE source and serializer",
+    "E03 actual write acceptance"
+  ],
+  "finalCombinedRegression": {
+    "result": "PASS_COMBINED_FULL",
+    "passed": 1098,
+    "skipped": 1,
+    "seconds": 1144.62,
+    "evidence": "../../../approved-execution-verification.json",
+    "latestSourceAfterScopedRecoveryPublisherFix": true
+  }
+}

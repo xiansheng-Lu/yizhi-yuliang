@@ -1,0 +1,124 @@
+{
+  "date": "2026-10-29",
+  "verifiedAtUtc": "2026-10-28T17:32:16.162092+00:00",
+  "baseline": "94834e2b4247058e44bc9a13e6c73f602b0577f0",
+  "branch": "codex/backend-approved-execution-outbox",
+  "result": "PASS_COMBINED_FULL",
+  "environment": "WSL Python3.13; isolated real PostgreSQL/Redis/RabbitMQ/MinIO, Celery processes, private loopback HTTP and nginx; synthetic platform/model data only",
+  "checks": [
+    {
+      "command": "ruff check src tests scripts alembic/versions/0076_approval_execution_events.py alembic/versions/0077_approved_dispatch_worker.py",
+      "result": "PASS"
+    },
+    {
+      "command": "mypy src",
+      "result": "PASS",
+      "sourceFiles": 247
+    },
+    {
+      "command": "pytest -m \"unit or contract\" -q",
+      "passed": 999,
+      "deselected": 1101,
+      "seconds": 9.68
+    },
+    {
+      "command": "python scripts/test_infrastructure.py --group all --details",
+      "passed": 1098,
+      "skipped": 1,
+      "seconds": 1144.62,
+      "skip": "optional infrastructure lifecycle restart disabled by default"
+    }
+  ],
+  "dedicated": {
+    "approvalProducer": {
+      "passed": 18,
+      "seconds": 16.4,
+      "evidence": "tasks/M2-15/producer/verification.json"
+    },
+    "dispatchWithInitialRecoveryHandoff": {
+      "passed": 13,
+      "seconds": 14.0,
+      "evidence": "tasks/M2-15/dispatch/verification.json"
+    },
+    "realPipeline": {
+      "passed": 7,
+      "seconds": 75.99,
+      "evidence": "tasks/M2-15/pipeline/verification.json",
+      "latestSourceRecheck": "ALL_SEVEN_REEXECUTED_AND_PASS_IN_FINAL_FULL_AFTER_SCOPE_FIX"
+    },
+    "recoveryCrossJobScope": {
+      "passed": 2,
+      "seconds": 6.97,
+      "realMq": false,
+      "evidence": "tasks/M2-15/recovery-scope/verification.json"
+    },
+    "rootMetadataAndActualQueueRouting": {
+      "passed": 4,
+      "seconds": 0.76
+    }
+  },
+  "realFaults": [
+    "two execution workers one physical loopback WRITE",
+    "publication confirmation loss reuses original event without second WRITE",
+    "invalid broker job rejected before admission then legitimate event still works",
+    "default empty production registry and current authorization revocation zero attempts or WRITE",
+    "process exit after SENT before wire: actual SYSTEM Inspector NOT_SENT/E1/network0",
+    "process exit after wire before response persistence: actual SYSTEM Inspector UNKNOWN/E0/network1",
+    "initial recovery publication ACK loss retains original approved message and never restores send ticket"
+  ],
+  "reviewFixes": [
+    "Original requester A remains subject; approver B only authorizes decision; source/event/outbox atomic and private old approval core revoked",
+    "Approved task routes to execute queue ahead of system wildcard",
+    "In-memory ticket only once; network outside consume transaction; persisted default BLOCKED_EXECUTOR never auto activates",
+    "Recovery handoff happens before task ACK even after receipt; targeted current attempt event, no passive-DUE completion claim",
+    "Current recovery worker no longer batch-publishes unrelated revoked jobs or marks the wrong successor AUTH_REVOKED",
+    "Celery result permits only safe IDs/states and excludes free persisted outcome text"
+  ],
+  "sourceFreeze": {
+    "backendFiles": 18,
+    "unchangedDuringFinalFull": true,
+    "sha256LfNormalized": {
+      "backend/alembic/versions/0076_approval_execution_events.py": "e4b246ba13098ea54d551a0a024080236422f149090eadbf6a7b46e5e0752ebc",
+      "backend/alembic/versions/0076_approval_execution_events.sql": "dcd809c56f5164b6a50411932d97bec5ff6fe1a6118c4c818fb943d80f182d6b",
+      "backend/alembic/versions/0077_approved_dispatch_worker.py": "ffebeb00dc60a060f3c453e7a872311ba421528ac71a255a3f67169a5493593c",
+      "backend/alembic/versions/0077_approved_dispatch_worker.sql": "651b93f90c3bc173e847fa22b7f48ca919912ce2ecc0b09a3cd089362a8c1c67",
+      "backend/src/yuliang/modules/execution/approval_outbox.py": "10ce57a096510fa9e682d78ef1127c079bea859c42b3719aefc718d640e7c3e7",
+      "backend/src/yuliang/modules/execution/dispatch_runtime.py": "578280235b2fba2c8a02533d8e4f8b719d40229d25775623083a0b9f51dddd9e",
+      "backend/src/yuliang/modules/execution/dispatch_service.py": "1657a5ffac8f4b92202d212c0b16ee03e064054ceb0819dc332f96925f2e3ae5",
+      "backend/tests/integration/approved_execution_worker.py": "fd0c74b4997b2d5972fadbbc9d1a8fea0a12b9aa47611bc13b510272abdb17b3",
+      "backend/tests/integration/test_approval_execution_outbox.py": "8a5b9e0e891cfb99407296c60780455f0c2d00eee9e8b38913f3eb7fe445dfd3",
+      "backend/tests/integration/test_approved_execution_dispatch.py": "ec15f67f092f0d3eeb940e958a8a8b65a2c4ffa7cf981013e52a3202c2883992",
+      "backend/tests/integration/test_approved_execution_pipeline.py": "55dd3c101a2203cf052a8282b79e9571e24a6598ca84979e994396f437bf9687",
+      "backend/tests/integration/test_recovery_publish_scope.py": "44c83674956f40d534c6d40356ff3bbfb686317a297c17f3a08965b73796c2aa",
+      "backend/tests/unit/test_approval_outbox.py": "b67cb7c05b21d73dcd50dabc9c0eb2df7d8f4bf762fd7dfc30e357a4b054c5b1",
+      "backend/tests/unit/test_approved_execution_dispatch.py": "25db3325110b872b57dff543d82d466175d87176caf5b95772fbd51d07bfe2ea",
+      "backend/tests/unit/test_approved_execution_route.py": "7641bb042eeacf050dbf0cd7bd06adf98fa4b18af3a11ec3ab8c1470ee543b4e",
+      "backend/scripts/test_infrastructure.py": "22565244f45baddbc43aa02cb9e4a845df94c81822b46da88837bd6eb36e7fb1",
+      "backend/src/yuliang/worker/app.py": "750af9a1ca9033f4aef752208f204241e0a289bf6bf784a53e1adc37660e90ac",
+      "backend/src/yuliang/worker/tasks.py": "b45e4f95a98a8bf34f9d43e2e1c40aa0734146e6119bd903e1ff42a98795e5d0"
+    }
+  },
+  "whitespace": {
+    "beforeFinalTestsEofOnly": [],
+    "pythonAstUnchanged": true
+  },
+  "migrationHead": "0077_approved_dispatch_worker",
+  "development": "approved-execution-development.json",
+  "productionDispatchRegistry": "EMPTY_DEFAULT_FACTORY_NONE",
+  "platformBusinessWriteCalls": 0,
+  "realSupplierCalls": 0,
+  "realModelCalls": 0,
+  "paidCalls": 0,
+  "originalTokenServiceChanges": 0,
+  "notClaimed": [
+    "official production WRITE adapter/serializer or account action quota permission",
+    "real platform accepted/MATCHED budget writes",
+    "complete M2-05b frontend lifecycle/snapshot",
+    "manual reconciliation note or arbitrary success/hold release",
+    "named BE FE acceptance or entire M2-15 DONE"
+  ],
+  "nextReady": [
+    "M2-18b own-job append-only human statements, never E1/E2 or financial release",
+    "M2-20 internal structured factual timeline; no invented frontend HTTP contract"
+  ]
+}

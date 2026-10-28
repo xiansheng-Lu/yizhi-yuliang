@@ -4,7 +4,7 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "currentFocus": "M3-18",
+  "currentFocus": "M2-15",
   "tasks": {
     "R00-01": {
       "owner": "BE",
@@ -3415,6 +3415,30 @@
         "no new HTTP or frozen frontend attempts contract",
         "no manual success, budget release or quarantine bypass"
       ]
+    },
+    "M2-15": {
+      "owner": "BE",
+      "status": "IN_PROGRESS",
+      "delivery": "可靠APPROVE来源/outbox、A/B主体绑定、默认关闭dispatch、初始恢复确认与定向SYSTEM publisher实际整合通过；正式生产WRITE adapter/serializer及完整前端生命周期仍缺，整卡IN_PROGRESS",
+      "dependencyInput": "M0-16c outbox/inbox、M2-13b及既有Approvals/ExecutionOrders/Receipts/Recovery实际代码和证据；仅已持久内部AD_PLAN批准子集，完整M2-05b HTTP/快照缺口不冒完成",
+      "evidence": "tasks/M2-15/README.md",
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F06_F13"
+      },
+      "technicalVerification": {
+        "result": "PASS_REVIEWED_LOCAL_DURABLE_PIPELINE_COMBINED_FULL",
+        "producerPassed": 18,
+        "dispatchPassed": 13,
+        "pipelinePassed": 7,
+        "scopePassed": 2,
+        "unitContractPassed": 999,
+        "combinedFullPassed": 1098,
+        "optionalRestartSkipped": 1,
+        "evidence": "approved-execution-verification.json",
+        "platformCalls": 0,
+        "paidCalls": 0
+      }
     }
   },
   "gates": {
@@ -3526,7 +3550,7 @@
     "done": "全部适用DoD与复核通过后才记DONE",
     "offline": "离线通过不等于真实依赖、前端联调或平台验收通过"
   },
-  "nextTask": "本批技术通过后合并main推送，紧接新本地分支做可靠批准producer/worker，不等待继续授权",
+  "nextTask": "本批技术通过后合并main推送，立即新分支推进人工依据追加与内部时间线，不开放生产WRITE或代签DONE",
   "continuation": {
     "requestedOn": "2026-10-27",
     "authorization": "持续推进后端任务卡，缺资源再找用户对接",
@@ -3534,12 +3558,13 @@
     "environment": "WSL2 Ubuntu Docker; UV_PROJECT_ENVIRONMENT=/home/lenovo/.cache/yuliang-venv",
     "latestUserRequest": "继续采用多agent模式持续开发，当前任务结束直接开启下一个任务，需要资源再找用户",
     "developmentPolicy": "缺人工/外部验收时记录并继续可独立技术准备；正式门禁、平台调用和付费仍按各自证据许可",
-    "lastCompletedTechnicalTask": "M1-19 stable ADGROUP continuation and M2-18b own-job sanitized evidence internal reader",
-    "nextTechnicalTask": "M2-15 approval outbox plus durable single-send worker on existing kernel; default production registry closed, synthetic loopback only",
+    "lastCompletedTechnicalTask": "M2-15 durable approved source/outbox/execute worker and initial recovery handoff, real process faults and scoped recovery publication",
+    "nextTechnicalTask": "M2-18b append-only own-job human evidence notes and M2-20 internal structured factual timeline",
     "executionRules": "docs/backend/evidence/execution-rules.md",
-    "checkpoint": "本批分页13/53.67s+旧查询14/15.37s、独立执行证据16/16.01s、相关25/24.53s与989单元/契约10.83s通过，244源码mypy/Ruff通过。真实TS消费12页1101条无重漏/排序及重放一致。默认开发库0075、50相关表仅5系统模板其余0，迁移角色NOLOGIN，DB已释放。准备中文提交合并main推送后继续可靠批准producer/worker本地技术切片，真实平台/paid0。",
+    "checkpoint": "本批完整1098集成/1可选重启跳过1144.62s，999单元/契约9.68s、247源码mypy/Ruff通过；producer18/dispatch-handoff13/真实Rabbit与Inspector7/双job2已验证并纳最新full。开发库0077、52相关表仅5系统模板其余0、迁移角色NOLOGIN，旧审批core应用不可执行。默认生产WRITE registry仍空、平台/paid0。准备中文提交合并main推送后新分支继续人工依据/结构化时间线。",
     "technicalPreparationQueue": [
-      "M2-15:local reliable approval outbox and worker dispatch"
+      "M2-18b:manual unverified notes",
+      "M2-20:structured internal execution timeline"
     ],
     "routingReason": "重新核对149卡，M1-06/07原生适配已有实际技术证据，M1-08与后续镜像可做本地实现与合成端口/真实PG集成；按持续授权不等待实际租户/店铺绑定，但P验收必须保留E01/E02，不能把合成测试当真平台",
     "deferredTechnicalDependencies": [
@@ -3562,18 +3587,19 @@
     "integrationCheckpoint": "已整合前端frontend目录重构和M1-06/07原生适配；SSE迁移改为0040，保留0039令牌续期与资源未绑定门禁",
     "multiAgentAuthorization": "2026-10-28用户明确授权多Agent持续开发，资源阻塞单列；BE负责人不变",
     "nextReadyQueue": [
-      "M2-15:local reliable approval outbox and worker dispatch"
+      "M2-18b:manual unverified notes",
+      "M2-20:structured internal execution timeline"
     ],
-    "latestVerification": "query-evidence-verification.json",
-    "combinedRegression": "query-evidence-verification.json",
-    "activeBranch": "codex/backend-query-continuation",
-    "lastRemoteMain": "30ec5f50e8fe546b6652a2a7b4a3219594e97335",
+    "latestVerification": "approved-execution-verification.json",
+    "combinedRegression": "approved-execution-verification.json",
+    "activeBranch": "codex/backend-approved-execution-outbox",
+    "lastRemoteMain": "94834e2b4247058e44bc9a13e6c73f602b0577f0",
     "activeAgents": {
-      "commerce": "pagination frozen/pass; read-only next dispatch design complete",
-      "beans": "reader frozen/pass; read-only approval producer design complete",
-      "reports": "frontend pagination actual consumer PASS/frozen; no DB"
+      "beans": "READ_ONLY_NEXT_SLICE_DESIGN_COMPLETE_SOURCE_FROZEN_NO_FACILITIES",
+      "commerce": "READ_ONLY_NEXT_SLICE_DESIGN_COMPLETE_SOURCE_FROZEN_NO_FACILITIES",
+      "reports": "READ_ONLY_NEXT_SLICE_DESIGN_COMPLETE_SOURCE_FROZEN_NO_FACILITIES"
     },
-    "databaseWindow": "RELEASED_AFTER_ROOT_RELATED25_AND_DEFAULT_DEV0075; no active DB owner",
+    "databaseWindow": "RELEASED_AFTER_ROOT_FINAL_ALL1098_AND_DEFAULT_DEV0077; no active DB/MQ/process window",
     "lastAbortedCombinedRegression": {
       "passedBeforeInterrupt": 117,
       "skipped": 1,
@@ -3582,8 +3608,8 @@
       "finalResultClaimed": false
     },
     "migrationReservations": {
-      "0074": "resource_query_cursors exact short revision; filename0074_resource_query_continuations; commerce; down0073_content_topic",
-      "0075": "execution_evidence_reads; beans; root corrected down0074_resource_query_cursors"
+      "0076": "approval_execution_events; beans; down0075_execution_evidence_reads",
+      "0077": "approved_dispatch_worker; commerce; down0076_approval_execution_events"
     },
     "previousBatchTargetedVerification": {
       "rootCostAndUow": {
@@ -3645,12 +3671,11 @@
       "ledgerActor": "PASS_LEDGER21_0072_PUBLIC_BEGIN_FINISH_12_14_AND_PRIVATE_DENIED"
     },
     "currentReviewFixes": {
-      "paginationCleanup": "PASS_PG_THREE_CHAINS_297_EXPIRED_ROWS",
-      "paginationNextActorFk": "PASS_PG_CROSS_ACTOR_REFERENCE_REJECTED",
-      "evidenceFreeTextOutcome": "PASS_READER16_SQL_OUTCOME_WHITELIST_AND_SAFE_VALIDATION_ERROR",
-      "paginationNumericSort": "PASS_PG_AND_ACTUAL_FRONTEND_BIGINT_ORDER",
-      "paginationSerializationExhaustion": "UNIT_FIXED_409_AFTER_THREE_40001",
-      "migrationRevisionLength": "FIXED_SHORT_0074_RESOURCE_QUERY_CURSORS_AND_FAST_STATIC_UNIT_GUARD_PASS"
+      "sourceAggregate": "FIXED_COMMAND_JOB_PAIRING",
+      "safeRedisRecovery": "PASS_REAL_PG_SECRET_STAYS_DB_NO_RAW_OUTCOME",
+      "inactiveOriginalActor": "ORIGIN_ONLY_AND_NARROW_BLOCKED_FACT_NO_SEND_PERMISSION",
+      "initialRecoveryPublication": "PASS_HANDOFF13_REAL_MQ7_INSPECTOR_AND_LATEST_FULL1098",
+      "crossJobRecoveryPublisher": "PASS_DUAL_JOB2_AND_LATEST_SOURCE_FULL1098_WITH_PIPELINE7_AND_OLD_WORKERS"
     },
     "previousCombinedRegression": {
       "branch": "codex/backend-ai-content-generation",
@@ -3698,7 +3723,15 @@
         "seconds": 10.73
       }
     },
-    "currentTargetedVerification": {
+    "previousRelatedRegressionTopicAdgroup": {
+      "branch": "codex/backend-topic-adgroup-queries",
+      "baseline": "bf2b2f6a071a53e716ba9e8560fccfe45991e179",
+      "result": "PASS_TARGETED_AND_RELATED_REGRESSION",
+      "previousCompletedEvidence": "ai-content-generation-verification.json",
+      "developmentHead": "0073_content_topic",
+      "evidence": "topic-adgroup-verification.json"
+    },
+    "previousQueryEvidenceVerification": {
       "adgroupPagination": {
         "static": "ruff/mypy4 PASS",
         "unitPassed": 19,
@@ -3736,22 +3769,112 @@
         "scope": "RELATED_NOT_FULL"
       }
     },
-    "previousRelatedRegressionTopicAdgroup": {
-      "branch": "codex/backend-topic-adgroup-queries",
-      "baseline": "bf2b2f6a071a53e716ba9e8560fccfe45991e179",
-      "result": "PASS_TARGETED_AND_RELATED_REGRESSION",
-      "previousCompletedEvidence": "ai-content-generation-verification.json",
-      "developmentHead": "0073_content_topic",
-      "evidence": "topic-adgroup-verification.json"
-    },
-    "pendingCombinedRegression": {
+    "previousQueryEvidenceRegression": {
       "branch": "codex/backend-query-continuation",
       "baseline": "30ec5f50e8fe546b6652a2a7b4a3219594e97335",
       "result": "PASS_TARGETED_AND_RELATED_REGRESSION",
       "developmentHead": "0075_execution_evidence_reads",
       "previousCompletedEvidence": "topic-adgroup-verification.json",
       "evidence": "query-evidence-verification.json"
-    }
+    },
+    "currentTargetedVerification": {
+      "approvalProducer": {
+        "passed": 18,
+        "seconds": 16.4,
+        "head": "0077_approved_dispatch_worker",
+        "firstRun": "PASS_NO_SOURCE_FIX"
+      },
+      "dispatchWorker": {
+        "passed": 10,
+        "seconds": 11.56,
+        "head": "0077_approved_dispatch_worker",
+        "unitPassed": 3,
+        "unitSeconds": 0.95,
+        "safeRecovery": "IDS_AND_ENUM_STATE_ONLY_NO_OUTCOME_FREE_TEXT"
+      },
+      "pipeline": {
+        "result": "PARTIAL_NOT_PASS",
+        "latestCompleted": {
+          "passed": 6,
+          "failed": 1,
+          "seconds": 74.99
+        },
+        "defaultClosedDiagnostic": {
+          "passed": 1,
+          "seconds": 14.2
+        },
+        "remaining": "initial Recovery publication/real Inspector integration plus rejected marker test recheck"
+      },
+      "rootRouting": {
+        "unitPassed": 3,
+        "seconds": 0.46,
+        "scope": "actual Celery routing only"
+      },
+      "rootSharedStatic": {
+        "ruff": "PASS",
+        "mypySourceFiles": 247,
+        "migrationAndRoutingUnitPassed": 4,
+        "seconds": 0.76
+      },
+      "dispatchWorkerHandoff": {
+        "passed": 13,
+        "seconds": 14.0,
+        "head": "0077_approved_dispatch_worker",
+        "sourceFixDuringRun": false
+      },
+      "pipelineEnhanced": {
+        "passed": 7,
+        "seconds": 75.99,
+        "head": "0077_approved_dispatch_worker",
+        "scope": "before targeted cross-job publisher change; final all reruns seven on frozen latest source"
+      },
+      "rootFinalStatic": {
+        "ruff": "PASS",
+        "mypySourceFiles": 247,
+        "unitPassed": 999,
+        "deselected": 1101,
+        "seconds": 9.68
+      },
+      "recoveryScope": {
+        "passed": 2,
+        "seconds": 6.97,
+        "head": "0077_approved_dispatch_worker",
+        "realMq": false
+      },
+      "combinedFull": {
+        "passed": 1098,
+        "skipped": 1,
+        "seconds": 1144.62,
+        "sourceFrozen": true
+      }
+    },
+    "pendingCombinedRegression": {
+      "branch": "codex/backend-approved-execution-outbox",
+      "baseline": "94834e2b4247058e44bc9a13e6c73f602b0577f0",
+      "result": "PASS_COMBINED_FULL",
+      "developmentHead": "0077_approved_dispatch_worker",
+      "previousCompletedEvidence": "query-evidence-verification.json",
+      "session": 65580,
+      "sourceFreeze": ".runtime/approved-execution-source-freeze.json",
+      "migrationHeadInTests": "0077_approved_dispatch_worker",
+      "passed": 1098,
+      "skipped": 1,
+      "seconds": 1144.62,
+      "evidence": "approved-execution-verification.json"
+    },
+    "nextAfterCurrentFull": [
+      {
+        "task": "M2-18b",
+        "slice": "append-only own-job unverified manual evidence notes",
+        "input": "real attempts/UNKNOWN/recovery producers and existing task.create metadata-write+snapshot.read policies; no new HTTP or cross actor"
+      },
+      {
+        "task": "M2-20",
+        "slice": "internal structured factual execution timeline",
+        "input": "actual job events/approval/attempt/receipt/recovery/verified facts/0076-77; frontend history not expanded without contract"
+      }
+    ],
+    "deferredSafeRetryInputs": "M2-19 kernel plan identified but all real FAILED sources currently retryable=false; no production positive classification assumed, UNKNOWN and money retries remain closed"
   },
   "frontendIntegration": {
     "F01": {

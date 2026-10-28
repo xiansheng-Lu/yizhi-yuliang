@@ -2,12 +2,14 @@
 
 import base64
 import json
+from datetime import date
 from pathlib import Path
 from typing import Any
 from uuid import UUID
 
 from pydantic import SecretBytes, SecretStr
 from sqlalchemy import Engine, text
+from sqlalchemy.orm import Session
 
 from yuliang.modules.connectors.adq_assets import MIRROR_POLICY, AdqAssetSync, AssetKind
 from yuliang.modules.connectors.adq_finance import AdqFinanceSync
@@ -24,6 +26,7 @@ from yuliang.modules.connectors.adq_report_protocol import (
 from yuliang.modules.connectors.adq_reports import AdqReportSync
 from yuliang.modules.connectors.archive import PlatformArchive, RecordedPlatformClient
 from yuliang.modules.connectors.base import GatewayContext
+from yuliang.modules.connectors.external_tokens import ExternalTokenConfig, ExternalTokenProvider
 from yuliang.modules.connectors.governance import PlatformGovernance, QuotaLimits
 from yuliang.modules.connectors.governed import GovernedPlatformClient
 from yuliang.modules.connectors.http import PlatformHttpClient
@@ -37,6 +40,15 @@ from yuliang.modules.connectors.oauth import OAuthRejected, OAuthService, requir
 from yuliang.modules.connectors.redaction import ArchivePolicy
 from yuliang.modules.connectors.registry import GatewayRegistry
 from yuliang.modules.connectors.resources import ApplicationResource, ResourceBundle
+from yuliang.modules.connectors.shop_compass_protocol import COMPASS_ARCHIVE_POLICY, COMPASS_POLICY
+from yuliang.modules.connectors.shop_compass_sync import ShopCompassSync
+from yuliang.modules.connectors.shop_detail_protocol import (
+    DETAIL_ARCHIVE_POLICY,
+    DETAIL_MIRROR_POLICY,
+)
+from yuliang.modules.connectors.shop_order_sync import ShopOrderSync
+from yuliang.modules.connectors.shop_orders import ORDER_ARCHIVE_POLICY, ORDER_POLICY, Kind
+from yuliang.modules.connectors.shop_product_details import ShopProductDetailSync
 from yuliang.modules.connectors.shop_product_sync import ShopProductIdSync
 from yuliang.modules.connectors.shop_products import PRODUCT_ID_POLICY
 from yuliang.modules.connectors.sync_cursor import CursorCodec
@@ -57,6 +69,9 @@ class PlatformRuntime:
         self.adq_finance: dict[UUID, AdqFinanceSync] = {}
         self.adq_reports: dict[UUID, AdqReportSync] = {}
         self.shop_product_ids: dict[UUID, ShopProductIdSync] = {}
+        self.shop_details: dict[UUID, ShopProductDetailSync] = {}
+        self.shop_compass: dict[UUID, ShopCompassSync] = {}
+        self.shop_orders: dict[UUID, ShopOrderSync] = {}
         self.ports = {
             item.id: NativeAuthorization(item) for item in bundle.applications if item.enabled
         }
@@ -97,6 +112,8 @@ class PlatformRuntime:
         if len(set(enabled_connectors)) != len(enabled_connectors):
             self.close()
             raise ValueError("当前装配每个产品线只支持一个显式试点应用")
+        audit_secret = settings.auth_audit_secret
+        governance = self.governance
         for port in self.ports.values():
             item = port.resource
             client = GovernedPlatformClient(
@@ -196,6 +213,50 @@ class PlatformRuntime:
                     item.granted_scopes,
                 )
 
+                def shop_client(
+                    policy: ArchivePolicy, application_id: UUID = item.id
+                ) -> GovernedPlatformClient:
+                    return GovernedPlatformClient(
+                        RecordedPlatformClient(
+                            PlatformHttpClient(native_signer),
+                            PlatformArchive(engine, audit_secret),
+                            policy=policy,
+                            decoder=decode_verdict,
+                        ),
+                        governance,
+                        application_id,
+                    )
+
+                def shop_store(policy: ArchivePolicy) -> SyncStore:
+                    return SyncStore(
+                        engine,
+                        CursorCodec(keys, bundle.key_version, audit_secret),
+                        policy=policy,
+                    )
+
+                self.shop_details[item.id] = ShopProductDetailSync(
+                    shop_store(DETAIL_MIRROR_POLICY),
+                    shop_client(DETAIL_ARCHIVE_POLICY),
+                    self.token_for_read,
+                    item.readonly_interfaces,
+                    item.granted_scopes,
+                )
+                self.shop_compass[item.id] = ShopCompassSync(
+                    shop_store(COMPASS_POLICY),
+                    shop_client(COMPASS_ARCHIVE_POLICY),
+                    self.token_for_read,
+                    item.readonly_interfaces,
+                    item.granted_scopes,
+                    FactWriter(engine, settings.auth_audit_secret),
+                )
+                self.shop_orders[item.id] = ShopOrderSync(
+                    shop_store(ORDER_POLICY),
+                    shop_client(ORDER_ARCHIVE_POLICY),
+                    self.token_for_read,
+                    item.readonly_interfaces,
+                    item.granted_scopes,
+                )
+
     @classmethod
     def load(cls, engine: Engine, settings: Settings, path: Path) -> "PlatformRuntime":
         return cls(engine, settings, ResourceBundle.model_validate_json(path.read_bytes()))
@@ -210,7 +271,12 @@ class PlatformRuntime:
         with business_transaction(self.engine, identity) as session:
             require_admin(session, identity, session_id)
         port = self.ports.get(app_id)
-        if port is None or port.resource.tenant_id != identity.tenant_id or self.oauth is None:
+        if (
+            port is None
+            or port.resource.tenant_id != identity.tenant_id
+            or self.oauth is None
+            or port.resource.external_token_service is not None
+        ):
             raise OAuthRejected()
         return port
 
@@ -236,50 +302,85 @@ class PlatformRuntime:
         if self.oauth is None:
             raise OAuthRejected()
         with business_transaction(self.engine, ctx.identity) as session:
-            row = (
-                session.execute(
-                    text("""SELECT * FROM provider_authorizations
-                WHERE id=:id AND status='ACTIVE' AND expires_at>clock_timestamp()"""),
-                    {"id": ctx.authorization_id},
+            item, row = self._read_resource(session, ctx)
+        reference = item.external_token_service
+        if reference is not None:
+            provider = ExternalTokenProvider(
+                ExternalTokenConfig(
+                    base_url=reference.base_url,
+                    api_key=reference.api_key.resolve(),
+                    product=item.connector_id,
+                    account_id=item.native_id if item.connector_id == "adq" else None,
                 )
-                .mappings()
-                .first()
             )
-            if row is None:
-                raise OAuthRejected()
-            port = self.ports.get(row["application_id"])
-            if port is None:
-                raise OAuthRejected()
-            item: ApplicationResource = port.resource
-            if (
-                ctx.identity.tenant_id,
-                ctx.shop_id,
-                ctx.account_id,
-                ctx.native_account_id,
-                ctx.connector_id,
+            token = await provider.get_token()
+            # 托管服务可能按需刷新；等待期间本地撤权/版本改变仍必须拒绝旧请求。
+            with business_transaction(self.engine, ctx.identity) as session:
+                _, current = self._read_resource(session, ctx)
+                if current["version"] != row["version"]:
+                    raise OAuthRejected()
+            return token.access_token
+        return self.oauth.cipher.open(
+            TokenContext(
+                row["tenant_id"],
+                row["id"],
+                row["application_id"],
                 row["app_id"],
-            ) != (
-                item.tenant_id,
-                item.shop_id,
-                item.account_id,
-                item.native_id,
-                item.connector_id,
-                item.app_id,
-            ):
-                raise OAuthRejected()
-            return self.oauth.cipher.open(
-                TokenContext(
-                    row["tenant_id"],
-                    row["id"],
-                    row["application_id"],
-                    row["app_id"],
-                    row["connector_id"],
-                    row["provider"],
-                    row["product_line"],
-                ),
-                "access",
-                Ciphertext(row["key_version"], row["access_token_enc"]),
+                row["connector_id"],
+                row["provider"],
+                row["product_line"],
+            ),
+            "access",
+            Ciphertext(row["key_version"], row["access_token_enc"]),
+        )
+
+    def _read_resource(
+        self, session: Session, ctx: GatewayContext
+    ) -> tuple[ApplicationResource, dict[str, Any]]:
+        found = (
+            session.execute(
+                text("""SELECT * FROM provider_authorizations
+            WHERE id=:id AND status='ACTIVE' AND expires_at>clock_timestamp()"""),
+                {"id": ctx.authorization_id},
             )
+            .mappings()
+            .first()
+        )
+        if found is None:
+            raise OAuthRejected()
+        row = dict(found)
+        port = self.ports.get(row["application_id"])
+        if port is None:
+            raise OAuthRejected()
+        item = port.resource
+        if (
+            ctx.identity.tenant_id,
+            ctx.shop_id,
+            ctx.account_id,
+            ctx.native_account_id,
+            ctx.connector_id,
+            ctx.provider,
+            ctx.product_line,
+            row["app_id"],
+        ) != (
+            item.tenant_id,
+            item.shop_id,
+            item.account_id,
+            item.native_id,
+            item.connector_id,
+            item.provider,
+            item.connector_id,
+            item.app_id,
+        ) or (row["tenant_id"], row["connector_id"], row["provider"], row["product_line"]) != (
+            item.tenant_id,
+            item.connector_id,
+            item.provider,
+            item.connector_id,
+        ):
+            raise OAuthRejected()
+        if ctx.authorization_version is not None and ctx.authorization_version != row["version"]:
+            raise OAuthRejected()
+        return item, row
 
     async def sync_shop_product_ids(self, ctx: GatewayContext, run_id: UUID) -> dict[str, Any]:
         await self.token_for_read(ctx)
@@ -292,6 +393,43 @@ class PlatformRuntime:
         if reader is None:
             raise OAuthRejected()
         return await reader.sync(ctx, run_id)
+
+    def _application_for_read(self, ctx: GatewayContext) -> UUID:
+        with business_transaction(self.engine, ctx.identity) as session:
+            item, _ = self._read_resource(session, ctx)
+            return item.id
+
+    async def sync_shop_detail(
+        self, ctx: GatewayContext, run_id: UUID, product_id: str
+    ) -> dict[str, Any]:
+        reader = self.shop_details.get(self._application_for_read(ctx))
+        if reader is None:
+            raise OAuthRejected()
+        return await reader.sync(ctx, run_id, product_id)
+
+    async def sync_shop_compass(
+        self, ctx: GatewayContext, run_id: UUID, *, day: date
+    ) -> dict[str, Any]:
+        reader = self.shop_compass.get(self._application_for_read(ctx))
+        if reader is None:
+            raise OAuthRejected()
+        return await reader.sync(ctx, run_id, day=day)
+
+    async def sync_shop_orders(
+        self,
+        ctx: GatewayContext,
+        run_id: UUID,
+        *,
+        kind: Kind,
+        order_id: str | None = None,
+        parameters_input: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        reader = self.shop_orders.get(self._application_for_read(ctx))
+        if reader is None:
+            raise OAuthRejected()
+        return await reader.sync(
+            ctx, run_id, kind=kind, order_id=order_id, parameters_input=parameters_input
+        )
 
     async def sync_adq_assets(
         self, ctx: GatewayContext, kind: AssetKind, run_id: UUID

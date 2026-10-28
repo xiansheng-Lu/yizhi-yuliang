@@ -94,6 +94,10 @@ def main() -> int:
             "adq-finance",
             "adq-reports",
             "shop-products",
+            "shop-details",
+            "shop-compass",
+            "shop-orders",
+            "external-token-runtime",
         ),
         default="all",
     )
@@ -153,6 +157,10 @@ def main() -> int:
         "adq-finance": ["tests/integration/test_adq_finance_reads.py"],
         "adq-reports": ["tests/integration/test_adq_reports.py"],
         "shop-products": ["tests/integration/test_shop_products.py"],
+        "shop-details": ["tests/integration/test_shop_product_details.py"],
+        "shop-compass": ["tests/integration/test_shop_compass.py"],
+        "shop-orders": ["tests/integration/test_shop_orders.py"],
+        "external-token-runtime": ["tests/integration/test_external_token_runtime.py"],
         "parser": [
             "tests/integration/test_command_parse.py",
             "tests/integration/test_workspace.py",

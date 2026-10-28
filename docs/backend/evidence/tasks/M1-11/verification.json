@@ -1,21 +1,12 @@
 {
-  "task": "M1-11",
-  "date": "2026-10-28",
-  "status": "IN_PROGRESS",
-  "result": "PASS_PRODUCT_ID_SLICE_ONLY",
-  "wholeTaskTechnicalResult": "PENDING_SKU_STOCK_PRICE_SOFT_DELETE",
-  "unitAndContract": {"passed": 696, "seconds": 6.08},
-  "dedicatedUnit": 10,
-  "realPostgresRedisIntegration": {"passed": 4, "seconds": 7.90},
-  "ruff": "PASS",
-  "mypy": "PASS_5_FILES",
-  "livePlatformCalls": 0,
-  "paidCalls": 0,
-  "liveAcceptance": "NOT_RUN_E02",
-  "review": "PENDING_BE_FE",
-  "migration": "NONE_REUSES_SYNC_STORE",
-  "commands": [
-    "python scripts/test_infrastructure.py --group shop-products --details",
-    "pytest tests/unit tests/contract -q"
-  ]
+ "task":"M1-11","date":"2026-10-28","status":"WAITING_REVIEW",
+ "technicalResult":"PASS_LOCAL_PRODUCT_ID_DETAIL_SKU_PROJECTION_SOFT_DELETE_GUARDS",
+ "liveAcceptance":"NOT_RUN_E02","review":"PENDING_BE_F05_F09",
+ "idSlice":{"unit":10,"realIntegration":4},
+ "detailSlice":{"unit":7,"realIntegration":5,"integrationSeconds":6.71},
+ "ruff":"PASS","mypy":"PASS_NEW_DETAIL_SCOPE_9_FILES",
+ "migration":"0048_shop_product_details","livePlatformCalls":0,"paidCalls":0,
+ "scope":"Synthetic upstream and independent unit/status proofs; real PostgreSQL Redis and atomic rollback",
+ "remaining":["Actual shop/account mappings and scope evidence","Real platform SKU/price/stock sampling","Actual unit/status/freshness evidence","BE/FE named review"],
+ "nextTechnicalTask":"M3-13a"
 }

@@ -4,7 +4,7 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "currentFocus": "M1-11",
+  "currentFocus": "M3-13a",
   "tasks": {
     "R00-01": {
       "owner": "BE",
@@ -2789,43 +2789,66 @@
     },
     "M1-11": {
       "owner": "BE",
-      "status": "IN_PROGRESS",
-      "scope": "小店商品ID分页受控同步纵切；SKU/价格/库存详情协议与仓储后续补齐",
-      "delivery": "商品ID受控分页同步/runtime接线和4项真实PG/Redis专项通过；SKU/价格/库存完整卡尚未完成",
+      "status": "WAITING_REVIEW",
       "evidence": "tasks/M1-11/README.md",
       "blockedBy": [
         "E02",
         "E08"
       ],
+      "liveAcceptance": "NOT_RUN_E02",
       "review": {
-        "backend": "PENDING",
-        "frontend": "PENDING_F05_F09"
+        "frontend": "PENDING",
+        "backend": "PENDING"
       },
-      "liveAcceptance": "NOT_RUN",
       "technicalVerification": {
-        "livePlatformCalls": 0,
-        "dedicated": 4,
         "paidCalls": 0,
-        "result": "PASS_PRODUCT_ID_SLICE_ONLY",
-        "unitAndContract": 696,
-        "evidence": "tasks/M1-11/verification.json"
-      }
+        "livePlatformCalls": 0,
+        "evidence": "tasks/M1-11/verification.json",
+        "result": "PASS_LOCAL_TECHNICAL_SCOPE_ONLY"
+      },
+      "delivery": "商品/SKU稳定ID、详情观察、有独立依据的价格/库存/软删视图和新鲜度失败标记技术通过；真实采样与人工复核待办"
     },
     "M1-12": {
       "owner": "BE",
-      "status": "BLOCKED",
-      "scope": "罗盘经营事实正式协议调研",
-      "delivery": "已核查本地接口索引；官方正文获取失败，字段/单位/退款口径未确认，未伪造实现",
+      "status": "WAITING_REVIEW",
       "evidence": "tasks/M1-12/README.md",
       "blockedBy": [
         "E02",
-        "M1-12_PROTOCOL",
         "E08"
       ],
+      "liveAcceptance": "NOT_RUN_E02",
       "review": {
-        "backend": "PENDING",
-        "frontend": "PENDING_F04_F08"
-      }
+        "frontend": "PENDING",
+        "backend": "PENDING"
+      },
+      "technicalVerification": {
+        "paidCalls": 0,
+        "livePlatformCalls": 0,
+        "evidence": "tasks/M1-12/verification.json",
+        "result": "PASS_LOCAL_TECHNICAL_SCOPE_ONLY"
+      },
+      "delivery": "罗盘逐日受控同步与独立依据经营事实、覆盖状态及回滚技术通过；真实平台口径未验收"
+    },
+    "M1-13": {
+      "owner": "BE",
+      "status": "WAITING_REVIEW",
+      "evidence": "tasks/M1-13/README.md",
+      "blockedBy": [
+        "E02",
+        "E08"
+      ],
+      "liveAcceptance": "NOT_RUN_E02",
+      "review": {
+        "frontend": "PENDING",
+        "backend": "PENDING"
+      },
+      "technicalVerification": {
+        "paidCalls": 0,
+        "livePlatformCalls": 0,
+        "evidence": "tasks/M1-13/verification.json",
+        "result": "PASS_LOCAL_TECHNICAL_SCOPE_ONLY"
+      },
+      "delivery": "订单/售后列表分页和详情最小观察、独立商家结算历史单位视图技术通过；未知财务/时间含义不做规范累计"
     }
   },
   "gates": {
@@ -2932,26 +2955,24 @@
   },
   "nextTask": {
     "status": "IN_PROGRESS",
-    "id": "M1-11"
+    "id": "M3-13a"
   },
   "continuation": {
     "requestedOn": "2026-10-27",
     "authorization": "持续推进后端任务卡，缺资源再找用户对接",
     "heartbeat": "已在本聊天设置5分钟中断/空闲恢复；卡间立即推进",
     "environment": "WSL2 Ubuntu Docker; UV_PROJECT_ENVIRONMENT=/home/lenovo/.cache/yuliang-venv",
-    "latestUserRequest": "补齐浏览器验收，然后按照后端任务卡继续后续的所有开发，需要资源再找我对接，不阻塞持续开发到完毕",
+    "latestUserRequest": "继续采用多agent模式持续开发，当前任务结束直接开启下一个任务，需要资源再找用户",
     "developmentPolicy": "缺人工/外部验收时记录并继续可独立技术准备；正式门禁、平台调用和付费仍按各自证据许可",
-    "lastCompletedTechnicalTask": "M1-10",
-    "nextTechnicalTask": "M1-11",
+    "lastCompletedTechnicalTask": "M1-13",
+    "nextTechnicalTask": "M3-13a",
     "executionRules": "docs/backend/evidence/execution-rules.md",
-    "checkpoint": "多Agent：M1-10 23专项和758全量集成通过；M1-11商品ID纵切专项执行中；M1-12协议与M1-14渠道缺口单列；外部token只读provider12单测通过未激活。",
+    "checkpoint": "M1-11详情5、M1-12罗盘7、M1-13订单8、外部token运行时5项专项通过；关联native8/商品4/sync14及726单元契约通过。已立即领取M3-13a/M3-08a/M4-02，未代替P验收和签字。",
     "technicalPreparationQueue": [
-      "M1-10",
-      "M1-11",
-      "M1-12",
-      "M1-13",
-      "M1-14",
-      "M3-08a"
+      "M3-13a",
+      "M3-08a",
+      "M4-02",
+      "M1-18"
     ],
     "routingReason": "重新核对149卡，M1-06/07原生适配已有实际技术证据，M1-08与后续镜像可做本地实现与合成端口/真实PG集成；按持续授权不等待实际租户/店铺绑定，但P验收必须保留E01/E02，不能把合成测试当真平台",
     "deferredTechnicalDependencies": [
@@ -3031,7 +3052,7 @@
       "productionSwitchover": false,
       "actualCredentialsReadByThisTask": false,
       "readonlyValidationPermission": "NOT_RECEIVED",
-      "note": "另一用户任务已技术接入，私有引用已采集；用户确认无业务租户且为不同店铺，未激活/真实验收",
+      "note": "用户确认两个项目均属于yizhi，店铺不同；凭据引用已采集，原服务唯一刷新模式新增受控运行时接线但未启用真实配置。",
       "nativeAdaptationCommit": "c70365467bef6ba05a3732c5249de13a6df3a1b5"
     },
     "credentialReferencesReceived": true,

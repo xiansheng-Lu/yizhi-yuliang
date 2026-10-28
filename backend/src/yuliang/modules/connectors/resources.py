@@ -9,6 +9,8 @@ from uuid import UUID, uuid4
 
 from pydantic import BaseModel, ConfigDict, Field, SecretStr, model_validator
 
+from yuliang.modules.connectors.external_tokens import ExternalTokenConfig
+
 
 class ResourceModel(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True, hide_input_in_errors=True)
@@ -37,6 +39,20 @@ def read_environment(path: Path) -> dict[str, str]:
     return values
 
 
+class ExternalTokenReference(ResourceModel):
+    base_url: str
+    api_key: SecretReference
+    owner_confirmed: bool = False
+
+    @model_validator(mode="after")
+    def loopback_only(self) -> "ExternalTokenReference":
+        # 校验URL不需要读取密钥，禁用配置不会触碰原项目凭据。
+        ExternalTokenConfig(
+            base_url=self.base_url, api_key=SecretStr("validation-only"), product="wxshop"
+        )
+        return self
+
+
 class ApplicationResource(ResourceModel):
     id: UUID
     connector_id: Literal["adq", "wxshop"]
@@ -55,19 +71,27 @@ class ApplicationResource(ResourceModel):
     permissions_evidence: str | None = None
     readonly_interfaces: tuple[str, ...] = ()
     token_owner_transferred: bool = False
+    external_token_service: ExternalTokenReference | None = None
     enabled: bool = False
 
     @model_validator(mode="after")
     def coherent(self) -> "ApplicationResource":
         if (self.connector_id, self.mode) not in {("adq", "ADQ_OAUTH"), ("wxshop", "WXSHOP_SELF")}:
             raise ValueError("小店自研与ADQ OAuth必须使用各自授权模式")
+        if self.external_token_service is not None and self.token_owner_transferred:
+            raise ValueError("托管令牌与驭量自行刷新不能同时启用")
+        owner_ready = (
+            self.external_token_service.owner_confirmed
+            if self.external_token_service is not None
+            else self.token_owner_transferred
+        )
         if self.enabled and (
             self.tenant_id is None
             or self.shop_id is None
             or self.native_id is None
             or self.granted_scopes is None
             or not self.permissions_evidence
-            or not self.token_owner_transferred
+            or not owner_ready
             or self.connector_id == "adq"
             and not self.redirect_uri
         ):

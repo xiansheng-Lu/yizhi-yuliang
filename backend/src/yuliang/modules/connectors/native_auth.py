@@ -40,6 +40,8 @@ class NativeAuthorization:
         )
 
     def authorize_url(self, state: SecretStr) -> str:
+        if self.resource.external_token_service is not None:
+            raise ValueError("托管令牌由原服务授权，驭量不创建第二授权或刷新者")
         application = self.application()
         if self.resource.mode != "ADQ_OAUTH":
             raise ValueError("小店自研不使用ADQ扫码授权")
@@ -53,6 +55,8 @@ class NativeAuthorization:
 
     async def _request(self, *, code: SecretStr | None, refresh: SecretStr | None) -> TokenSet:
         item = self.resource
+        if item.external_token_service is not None:
+            raise CodeExchangeFailure(unknown=False)
         self.application()  # 先核验资源/唯一刷新者，再读取Secret或出网。
         secret = item.secret.resolve().get_secret_value()
         started = datetime.now(UTC)

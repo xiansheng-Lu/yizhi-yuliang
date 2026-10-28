@@ -1,0 +1,22 @@
+{
+  "unitPassed": 11,
+  "platformCalls": 0,
+  "sourceSemantics": "REQUIRES_INDEPENDENT_MAINTENANCE_CONTRACT",
+  "review": "PENDING_BE_F04_F08",
+  "result": "PASS_LOCAL_PG_REDIS_SYNTHETIC_HTTP",
+  "paidCalls": 0,
+  "integrationSeconds": 6.96,
+  "integrationPassed": 7,
+  "integrationCommand": "python scripts/test_infrastructure.py --group shop-compass --details",
+  "unitSeconds": 0.54,
+  "date": "2026-10-28",
+  "migration": "0049_shop_compass",
+  "mypy": "PASS_5_NEW_SOURCE_FILES",
+  "ruff": "PASS",
+  "blockers": [
+    "E02",
+    "E08"
+  ],
+  "sourceProtocol": "EXISTING_WX_SHOP_COLLECTOR_SOURCE",
+  "liveAcceptance": "NOT_RUN_E02"
+}

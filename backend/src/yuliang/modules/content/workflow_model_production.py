@@ -20,6 +20,7 @@ from yuliang.modules.content.workflows_execution_service import WorkflowExecutio
 from yuliang.platform.errors import ApiError, ErrorCode
 
 SCENARIO_STEPS = {
+    "content_topic": {"topic"},
     "content_planning": {"planning", "topic"},
     "content_script": {"script"},
     "content_storyboard": {"storyboard"},

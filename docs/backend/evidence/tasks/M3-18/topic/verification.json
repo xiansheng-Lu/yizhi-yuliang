@@ -1,0 +1,62 @@
+{
+  "task": "M3-18",
+  "slice": "independent_content_topic",
+  "date": "2026-10-28",
+  "baseline": "bf2b2f6a071a53e716ba9e8560fccfe45991e179",
+  "status": "TECH_VERIFIED_WAITING_REVIEW",
+  "wholeTaskStatus": "IN_PROGRESS",
+  "migration": "0073_content_topic",
+  "downRevision": "0072_ai_ledger_actor_guard",
+  "unit": {
+    "dedicatedPassed": 8,
+    "existingPassed": 26,
+    "totalPassed": 34,
+    "seconds": 1.52
+  },
+  "ruff": "PASS",
+  "mypy": "PASS_3_SOURCE_2_NEW_TEST_FILES",
+  "integration": {
+    "passed": 6,
+    "seconds": 10.11,
+    "result": "PASS_REAL_PG_AND_HTTP_SYNTHETIC_MODEL",
+    "testedHead": "0073",
+    "entry": "tests/integration/test_ai_content_topic.py"
+  },
+  "regression": {
+    "aiContent": {
+      "passed": 17,
+      "seconds": 17.55
+    }
+  },
+  "dbWindow": "RELEASED",
+  "newScenario": "content_topic",
+  "newPromptState": "DRAFT",
+  "newPromptVersion": 1,
+  "oldPromptsAndHashesChanged": false,
+  "legacyTopicPlanningAlias": "PRESERVED",
+  "modelOutput": "planning.body_only",
+  "newFrontendDocumentFields": 0,
+  "runtimeDefault": "DISABLED",
+  "realModelCalls": 0,
+  "paidCalls": 0,
+  "platformCalls": 0,
+  "review": {
+    "backend": "PENDING",
+    "frontend": "PENDING"
+  },
+  "notClaimed": [
+    "real model quality",
+    "frontend browser acceptance",
+    "BE FE final signoff",
+    "caption ASR or video timing support"
+  ],
+  "relatedRegression": {
+    "passed": 36,
+    "seconds": 35.59,
+    "evidence": "../../../topic-adgroup-verification.json"
+  },
+  "combinedUnitContract": {
+    "passed": 975,
+    "seconds": 10.73
+  }
+}

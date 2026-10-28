@@ -12,6 +12,7 @@ from yuliang.modules.commerce.shop_details import product_view
 from yuliang.modules.configuration.integration_service import IntegrationService
 from yuliang.modules.reporting.query_facts import query_facts
 from yuliang.modules.reporting.query_models import QueryRequest, ResourcePage, ResourceRow
+from yuliang.modules.reporting.query_plans import query_adgroups
 from yuliang.modules.reporting.query_scope import query_context
 from yuliang.platform.db import VerifiedIdentity, business_transaction
 from yuliang.platform.errors import ApiError, ErrorCode
@@ -45,6 +46,7 @@ class QueryService:
             )
         if (value.scope.product_line, value.resource) not in {
             ("adq", "reports"),
+            ("adq", "adgroups"),
             ("wxshop", "compass"),
             ("wxshop", "products"),
             ("wxshop", "stock"),
@@ -59,6 +61,8 @@ class QueryService:
             ctx, pair = query_context(
                 session, IntegrationService(self.engine, self.identity), value
             )
+            if value.resource == "adgroups":
+                return query_adgroups(session, ctx, value)
             if value.resource in {"reports", "compass"}:
                 return self._reports(session, ctx, pair, value)
             return self._products(session, ctx, value)

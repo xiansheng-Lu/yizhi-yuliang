@@ -7,7 +7,7 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from yuliang.modules.content.models import Brief
 
-Scenario = Literal["content_planning", "content_script", "content_storyboard"]
+Scenario = Literal["content_topic", "content_planning", "content_script", "content_storyboard"]
 
 
 class ContentModel(BaseModel):

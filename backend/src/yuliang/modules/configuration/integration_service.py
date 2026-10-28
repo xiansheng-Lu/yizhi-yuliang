@@ -187,6 +187,19 @@ class IntegrationService:
             and evaluate_binding(session, self.identity, shop_ids[0], binding.id)["status"]
             == "AUTHORIZED"
         )
+        if proof.resource == "adgroups":
+            route = current_source(session, binding, now)
+            shop_read_implemented = bool(
+                line == "adq"
+                and binding.operation_kind == "READ"
+                and binding.http_method == "GET"
+                and binding.normalized_path == "/v1.3/adgroups/get"
+                and route is not None
+                and route.profile == "ADQ_ADGROUPS_V1_3_READ"
+            )
+        if line == "adq" and proof.resource == "campaigns":
+            # 无冻结前端读取目录/本卡消费纵切；不靠当前目录恰好缺行隐式关闭。
+            shop_read_implemented = False
         state = aggregate(
             binding, assertions, now=now, permitted=allowed, account_authorized=authorized
         )

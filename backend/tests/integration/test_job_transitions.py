@@ -11,7 +11,7 @@ from uuid import UUID, uuid4
 
 import pytest
 from pydantic import SecretStr
-from sqlalchemy import text
+from sqlalchemy import Connection, text
 from sqlalchemy.exc import DBAPIError
 from sqlalchemy.orm import Session
 from state_cases import facts_for, state_job
@@ -37,6 +37,19 @@ pytestmark = pytest.mark.integration
 EDGES = [(event, source) for event, rule in RULES.items() for source in sorted(rule.sources)]
 
 
+def synthetic_initial_notice(owner: Connection, job: CommandJob) -> None:
+    """仅维护fixture重建v1初态，和其已有job_events校准一致；不改运行时约束或已投影源。"""
+    assert owner.execute(text("SELECT current_user")).scalar_one() == "app_owner"
+    changed = owner.execute(
+        text("""UPDATE event_source_outbox
+        SET changes=jsonb_build_object('status',CAST(:status AS text)),
+        occurred_at=:at WHERE job_id=:job AND entity_type='command_job'
+         AND version=1 AND projected_seq IS NULL"""),
+        {"status": job.status.value, "at": job.updated_at, "job": job.job_id},
+    )
+    assert changed.rowcount == 1
+
+
 def seed(data: dict[str, Any], status: JobStatus, *, expired: bool = False) -> CommandJob:
     base = data["applications"].create(data["input"])
     with data["maintenance"].begin() as owner:
@@ -59,6 +72,7 @@ def seed(data: dict[str, Any], status: JobStatus, *, expired: bool = False) -> C
                     ],
                 }
             )
+        synthetic_initial_notice(owner, job)
         owner.execute(
             text("""UPDATE command_jobs SET status=:status,document=CAST(:document AS jsonb),
         created_at=:created,updated_at=:updated,expires_at=:expires,

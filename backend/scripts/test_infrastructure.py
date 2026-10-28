@@ -83,6 +83,7 @@ def main() -> int:
             "projections",
             "approvals",
             "readback",
+            "events",
         ),
         default="all",
     )
@@ -131,6 +132,7 @@ def main() -> int:
         "projections": ["tests/integration/test_job_projections.py"],
         "approvals": ["tests/integration/test_approvals.py"],
         "readback": ["tests/integration/test_independent_readback.py"],
+        "events": ["tests/integration/test_event_projections.py"],
         "parser": [
             "tests/integration/test_command_parse.py",
             "tests/integration/test_workspace.py",

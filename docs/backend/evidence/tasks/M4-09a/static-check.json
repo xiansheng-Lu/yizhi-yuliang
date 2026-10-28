@@ -1,0 +1,18 @@
+{
+  "result": "PASS",
+  "formatFiles": 239,
+  "mypyFiles": 192,
+  "diffCheck": "PASS",
+  "sourceTables": [
+    "command_jobs",
+    "approvals",
+    "execution_orders"
+  ],
+  "globalIdentityCursor": false,
+  "retentionDays": 7,
+  "sourceDedupeSurvivesProjectionCleanup": true,
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "checkedAt": "2026-10-28T01:50:48.552Z",
+  "sourceCommit": "d1de32e4056de96035dab286685af361f6e85a27"
+}

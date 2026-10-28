@@ -394,9 +394,10 @@ async def test_failed_string_without_e1_does_not_release(budget_ready: dict[str,
     with data["maintenance"].begin() as owner:
         owner.execute(text("SET LOCAL ROLE app_owner"))
         owner.execute(
-            text("""UPDATE command_jobs SET status='FAILED',
-        document=jsonb_set(jsonb_set(document,'{status}','"FAILED"'::jsonb),
-                          '{history,-1,status}','"FAILED"'::jsonb)""")
+            text("""UPDATE command_jobs SET status='FAILED',version=version+1,
+        document=jsonb_set(jsonb_set(jsonb_set(document,'{status}','"FAILED"'::jsonb),
+                          '{history,-1,status}','"FAILED"'::jsonb),
+                          '{version}',to_jsonb(version+1))""")
         )
     for proof in (None, receipt.receipt_id):
         with pytest.raises(ApiError):

@@ -2,9 +2,17 @@
 
 2026-10-28，BE负责；前端一人、后端一人，coding agent协作。用户已授权卡间连续推进。以task-status.json、20册及实际证据为准；本页不替代具名复核、真实平台口径或正式门禁。
 
-## 当前批次
+## 本轮进行中检查点（后于下方已合并批次）
 
-本地分支codex/backend-comparison-assets，基线main739b721。0058—0061真实迁移；数据库/迁移集成窗口按reports→commerce→snapshot→publication→主Agent整合串行。本批最终全量集成865通过、1可选重启跳过，818单元/契约通过，199源码mypy与Ruff通过；默认开发库已到0061，28相关表0行，迁移角色NOLOGIN。实现冻结并准备合并main，下一批立即新分支推进。
+当前本地分支codex/backend-content-plan-readmodels，remote main基线d0caf14；0062计划观察/字段依据与0063原子派生已落。M1-18计划切片16U+10PG/5路径回归通过；M1-19四V9只读切片10U+6PG/15上下文回归+实际TS消费通过；M3-16共享库/SAVE守卫21U+5PG通过，整卡仍缺真实GENERATION/SOP入口。M3-14五类派生9U+5PG及实际TS flowDocument/validateContent黄金对比通过；最终child-edit/伪造关系负例也已在完整集成通过。
+
+最终完整集成891通过/1可选重启跳过（672.28秒），874单元/契约、212源码mypy及Ruff通过。开发库0063，32相关表0行、迁移角色NOLOGIN；当前无占用DB窗口，重跑需新授权。M1-18/M1-19/M3-16整卡保持IN_PROGRESS；M3-14本地技术完成、WAITING_REVIEW。新真实平台/付费调用0。
+
+下一具备技术输入的任务是M3-17a模板/Run/Step，0063原子派生本批同步main后新分支直接领；M4-04可基于实际规范日事实做独立聚合器及SQL验收，禁止另造未消费的概况HTTP端点。F09本地迁移需明确canonical products.id与云commerce_products.id映射，不能把两个UUID命名空间混用；F10新API应取V9实际产品读取给出的内部ID。均不制造签字/平台口径。
+
+## 已合并批次
+
+已完成批次codex/backend-comparison-assets，基线main739b721，最终合并推送main d0caf14。0058—0061真实迁移；数据库/迁移集成窗口按reports→commerce→snapshot→publication→主Agent整合串行。本批最终全量集成865通过、1可选重启跳过，818单元/契约通过，199源码mypy与Ruff通过；默认开发库已到0061，28相关表0行，迁移角色NOLOGIN。实现已冻结并合并推送main d0caf14。新本地codex/backend-content-plan-readmodels已启动commerce→M3-16、beans→M1-18计划投影、reports→M1-19实际读契约。0062预留plan，其他迁移向主Agent申请；当前没有已授予的DB窗口。
 
 | 卡 | 实际技术结果 | 保留边界 |
 |---|---|---|
@@ -36,3 +44,5 @@
 完成本批检查后中文提交、合并main推送；不推中间分支、不强推。下一批新建本地分支再实施，主Agent统一公共文件、迁移号、DB窗口、台账和Git。06/12两份既有未提交文档不得夹带。只缺人工签字/外部验收时保留门禁并继续其他就绪技术任务，不把技术PASS计正式DONE。
 
 automation五分钟仅恢复中断/空闲，卡间直接推进；状态不变或无可操作变化保持安静，只在有意义交付、失败或需用户资源时通知。原每小时只读汇报不变。
+
+完整V8计划字段存在跨端真实源矛盾，已向用户提交resource-handoff/v8-plan-contract-gap.md可空只读契约选择；未改冻结前端类型。该决议只阻塞对应完整快照/workspace，不阻塞SOP/导入或独立规范事实聚合。

@@ -1,10 +1,10 @@
 # 最新恢复入口
 
-2026-10-28：上一批已合并推送main **0c613c4f9dc40b87e65383844f799e59403e64ab**，远程哈希实查一致；954集成通过、1可选重启跳过（826.45s），919单元/契约及228源码mypy/Ruff通过。开发库0068，44相关表仅5系统模板，其余0，迁移角色NOLOGIN；见workflow-execution-links-verification.json。三卡整卡仍有真实生成/上传审核/全内容事件/UI等缺口，未宣布整体完成。
+2026-10-28：上一批已合并推送main **bf2b2f6a071a53e716ba9e8560fccfe45991e179**，远程哈希实查一致；1009集成通过、1可选重启跳过（953.14s），952单元/契约及240源码mypy/Ruff通过。开发库0072，48相关表仅5系统模板，其余0，迁移角色NOLOGIN；见ai-content-generation-verification.json。三卡整卡仍有真实生成/上传审核/全内容事件/UI等缺口，未宣布整体完成。
 
-已立即新建本地**codex/backend-ai-content-generation**：commerce→M3-18/0069模型候选生产、beans→M3-19a/0070生成账本、reports→本地真实nginx/50TCP流SSE专项；root补CostGate/InvocationLedger同事务接口、跨actor完成槽计数公共接线及0071 job费用绑定恢复。默认不读真实模型配置、不调用真实供应商、不沿用已用6次/20分许可。源码与测试已实际落，非仅readiness。
+**codex/backend-topic-adgroup-queries**已完成本批技术验证：本批独立topic6/10.11s+旧AI17/17.55s、ADGROUP14/14.61s+context15/10.05s、相关36/35.59s与975单元/契约10.73s通过，241源码mypy/Ruff通过。实际PlatformService消费3响应/8行、6非法响应拒绝，浏览器未验。默认开发库0073、48相关表仅5系统模板其余0，NOLOGIN；全部DB释放。准备中文提交合并main推送后继续。
 
-本批1009集成通过/1可选重启跳过（953.14s），952单元/契约及240源码mypy/Ruff通过。0069至0072迁移实际升级，48相关表仅5系统模板其余0，迁移角色NOLOGIN。AI17/GEN31/ledger21/proxy3修后专项通过；三卡整卡仍IN_PROGRESS。待中文提交合并main推送后立即新分支继续，真实模型/供应商/平台调用0。 DB已释放，下一就绪任务只读调研完成；合并后使用新本地分支实施。
+ADGROUP当前上限1000完整匹配行，超限明确422/收窄，nextCursor=null；尚未实现服务端分页，不声称5000展示。CAMPAIGN无冻结FE目录入口且后端明确关闭；当前观察非历史配置，未知预算/源时间保持未知。下一切片先核稳定跨页或执行内核实际缺口，不能因台账无ID推断已有内核未实现。直播/回放还缺可靠语义/场次映射/媒体转录，不能用SDK类型、UV或空数组补投影。
 
 用户的V8只读可空契约问题仍待答复，具体reviewable方案见resource-handoff/v8-plan-contract-gap.md。当前前端冻结契约未改，不默认选项被确认；该缺口只影响完整M1-18/V8 workspace，不阻塞上列任务。M1-18/M1-19/M3-16未实现项继续IN_PROGRESS，M3-14已技术通过待人工。
 

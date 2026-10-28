@@ -1,0 +1,112 @@
+{
+  "date": "2026-10-28",
+  "baseline": "bf2b2f6a071a53e716ba9e8560fccfe45991e179",
+  "branch": "codex/backend-topic-adgroup-queries",
+  "result": "PASS_TARGETED_AND_RELATED_REGRESSION",
+  "environment": "WSL Python3.13; actual isolated PostgreSQL/Redis/MinIO, Cookie/CSRF main HTTP, synthetic HTTP model/platform transport; actual frontend TS consumer with recorded HTTP injection",
+  "checks": [
+    {
+      "command": "ruff check src tests scripts alembic/versions/0073_content_topic.py",
+      "result": "PASS"
+    },
+    {
+      "command": "mypy src",
+      "result": "PASS",
+      "sourceFiles": 241
+    },
+    {
+      "command": "pytest -m \"unit or contract\" -q",
+      "passed": 975,
+      "deselected": 1032,
+      "seconds": 10.73
+    },
+    {
+      "command": "python scripts/test_infrastructure.py --group topic-adgroup-regression --details",
+      "passed": 36,
+      "seconds": 35.59,
+      "files": [
+        "test_resource_queries.py",
+        "test_plan_read_projections.py",
+        "test_content_workflows.py",
+        "test_workflow_execution.py"
+      ]
+    }
+  ],
+  "dedicated": {
+    "topic": {
+      "passed": 6,
+      "seconds": 10.11,
+      "oldAiRegressionPassed": 17,
+      "oldAiRegressionSeconds": 17.55,
+      "evidence": "tasks/M3-18/topic/verification.json"
+    },
+    "adgroupQuery": {
+      "passed": 14,
+      "seconds": 14.61,
+      "integrationContextPassed": 15,
+      "integrationContextSeconds": 10.05,
+      "evidence": "tasks/M1-19/adgroups/verification.json"
+    },
+    "frontendConsumer": {
+      "result": "PASS_RECORDED_HTTP_FRONTEND_CONSUMPTION",
+      "cases": 3,
+      "consumedRows": 8,
+      "invalidResponsesRejected": 6,
+      "realNetworkCalls": 0,
+      "evidence": "tasks/M1-19/adgroups/frontend/consumer-verification.json"
+    }
+  },
+  "baselineFullIntegration": {
+    "evidence": "ai-content-generation-verification.json",
+    "passed": 1009,
+    "skipped": 1,
+    "seconds": 953.14,
+    "scope": "previous exact main bf2b2f6 baseline; not rerun or claimed as current branch full result"
+  },
+  "sourceFreeze": {
+    "backendFiles": 17,
+    "unchangedDuringFinalRegression": true,
+    "sha256LfNormalized": {
+      "backend/alembic/versions/0073_content_topic.py": "8eddb2a3f6e1593b49e6424e357fb04de439ed6e57a1c60b2955ad1cfa395655",
+      "backend/alembic/versions/0073_content_topic.sql": "42fec75a6ae13b0a0d23713b7a621fbd8f7199ccf9ccd81d6a8a2825c291ffa5",
+      "backend/src/yuliang/modules/aikernel/content_prompts/topic/v1/golden.json": "df934ec038a35df864d0f96d7d05a9579746147cf59ffb427b134d1f78bdab2d",
+      "backend/src/yuliang/modules/aikernel/content_prompts/topic/v1/manifest.json": "58e89be8b73f4eff8272c7560e95056bcc7d15565e1501f847aaf9aaba56c966",
+      "backend/src/yuliang/modules/aikernel/content_prompts/topic/v1/template.txt": "870b48cc5efda158c7b88528b2026459809d7180ba02daecbbf7b749eb6d029c",
+      "backend/src/yuliang/modules/reporting/query_plans.py": "0f2e3af2a068533f3650bd9ec94024e212b9094ad995d12e15a153f84d1c3320",
+      "backend/tests/integration/test_ai_content_topic.py": "21a1633526684e31086d08a830dd208521f061254a11689c37e6e54b7b511a0f",
+      "backend/tests/integration/test_resource_query_plans.py": "861a87208e2c5b9a5e7bd63a456a9507aff5550261fb239da3eac27f00335188",
+      "backend/tests/unit/test_ai_content_topic.py": "0911dc25f4cb331075fa0f1a1059ef7908b52105ee756f2ef8a8f2071fd6a843",
+      "backend/tests/unit/test_query_plans.py": "d36eb82e6ffb88295863d6f6bed8d07969415bcd93245cf1953188a17fc530d1",
+      "backend/scripts/test_infrastructure.py": "552e908a91d46c91d56bdccc2fb01dd3a41948938eda76acb8f89b84b6a7982f",
+      "backend/src/yuliang/modules/aikernel/content_prompts.py": "4aa7e872ef71494bf705335771d3ed5bfa994021112ecd457f6d0cc4032eef23",
+      "backend/src/yuliang/modules/configuration/integration_service.py": "a855066822ae30dffedbee80dbe548ebe47452a0393b3a3fda49418c04f665a5",
+      "backend/src/yuliang/modules/content/ai_content_models.py": "f85943b842bccc81a8a1bb60a54ecd51f623353bdf6ebf92aec2c821275f23ed",
+      "backend/src/yuliang/modules/content/workflow_model_production.py": "55c139bcd04a1652a752d3504d59c4982d9fb8a5a0df46269faff8c38d98f8d1",
+      "backend/src/yuliang/modules/reporting/query_service.py": "bf7adaa529e5281b0d8f236c44e79613ec2b808fce13ccdd29a8783e99a5f60b",
+      "backend/tests/integration/test_integration_context.py": "6c7a8ff3a5478c8a128b141dfdadc813a8166b00be0b83fad7b65eb1a3b7fd68"
+    }
+  },
+  "review": [
+    "Independent topic prompt, exact topic/planning.body guard and legacy prompt hash/alias compatibility",
+    "ADGROUP exact official current source/head/profile/authorized scope; unsupported CAMPAIGN backend explicitly closed",
+    "Resolved tenant/account used in row identity even with empty requested account selector",
+    "Actual complete latest observation only; known zero separate from unknown proof/time; no stale SUCCESS fallback"
+  ],
+  "migrationHead": "0073_content_topic",
+  "development": "topic-adgroup-development.json",
+  "paidCalls": 0,
+  "realModelCalls": 0,
+  "realSupplierCalls": 0,
+  "livePlatformCalls": 0,
+  "originalTokenServiceChanges": 0,
+  "notClaimed": [
+    "current branch full 1009-suite rerun",
+    "named BE FE acceptance",
+    "real model quality or billing",
+    "real platform mapping or P acceptance",
+    "CAMPAIGN resource entry",
+    "ADGROUP server pagination or more than1000 displayed matches",
+    "frontend browser F10 F11 F12 acceptance",
+    "complete live replay and overview dimensions"
+  ]
+}

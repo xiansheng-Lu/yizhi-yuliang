@@ -125,3 +125,9 @@ main0c613c4远程核对同步后，新本地codex/backend-ai-content-generation�
 ## 本批最终整合实证
 
 本批1009集成通过/1可选重启跳过（953.14s），952单元/契约及240源码mypy/Ruff通过。0069至0072迁移实际升级，48相关表仅5系统模板其余0，迁移角色NOLOGIN。AI17/GEN31/ledger21/proxy3修后专项通过；三卡整卡仍IN_PROGRESS。待中文提交合并main推送后立即新分支继续，真实模型/供应商/平台调用0。
+
+## topic与ADGROUP下一批正式领取
+
+main bf2b2f6已合并推送，1009集成/1跳过及952单元通过。新本地codex/backend-topic-adgroup-queries立即启动：commerce独占0073/topic提示与生产链，beans独占M1-19 ADGROUP查询及最小READ接线，reports只做独立契约/真实TS消费证据。root仍独占runner、公共台账和Git；当前未授予任何DB窗口，冻结后串行。只选已有冻结FE目录与真实profile的ADGROUP，CAMPAIGN缺入口维持关闭；不把旧1009或历史付费许可作为新批次通过。06/12伙伴各2新增保留，不夹带。
+
+本批最终收口：本批独立topic6/10.11s+旧AI17/17.55s、ADGROUP14/14.61s+context15/10.05s、相关36/35.59s与975单元/契约10.73s通过，241源码mypy/Ruff通过。实际PlatformService消费3响应/8行、6非法响应拒绝，浏览器未验。默认开发库0073、48相关表仅5系统模板其余0，NOLOGIN；全部DB释放。准备中文提交合并main推送后继续。本批使用专项及相关回归；上批1009全量仅为bf2b2f6基线证据，未重复声称新分支full通过。

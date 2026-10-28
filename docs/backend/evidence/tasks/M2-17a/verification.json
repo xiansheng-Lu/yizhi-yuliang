@@ -1,0 +1,78 @@
+{
+  "checkedAt": "2026-10-28T01:24:36.407Z",
+  "baseline": "a04c102",
+  "documentationBaseline": "ab2b975",
+  "implementationCommit": "cd4d0e242f55500bd7cf18e886a5e77a867b0689",
+  "result": "PASS_LOCAL_INDEPENDENT_GET_COMPARISON_WITHOUT_FINALIZATION",
+  "checks": [
+    {
+      "command": "uv run --frozen ruff check .",
+      "result": "PASS"
+    },
+    {
+      "command": "uv run --frozen ruff format --check .",
+      "result": "PASS",
+      "count": 236
+    },
+    {
+      "command": "uv run --frozen mypy",
+      "result": "PASS",
+      "count": 190
+    },
+    {
+      "command": "uv run --frozen pytest tests/unit tests/contract -q",
+      "result": "PASS",
+      "count": 582,
+      "added": 27
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --group readback --details",
+      "result": "PASS",
+      "count": 12
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --details",
+      "result": "PASS_WITH_EXPLICIT_LIFECYCLE_SKIP",
+      "count": 605,
+      "skipped": 1,
+      "seconds": 362.97
+    }
+  ],
+  "database": {
+    "head": "0037_approval_service",
+    "newMigration": false,
+    "migrationRoleCanLogin": false,
+    "developmentRows": {
+      "approvals": 0,
+      "approval_decisions": 0,
+      "server_approval_permits": 0,
+      "execution_recoveries": 0,
+      "execution_recovery_evidence": 0,
+      "execution_orders": 0,
+      "execution_attempts": 0,
+      "budget_job_finalizations": 0,
+      "command_jobs": 0
+    }
+  },
+  "traces": [
+    "independent-get.json"
+  ],
+  "input": "EXPLICIT_MOCK_PLATFORM_HTTP_REAL_PG_REDIS_ARCHIVE_AND_BUDGET",
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "comparisonEvidenceLevel": "E0",
+  "limitations": [
+    "Vendor-specific read port and confirmed field/precision contract not wired",
+    "M2-17b durable schedule and E2 finalization not implemented by this card",
+    "BE/FE/F06 review and G0/E08 pending"
+  ],
+  "defects": [
+    {
+      "layer": "TEST_TRACE_ONLY",
+      "initialFailure": "Used nonexistent CommandJob.id and then UUID without JSON conversion",
+      "resolution": "Use actual business job UUID converted to string; 12 dedicated and 605 full integration tests pass"
+    }
+  ],
+  "status": "WAITING_REVIEW",
+  "humanSignoff": "PENDING"
+}

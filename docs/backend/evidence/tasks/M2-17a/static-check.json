@@ -1,0 +1,13 @@
+{
+  "result": "PASS",
+  "formatFiles": 236,
+  "mypyFiles": 190,
+  "diffCheck": "PASS",
+  "defaultPorts": 0,
+  "perComparisonEvidenceLevel": "E0",
+  "newMigration": false,
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "checkedAt": "2026-10-28T01:24:36.407Z",
+  "sourceCommit": "cd4d0e242f55500bd7cf18e886a5e77a867b0689"
+}

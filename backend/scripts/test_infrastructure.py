@@ -82,6 +82,7 @@ def main() -> int:
             "execution-recovery",
             "projections",
             "approvals",
+            "readback",
         ),
         default="all",
     )
@@ -129,6 +130,7 @@ def main() -> int:
         ],
         "projections": ["tests/integration/test_job_projections.py"],
         "approvals": ["tests/integration/test_approvals.py"],
+        "readback": ["tests/integration/test_independent_readback.py"],
         "parser": [
             "tests/integration/test_command_parse.py",
             "tests/integration/test_workspace.py",

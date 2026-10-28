@@ -1,0 +1,30 @@
+{
+  "head": "0057_report_drafts",
+  "migrationRoleCanLogin": false,
+  "developmentRows": {
+    "provider_authorizations": 0,
+    "sync_sources": 0,
+    "sync_runs": 0,
+    "sync_pages": 0,
+    "commerce_products": 0,
+    "commerce_skus": 0,
+    "shop_product_detail_pages": 0,
+    "shop_product_measure_proofs": 0,
+    "shop_compass_observations": 0,
+    "shop_compass_contracts": 0,
+    "shop_order_observations": 0,
+    "shop_settlement_proofs": 0,
+    "content_documents": 0,
+    "content_document_versions": 0,
+    "content_document_references": 0,
+    "resource_lookup_contexts": 0,
+    "resource_lookup_pages": 0,
+    "analysis_tasks": 0,
+    "analysis_results": 0,
+    "analysis_executions": 0,
+    "content_uploads": 0,
+    "content_assets": 0,
+    "report_drafts": 0,
+    "report_draft_versions": 0
+  }
+}

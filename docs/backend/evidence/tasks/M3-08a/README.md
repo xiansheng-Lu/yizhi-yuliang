@@ -24,3 +24,4 @@ LookupService只读取最近完整SUCCESS且未过期的来源run。上游错误
 
 回滚采用停用该应用只读入口和撤销来源适用依据，保留分页档案，不做破坏性downgrade。BE/F11具名复核PENDING；其余LookupKind仍待正式来源与适配，整父卡不可因本切片通过而关闭。
 `SyncStore.resource_kind`只允许小写字母数字点下划线；本轮专项发现来源键拼接标准UUID含横杠不合法，已改为proof.id.hex并完整复验。测试夹具先变更原生账户再注册新绑定，保留实际原生变更使既有能力失效的安全触发器，不通过弱化生产守卫修测试。
+2026-10-28追加targets推广资产切片：固定SDK协议、0056按kind隔离来源、严格未删除/核对资产类型才可选；4项真实PG/Redis/HTTP专项、18项合并协议单元和7项audiences回归通过。见[targets切片证据](targets/README.md)。此前本文“仅audiences”描述第一切片；当前已技术实现audiences与targets，其他LookupKind仍未实现，整卡不关闭。

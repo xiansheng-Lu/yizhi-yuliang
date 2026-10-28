@@ -1,0 +1,256 @@
+{
+  "checkedAt": "2026-10-28T17:17:51.680449+08:00",
+  "source": "ORIGINAL_WX_SHOP_SDK_EXISTING_HOSTED_TOKEN",
+  "yuliangRuntimeAcceptance": "NOT_RUN",
+  "platformCalls": 4,
+  "forceRefreshCalls": 0,
+  "serviceLifecycleChanges": 0,
+  "calls": [
+    {
+      "api": "获取店铺基本信息",
+      "status": "BUSINESS_SUCCESS",
+      "errcode": 0,
+      "schema": {
+        "errcode": "int",
+        "errmsg": "str",
+        "info": {
+          "nickname": "str",
+          "headimg_url": "str",
+          "subject_type": "str",
+          "status": "str",
+          "username": "str",
+          "open_timestamp": "int"
+        }
+      }
+    },
+    {
+      "api": "商品管理/获取商品列表",
+      "status": "BUSINESS_SUCCESS",
+      "errcode": 0,
+      "schema": {
+        "errcode": "int",
+        "errmsg": "str",
+        "product_ids": {
+          "type": "array",
+          "sampleSchema": "int"
+        },
+        "next_key": "str",
+        "total_num": "int"
+      },
+      "safeCounts": {
+        "returnedProducts": 1,
+        "hasMore": true
+      }
+    },
+    {
+      "api": "获取商品",
+      "status": "BUSINESS_SUCCESS",
+      "errcode": 0,
+      "schema": {
+        "errcode": "int",
+        "errmsg": "str",
+        "product": {
+          "product_id": "str",
+          "out_product_id": "str",
+          "title": "str",
+          "sub_title": "str",
+          "head_imgs": {
+            "type": "array",
+            "sampleSchema": "str"
+          },
+          "desc_info": {
+            "imgs": {
+              "type": "array",
+              "sampleSchema": "str"
+            },
+            "desc": "str"
+          },
+          "cats": {
+            "type": "array",
+            "sampleSchema": {
+              "cat_id": "str"
+            }
+          },
+          "attrs": {
+            "type": "array",
+            "sampleSchema": {
+              "attr_key": "str",
+              "attr_value": "str"
+            }
+          },
+          "express_info": {
+            "template_id": "str",
+            "weight": "int",
+            "express_type": "int"
+          },
+          "status": "int",
+          "skus": {
+            "type": "array",
+            "sampleSchema": {
+              "sku_id": "str",
+              "out_sku_id": "str",
+              "thumb_img": "str",
+              "sale_price": "int",
+              "stock_num": "int",
+              "sku_code": "str",
+              "sku_attrs": "list",
+              "status": "int",
+              "sku_deliver_info": "dict",
+              "bar_code": "str"
+            }
+          },
+          "min_price": "int",
+          "spu_code": "str",
+          "deliver_method": "int",
+          "aftersale_desc": "str",
+          "limited_info": {
+            "period_type": "int",
+            "limited_buy_num": "int"
+          },
+          "brand_id": "str",
+          "qualifications": {
+            "type": "array",
+            "sampleSchema": null
+          },
+          "extra_service": {
+            "seven_day_return": "int",
+            "pay_after_use": "int",
+            "freight_insurance": "int",
+            "damage_guarantee": "int",
+            "fake_one_pay_three": "int",
+            "exchange_support": "int",
+            "onsite_installation": "int"
+          },
+          "product_type": "int",
+          "edit_time": "int",
+          "after_sale_info": {
+            "after_sale_address_id": "str"
+          },
+          "hide_in_window": "int",
+          "product_qua_infos": {
+            "type": "array",
+            "sampleSchema": {
+              "qua_id": "str",
+              "qua_url": "list"
+            }
+          },
+          "size_chart": {
+            "enable": "bool",
+            "specification_list": {
+              "type": "array",
+              "sampleSchema": null
+            }
+          },
+          "deliver_acct_type": {
+            "type": "array",
+            "sampleSchema": null
+          },
+          "domain_type": "int",
+          "custom_config": {
+            "custom_type": {
+              "type": "array",
+              "sampleSchema": null
+            },
+            "custom_text_max_length": "int",
+            "custom_text_input_type": "int",
+            "custom_text_direction": "int",
+            "custom_text_font_size": "int",
+            "custom_text_color": "str",
+            "custom_text_input_types": {
+              "type": "array",
+              "sampleSchema": null
+            },
+            "open_custom": "bool",
+            "desc_img_list": {
+              "type": "array",
+              "sampleSchema": null
+            },
+            "preview_type": "int"
+          },
+          "short_title": "str",
+          "total_sold_num": "int",
+          "release_mode": "int",
+          "head_videos": {
+            "type": "array",
+            "sampleSchema": null
+          },
+          "spu_deliver_info": {
+            "sku_deliver_info": {
+              "stock_type": "int"
+            },
+            "is_spu_range": "int"
+          },
+          "cats_v2": {
+            "type": "array",
+            "sampleSchema": {
+              "cat_id": "str"
+            }
+          },
+          "sub_status": "int",
+          "vertical_head_imgs": {
+            "type": "array",
+            "sampleSchema": null
+          },
+          "white_bg_imgs": {
+            "type": "array",
+            "sampleSchema": null
+          }
+        },
+        "info_score": {
+          "sub_score_list": {
+            "type": "array",
+            "sampleSchema": {
+              "audit_remark": "str",
+              "busi_data_field_api": "str",
+              "field_name": "str"
+            }
+          },
+          "score_level": "int"
+        },
+        "cmp_price_info": {
+          "sku_result_list": {
+            "type": "array",
+            "sampleSchema": null
+          },
+          "status": "int"
+        },
+        "audit_info": {
+          "user_strategy_flag_list": {
+            "type": "array",
+            "sampleSchema": "int"
+          }
+        }
+      },
+      "safeCounts": {
+        "skuRows": 6
+      }
+    },
+    {
+      "api": "罗盘商家版/获取电商数据概览",
+      "status": "BUSINESS_SUCCESS",
+      "errcode": 0,
+      "schema": {
+        "errcode": "int",
+        "errmsg": "str",
+        "data": {
+          "pay_gmv": "str",
+          "pay_uv": "str",
+          "pay_order_cnt": "str",
+          "pay_refund_gmv": "str",
+          "live_pay_gmv": "str",
+          "feed_pay_gmv": "str",
+          "product_click_uv": "str"
+        }
+      },
+      "requestedDay": "20261027",
+      "semanticEvidence": "RAW_FIELD_SHAPE_ONLY_UNIT_TIMEZONE_REFUND_DEDUP_NOT_PROVEN",
+      "safeCounts": {
+        "metricFieldCount": 7
+      }
+    }
+  ],
+  "serviceReachable": true,
+  "tokenServiceHttpStatus": 200,
+  "status": "READONLY_PROBE_COMPLETED",
+  "note": "No raw values, product IDs, shop identity, PII, access token or secret persisted. GET hosted token may let its sole owner renew normally; no force refresh or second refresher."
+}

@@ -3,7 +3,7 @@
 import json
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, Field, SecretStr
+from pydantic import BaseModel, ConfigDict, Field, SecretStr, field_validator
 
 from yuliang.modules.connectors.base import GatewayContext
 from yuliang.modules.connectors.http import HttpExchange, OperationSpec
@@ -137,3 +137,116 @@ def audience_page(
         total,
         pages,
     )
+
+
+TARGET_PATH = "/v3.0/marketing_target_assets/get"
+TARGET_FIELDS = ("marketing_asset_id", "marketing_asset_name", "marketing_asset_type", "is_deleted")
+TARGET_POLICY = ArchivePolicy(fields=frozenset(TARGET_FIELDS))
+TARGET_ARCHIVE = ArchivePolicy(
+    fields=frozenset(
+        {
+            "code",
+            "data",
+            "list",
+            "page_info",
+            "page",
+            "page_size",
+            "total_number",
+            "total_page",
+            *TARGET_FIELDS,
+        }
+    )
+)
+TARGET_TYPES = frozenset(
+    {
+        "MARKETING_TARGET_TYPE_TRAFFIC",
+        "MARKETING_TARGET_TYPE_HOUSE_PROPERTY",
+        "MARKETING_TARGET_TYPE_PRODUCT",
+        "MARKETING_TARGET_TYPE_WECHAT_STORE_PRODUCT",
+        "MARKETING_TARGET_TYPE_WECHAT_STORE_PRODUCT_SET",
+        "MARKETING_TARGET_TYPE_PRODUCT_AGGREGATION_PAGE",
+    }
+)
+ASSET_TYPES = frozenset(
+    {
+        "MARKETING_ASSET_TYPE_TRAFFIC_CAR_MODEL",
+        "MARKETING_ASSET_TYPE_REAL_ESTATE_REAL_ESTATE",
+        "MARKETING_ASSET_TYPE_PRODUCT_AGGREGATION_PAGE_WECHAT_STORE_PRODUCT_BUNDLES",
+    }
+)
+
+
+class TargetParameters(AudienceParameters):
+    marketing_target_type: str = Field(pattern=r"^MARKETING_TARGET_TYPE_[A-Z_]{1,80}$")
+
+    @field_validator("marketing_target_type")
+    @classmethod
+    def fixed_type(cls, value: str) -> str:
+        if value not in TARGET_TYPES:
+            raise ValueError("目标类型未实现固定来源")
+        return value
+
+
+def target_spec(ctx: GatewayContext) -> OperationSpec:
+    from dataclasses import replace
+
+    return replace(
+        audience_spec(ctx),
+        key="adq.lookup.targets",
+        path=TARGET_PATH,
+        parameters_model=TargetParameters,
+    )
+
+
+def target_page(
+    exchange: HttpExchange, account: str, number: int, size: int
+) -> tuple[SyncPage, int, int]:
+    from dataclasses import replace
+
+    body = json.loads(exchange.body)
+    if (
+        not isinstance(body, dict)
+        or not isinstance(body.get("data"), dict)
+        or not isinstance(body["data"].get("list"), list)
+    ):
+        raise ValueError("推广资产响应缺少实际资源页")
+    originals = []
+    normalized = []
+    for raw in body["data"]["list"]:
+        if (
+            not isinstance(raw, dict)
+            or not isinstance(raw.get("marketing_asset_type"), str)
+            or not 1 <= len(raw["marketing_asset_type"]) <= 160
+        ):
+            raise ValueError("推广资产类型缺失")
+        deleted = raw.get("is_deleted")
+        if deleted is not None and type(deleted) is not bool:
+            raise ValueError("推广资产删除标识须为真实布尔值或未知")
+        originals.append(raw)
+        normalized.append(
+            dict(
+                audience_id=raw.get("marketing_asset_id"),
+                account_id=account,
+                name=raw.get("marketing_asset_name"),
+                status="OBSERVED",
+                online_status="UNKNOWN",
+            )
+        )
+    # 复用精确ID、完整页数和响应业务码检查；注入的account仅表示请求账户，不伪造响应归属证据。
+    amended = dict(body) | dict(data=dict(body["data"]) | dict(list=normalized))
+    page, total, pages = audience_page(
+        replace(exchange, body=json.dumps(amended).encode()), account, number, size
+    )
+    records = tuple(
+        MirrorRecord(
+            native_id=record.native_id,
+            values=dict(
+                marketing_asset_id=record.native_id,
+                marketing_asset_name=record.values["name"],
+                marketing_asset_type=raw["marketing_asset_type"],
+                is_deleted=raw.get("is_deleted"),
+            ),
+        )
+        for record, raw in zip(page.records, originals, strict=True)
+    )
+    return replace(page, records=records), total, pages

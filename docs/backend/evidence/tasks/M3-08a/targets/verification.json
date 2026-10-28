@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-28",
+  "result": "PASS_TARGETS_SLICE_LOCAL_TECHNICAL_ONLY",
+  "paidCalls": 0,
+  "liveAcceptance": "NOT_RUN_E01",
+  "audiencesRegressionPassed": 7,
+  "review": "PENDING_BE_F11",
+  "unitSeconds": 0.79,
+  "ruff": "PASS",
+  "audiencesRegressionSeconds": 10.57,
+  "keyChecks": [
+    "KIND_CONTEXT_ISOLATION",
+    "CURRENT_AUTHORIZATION_VERSION",
+    "STRICT_FALSE_DELETION",
+    "NO_PROPERTIES_COLLECTION",
+    "NO_KEYWORD_RESOURCE_INVENTION",
+    "REAL_RUNTIME_HTTP_LOOKUP_PAGE"
+  ],
+  "targetIntegrationPassed": 4,
+  "migration": "0056_lookup_target_assets",
+  "unitPassed": 18,
+  "businessWriteCalls": 0,
+  "taskOverall": "PARTIAL_OTHER_KINDS_PENDING",
+  "platformCalls": 0,
+  "targetIntegrationSeconds": 7.31,
+  "typecheck": "PASS_SRC_PLUS_TARGET_TESTS_188_FILES"
+}

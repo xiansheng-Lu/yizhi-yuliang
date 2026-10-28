@@ -1,0 +1,28 @@
+{
+  "project": "wxshop",
+  "date": "2026-10-28T17:16:43.73512+08:00",
+  "authorization": "USER_EXPLICIT_APPROVAL_INITIALIZE_AND_MIGRATE_2026_10_28",
+  "stage": "COMPLETE",
+  "status": "OFFLINE_INITIALIZATION_AND_MIGRATION_PASS",
+  "platformCalls": 0,
+  "forceRefreshCalls": 0,
+  "originalPayloadValuesPreserved": true,
+  "migrations": [
+    {
+      "ordinal": 1,
+      "status": "PASS",
+      "beforeFormat": "LEGACY_KNOWN",
+      "afterFormat": "TOKEN_AESGCM_V1",
+      "payloadValuesPreserved": true,
+      "sha256": "ad55e3d161e3157fb7dbccbfff955528f86385ab09281d831a27c4372129a05b"
+    }
+  ],
+  "keyringBackupVerified": true,
+  "apiKeyBackupVerified": true,
+  "tenant": "yizhi",
+  "loopbackPort": 8099,
+  "migratedFileCount": 1,
+  "configurationUpdated": true,
+  "platformSecretValuesUnchanged": true,
+  "legacyPlaintextPayloadBackupsCreated": 0
+}

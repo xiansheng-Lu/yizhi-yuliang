@@ -21,9 +21,14 @@ from yuliang.modules.connectors.governed import GovernedPlatformClient
 from yuliang.modules.connectors.lookup_protocol import (
     LOOKUP_FIELDS,
     LOOKUP_POLICY,
+    TARGET_FIELDS,
+    TARGET_POLICY,
     AudienceParameters,
+    TargetParameters,
     audience_page,
     audience_spec,
+    target_page,
+    target_spec,
 )
 from yuliang.modules.connectors.sync_store import (
     PagePermit,
@@ -37,6 +42,40 @@ from yuliang.platform.errors import ApiError, ErrorCode
 
 
 class AudienceLookupSync:
+    kind = "audiences"
+    policy = LOOKUP_POLICY
+    resource_id = "audience_id"
+    resource_name = "name"
+
+    def spec(self, ctx: GatewayContext) -> Any:
+        return audience_spec(ctx)
+
+    def parameters(
+        self, ctx: GatewayContext, proof: LookupSourceProof, page_size: int
+    ) -> dict[str, Any]:
+        return AudienceParameters(
+            account_id=ctx.native_account_id, page_size=page_size, fields=list(LOOKUP_FIELDS)
+        ).model_dump()
+
+    def parse(
+        self, exchange: Any, account: str, number: int, size: int
+    ) -> tuple[SyncPage, int, int]:
+        return audience_page(exchange, account, number, size)
+
+    def selected(self, item: dict[str, Any], proof: LookupSourceProof) -> dict[str, Any]:
+        eligible = item["status"] == "SUCCESS" and item["online_status"] == "ONLINE"
+        return dict(
+            id=item[self.resource_id],
+            platformId=item[self.resource_id],
+            name=item[self.resource_name],
+            kind=self.kind,
+            status=item["status"] + "/" + item["online_status"],
+            eligible=eligible,
+            reason="当前来源和上下文适用依据有效"
+            if eligible
+            else "人群未处理完成或已离线，不可选择",
+        )
+
     def __init__(
         self,
         store: SyncStore,
@@ -44,7 +83,7 @@ class AudienceLookupSync:
         tokens: Callable[[GatewayContext], Awaitable[SecretStr]],
         allowed_interfaces: tuple[str, ...],
     ) -> None:
-        if store.policy != LOOKUP_POLICY:
+        if store.policy != self.policy:
             raise ValueError("人群同步必须使用独立白名单")
         self.store, self.client, self.tokens = store, client, tokens
         self.allowed = frozenset(allowed_interfaces)
@@ -59,7 +98,7 @@ class AudienceLookupSync:
             or not ConfigurationService._allowed(session, context, "snapshot.read")
         ):
             raise ApiError(ErrorCode.FORBIDDEN, "无当前资源上下文权限")
-        proof = lookup_source(session, context)
+        proof = lookup_source(session, context, self.kind)
         if proof is None:
             raise ApiError(ErrorCode.CAPABILITY_UNAVAILABLE, "该上下文尚无人群资源适用依据")
         version = require_adq_read(
@@ -72,7 +111,7 @@ class AudienceLookupSync:
             or proof.authorization_version != version
         ):
             raise ApiError(ErrorCode.CAPABILITY_UNAVAILABLE, "资源来源授权或版本已改变")
-        spec = audience_spec(ctx)
+        spec = self.spec(ctx)
         if spec.path not in self.allowed:
             raise ApiError(ErrorCode.CAPABILITY_UNAVAILABLE, "应用未开放人群只读来源")
         self.store._read(session, ctx, spec)
@@ -86,15 +125,18 @@ class AudienceLookupSync:
         *,
         page_size: int = 100,
     ) -> dict[str, Any]:
-        spec = audience_spec(ctx)
+        spec = self.spec(ctx)
         with business_transaction(self.store.engine, ctx.identity) as session:
             proof = self.scope(session, ctx, context)
         ctx = replace(ctx, authorization_version=proof.authorization_version)
-        parameters = AudienceParameters(
-            account_id=ctx.native_account_id, page_size=page_size, fields=list(LOOKUP_FIELDS)
-        ).model_dump()
+        parameters = self.parameters(ctx, proof, page_size)
         lease = self.store.begin(
-            ctx, spec, "lookup.audiences." + proof.id.hex, run_id, parameters, restart_cursor=True
+            ctx,
+            spec,
+            "lookup." + self.kind + "." + proof.id.hex,
+            run_id,
+            parameters,
+            restart_cursor=True,
         )
         while isinstance(lease, SyncLease):
             active = lease
@@ -122,7 +164,7 @@ class AudienceLookupSync:
                 )
                 if result.exchange is None:
                     raise SyncConflict("LOOKUP_READ_UNAVAILABLE")
-                page, total, pages = audience_page(
+                page, total, pages = self.parse(
                     result.exchange, ctx.native_account_id, number, page_size
                 )
                 if total > 10000:
@@ -152,14 +194,14 @@ class AudienceLookupSync:
                     seen = set(
                         session.execute(
                             text(
-                                "SELECT i->>'audience_id' FROM resource_lookup_pages p "
+                                "SELECT i->>:field FROM resource_lookup_pages p "
                                 "CROSS JOIN LATERAL jsonb_array_elements(p.items) i "
                                 "WHERE p.run_id=:run"
                             ),
-                            dict(run=run_id),
+                            dict(run=run_id, field=self.resource_id),
                         ).scalars()
                     )
-                    if any(i["audience_id"] in seen for i in items):
+                    if any(i[self.resource_id] in seen for i in items):
                         raise SyncConflict("LOOKUP_DUPLICATE_RESOURCE")
                     session.execute(
                         text("""INSERT INTO resource_lookup_pages
@@ -195,3 +237,50 @@ class AudienceLookupSync:
                     pass
                 raise
         return lease
+
+
+class TargetLookupSync(AudienceLookupSync):
+    kind = "targets"
+    policy = TARGET_POLICY
+    resource_id = "marketing_asset_id"
+    resource_name = "marketing_asset_name"
+
+    def spec(self, ctx: GatewayContext) -> Any:
+        return target_spec(ctx)
+
+    def parameters(
+        self, ctx: GatewayContext, proof: LookupSourceProof, page_size: int
+    ) -> dict[str, Any]:
+        return TargetParameters(
+            account_id=ctx.native_account_id,
+            page_size=page_size,
+            fields=list(TARGET_FIELDS),
+            marketing_target_type=proof.marketing_target_type or "",
+        ).model_dump()
+
+    def parse(
+        self, exchange: Any, account: str, number: int, size: int
+    ) -> tuple[SyncPage, int, int]:
+        return target_page(exchange, account, number, size)
+
+    def selected(self, item: dict[str, Any], proof: LookupSourceProof) -> dict[str, Any]:
+        eligible = (
+            item.get("is_deleted") is False
+            and item["marketing_asset_type"] in proof.marketing_asset_types
+        )
+        return dict(
+            id=item[self.resource_id],
+            platformId=item[self.resource_id],
+            name=item[self.resource_name],
+            kind=self.kind,
+            category=item["marketing_asset_type"],
+            status="ACTIVE"
+            if item.get("is_deleted") is False
+            else "DELETED"
+            if item.get("is_deleted") is True
+            else "UNCONFIRMED",
+            eligible=eligible,
+            reason="精确目标类型及适用上下文依据有效"
+            if eligible
+            else "资产已删除、删除状态未知或类型不适用",
+        )

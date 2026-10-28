@@ -1,0 +1,34 @@
+{
+  "verifiedAt": "2026-10-28T17:18:29.968733+08:00",
+  "authorization": "USER_APPROVED_INITIALIZE_AND_MIGRATE",
+  "services": [
+    {
+      "project": "adq",
+      "pid": 22000,
+      "loopbackPort": 8088,
+      "healthHttp": 200,
+      "healthOk": true,
+      "normalRefreshCount": null,
+      "singletonDuplicateOwnerRejected": true,
+      "keyBackupExists": true,
+      "apiKeyBackupExists": true
+    },
+    {
+      "project": "wxshop",
+      "pid": 19424,
+      "loopbackPort": 8099,
+      "healthHttp": 200,
+      "healthOk": true,
+      "normalRefreshCount": 1,
+      "singletonDuplicateOwnerRejected": true,
+      "keyBackupExists": true,
+      "apiKeyBackupExists": true
+    }
+  ],
+  "platformReadonlyCalls": 7,
+  "businessWriteCalls": 0,
+  "forceRefreshCalls": 0,
+  "yuliangRuntimeAcceptance": "NOT_RUN",
+  "result": "PASS",
+  "legacyPlaintextPayloadBackupsCreated": 0
+}

@@ -142,7 +142,18 @@ def accept_analysis(payload: dict[str, Any]) -> dict[str, Any]:
         )
     except DBAPIError:
         raise Reject("分析投递事实未提交，保持内部任务重投", requeue=True) from None
-    return {"taskId": str(item.job_id), "eventId": str(item.event_id), "deliveryRecorded": changed}
+    from yuliang.modules.analysis.repository import AnalysisLeaseBusy, execute_analysis
+
+    try:
+        computed = execute_analysis(engine(), identity, item.job_id)
+    except (DBAPIError, AnalysisLeaseBusy):
+        raise Reject("分析阶段未提交，按原任务恢复", requeue=True) from None
+    return {
+        "taskId": str(item.job_id),
+        "eventId": str(item.event_id),
+        "deliveryRecorded": changed,
+        "computed": computed,
+    }
 
 
 @app.task(

@@ -1,0 +1,25 @@
+{
+  "checkedAt": "2026-10-28T17:04:37.830602+08:00",
+  "scope": "INDEPENDENT_EXISTING_PROJECT_READONLY_NOT_YULIANG_BUSINESS_MAPPING",
+  "writes": 0,
+  "paidCalls": 0,
+  "forcedRefresh": false,
+  "calls": [],
+  "errorType": "ConnectionError",
+  "result": "BLOCKED_EXISTING_SERVICE_SECURITY_CONFIGURATION",
+  "startup": {
+    "outcome": "EXITED_BEFORE_LISTEN",
+    "credentialsChanged": false,
+    "originalEntryPoint": "services/adq_token_service.py",
+    "loopbackConfirmed": true,
+    "existingDependenciesReady": true,
+    "refreshCalled": false,
+    "reason": "ADQ_TOKEN_API_KEY_REQUIRED_BUT_NOT_CONFIGURED",
+    "platformCalls": 0,
+    "singleOwnerLock": "ProcessOwner/msvcrt",
+    "duplicatePythonServiceFound": false,
+    "attempted": true
+  },
+  "mappingStatus": "INDEPENDENT_PROJECT_UNBOUND_TO_YULIANG_BUSINESS_TENANT",
+  "unitConclusion": "UNCONFIRMED: pinned official SDK balance/realtime_cost only declares int64 without unit descriptions"
+}

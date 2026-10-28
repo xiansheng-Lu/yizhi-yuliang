@@ -1,0 +1,36 @@
+{
+  "project": "adq",
+  "date": "2026-10-28T17:14:56.814403+08:00",
+  "authorization": "USER_EXPLICIT_APPROVAL_INITIALIZE_AND_MIGRATE_2026_10_28",
+  "stage": "COMPLETE",
+  "status": "OFFLINE_INITIALIZATION_AND_MIGRATION_PASS",
+  "platformCalls": 0,
+  "forceRefreshCalls": 0,
+  "originalPayloadValuesPreserved": true,
+  "migrations": [
+    {
+      "ordinal": 1,
+      "status": "PASS",
+      "beforeFormat": "LEGACY_KNOWN",
+      "afterFormat": "TOKEN_AESGCM_V1",
+      "payloadValuesPreserved": true,
+      "sha256": "637961a1f19e3be9db8d407e669269d484503ef6ffa5ae2e0451d6f2a41f5fa1"
+    },
+    {
+      "ordinal": 2,
+      "status": "PASS",
+      "beforeFormat": "LEGACY_KNOWN",
+      "afterFormat": "TOKEN_AESGCM_V1",
+      "payloadValuesPreserved": true,
+      "sha256": "469046d9b474393aff71a0f04af4f3b1f29199daf9b7e662ad95b41b9d3dda0f"
+    }
+  ],
+  "keyringBackupVerified": true,
+  "apiKeyBackupVerified": true,
+  "tenant": "yizhi",
+  "loopbackPort": 8088,
+  "migratedFileCount": 2,
+  "configurationUpdated": true,
+  "platformSecretValuesUnchanged": true,
+  "legacyPlaintextPayloadBackupsCreated": 0
+}

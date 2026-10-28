@@ -1,4 +1,5 @@
 from pathlib import Path
+from uuid import uuid4
 
 import pytest
 from pydantic import SecretStr, ValidationError
@@ -21,9 +22,20 @@ def reference(tmp_path: Path, **changes: object) -> dict[str, object]:
 
 def test_external_config_has_one_explicit_owner_and_no_secret_read(tmp_path: Path) -> None:
     item = resource(
-        tmp_path, token_owner_transferred=False, external_token_service=reference(tmp_path)
+        tmp_path,
+        token_owner_transferred=False,
+        external_token_service=reference(tmp_path),
+        account_id=uuid4(),
+        redirect_uri=None,
     )
     assert item.external_token_service is not None
+    assert item.redirect_uri is None
+    with pytest.raises(ValueError):
+        NativeAuthorization(item).application()
+    with pytest.raises(ValidationError):
+        resource(
+            tmp_path, token_owner_transferred=False, external_token_service=reference(tmp_path)
+        )
     with pytest.raises(ValidationError):
         resource(tmp_path, external_token_service=reference(tmp_path))
     with pytest.raises(ValidationError):
@@ -43,7 +55,11 @@ def test_external_config_has_one_explicit_owner_and_no_secret_read(tmp_path: Pat
 @pytest.mark.asyncio
 async def test_external_config_cannot_start_native_refresh_or_authorization(tmp_path: Path) -> None:
     item = resource(
-        tmp_path, token_owner_transferred=False, external_token_service=reference(tmp_path)
+        tmp_path,
+        token_owner_transferred=False,
+        external_token_service=reference(tmp_path),
+        account_id=uuid4(),
+        redirect_uri=None,
     )
     port = NativeAuthorization(item)
     with pytest.raises(ValueError):

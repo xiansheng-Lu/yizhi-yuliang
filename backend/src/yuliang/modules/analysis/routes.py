@@ -3,8 +3,10 @@
 from uuid import UUID
 
 from fastapi import APIRouter, Request
-from starlette.responses import JSONResponse
+from starlette.responses import HTMLResponse, JSONResponse
 
+from yuliang.modules.analysis.drafts_models import ReportDraft
+from yuliang.modules.analysis.drafts_service import DraftService
 from yuliang.modules.analysis.models import AnalysisCreate
 from yuliang.modules.analysis.service import AnalysisService
 from yuliang.modules.identity.routes import SESSION_COOKIE, service
@@ -65,3 +67,51 @@ def results(request: Request) -> JSONResponse:
 @router.get("/results/{identifier}")
 def result(identifier: UUID, request: Request) -> JSONResponse:
     return success(request, analysis(request).results(identifier)[0])
+
+
+def drafts_service(request: Request) -> "DraftService":
+    from yuliang.modules.analysis.drafts_service import DraftService
+
+    current = analysis(request)
+    return DraftService(current.engine, current.identity)
+
+
+@router.get("/drafts")
+def drafts_list(request: Request) -> JSONResponse:
+    return success(request, drafts_service(request).list())
+
+
+@router.get("/drafts/{identifier}")
+def draft_get(identifier: UUID, request: Request) -> JSONResponse:
+    return success(request, drafts_service(request).get(identifier))
+
+
+@router.put("/drafts/{identifier}")
+def draft_save(identifier: UUID, value: "ReportDraft", request: Request) -> JSONResponse:
+    import json
+
+    from yuliang.modules.analysis.drafts_service import DraftConflict
+    from yuliang.platform.errors import failure
+
+    try:
+        return success(request, drafts_service(request).save(identifier, value))
+    except DraftConflict as error:
+        response = failure(request, error)
+        body = json.loads(bytes(response.body))
+        body["error"]["current"] = error.current
+        return JSONResponse(body, status_code=409)
+
+
+@router.get("/drafts/{identifier}/preview")
+def draft_preview(identifier: UUID, request: Request) -> "HTMLResponse":
+    from starlette.responses import HTMLResponse
+
+    return HTMLResponse(
+        drafts_service(request).preview(identifier),
+        headers={
+            "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; "
+            "base-uri 'none'; form-action 'none'",
+            "X-Content-Type-Options": "nosniff",
+            "Cache-Control": "private, no-store",
+        },
+    )

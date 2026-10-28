@@ -9,11 +9,12 @@ from sqlalchemy.orm import Session
 from yuliang.modules.connectors.adq_assets import native_integer
 from yuliang.modules.connectors.base import GatewayContext
 from yuliang.modules.delivery.plan_reads import read_plan_observations
+from yuliang.modules.reporting.query_adgroup_cursor import MAX_TOTAL, paginate
 from yuliang.modules.reporting.query_models import QueryRequest, ResourcePage, ResourceRow
 from yuliang.platform.errors import ApiError, ErrorCode
 
 UNKNOWN_TIME = "源更新时间未提供"
-MAX_ROWS = 1000
+MAX_ROWS = MAX_TOTAL
 
 
 def project_adgroups(
@@ -46,6 +47,10 @@ def project_adgroups(
                 ErrorCode.INVALID_INPUT, "父级须为真实原生计划int64 ID，不是本地UUID"
             ) from exc
     seen = set()
+    if len(view["observations"]) > MAX_ROWS:
+        raise ApiError(
+            ErrorCode.DATA_COVERAGE_INSUFFICIENT, "完整广告组来源超过10000条，不返回截断集合"
+        )
     for observation in view["observations"]:
         native, fields = observation["nativeId"], observation["values"]
         if native in seen or fields.get("adgroup_id") != native or fields.get("level") != "ADGROUP":
@@ -89,11 +94,12 @@ def project_adgroups(
                 money_type="AD_BUDGET" if normalized else None,
             )
         )
-    if len(rows) > MAX_ROWS:
+    try:
+        rows.sort(key=lambda row: int(native_integer(row.native_id, positive=True)))
+    except ValueError:
         raise ApiError(
-            ErrorCode.DATA_COVERAGE_INSUFFICIENT,
-            "广告组完整结果超过1000条，请按原生计划ID或搜索收窄；不返回截断集合",
-        )
+            ErrorCode.DATA_COVERAGE_INSUFFICIENT, "广告组原生ID非法，无法稳定排序"
+        ) from None
     if any(r.updated_at == UNKNOWN_TIME for r in rows):
         warnings.append("SOURCE_UPDATED_AT_UNKNOWN: syncedAt为持久抓取时间，不是源更新时间")
     return ResourcePage(
@@ -115,11 +121,16 @@ def query_adgroups(session: Session, ctx: GatewayContext, value: QueryRequest) -
     ).one()
     if (binding.normalized_path, binding.http_method) != ("/v1.3/adgroups/get", "GET"):
         raise ApiError(ErrorCode.CAPABILITY_UNAVAILABLE, "不是已实现的正式广告组只读协议")
-    declaration = session.execute(
-        text("""SELECT payload FROM integration_operation_assertions
+    assertion = (
+        session.execute(
+            text("""SELECT payload,revision FROM integration_operation_assertions
         WHERE binding_id=:binding AND resource='adgroups' ORDER BY revision DESC LIMIT 1"""),
-        dict(binding=ctx.binding_id),
-    ).scalar_one()
+            dict(binding=ctx.binding_id),
+        )
+        .mappings()
+        .one()
+    )
+    declaration = assertion["payload"]
     application = session.execute(
         text("SELECT application_id FROM provider_authorizations WHERE id=:id"),
         dict(id=ctx.authorization_id),
@@ -128,22 +139,24 @@ def query_adgroups(session: Session, ctx: GatewayContext, value: QueryRequest) -
         session, ctx, "ADGROUP", application, frozenset(declaration["requiredScopes"])
     )
     if view["status"] not in {"ready", "empty", "coverage_error"}:
-        raise ApiError(ErrorCode.CAPABILITY_UNAVAILABLE, "广告组缺最新完整读取，不能伪造空集合")
-    fetched = session.execute(
-        text("""SELECT max(p.fetched_at) FROM adq_plan_pages p WHERE p.run_id=(
-          SELECT r.id FROM sync_sources s JOIN sync_runs r
-          ON (r.tenant_id,r.source_id)=(s.tenant_id,s.id)
-          WHERE s.account_id=:account AND s.binding_id=:binding AND s.enabled
-          AND s.resource_kind='adq.plans.adgroup'
-          ORDER BY r.started_at DESC,r.id DESC LIMIT 1)"""),
-        dict(account=ctx.account_id, binding=ctx.binding_id),
-    ).scalar_one()
-    if fetched is None:
+        raise ApiError(
+            ErrorCode.VERSION_CONFLICT
+            if value.filters.cursor
+            else ErrorCode.CAPABILITY_UNAVAILABLE,
+            "广告组最新完整读取已改变或未就绪，请重新查询",
+        )
+    snapshot = view["snapshot"]
+    if (
+        not isinstance(snapshot, dict)
+        or not snapshot.get("complete")
+        or not snapshot.get("fetchedAt")
+    ):
         raise ApiError(ErrorCode.DATA_COVERAGE_INSUFFICIENT, "完整广告组批次缺持久抓取时间")
-    return project_adgroups(
+    page = project_adgroups(
         view,
         value,
-        fetched.isoformat(),
+        snapshot["fetchedAt"],
         resolved_account_id=str(ctx.account_id),
         resolved_tenant_id=ctx.identity.tenant_id,
     )
+    return paginate(session, ctx, value, page, snapshot | dict(assertion=dict(assertion)))

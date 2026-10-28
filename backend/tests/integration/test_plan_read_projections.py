@@ -127,7 +127,16 @@ async def test_confirmed_empty_is_distinct(plans: dict[str, Any]) -> None:
     d = plans
     d["state"]["rows"] = []
     await d["reader"].sync(d["ctx"], "CAMPAIGN", uuid4(), page_size=2)
-    assert read(d) == dict(status="empty", observations=[], normalized=[], gaps=[])
+    result = read(d)
+    assert {key: result[key] for key in ("status", "observations", "normalized", "gaps")} == dict(
+        status="empty", observations=[], normalized=[], gaps=[]
+    )
+    assert result["snapshot"]["complete"] is True
+    assert result["snapshot"]["runState"] == "SUCCESS"
+    assert result["snapshot"]["totalNumber"] == 0
+    assert result["snapshot"]["pageCount"] == 1
+    assert result["snapshot"]["accountId"] == str(d["ctx"].account_id)
+    assert result["snapshot"]["fetchedAt"] is not None
 
 
 @pytest.fixture

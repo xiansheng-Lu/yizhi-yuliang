@@ -112,6 +112,9 @@ def main() -> int:
             "content-validation",
             "resource-queries",
             "resource-query-plans",
+            "adgroup-query-pagination",
+            "execution-evidence-reads",
+            "query-evidence-regression",
             "topic-adgroup-regression",
             "content-flows",
             "content-workflows",
@@ -201,6 +204,13 @@ def main() -> int:
         "content-validation": ["tests/integration/test_content_validation.py"],
         "resource-queries": ["tests/integration/test_resource_queries.py"],
         "resource-query-plans": ["tests/integration/test_resource_query_plans.py"],
+        "adgroup-query-pagination": ["tests/integration/test_adgroup_query_pagination.py"],
+        "execution-evidence-reads": ["tests/integration/test_execution_evidence_reads.py"],
+        "query-evidence-regression": [
+            "tests/integration/test_resource_queries.py",
+            "tests/integration/test_plan_read_projections.py",
+            "tests/integration/test_job_projections.py",
+        ],
         "topic-adgroup-regression": [
             "tests/integration/test_resource_queries.py",
             "tests/integration/test_plan_read_projections.py",

@@ -1,5 +1,7 @@
 # M1-19 ADQ 广告组只读资源查询
 
+当前稳定分页已取代本页初版1000行/不支持cursor限制，最新见[pagination/api-contract.md](pagination/api-contract.md)；首版证据作为历史保留。
+
 状态：后端本切片真实 PG/HTTP 已技术验证；前端消费者独立核验另见 frontend 子目录。M1-19 整卡仍 IN_PROGRESS。
 
 ## 真实合同与接线

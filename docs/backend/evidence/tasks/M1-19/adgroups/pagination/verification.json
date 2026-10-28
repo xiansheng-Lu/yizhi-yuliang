@@ -1,0 +1,73 @@
+{
+  "taskId": "M1-19",
+  "slice": "ADGROUP_STABLE_PAGINATION",
+  "status": "TECH_VERIFIED",
+  "wholeTaskAcceptance": "NOT_CLAIMED",
+  "migrationRevision": "0074_resource_query_cursors",
+  "testedHead": "0075_execution_evidence_reads",
+  "unit": {
+    "passed": 20,
+    "seconds": 0.94
+  },
+  "paginationIntegration": {
+    "passed": 13,
+    "seconds": 53.67
+  },
+  "queryPlansRegression": {
+    "passed": 14,
+    "seconds": 15.37
+  },
+  "static": {
+    "ruff": "PASS",
+    "mypySourceFiles": 4,
+    "mypy": "PASS"
+  },
+  "historicalRuns": [
+    {
+      "group": "pagination",
+      "setupErrors": 13,
+      "seconds": 4.63,
+      "reason": "revision exceeded existing Alembic varchar32; fixed short revision"
+    },
+    {
+      "group": "pagination",
+      "passed": 10,
+      "failed": 3,
+      "seconds": 54.67,
+      "reason": "numeric order and tenant-bound test sampling; fixed"
+    },
+    {
+      "group": "query-plans",
+      "passed": 12,
+      "failed": 2,
+      "seconds": 15.22,
+      "reason": "old no-pagination assertions; updated"
+    },
+    {
+      "group": "query-plans",
+      "passed": 13,
+      "failed": 1,
+      "seconds": 15.95,
+      "reason": "existing sync protocol rejects 10001 before query; assertion reflects real entry"
+    }
+  ],
+  "dbWindow": "RELEASED",
+  "actualPlatformCalls": 0,
+  "paidCalls": 0,
+  "frontendCapture": "PASS_INDEPENDENT_ACTUAL_TS_CONSUMER_12_PAGES_1101_ROWS_NOT_BROWSER",
+  "remainingGates": [
+    "BE/F11 contract review",
+    "real platform and production acceptance",
+    "whole M1-19 scope review"
+  ],
+  "relatedRegression": {
+    "passed": 25,
+    "seconds": 24.53,
+    "evidence": "query-evidence-verification.json"
+  },
+  "combinedUnitContract": {
+    "passed": 989,
+    "seconds": 10.83
+  },
+  "frontendEvidence": "frontend/consumer-verification.json"
+}

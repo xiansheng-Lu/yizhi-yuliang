@@ -1,5 +1,7 @@
 # 已有 V9 广告组查询合同
 
+当前稳定分页已取代本页初版1000行/不支持cursor限制，最新见[pagination/api-contract.md](pagination/api-contract.md)；首版证据作为历史保留。
+
 入口：`POST /v1/delivery/integrations/queries`，Cookie 与 `X-CSRF-Token`；禁止 query 参数覆盖身份。body 沿现有 `QueryRequest`：
 
 ```json

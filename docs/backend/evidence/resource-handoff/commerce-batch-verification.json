@@ -1,0 +1,24 @@
+{
+  "date": "2026-10-28",
+  "baseline": "1ac4e78",
+  "unitAndContract": {
+    "passed": 726,
+    "seconds": 7.18
+  },
+  "dedicated": {
+    "externalTokenRuntime": 5,
+    "shopDetails": 5,
+    "shopCompass": 7,
+    "shopOrders": 8
+  },
+  "regression": {
+    "shopProducts": 4,
+    "nativeHandoff": 8,
+    "syncCheckpoints": 14
+  },
+  "realPlatformCalls": 0,
+  "paidCalls": 0,
+  "result": "PASS_TARGETED_REAL_PG_REDIS",
+  "fullRegression": "PENDING_NEXT_BATCH_INTEGRATION",
+  "review": "PENDING_BE_FE"
+}

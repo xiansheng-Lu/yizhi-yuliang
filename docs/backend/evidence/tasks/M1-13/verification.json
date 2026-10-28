@@ -1,0 +1,26 @@
+{
+  "external": "E02/G0/E08",
+  "review": "PENDING_BE_F05_F08",
+  "livePlatformCalls": 0,
+  "date": "2026-10-28",
+  "ruff": "PASS",
+  "paidCalls": 0,
+  "mypySourceFiles": 3,
+  "limitations": [
+    "unit and source-time semantics unconfirmed",
+    "raw status not financial completion",
+    "list IDs require separately authorized detail reads",
+    "historical settlement observation not fresh advertising budget"
+  ],
+  "realIntegration": {
+    "seconds": 7.61,
+    "passed": 8,
+    "command": "uv run --frozen python scripts/test_infrastructure.py --group shop-orders --details"
+  },
+  "unit": {
+    "seconds": 0.64,
+    "passed": 10,
+    "command": "uv run --frozen pytest tests/unit/test_shop_orders.py -q"
+  },
+  "result": "PASS_TECHNICAL_OBSERVATION_LAYER"
+}

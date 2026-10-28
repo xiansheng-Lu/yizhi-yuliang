@@ -6,15 +6,14 @@ from typing import Any
 from uuid import UUID
 
 from pydantic import SecretStr
-from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from yuliang.modules.capability.service import evaluate_binding
 from yuliang.modules.connectors.base import GatewayContext
 from yuliang.modules.connectors.governance import CallDeferred
 from yuliang.modules.connectors.governed import GovernedPlatformClient
 from yuliang.modules.connectors.native_reads import parse_page, read_spec
 from yuliang.modules.connectors.shop_products import PRODUCT_ID_POLICY, product_id_page
+from yuliang.modules.connectors.shop_read_scope import require_shop_read
 from yuliang.modules.connectors.sync_store import PagePermit, SyncConflict, SyncLease, SyncStore
 from yuliang.platform.db import business_transaction
 from yuliang.platform.errors import ApiError, ErrorCode
@@ -37,30 +36,7 @@ class ShopProductIdSync:
         self.allowed, self.scopes = frozenset(allowed_interfaces), frozenset(required_scopes)
 
     def _scope(self, session: Session, ctx: GatewayContext) -> int:
-        if (ctx.connector_id, ctx.provider, ctx.product_line) != ("wxshop", "wxshop", "wxshop"):
-            raise ApiError(ErrorCode.CAPABILITY_UNAVAILABLE, "小店产品线不匹配")
-        grant = session.execute(
-            text("""SELECT p.version,p.scopes,p.application_id
-          FROM provider_authorizations p JOIN authorization_account_links l
-          ON l.tenant_id=p.tenant_id AND l.authorization_id=p.id
-          JOIN ad_accounts a ON (a.tenant_id,a.id)=(l.tenant_id,l.account_id)
-          WHERE p.id=:grant AND a.id=:account AND a.native_id=:native
-          AND l.native_id_snapshot=a.native_id AND a.status='AUTHORIZED'
-          AND a.deleted_at IS NULL AND p.status='ACTIVE' AND p.expires_at>clock_timestamp()
-          AND p.connector_id='wxshop' AND p.provider='wxshop' AND p.product_line='wxshop'"""),
-            dict(grant=ctx.authorization_id, account=ctx.account_id, native=ctx.native_account_id),
-        ).first()
-        state = evaluate_binding(session, ctx.identity, ctx.shop_id, ctx.binding_id)
-        if (
-            grant is None
-            or grant.application_id != self.client.application_id
-            or not self.scopes <= set(grant.scopes)
-            or state["status"] != "AUTHORIZED"
-        ):
-            raise ApiError(ErrorCode.CAPABILITY_UNAVAILABLE, "小店授权范围或只读证据未就绪")
-        if ctx.authorization_version is not None and ctx.authorization_version != grant.version:
-            raise SyncConflict("AUTHORIZATION_CHANGED")
-        return int(grant.version)
+        return require_shop_read(session, ctx, self.client.application_id, self.scopes)
 
     async def sync(
         self, ctx: GatewayContext, run_id: UUID, *, page_size: int = 100

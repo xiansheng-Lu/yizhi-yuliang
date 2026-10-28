@@ -1,0 +1,6 @@
+{
+ "sdk":{"repository":"https://github.com/zsmhub/wx-channels-sdk","revision":"97497af9d9cd3dfbb30ca71aa8c0bc8be52207c6","path":"apis/商品-获取商品.go","sourceType":"THIRD_PARTY_SDK_SOURCE","authorityLimits":"Field types and fixed route only; does not prove units, status semantics or actual permission"},
+ "localSources":[{"path":"D:/codex/wx_shop/sdk/wxshop_api_registry.py","sha256":"0468f476a3f8c555e9afce4cf7413a5cc25a31f13806ca1fa225b3512d0a31a5"},{"path":"D:/codex/wx_shop/dashboard/collect_data.py","sha256":"a30ab4b6ebce3db15fe65d269a6107fec1c8c60c5230c4015b637f6b2451b172"}],
+ "officialDocument":"https://developers.weixin.qq.com/doc/store/shop/API/channels-shop-product/shop/api_getproduct.html",
+ "officialBodyRead":false,"unitAndStatusEvidence":"Requires independent current scoped proof; synthetic only in tests"
+}

@@ -1,0 +1,18 @@
+{
+  "checkedOn": "2026-10-28",
+  "sources": [
+    {
+      "officialPageBody": "UNAVAILABLE_WEB_OPEN_FAILED",
+      "officialDoc": "https://developers.weixin.qq.com/doc/store/shop/API/compass/api_getshopoverall",
+      "path": "D:/codex/wx_shop/dashboard/collect_data.py",
+      "protocolLines": "321-335",
+      "meaning": "Existing collector source; not proof of unit/timezone/refund/dedup semantics",
+      "sha256": "a30ab4b6ebce3db15fe65d269a6107fec1c8c60c5230c4015b637f6b2451b172"
+    },
+    {
+      "meaning": "Reference-only fixed catalog; not authorization",
+      "path": "docs/shared/reference/platform-api-reference/微信小店API全量接口图谱.html",
+      "sha256": "2ef80f6fbb5ff42b66bf495e89ea872a7e0ef71d788791093ca84a01953f8369"
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "livePlatformCalls": 0,
+  "authority": "LOCAL_INDEPENDENT_IMPLEMENTATION_NOT_LIVE_ACCEPTANCE",
+  "checkedAt": "2026-10-28",
+  "officialUrls": [
+    "https://developers.weixin.qq.com/doc/channels/API/channels-shop-order/api_getorder.html",
+    "https://developers.weixin.qq.com/doc/channels/API/funds/funds/api_getbalance.html"
+  ],
+  "sources": [
+    {
+      "sha256": "a30ab4b6ebce3db15fe65d269a6107fec1c8c60c5230c4015b637f6b2451b172",
+      "path": "D:/codex/wx_shop/dashboard/collect_data.py"
+    },
+    {
+      "sha256": "0468f476a3f8c555e9afce4cf7413a5cc25a31f13806ca1fa225b3512d0a31a5",
+      "path": "D:/codex/wx_shop/sdk/wxshop_api_registry.py"
+    },
+    {
+      "sha256": "85ef796a697a548fdf566eea245d3ba88cb936c3ad3f3245ebdaae8b3cc809cc",
+      "path": "D:/codex/wx_shop/sdk/wxshop_client.py"
+    }
+  ],
+  "officialOpen": "FAILED_NON_RETRYABLE",
+  "paidCalls": 0,
+  "sdk": {
+    "repository": "https://github.com/zsmhub/wx-channels-sdk",
+    "authority": "THIRD_PARTY_SDK_LOCAL_INDEPENDENT_CROSSCHECK_NOT_OFFICIAL_ACCOUNT_ACCEPTANCE",
+    "revision": "97497af9d9cd3dfbb30ca71aa8c0bc8be52207c6",
+    "sources": [
+      {
+        "sha256": "66b699f158bf6f09f47afc2e44bc53b6d3d6b2aded93a37b266bbbfb6b56c206",
+        "path": "apis/订单-获取订单列表.go"
+      },
+      {
+        "sha256": "07707f1235c7c08cff8ef7680332054b804686d73934fe3fd06efdbd410d0c7a",
+        "path": "apis/订单-获取订单详情.go"
+      },
+      {
+        "sha256": "5a863661a6c6bf9ded62be037ab2e05a6e1831f8ebd34e6c82be020390d142d7",
+        "path": "apis/售后-获取售后单列表.go"
+      },
+      {
+        "sha256": "63482edbc51342f28ef80851307307907dad56bbc16885669292ab504f296b3f",
+        "path": "apis/售后-获取售后单.go"
+      },
+      {
+        "sha256": "58d6b236db02cbb90a4e490ea55df788296a65a05f13323ad2731220952d9337",
+        "path": "apis/资金-获取账户余额.go"
+      }
+    ]
+  }
+}

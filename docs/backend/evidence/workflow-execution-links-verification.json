@@ -1,0 +1,103 @@
+{
+  "date": "2026-10-28",
+  "baseline": "591447df0a4d4b102d66143a3d5e5e4960a3be8f",
+  "branch": "codex/backend-workflow-execution-links-events",
+  "result": "PASS_COMBINED_FULL",
+  "environment": "WSL Python3.13; actual isolated PostgreSQL/Redis/RabbitMQ/MinIO, Cookie CSRF HTTP and loopback SSE; synthetic accounts, upstream and facts",
+  "checks": [
+    {
+      "command": "ruff check src tests scripts",
+      "result": "PASS"
+    },
+    {
+      "command": "ruff check alembic/versions/0066_workflow_execution.py alembic/versions/0067_content_account_links.py alembic/versions/0068_content_analysis_events.py",
+      "result": "PASS"
+    },
+    {
+      "command": "mypy src",
+      "sourceFiles": 228,
+      "result": "PASS"
+    },
+    {
+      "command": "pytest -m \"unit or contract\" -q",
+      "passed": 919,
+      "deselected": 957,
+      "seconds": 9.85
+    },
+    {
+      "command": "python scripts/test_infrastructure.py --group all --details",
+      "passed": 954,
+      "skipped": 1,
+      "seconds": 826.45,
+      "scope": "final reviewed frozen sources after derived candidate/history/buffered authority fixes",
+      "skip": "optional infrastructure lifecycle restart disabled by default"
+    }
+  ],
+  "dedicated": {
+    "workflowExecution": {
+      "passed": 12,
+      "seconds": 12.09
+    },
+    "workflowTemplatesRegression": {
+      "passed": 8,
+      "seconds": 8.6
+    },
+    "contentFlowsRegression": {
+      "passed": 8,
+      "seconds": 7.84
+    },
+    "accountLinks": {
+      "passed": 14,
+      "seconds": 13.14
+    },
+    "analysisWorkflowEvents": {
+      "passed": 9,
+      "seconds": 14.75
+    }
+  },
+  "reviewFixes": [
+    "frozen full graphics/video candidate creates exact reviewed first-version document atomically; no stale prompt or node text",
+    "prepared Flow child shares caller transaction, original key and source version; occupied exposed child ID cannot overwrite editor document",
+    "current action included in immutable result/history; 1001st new action refused before state/document/event mutations",
+    "SSE authority fingerprint includes product and shop/account links, shop status/platform, account provider/product_line; buffered unauthorized frames rejected"
+  ],
+  "actualFrontendConsumer": {
+    "accountLinkKeyAndValidateAccountLinks": "PASS",
+    "negativeRejected": 2,
+    "replayNetworkCalls": 0,
+    "browserF09F10F11F12": "NOT_RUN"
+  },
+  "realLoopbackSse": [
+    "analysis.changed resume",
+    "workflow.changed resume",
+    "product soft deletion resync and close",
+    "buffered shop status revocation resync without leaked analysis.changed",
+    "buffered account platform change resync without leaked analysis.changed"
+  ],
+  "development": "workflow-execution-links-development.json",
+  "migrationHead": "0068_content_analysis_events",
+  "paidCalls": 0,
+  "livePlatformCalls": 0,
+  "platformBusinessWriteCalls": 0,
+  "originalTokenServiceChanges": 0,
+  "status": {
+    "M3-17b": "IN_PROGRESS_AI_GENERATION_PRODUCERS_NOT_IMPLEMENTED",
+    "M3-20a": "IN_PROGRESS_PLATFORM_UPLOAD_REVIEW_AND_UI_NOT_IMPLEMENTED",
+    "M4-09c": "IN_PROGRESS_PROXY_LOAD_F12_AND_ALL_CONTENT_GENERATION_EVENTS_NOT_VERIFIED",
+    "M3-16": "IN_PROGRESS_REAL_GENERATION_NOT_IMPLEMENTED"
+  },
+  "nextReady": [
+    "M3-18",
+    "M3-19a",
+    "M4-09c:local-proxy-load"
+  ],
+  "postRegressionFormatting": "One test EOF and three evidence documents whitespace-only cleanup; executable Python AST unchanged",
+  "notClaimed": [
+    "named BE FE acceptance",
+    "real model or supplier generation and billing",
+    "real platform upload or review evidence",
+    "real frontend browser integration",
+    "reverse proxy or 50 concurrent connections acceptance",
+    "production TLS or full content event coverage"
+  ]
+}

@@ -11,7 +11,7 @@ import pytest
 from sqlalchemy import text
 from sqlalchemy.exc import DBAPIError
 
-from yuliang.modules.content.flows import FlowCreate, FlowService
+from yuliang.modules.content.flows import FlowCreate, FlowService, derive_document
 from yuliang.modules.content.models import Document
 from yuliang.modules.content.service import ContentService, DocumentConflict
 from yuliang.platform.db import business_transaction
@@ -148,6 +148,28 @@ def test_revoked_scope_and_archived_child_do_not_recreate(parent: dict[str, Any]
         d["flows"].create(source, FlowCreate.model_validate(request(d)))
 
 
+def test_caller_transaction_rollback_keeps_no_child_or_derivation(parent: dict[str, Any]) -> None:
+    d = parent
+    source = UUID(d["parent"]["id"])
+    value = FlowCreate.model_validate(request(d, key="workflow:run:step:attempt:1"))
+    with pytest.raises(RuntimeError, match="caller rollback"):
+        with business_transaction(d["engine"], d["identity"]) as session:
+            child = d["flows"].create_in_transaction(session, source, value)
+            assert d["flows"].create_in_transaction(session, source, value) == child
+            assert session.execute(text("SELECT count(*) FROM content_documents")).scalar_one() == 2
+            raise RuntimeError("caller rollback")
+    with business_transaction(d["engine"], d["identity"]) as session:
+        assert session.execute(text("SELECT count(*) FROM content_documents")).scalar_one() == 1
+        assert (
+            session.execute(text("SELECT count(*) FROM content_document_versions")).scalar_one()
+            == 1
+        )
+        assert session.execute(text("SELECT count(*) FROM content_derivations")).scalar_one() == 0
+        saved = d["flows"].create_in_transaction(session, source, value)
+    assert d["flows"].create(source, value) == saved
+    assert saved["parentId"] == str(source)
+
+
 def test_derivation_links_immutable_to_runtime(parent: dict[str, Any]) -> None:
     d = parent
     d["flows"].create(UUID(d["parent"]["id"]), FlowCreate.model_validate(request(d)))
@@ -166,3 +188,38 @@ def test_derivation_links_immutable_to_runtime(parent: dict[str, Any]) -> None:
                 )
             )
         assert getattr(forged.value.orig, "sqlstate", None) == "22023"
+
+
+@pytest.mark.parametrize("collision", [False, True])
+def test_frozen_prepared_child_first_version_replay_and_create_only(
+    parent: dict[str, Any], collision: bool
+) -> None:
+    d = parent
+    identifier = UUID(d["parent"]["id"])
+    candidate = Document.model_validate(d["parent"] | dict(body="frozen new body"))
+    prepared = derive_document(candidate, "graphics")
+    value = FlowCreate.model_validate(request(d, "graphics", "workflow:frozen:candidate"))
+    if collision:
+        d["content"].save(UUID(prepared.id), prepared)
+        with pytest.raises(ApiError) as refused:
+            with business_transaction(d["engine"], d["identity"]) as session:
+                d["flows"].create_in_transaction(session, identifier, value, prepared=prepared)
+        assert refused.value.code == ErrorCode.VERSION_CONFLICT
+        assert d["content"].get(UUID(prepared.id))["version"] == 1
+        return
+    with business_transaction(d["engine"], d["identity"]) as session:
+        saved = d["flows"].create_in_transaction(session, identifier, value, prepared=prepared)
+    assert saved["version"] == 1 and saved["body"] == "frozen new body"
+    assert "frozen new body" in saved["prompt"]
+    with business_transaction(d["engine"], d["identity"]) as session:
+        replay = d["flows"].create_in_transaction(session, identifier, value, prepared=prepared)
+        assert replay == saved
+    with pytest.raises(ApiError) as mismatch:
+        with business_transaction(d["engine"], d["identity"]) as session:
+            d["flows"].create_in_transaction(
+                session,
+                identifier,
+                value,
+                prepared=prepared.model_copy(update=dict(body="changed")),
+            )
+    assert mismatch.value.code == ErrorCode.IDEMPOTENCY_MISMATCH

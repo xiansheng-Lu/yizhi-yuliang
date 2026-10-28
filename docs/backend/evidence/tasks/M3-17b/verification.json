@@ -1,0 +1,18 @@
+{
+ "task":"M3-17b","date":"2026-10-28","baseline":"591447df0a4d4b102d66143a3d5e5e4960a3be8f",
+ "status":"IN_PROGRESS","sliceStatus":"TECH_VERIFIED_WAITING_REVIEW",
+ "technicalResult":"PASS_REAL_MANUAL_REVIEW_ACCEPT_SKIP_REDO_TRANSACTION_SLICE",
+ "migration":"0066_workflow_execution","downRevision":"0065_content_imports","testedHeadIncludes":"0068",
+ "unit":{"dedicatedPassed":12,"regressionPassed":8,"totalPassed":20,"seconds":0.65},
+ "integration":{"passed":12,"seconds":12.09,"firstRunPass":true,"realPostgres":true,"realCreateApp":true},
+ "reviewFixes":{"frozenDerivedDocumentVersionOne":"PASS","responseGetReplayCurrentHistory":"PASS","action1001NoStateDocumentEventWrite":"PASS","immutableOldResultsRewritten":false},
+ "rootIndependentValidation":{"contentFlows":{"passed":8,"seconds":7.84},"contentEvents":{"passed":9,"seconds":14.75}},
+ "regression":{"contentWorkflows":{"passed":8,"seconds":8.60},"contentFlows":{"passed":6,"seconds":7.16}},
+ "ruff":"PASS","mypy":"PASS_5_SOURCE_2_TEST_FILES","dbWindow":"RELEASED",
+ "runRevision":{"initial":1,"perRealAction":1,"replayIncrement":0},
+ "templateSchemas":{"legacy":1,"explicitOptionalProposal":2,"existingSeedsChanged":false},
+ "realSupportedKinds":["MANUAL","REVIEW"],"unavailableKinds":["AI_ASSISTED","GENERATION"],
+ "externalPlatformCalls":0,"paidCalls":0,"gitOperations":0,
+ "notClaimed":["M3-18 real generated prose candidates","M3-19 provider jobs and unknown billing recovery","F10 browser integration","SSE acceptance based only on GET","M3-16 full task completion"],
+ "review":{"backend":"PENDING","frontend":"PENDING"},"nextTask":"M3-18"
+}

@@ -1,0 +1,47 @@
+{
+  "task": "M3-20a",
+  "status": "IN_PROGRESS",
+  "baseline": "591447df0a4d4b102d66143a3d5e5e4960a3be8f",
+  "checkedAt": "2026-10-28T12:53:21.297593+00:00",
+  "unit": {
+    "result": "PASS",
+    "passed": 8,
+    "seconds": 0.23,
+    "command": "pytest -q tests/unit/test_content_account_links.py"
+  },
+  "static": {
+    "ruff": "PASS",
+    "mypy": "PASS",
+    "files": 5
+  },
+  "integration": {
+    "result": "PASS",
+    "passed": 14,
+    "seconds": 13.14,
+    "command": "python scripts/test_infrastructure.py --group content-account-links --details",
+    "infrastructure": [
+      "PostgreSQL",
+      "MinIO",
+      "actual main FastAPI cookie CSRF HTTP"
+    ],
+    "authorizationSource": "Synthetic OAuthService independent ADQ grant, not WXSHOP grant"
+  },
+  "frontendConsumer": {
+    "result": "PASS",
+    "command": "node .runtime/contract-tools/node_modules/tsx/dist/cli.mjs --tsconfig frontend/tsconfig.json backend/scripts/check_content_account_links_frontend.mts .runtime/content-account-links-fixture.json",
+    "actualFrontendValidator": true,
+    "negativeRejected": 2,
+    "networkCalls": 0,
+    "firstAttempt": "ES named import incompatible with local tsx CJS; createRequire fix passed"
+  },
+  "migration": "0067_content_account_links",
+  "downRevision": "0066_workflow_execution",
+  "uploadProducer": "NOT_INTEGRATED",
+  "platformReview": "UNKNOWN",
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "tokenConfigurationChanges": 0,
+  "dbWindow": "RELEASED_TO_ROOT_AND_REPORTS",
+  "frontendBrowser": "NOT_WIRED",
+  "sourceFrozen": true
+}

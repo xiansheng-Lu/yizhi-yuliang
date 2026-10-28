@@ -1,0 +1,26 @@
+import { readFileSync } from "node:fs";
+import assert from "node:assert/strict";
+import { createRequire } from "node:module";
+const require = createRequire(import.meta.url);
+const { accountLinkKey, validateAccountLinks } = require("../../frontend/src/lib/content-delivery.ts");
+import type { ContentAccountLink, ContentOwner, ContentState } from "../../frontend/src/lib/content-factory.ts";
+
+const file = process.argv[2];
+if (!file) throw new Error("fixture path required");
+const { value, asset, owner } = JSON.parse(readFileSync(file, "utf8"));
+const link: ContentAccountLink = value.link;
+const state: ContentState = { schema: 1, revision: 0, documents: [], assets: [{ ...asset, accountLinks: [link] }] };
+validateAccountLinks(state, owner as ContentOwner);
+assert.equal(accountLinkKey(link), JSON.stringify([link.productLine, link.accountId]));
+assert.equal(link.mode, "API");
+assert.equal(link.linkedBy, owner.userId);
+assert.equal(value.upload.status, "NOT_INTEGRATED");
+assert.equal(value.upload.platformAssetId, null);
+assert.equal(value.review.status, "UNKNOWN");
+const duplicate = structuredClone(state);
+duplicate.assets[0].accountLinks!.push(link);
+assert.throws(() => validateAccountLinks(duplicate, owner));
+const forged = structuredClone(state);
+forged.assets[0].accountLinks![0].tenantId = "foreign";
+assert.throws(() => validateAccountLinks(forged, owner));
+process.stdout.write(JSON.stringify({ result: "PASS", actualFrontendValidator: true, duplicateAndForeignRejected: 2, networkCalls: 0 }) + "\n");

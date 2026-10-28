@@ -12,6 +12,7 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from yuliang.modules.analysis.models import AnalysisModel
+from yuliang.modules.content.asset_models import document_assets
 from yuliang.modules.content.models import Board, Document, Kind, Node, Settings
 from yuliang.modules.content.validation import validate_content
 from yuliang.platform.db import business_transaction
@@ -123,6 +124,18 @@ class FlowService:
         return dict(saved)
 
     def create(self, parent: UUID, request: FlowCreate) -> dict[str, Any]:
+        with business_transaction(self.content.engine, self.content.identity) as session:
+            return self.create_in_transaction(session, parent, request)
+
+    def create_in_transaction(
+        self,
+        session: Session,
+        parent: UUID,
+        request: FlowCreate,
+        *,
+        prepared: Document | None = None,
+    ) -> dict[str, Any]:
+        """参加调用方事务；不提交子稿，也不打开第二个数据库事务。"""
         from yuliang.modules.content.service import DocumentConflict
 
         try:
@@ -130,42 +143,55 @@ class FlowService:
         except ValidationError:
             raise ApiError(ErrorCode.INVALID_INPUT, "派生请求参数无效") from None
         c = self.content
-        with business_transaction(c.engine, c.identity) as session:
-            current = c._row(session, parent, True)
-            replay = self._replay(session, parent, request)
-            if replay is not None:
-                return replay
-            if current["revision"] != request.version:
-                raise DocumentConflict(dict(current["payload"]))
-            child = derive_document(validate_content(current["payload"]), request.kind)
         # 派生按前端规则清空所有文件引用；不能凭复制source.assetId跳过实际文件守卫。
-        with business_transaction(c.engine, c.identity) as session:
-            session.execute(
-                text("SELECT pg_advisory_xact_lock(hashtextextended(:key,760163))"),
-                dict(key=f"{c.identity.tenant_id}|{c.identity.user_id}|{request.idempotency_key}"),
-            )
-            c._lock(session, parent)
-            current = c._row(session, parent, True)
-            replay = self._replay(session, parent, request)
-            if replay is not None:
-                return replay
-            if current["revision"] != request.version:
-                raise DocumentConflict(dict(current["payload"]))
-            saved = c._save(session, UUID(child.id), child)
-            session.execute(
-                text(
-                    "INSERT INTO content_derivations(tenant_id,actor_id,request_key,parent_id,"
-                    "parent_revision,child_id,child_revision,kind) "
-                    "VALUES(:tenant,:actor,:key,:parent,:revision,:child,1,:kind)"
-                ),
-                dict(
-                    tenant=c.identity.tenant_id,
-                    actor=c.identity.user_id,
-                    key=request.idempotency_key,
-                    parent=parent,
-                    revision=request.version,
-                    child=child.id,
-                    kind=request.kind,
-                ),
-            )
-            return saved
+        session.execute(
+            text("SELECT pg_advisory_xact_lock(hashtextextended(:key,760163))"),
+            dict(key=f"{c.identity.tenant_id}|{c.identity.user_id}|{request.idempotency_key}"),
+        )
+        c._lock(session, parent)
+        current = c._row(session, parent, True)
+        if prepared is not None:
+            prepared = validate_content(prepared)
+            if (
+                prepared.parentId != str(parent)
+                or prepared.productId != current["payload"]["productId"]
+                or prepared.kind != request.kind
+                or prepared.version != 1
+                or prepared.id == str(parent)
+                or prepared.status != "draft"
+                or document_assets(prepared)
+            ):
+                raise ApiError(ErrorCode.INVALID_INPUT, "冻结派生稿的身份、版本或素材引用不合法")
+        replay = self._replay(session, parent, request)
+        if replay is not None:
+            if prepared is not None and Document.model_validate(replay).model_dump(
+                exclude={"updatedAt"}
+            ) != prepared.model_dump(exclude={"updatedAt"}):
+                raise ApiError(ErrorCode.IDEMPOTENCY_MISMATCH, "派生请求键的冻结候选已变化")
+            return replay
+        if current["revision"] != request.version:
+            raise DocumentConflict(dict(current["payload"]))
+        child = prepared or derive_document(validate_content(current["payload"]), request.kind)
+        c._lock(session, UUID(child.id))
+        if session.execute(
+            text("SELECT 1 FROM content_documents WHERE id=:id"), dict(id=UUID(child.id))
+        ).first():
+            raise ApiError(ErrorCode.VERSION_CONFLICT, "派生目标ID已存在且没有原请求回执，禁止覆盖")
+        saved = c._save(session, UUID(child.id), child)
+        session.execute(
+            text(
+                "INSERT INTO content_derivations(tenant_id,actor_id,request_key,parent_id,"
+                "parent_revision,child_id,child_revision,kind) "
+                "VALUES(:tenant,:actor,:key,:parent,:revision,:child,1,:kind)"
+            ),
+            dict(
+                tenant=c.identity.tenant_id,
+                actor=c.identity.user_id,
+                key=request.idempotency_key,
+                parent=parent,
+                revision=request.version,
+                child=child.id,
+                kind=request.kind,
+            ),
+        )
+        return saved

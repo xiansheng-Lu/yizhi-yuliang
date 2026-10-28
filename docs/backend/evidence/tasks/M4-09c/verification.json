@@ -1,0 +1,68 @@
+{
+  "task": "M4-09c",
+  "date": "2026-10-28",
+  "baseline": "591447df0a4d4b102d66143a3d5e5e4960a3be8f",
+  "cardStatus": "IN_PROGRESS",
+  "slice": "analysis_task and workflow_run actual notifications",
+  "technicalResult": "PASS",
+  "migration": "0068_content_analysis_events",
+  "downRevision": "0067_content_account_links",
+  "database": {
+    "group": "content-analysis-events",
+    "passed": 9,
+    "seconds": 14.75,
+    "freshHeadMigration": true
+  },
+  "unit": {
+    "passed": 6,
+    "seconds": 0.63
+  },
+  "ruff": "PASS",
+  "mypy": {
+    "result": "PASS",
+    "files": 1
+  },
+  "realLoopbackSse": [
+    "analysis.changed resume",
+    "workflow.changed resume",
+    "product deletion AUTHORIZATION_CHANGED resync and close"
+  ],
+  "actualProductionSources": [
+    "analysis_tasks insert and status/progress/result/error change trigger",
+    "workflow_runs actual revision/status change trigger"
+  ],
+  "commandJobImpersonation": false,
+  "businessPayloadBroadcast": false,
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "dbWindow": "RELEASED",
+  "code": "FROZEN",
+  "proxyAcceptance": "NOT_RUN",
+  "fiftyConnections": "NOT_RUN",
+  "frontendF12": "PENDING",
+  "contentGenerationFullEvents": "PENDING_M3_20b",
+  "humanSignoff": "PENDING",
+  "databaseHistory": [
+    {
+      "group": "content-analysis-events",
+      "passed": 7,
+      "seconds": 12.22,
+      "freshHeadMigration": true
+    }
+  ],
+  "bufferedScopeRegression": {
+    "result": "PASS",
+    "cases": [
+      "shop status UNKNOWN after actual poll before stream response",
+      "dependency-free account provider/product_line changed after actual poll before response"
+    ],
+    "delivered": "connected followed by AUTHORIZATION_CHANGED resync and close; no buffered analysis.changed",
+    "scopeProbe": "actual controlled analysis_admit; missing bare-account metric coverage, computation intentionally not run"
+  },
+  "fingerprintFieldsAddedByRoot": [
+    "shops.status",
+    "shops.platform",
+    "ad_accounts.provider",
+    "ad_accounts.product_line"
+  ]
+}

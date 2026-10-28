@@ -27,7 +27,8 @@ class EventData(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
     tenant_id: str = Field(alias="tenantId", pattern=r"^[1-9][0-9]{0,18}$")
     entity_type: Literal[
-        "command_job", "approval", "execution", "capability_binding", "sync_source"
+        "command_job", "approval", "execution", "capability_binding", "sync_source",
+        "analysis_task", "workflow_run",
     ] = Field(alias="entityType")
     entity_id: UUID = Field(alias="entityId")
     version: int = Field(strict=True, gt=0, le=9007199254740991)
@@ -45,6 +46,8 @@ class StreamEvent(BaseModel):
         "execution.unknown",
         "capability.changed",
         "sync.completed",
+        "analysis.changed",
+        "workflow.changed",
     ]
     data: EventData
 
@@ -76,11 +79,17 @@ class CoreEventStream:
               'scopes',coalesce((SELECT jsonb_agg(to_jsonb(ds) ORDER BY ds.id)
                 FROM data_scopes ds WHERE ds.membership_id=m.id),'[]'::jsonb),
               'shops',coalesce((SELECT jsonb_agg(
-                jsonb_build_array(id,entity_id,deleted_at) ORDER BY id)
+                jsonb_build_array(id,entity_id,status,platform,deleted_at) ORDER BY id)
                 FROM shops),'[]'::jsonb),
               'accounts',coalesce((SELECT jsonb_agg(
-                jsonb_build_array(id,entity_id,status,deleted_at)
-                ORDER BY id) FROM ad_accounts),'[]'::jsonb))
+                jsonb_build_array(id,entity_id,status,provider,product_line,deleted_at)
+                ORDER BY id) FROM ad_accounts),'[]'::jsonb),
+              'accountShops',coalesce((SELECT jsonb_agg(
+                jsonb_build_array(shop_id,account_id) ORDER BY shop_id,account_id)
+                FROM entity_links),'[]'::jsonb),
+              'products',coalesce((SELECT jsonb_agg(
+                jsonb_build_array(id,shop_id,account_id,deleted_at) ORDER BY id)
+                FROM commerce_products),'[]'::jsonb))
               FROM memberships m WHERE m.id=:member AND m.user_id=:user AND m.status='ACTIVE'"""),
                 {"member": self.identity.membership_id, "user": self.identity.user_id},
             ).scalar_one_or_none()

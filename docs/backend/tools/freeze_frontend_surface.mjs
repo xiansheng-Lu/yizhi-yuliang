@@ -4,19 +4,22 @@ import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import ts from "../../../node_modules/typescript/lib/typescript.js";
+import { createRequire } from "node:module";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
+const frontend = path.join(root, "frontend");
+const ts = createRequire(path.join(frontend, "package.json"))("typescript");
+const sourcePath = name => path.join(name.startsWith("src/") ? frontend : root, name);
 const contracts = path.join(root, "docs/backend/contracts");
 const matrix = JSON.parse(fs.readFileSync(path.join(contracts, "http-contracts.json"), "utf8"));
 const prefixes = {
   ApiClient: "", DeliveryService: "/v1/delivery/",
   AdvertisingService: "/v1/delivery/configuration/", ApiAnalysisAdapter: "/v1/business-analysis",
 };
-const config = ts.readConfigFile(path.join(root, "tsconfig.json"), ts.sys.readFile);
-const parsed = ts.parseJsonConfigFileContent(config.config, ts.sys, root);
+const config = ts.readConfigFile(path.join(frontend, "tsconfig.json"), ts.sys.readFile);
+const parsed = ts.parseJsonConfigFileContent(config.config, ts.sys, frontend);
 const program = ts.createProgram({
-  rootNames: Object.keys(matrix.sourceSha256).map(name => path.join(root, name)),
+  rootNames: Object.keys(matrix.sourceSha256).map(sourcePath),
   options: parsed.options,
 });
 const checker = program.getTypeChecker();
@@ -42,7 +45,7 @@ function routePairs(pathNode, methodNode) {
   return [[methodNode ? pathText(methodNode) : "GET", pathText(pathNode)]];
 }
 for (const relative of Object.keys(matrix.sourceSha256).sort()) {
-  const source = program.getSourceFile(path.join(root, relative));
+  const source = program.getSourceFile(sourcePath(relative));
   assert(source, `无法解析${relative}`);
   function visit(node) {
     if ((ts.isInterfaceDeclaration(node) || ts.isTypeAliasDeclaration(node)) &&
@@ -96,13 +99,16 @@ assert.deepEqual([...actualRoutes].sort(), [...expectedRoutes].sort(), "人工�
 const result = { baseline: matrix.technicalRefresh?.baseline ?? "4405ebc", extraction: "TypeScript AST and type checker; no HTTP/platform execution",
   calls, exportedTypes: types };
 const target = path.join(contracts, "frontend-surface.json");
-const serialized = JSON.stringify(result,
-  (_key, value) => typeof value === "string" ? value.replace(/\r\n/g, "\n") : value, 2) + "\n";
+// TypeScript偶尔把类型输出为本机绝对import；只消除目录位置，保留模块名与类型。
+const serialize = value => JSON.stringify(value,
+  (_key, item) => typeof item === "string" ? item.replace(/\r\n/g, "\n")
+    .replace(/import\("[^"\n]*?\/(?:frontend\/)?src\//g, 'import("src/') : item, 2) + "\n";
+const serialized = serialize(result);
 if (process.argv.includes("--write")) fs.writeFileSync(target, serialized, "utf8");
-else assert.equal(fs.readFileSync(target, "utf8").replace(/\r\n/g, "\n"), serialized,
+else assert.equal(serialize(JSON.parse(fs.readFileSync(target, "utf8"))), serialized,
   "前端调用或字段有变化，需复核后才允许--write更新冻结基线");
 for (const [name, expected] of Object.entries(matrix.sourceSha256)) {
-  const normalized = fs.readFileSync(path.join(root, name), "utf8").replace(/\r\n/g, "\n");
+  const normalized = fs.readFileSync(sourcePath(name), "utf8").replace(/\r\n/g, "\n");
   assert.equal(createHash("sha256").update(normalized).digest("hex"), expected, `前端源码漂移：${name}`);
 }
 console.log(JSON.stringify({ result: "PASS", callSites: calls.length, exportedTypes: types.length,

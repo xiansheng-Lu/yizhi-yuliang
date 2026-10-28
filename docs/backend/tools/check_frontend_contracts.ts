@@ -1,12 +1,12 @@
 /** 使用当前真实ApiClient验证黄金样例；只验证协议，不调用真实平台。 */
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { ApiClient } from "../../../src/services/api-client";
-import { DeliveryService } from "../../../src/services/delivery-service";
-import { AdvertisingService } from "../../../src/services/advertising-service";
-import { ApiAnalysisAdapter } from "../../../src/services/analysis-service";
-import { configurationContextKey, type ConfigurationContext } from "../../../src/lib/advertising";
-import type { CommandJob } from "../../../src/lib/command-job";
+import { ApiClient } from "../../../frontend/src/services/api-client";
+import { DeliveryService } from "../../../frontend/src/services/delivery-service";
+import { AdvertisingService } from "../../../frontend/src/services/advertising-service";
+import { ApiAnalysisAdapter } from "../../../frontend/src/services/analysis-service";
+import { configurationContextKey, type ConfigurationContext } from "../../../frontend/src/lib/advertising";
+import type { CommandJob } from "../../../frontend/src/lib/command-job";
 
 const golden = JSON.parse(readFileSync(new URL("../contracts/golden.json", import.meta.url), "utf8"));
 let checks = 0;

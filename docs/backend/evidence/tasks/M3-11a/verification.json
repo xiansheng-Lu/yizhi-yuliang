@@ -1,0 +1,134 @@
+{
+  "checkedAt": "2026-10-28T04:49:02.721Z",
+  "baseline": "68a911cc6b56fe62398a9cef395b385559794463",
+  "implementationCommit": "8c19045",
+  "result": "PASS_REAL_PG_HTTP_RESOURCE_CONTEXT_NATIVE_LINK_FENCE_AND_CURRENT_OPERATION_EVIDENCE",
+  "checks": [
+    {
+      "command": "uv run --frozen ruff check src tests scripts alembic",
+      "result": "PASS"
+    },
+    {
+      "command": "uv run --frozen ruff format --check src tests scripts alembic",
+      "result": "PASS",
+      "count": 275
+    },
+    {
+      "command": "uv run --frozen mypy",
+      "result": "PASS",
+      "count": 223
+    },
+    {
+      "command": "uv run --frozen pytest tests/unit tests/contract -q",
+      "result": "PASS",
+      "count": 654
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --group integration-context --details",
+      "result": "PASS",
+      "count": 15,
+      "seconds": 8.71
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --details",
+      "result": "PASS_WITH_EXPLICIT_LIFECYCLE_SKIP",
+      "count": 698,
+      "skipped": 1,
+      "seconds": 439.79
+    },
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --tsconfig frontend/tsconfig.json backend/scripts/check_integration_frontend.mts docs/backend/evidence/tasks/M3-11a/context.json",
+      "result": "PASS",
+      "artifact": "frontend-check.json"
+    },
+    {
+      "command": "python docs/backend/tools/check_task_status.py --self-test",
+      "result": "PASS",
+      "registered": 67,
+      "invalidVariantsRejected": 13
+    },
+    {
+      "command": "python docs/backend/tools/check_plan.py",
+      "result": "PASS",
+      "cards": 149,
+      "nodes": 156
+    },
+    {
+      "command": "python docs/backend/tools/check_contracts.py",
+      "result": "PASS",
+      "frozenSources": 15,
+      "routes": 53
+    },
+    {
+      "command": "node docs/backend/tools/freeze_frontend_surface.mjs",
+      "result": "PASS",
+      "calls": 56,
+      "types": 133,
+      "routes": 53,
+      "frozenSources": 15,
+      "write": false
+    },
+    {
+      "command": "node node_modules/tsx/dist/cli.mjs --tsconfig frontend/tsconfig.json docs/backend/tools/check_frontend_contracts.ts",
+      "result": "PASS",
+      "count": 45
+    },
+    {
+      "command": "uv run --frozen python scripts/migrate_local.py upgrade",
+      "result": "PASS"
+    }
+  ],
+  "database": {
+    "head": "0043_integration_operations",
+    "migrationRoleCanLogin": false,
+    "developmentRows": {
+      "integration_operation_assertions": 0,
+      "analysis_tasks": 0,
+      "analysis_results": 0,
+      "analysis_deliveries": 0,
+      "configuration_field_assertions": 0,
+      "event_resource_heads": 0,
+      "capability_event_deadlines": 0,
+      "event_source_outbox": 0,
+      "event_stream_heads": 0,
+      "event_projections": 0,
+      "approvals": 0,
+      "approval_decisions": 0,
+      "server_approval_permits": 0,
+      "execution_recoveries": 0,
+      "execution_recovery_evidence": 0,
+      "execution_orders": 0,
+      "execution_attempts": 0,
+      "budget_job_finalizations": 0,
+      "command_jobs": 0
+    }
+  },
+  "traces": [
+    "context.json",
+    "frontend-check.json",
+    "development.json"
+  ],
+  "status": "WAITING_REVIEW",
+  "humanSignoff": "PENDING_BE_F11",
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "frontendBrowser": "NOT_RUN",
+  "limitations": [
+    "All identities and source proofs in tests are synthetic",
+    "Wxshop per-shop resource entry and resource writes remain closed pending M3-11b",
+    "Current frontend requires matching entity for selected shop/account; cross-entity operational contract not accepted",
+    "No actual business tenant/shop resource binding or live platform acceptance"
+  ],
+  "defects": [
+    {
+      "layer": "SOURCE_METHOD_REPRESENTATION",
+      "problem": "Catalog uses UNKNOWN rather than null for missing method",
+      "resolution": "Use existing M1-02 semantics with independent complete binding evidence; known conflicts still close all phases"
+    },
+    {
+      "layer": "TEST_FIXTURE",
+      "problem": "Path corruption persisted into shared catalog used by later cases",
+      "resolution": "Restore exact path in finally; final dedicated and full regression pass"
+    }
+  ]
+}

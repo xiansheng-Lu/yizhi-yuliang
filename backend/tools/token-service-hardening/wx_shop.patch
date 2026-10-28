@@ -1,0 +1,992 @@
+--- a/.env.example
++++ b/.env.example
+@@ -26,3 +26,10 @@
+ # 强制刷新节流：最小间隔（秒）与 24 小时内次数上限（官方限额 30s / 20 次）
+ WX_TOKEN_FORCE_MIN_INTERVAL=30
+ WX_TOKEN_FORCE_DAILY_LIMIT=20
++
++# 必填：密钥文件在私有目录中，用 tools/manage_security.py init-key 创建，切勿提交。
++TOKEN_ENCRYPTION_KEY_FILE=
++TOKEN_KEY_VERSION=v1
++TOKEN_TENANT_ID=
++# 业务 SDK / 面板 / 探针只访问唯一托管入口；API Key 与服务相同。
++WX_TOKEN_SERVICE_URL=http://127.0.0.1:8080
+--- a/.gitignore
++++ b/.gitignore
+@@ -14,3 +14,7 @@
+ dashboard/_probe_structs*.py
+ dashboard/_shot*
+ dashboard/_chrome_profile/
++
++# 私有加密密钥和进程锁
++.runtime/
++*.owner.lock
+--- /dev/null
++++ b/cache/security.py
+@@ -0,0 +1,115 @@
++"""Local token-service security: AES-GCM envelopes and lifetime process ownership.
++
++Keys are supplied out of band via TOKEN_ENCRYPTION_KEY_FILE (JSON map of
++version -> base64 32-byte key). Never creates or silently replaces keys/data.
++"""
++import base64
++import json
++import os
++import secrets
++from pathlib import Path
++from cryptography.hazmat.primitives.ciphers.aead import AESGCM
++
++
++class LegacyPlaintextError(RuntimeError):
++    pass
++
++
++class SecureJSON:
++    def __init__(self, context):
++        key_file = os.environ.get("TOKEN_ENCRYPTION_KEY_FILE", "")
++        self.version = os.environ.get("TOKEN_KEY_VERSION", "")
++        self.tenant = os.environ.get("TOKEN_TENANT_ID", "")
++        if not key_file or not self.version or not self.tenant:
++            raise RuntimeError("需要 TOKEN_ENCRYPTION_KEY_FILE / TOKEN_KEY_VERSION / TOKEN_TENANT_ID")
++        try:
++            self.keys = json.loads(Path(key_file).read_text(encoding="utf-8"))
++            for key in self.keys.values():
++                if len(base64.b64decode(key, validate=True)) != 32:
++                    raise ValueError()
++            if self.version not in self.keys:
++                raise ValueError()
++        except Exception:
++            raise RuntimeError("令牌加密密钥文件无效") from None
++        self.context = self.tenant + ":" + context
++
++    def read(self, path):
++        envelope = json.loads(Path(path).read_text(encoding="utf-8"))
++        if not isinstance(envelope, dict) or envelope.get("format") != "token-aesgcm-v1":
++            raise LegacyPlaintextError("拒绝读取旧明文凭据；请停服后执行显式加密迁移")
++        try:
++            version = envelope["key_version"]
++            aad = (self.context + ":" + version).encode()
++            raw = AESGCM(base64.b64decode(self.keys[version], validate=True)).decrypt(
++                base64.b64decode(envelope["nonce"], validate=True),
++                base64.b64decode(envelope["ciphertext"], validate=True), aad)
++            return json.loads(raw)
++        except Exception:
++            raise RuntimeError("令牌密文不可读取：密钥、版本、身份上下文或完整性不匹配") from None
++
++    def write(self, path, payload):
++        path = Path(path)
++        path.parent.mkdir(parents=True, exist_ok=True)
++        nonce = secrets.token_bytes(12)
++        aad = (self.context + ":" + self.version).encode()
++        ciphertext = AESGCM(base64.b64decode(self.keys[self.version], validate=True)).encrypt(
++            nonce, json.dumps(payload, ensure_ascii=False).encode(), aad)
++        envelope = {"format": "token-aesgcm-v1", "key_version": self.version,
++                    "nonce": base64.b64encode(nonce).decode(),
++                    "ciphertext": base64.b64encode(ciphertext).decode()}
++        tmp = path.with_name(path.name + "." + secrets.token_hex(8) + ".tmp")
++        try:
++            fd = os.open(tmp, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
++            with os.fdopen(fd, "w", encoding="utf-8") as stream:
++                json.dump(envelope, stream)
++                stream.flush()
++                os.fsync(stream.fileno())
++            os.replace(tmp, path)
++        finally:
++            tmp.unlink(missing_ok=True)
++
++
++class ProcessOwner:
++    """OS-held lifetime lock: second owner fails closed; crash releases lock.
++
++    Shared local filesystem only. All service instances for the same app must
++    share this path; multi-host/network-filesystem deployment is unsupported.
++    """
++    def __init__(self, path):
++        self.path = Path(path)
++        self.stream = None
++
++    def acquire(self):
++        if self.stream is not None:
++            return self
++        self.path.parent.mkdir(parents=True, exist_ok=True)
++        stream = self.path.open("a+b")
++        stream.seek(0, 2)
++        if stream.tell() == 0:
++            stream.write(b"0")
++            stream.flush()
++        stream.seek(0)
++        try:
++            if os.name == "nt":
++                import msvcrt
++                msvcrt.locking(stream.fileno(), msvcrt.LK_NBLCK, 1)
++            else:
++                import fcntl
++                fcntl.flock(stream.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
++        except OSError:
++            stream.close()
++            raise RuntimeError("同一应用已有令牌服务进程；请复用唯一托管入口") from None
++        self.stream = stream
++        return self
++
++    def close(self):
++        if self.stream is not None:
++            if os.name == "nt":
++                import msvcrt
++                self.stream.seek(0)
++                msvcrt.locking(self.stream.fileno(), msvcrt.LK_UNLCK, 1)
++            else:
++                import fcntl
++                fcntl.flock(self.stream.fileno(), fcntl.LOCK_UN)
++            self.stream.close()
++            self.stream = None
+--- a/cache/token_cache.py
++++ b/cache/token_cache.py
+@@ -29,6 +29,7 @@
+ from __future__ import annotations
+ 
+ import json
++from .security import SecureJSON
+ import logging
+ import os
+ import threading
+@@ -88,6 +89,7 @@
+         backoff_cap: float = 60.0,
+         persist_path: Optional[str] = None,
+         appid: str = "",
++        cipher_context: Optional[str] = None,
+         clock: Callable[[], float] = time.time,
+     ) -> None:
+         if margin < 0:
+@@ -102,6 +104,7 @@
+         self._backoff_cap = float(backoff_cap)
+         self._persist_path = persist_path or None
+         self._appid = appid
++        self._cipher = SecureJSON(cipher_context or "access-token:" + appid) if persist_path else None
+         self._clock = clock
+ 
+         self._cond = threading.Condition(threading.Lock())
+@@ -169,16 +172,17 @@
+ 
+             try:
+                 new_snap, err = self._fetch_once(force=False)
++                if new_snap is not None:
++                    self._apply_success(new_snap)
++                else:
++                    self._apply_failure(err)
+             finally:
+                 with self._cond:
+                     self._inflight = False
+                     self._cond.notify_all()
+ 
+             if new_snap is not None:
+-                self._apply_success(new_snap)
+                 return new_snap.token
+-
+-            self._apply_failure(err)
+             cur = self._snapshot
+             if allow_stale and cur is not None and self._clock() < cur.expire_at:
+                 return cur.token  # 刷新失败但旧 token 还在真实有效期内
+@@ -214,16 +218,17 @@
+ 
+             try:
+                 new_snap, err = self._fetch_once(force=force)
++                if new_snap is not None:
++                    self._apply_success(new_snap)
++                else:
++                    self._apply_failure(err)
+             finally:
+                 with self._cond:
+                     self._inflight = False
+                     self._cond.notify_all()
+ 
+             if new_snap is not None:
+-                self._apply_success(new_snap)
+                 return new_snap.token
+-
+-            self._apply_failure(err)
+             raise TokenCacheError(
+                 "刷新 access_token 失败",
+                 retry_after=max(1, int(self._next_attempt_at - self._clock())),
+@@ -293,8 +298,8 @@
+             return False
+         path = Path(self._persist_path)
+         try:
+-            data = json.loads(path.read_text(encoding="utf-8"))
+-        except (OSError, ValueError):
++            data = self._cipher.read(path)
++        except FileNotFoundError:
+             return False
+         if not isinstance(data, dict) or data.get("appid") != self._appid:
+             return False
+@@ -331,10 +336,7 @@
+                 "appid": self._appid,
+                 "saved_at": self._clock(),
+             }
+-            path = Path(self._persist_path)
+-            tmp = path.with_name(path.name + ".tmp")
+-            tmp.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+-            os.replace(tmp, path)  # 原子替换，避免半行文件
++            self._cipher.write(self._persist_path, payload)
+         except OSError as exc:
+             log.warning("token 持久化失败（不影响使用）：%s", exc)
+ 
+@@ -425,13 +427,13 @@
+                     self._inflight = True
+                 try:
+                     new_snap, err = self._fetch_once(force=False)
++                    if new_snap is not None:
++                        self._apply_success(new_snap)
++                    else:
++                        self._apply_failure(err)
+                 finally:
+                     with self._cond:
+                         self._inflight = False
+                         self._cond.notify_all()
+-                if new_snap is not None:
+-                    self._apply_success(new_snap)
+-                else:
+-                    self._apply_failure(err)
+             except Exception:  # noqa: BLE001 - 守护线程不能死
+                 log.exception("后台预热线程异常")
+--- a/dashboard/collect_data.py
++++ b/dashboard/collect_data.py
+@@ -670,13 +670,9 @@
+ 
+ 
+ def build_client() -> WxShopClient:
+-    """从 .env 读取凭据，构造 SDK 直连客户端。"""
++    """从 .env 读取唯一托管入口配置，构造 SDK 服务客户端。"""
+     load_dotenv(PROJECT_ROOT / ".env")
+-    appid = os.environ.get("WX_APPID", "")
+-    appsecret = os.environ.get("WX_SECRET", "")
+-    if not appid or not appsecret:
+-        raise SystemExit("缺少 WX_APPID / WX_SECRET（请检查项目根 .env）")
+-    return WxShopClient(appid=appid, appsecret=appsecret)
++    return WxShopClient()
+ 
+ 
+ def main() -> int:
+--- /dev/null
++++ b/docs/token-security.md
+@@ -0,0 +1,75 @@
++# 令牌服务安全接入与迁移
++
++本修复只加固两个独立令牌项目，不声明驭量 M1-06/M1-07 已接线或 E01/E02 已验收。
++
++## 配置与身份
++
++服务必填原平台凭据及 API Key（ADQ_TOKEN_API_KEY / WX_TOKEN_API_KEY），并设置：
++
++- TOKEN_TENANT_ID：该服务实例所属的内部租户标识；一个实例只服务一个租户。
++- TOKEN_ENCRYPTION_KEY_FILE：私有 JSON 密钥环绝对路径，内容为版本到 base64 32 字节密钥的映射。
++- TOKEN_KEY_VERSION：当前写入版本，密钥环可保留旧版本用于解密和显式重加密。
++
++应用 Secret 继续通过本地私有配置或部署密钥管理提供；不会写入令牌密文文件。
++私有密钥文件和 .env 均不提交。生产需备份密钥环；丢失后不能恢复旧密文。
++首次生成：`python tools/manage_security.py init-key .runtime/token-keys.json --version v1`。
++该命令拒绝覆盖现有文件，POSIX 使用 0600；Windows 在写密钥前移除继承权限并仅授予当前用户。
++部署使用其他服务账号时，由管理员在私有渠道明确授予该账号读取权限。
++
++ADQ 授权入口必须经可信后端调用：带 X-API-Key 与 X-Actor-ID（后端从已验证会话取得）。
++X-Actor-ID 本身不是登录凭据；本服务不实现驭量用户登录或替代其租户权限校验。
++回调必须使用服务端固定 HTTPS 地址，state 绑定租户、应用、发起人及回调地址，单次消费。
++不允许客户端指定 state 或其他回调，旧的关闭 state 校验开关无效。
++state 仅存内存，服务重启后未完成的授权需要重新发起，拒绝绕过。
++TOKEN_ALLOW_LOOPBACK_CALLBACK=1 仅用于隔离的本机 mock，正式部署不设置。
++
++## 先停旧服务再迁移
++
++本次没有读取、迁移、重写真实 .env 或 token 文件，也没有重启真实服务。
++旧版本不持有新进程锁，因此迁移前必须明确停止所有旧 token 服务和直连 SDK 实例。
++设置上述环境变量后执行以下命令。迁移使用同一 owner-lock；锁被占用时不修改源文件。
++只迁移原路径，不自动备份明文；已有备份、日志等历史副本需按原密钥管理制度处理。
++
++### ADQ
++
++使用 ADQ_DATA_DIR 的绝对路径，假定为 `D:/codex/tencent-adq/data`；将 APP_ID、ACCOUNT_ID 替换为实际值。
++
++```powershell
++python tools/manage_security.py migrate data/adq_credentials.json --context "adq-credentials:APP_ID" --owner-lock data/.token-service.owner.lock
++python tools/manage_security.py migrate data/token_ACCOUNT_ID.json --context "adq-access-token:APP_ID:ACCOUNT_ID" --owner-lock data/.token-service.owner.lock
++```
++
++每个已有账户快照分别迁移。固定回调地址的 path 必须与 ADQ_CALLBACK_PATH 一致。
++凭据/快照完整性或身份不匹配时拒绝启动，不会静默清空后覆盖；即便密文身份不匹配也不会读取上游重新覆盖。
++授权换码和后续刷新写回的 refresh_token 都加密保存；平台返回轮换 refresh_token 时先保存新值。
++
++### 微信小店
++
++默认缓存为项目根 token_cache.json，使用其绝对路径作为锁路径前缀：
++
++```powershell
++python tools/manage_security.py migrate token_cache.json --context "access-token:APP_ID" --owner-lock "D:/codex/wx_shop/token_cache.json.owner.lock"
++```
++
++SDK、dashboard 采集器及只读探针统一设置 WX_TOKEN_SERVICE_URL、WX_TOKEN_API_KEY。
++SDK 默认访问托管入口；不再用 AppID/Secret 隐式创建第二个刷新者。
++只有独立工具/mock 显式传 allow_direct_token=True 才可直连，禁止与该应用的托管服务并行。
++直连缓存严格使用响应 expires_in（不再写死 7200），短 TTL 提前量不超过半衰期，并发请求复用同一刷新结果。
++
++## 部署边界
++
++每个应用指定唯一数据目录/缓存路径、一个进程、一个 worker，业务方可有多个进程。
++进程锁持有至退出，第二个服务进程拒绝启动；进程崩溃后操作系统释放锁。
++生产默认监听回环，外部访问通过受控 HTTPS 反代；ServiceTokenProvider 拒绝远程明文 HTTP。
++此方案只支持单机本地文件系统；多个主机或不同数据目录不会共享锁，不能部署为多副本。
++需要多机时应继续使用唯一托管服务入口，而非给每台业务机部署刷新者。
++HTTP raw token、刷新、ADQ 授权管理接口强制鉴权，响应标注 Cache-Control: no-store。
++
++## 本地验证（仅合成凭据与 mock）
++
++```powershell
++python -m unittest discover -s tests -p "test_*.py" -q
++python tests/smoke_test.py
++```
++
++两个项目冒烟测试默认使用相同 mock 端口，按顺序运行。
+--- a/examples/demo_wxshop.py
++++ b/examples/demo_wxshop.py
+@@ -88,7 +88,7 @@
+ 
+         # ------------------------------------------------------------------ #
+         hr("S1 初始化客户端（直连 token 模式，base_url 指向本地 mock）")
+-        client = WxShopClient(appid="wxmockappid0001", appsecret="mocksecret0001",
++        client = WxShopClient(allow_direct_token=True, appid="wxmockappid0001", appsecret="mocksecret0001",
+                               base_url=MOCK)
+         token = client.token()
+         print(f"access_token = {token}")
+--- a/examples/probe_readonly.py
++++ b/examples/probe_readonly.py
+@@ -75,15 +75,7 @@
+ 
+ def main() -> int:
+     loaded = load_dotenv(PROJECT_ROOT / ".env")
+-    appid = os.environ.get("WX_APPID", "")
+-    appsecret = os.environ.get("WX_SECRET", "")
+-    if not appid or not appsecret:
+-        print("缺少 WX_APPID / WX_SECRET（.env 未配置）")
+-        return 2
+-    print(f".env 加载 {loaded} 项；appid={appid[:6]}…{appid[-4:]}")
+-
+-    # 直连模式：SDK 自行调用 stable_token 管理 token（一次性探针脚本，无需起 token 服务）
+-    client = WxShopClient(appid=appid, appsecret=appsecret)
++    client = WxShopClient()
+     ok_count = err_count = 0
+ 
+     def probe(title: str, api: str, **payload):
+--- a/README.md
++++ b/README.md
+@@ -1,4 +1,12 @@
++> **2026-10-28 安全接入更新**：令牌服务必须配置 API Key、`TOKEN_TENANT_ID`、
++> `TOKEN_ENCRYPTION_KEY_FILE`、`TOKEN_KEY_VERSION`；未配置时拒绝启动。
++> 旧明文文件不会自动读取或覆盖，请先停服，按 `docs/token-security.md` 显式迁移。
++> 同一应用只部署一个令牌托管进程；所有业务进程访问其鉴权 HTTP 入口。
++> 多机、网络文件系统和多个独立数据目录部署不受此进程锁保护，禁止据此横向扩容。
++
+ # 微信小店 access_token 自动续约服务
++
++SDK 默认通过 `WX_TOKEN_SERVICE_URL` 与 `WX_TOKEN_API_KEY` 使用托管入口；直连仅供显式 `allow_direct_token=True` 的独立工具或 mock 使用。
+ 
+ 面向**商家自研模式**的 token 托管服务：启动即拉取 access_token，后台守护线程在过期前自动续约，业务系统只需一个 HTTP 请求即可随时拿到有效 token。
+ 
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -1,2 +1,3 @@
+ flask>=3.0
+ requests>=2.31
++cryptography>=43.0
+--- a/sdk/wxshop_client.py
++++ b/sdk/wxshop_client.py
+@@ -27,6 +27,8 @@
+ """
+ 
+ import logging
++import os
++from urllib.parse import urlsplit
+ import threading
+ import time
+ from typing import Any, Callable, Dict, Generator, Iterable, List, Optional, Union
+@@ -145,8 +147,10 @@
+         self._refresh_lock = threading.Lock()
+         self._token: Optional[str] = None
+         self._expires_at: float = 0.0
+-
+-    def _fetch(self, force_refresh: bool = False) -> str:
++        self._ttl = 0
++        self._generation = 0
++
++    def _fetch(self, force_refresh: bool = False) -> tuple[str, int]:
+         payload = {
+             "grant_type": "client_credential",
+             "appid": self.appid,
+@@ -162,30 +166,38 @@
+         errcode = data.get("errcode", 0) or 0
+         if errcode != 0 or "access_token" not in data:
+             raise WxShopApiError(errcode, data.get("errmsg", ""), api="stable_token", response=data)
+-        return data["access_token"]
++        ttl = data.get("expires_in")
++        if type(ttl) is not int or ttl <= 0:
++            raise WxShopError("stable_token 返回无效 expires_in", api="stable_token")
++        return data["access_token"], ttl
+ 
+     def get_token(self) -> str:
+         with self._lock:
+-            if self._token and time.time() < self._expires_at - self.token_margin:
++            if self._token and time.time() < self._expires_at - min(self.token_margin, self._ttl * 0.5):
+                 return self._token
+-        return self.refresh()
+-
+-    def refresh(self) -> str:
++        return self.refresh(_only_if_needed=True)
++
++    def refresh(self, *, _only_if_needed=False) -> str:
+         """强制换新 token（并发下只放行一次，其余等待后复用结果）。"""
++        with self._lock:
++            previous = self._generation
+         if not self._refresh_lock.acquire(timeout=30):
++            raise WxShopError("等待 token 刷新超时", api="stable_token")
++        try:
+             with self._lock:
+-                if self._token:
++                if (self._token is not None and time.time() < self._expires_at
++                        and (self._generation != previous or (_only_if_needed
++                             and time.time() < self._expires_at - min(self.token_margin, self._ttl * 0.5)))):
+                     return self._token
+-            raise WxShopError("等待 token 刷新超时", api="stable_token")
+-        try:
+-            token = self._fetch(force_refresh=False)
++            started = time.time()
++            token, ttl = self._fetch(force_refresh=False)
++            if started + ttl <= time.time():
++                raise WxShopError("stable_token 响应到达时已过期", api="stable_token")
+             with self._lock:
+                 self._token = token
+-                # stable_token 有效期 7200s；重新拉一次确认剩余时间的成本不划算，
+-                # 保守按 7200 - margin 计，配合后台续约不会用到临界值
+-                self._expires_at = time.time() + 7200
+-            log.info("token 已刷新（直连模式），有效期至 %s",
+-                     time.strftime("%H:%M:%S", time.localtime(self._expires_at)))
++                self._ttl = ttl
++                self._generation += 1
++                self._expires_at = started + ttl
+             return token
+         finally:
+             self._refresh_lock.release()
+@@ -197,7 +209,7 @@
+                 time.sleep(interval)
+                 try:
+                     with self._lock:
+-                        need = not self._token or time.time() >= self._expires_at - self.token_margin
++                        need = not self._token or time.time() >= self._expires_at - min(self.token_margin, self._ttl * 0.5)
+                     if need:
+                         self.refresh()
+                 except Exception:  # noqa: BLE001
+@@ -215,6 +227,12 @@
+     """
+ 
+     def __init__(self, service_url: str, *, api_key: str = "", timeout: int = 10):
++        parsed = urlsplit(service_url)
++        if (not api_key or not parsed.hostname or parsed.username or parsed.password
++                or parsed.query or parsed.fragment
++                or not (parsed.scheme == "https" or (parsed.scheme == "http"
++                        and parsed.hostname in ("127.0.0.1", "localhost", "::1")))):
++            raise WxShopError("需要鉴权密钥及 HTTPS（或本机回环）令牌服务地址")
+         self.url = service_url.rstrip("/") + "/api/token?raw=1"
+         self.api_key = api_key
+         self.timeout = timeout
+@@ -248,7 +266,7 @@
+     两种典型用法：
+ 
+     # 1) 一次性脚本：直连 token
+-    client = WxShopClient(appid="wx...", appsecret="...")
++    client = WxShopClient(appid="wx...", appsecret="...", allow_direct_token=True)
+     orders = client.get_order_list(start_time=..., end_time=...)
+ 
+     # 2) 长驻服务：token 走本地 token 服务（推荐，天然解决并发抢锁）
+@@ -256,7 +274,7 @@
+                           token_service_key="your-key")
+ 
+     # 3) 联调：指向本地 mock
+-    client = WxShopClient(appid="wxmock", appsecret="mock",
++    client = WxShopClient(appid="wxmock", appsecret="mock", allow_direct_token=True,
+                           base_url="http://127.0.0.1:18081")
+     """
+ 
+@@ -270,6 +288,7 @@
+         base_url: str = DEFAULT_BASE_URL,
+         token_service_url: Optional[str] = None,
+         token_service_key: str = "",
++        allow_direct_token: bool = False,
+         timeout: int = 10,
+         token_margin: int = 300,
+         auto_refresh_token: bool = True,
+@@ -279,6 +298,9 @@
+         self.timeout = timeout
+         self.auto_refresh_token = auto_refresh_token
+ 
++        if not allow_direct_token:
++            token_service_url = token_service_url or os.environ.get("WX_TOKEN_SERVICE_URL", "http://127.0.0.1:8080")
++            token_service_key = token_service_key or os.environ.get("WX_TOKEN_API_KEY", "")
+         if token_service_url:
+             self.token_provider = ServiceTokenProvider(token_service_url, api_key=token_service_key)
+             self._owns_token = False  # 服务模式下不自己强刷
+@@ -500,7 +522,7 @@
+ 
+ if __name__ == "__main__":
+     logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
+-    c = WxShopClient(appid="wx-demo", appsecret="demo-secret",
++    c = WxShopClient(appid="wx-demo", appsecret="demo-secret", allow_direct_token=True,
+                      base_url="http://127.0.0.1:18081")
+     print("token:", c.token())
+     print("ping:", c.ping())
+--- a/services/wx_token_service.py
++++ b/services/wx_token_service.py
+@@ -19,6 +19,8 @@
+ """
+ 
+ import logging
++import secrets
++import atexit
+ import os
+ import sys
+ import threading
+@@ -32,6 +34,7 @@
+ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # 项目根目录，确保 cache 包可导入
+ 
+ from cache.token_cache import AccessTokenCache, TokenCacheError
++from cache.security import ProcessOwner
+ 
+ PROJECT_ROOT = Path(__file__).resolve().parents[1]
+ 
+@@ -101,6 +104,13 @@
+ FORCE_MIN_INTERVAL = _env_int("WX_TOKEN_FORCE_MIN_INTERVAL", 30)   # 强制刷新最小间隔（秒）
+ FORCE_DAILY_LIMIT = _env_int("WX_TOKEN_FORCE_DAILY_LIMIT", 20)     # 强制刷新 24h 内次数上限
+ 
++if not API_KEY:
++    raise RuntimeError("必须配置 WX_TOKEN_API_KEY，拒绝启动无鉴权令牌入口")
++if not CACHE_FILE:
++    raise RuntimeError("必须配置 WX_TOKEN_CACHE_FILE，以确定唯一托管入口和持久化位置")
++_OWNER = ProcessOwner(str(Path(CACHE_FILE).resolve()) + ".owner.lock").acquire()
++atexit.register(_OWNER.close)
++
+ ERR_HINTS = {
+     -1: "系统繁忙，请稍候再试",
+     40002: "grant_type 不合法，必须是 client_credential",
+@@ -208,14 +218,18 @@
+ 
+ 
+ def _authorized() -> bool:
+-    if not API_KEY:
+-        return True
+-    return request.headers.get("X-API-Key", "") == API_KEY
++    return bool(API_KEY) and secrets.compare_digest(request.headers.get("X-API-Key", ""), API_KEY)
+ 
+ 
+ # --------------------------------------------------------------------------- #
+ # HTTP 接口
+ # --------------------------------------------------------------------------- #
++
++
++@app.after_request
++def private_response(response):
++    response.headers["Cache-Control"] = "no-store"
++    return response
+ 
+ 
+ @app.get("/api/token")
+--- /dev/null
++++ b/tests/security_fixture.py
+@@ -0,0 +1,14 @@
++"""Ephemeral synthetic keys, never load or modify live runtime credentials."""
++import base64
++import json
++import os
++import tempfile
++from pathlib import Path
++
++_TMP = tempfile.TemporaryDirectory(prefix="token-security-test-")
++KEY_FILE = Path(_TMP.name) / "keys.json"
++KEY_FILE.write_text(json.dumps({"test-v1": base64.b64encode(b"T" * 32).decode()}))
++
++def configure():
++    os.environ.update(TOKEN_ENCRYPTION_KEY_FILE=str(KEY_FILE), TOKEN_KEY_VERSION="test-v1",
++                      TOKEN_TENANT_ID="test-tenant")
+--- a/tests/smoke_test.py
++++ b/tests/smoke_test.py
+@@ -13,6 +13,8 @@
+ """
+ 
+ import os
++import json
++import base64
+ import socket
+ import subprocess
+ import sys
+@@ -70,7 +72,11 @@
+         return 2
+ 
+     tmp = Path(tempfile.mkdtemp(prefix="wxtoken_"))
++    key_file = tmp / "keys.json"
++    key_file.write_text(json.dumps({"test-v1": base64.b64encode(b"T" * 32).decode()}))
+     env = dict(os.environ)
++    env.update(TOKEN_ENCRYPTION_KEY_FILE=str(key_file), TOKEN_KEY_VERSION="test-v1",
++               TOKEN_TENANT_ID="test-tenant")
+     env.update({
+         "WX_APPID": "wxmockappid0001",
+         "WX_SECRET": "mocksecret0001",
+--- a/tests/test_dashboard_collector.py
++++ b/tests/test_dashboard_collector.py
+@@ -9,6 +9,7 @@
+ import sys
+ import tempfile
+ import unittest
++from unittest.mock import patch
+ from datetime import datetime, timedelta
+ from pathlib import Path
+ 
+@@ -33,6 +34,12 @@
+ 
+ 
+ class PureFunctionTests(unittest.TestCase):
++    def setUp(self):
++        fixed = day_strings(3, end=datetime(2026, 10, 21))
++        patcher = patch("dashboard.collect_data.day_strings", return_value=fixed)
++        patcher.start()
++        self.addCleanup(patcher.stop)
++
+ 
+     def test_to_int(self):
+         self.assertEqual(to_int("123"), 123)
+@@ -139,6 +146,12 @@
+ 
+ 
+ class SnapshotBuildTests(unittest.TestCase):
++    def setUp(self):
++        fixed = day_strings(3, end=datetime(2026, 10, 21))
++        patcher = patch("dashboard.collect_data.day_strings", return_value=fixed)
++        patcher.start()
++        self.addCleanup(patcher.stop)
++
+     """_build_snapshot 聚合逻辑（合成数据，不触网）。"""
+ 
+     def _make_collector(self, days=3):
+--- /dev/null
++++ b/tests/test_security.py
+@@ -0,0 +1,126 @@
++import json
++import os
++import subprocess
++import sys
++import tempfile
++import unittest
++from pathlib import Path
++from unittest.mock import patch
++from cache.security import SecureJSON, ProcessOwner, LegacyPlaintextError
++from tests.security_fixture import KEY_FILE
++
++
++class SecurityTests(unittest.TestCase):
++    def setUp(self):
++        self.tmp = tempfile.TemporaryDirectory()
++        self.addCleanup(self.tmp.cleanup)
++        self.path = Path(self.tmp.name) / "token.json"
++        env = patch.dict(os.environ, TOKEN_ENCRYPTION_KEY_FILE=str(KEY_FILE),
++                         TOKEN_KEY_VERSION="test-v1", TOKEN_TENANT_ID="tenant-one")
++        env.start()
++        self.addCleanup(env.stop)
++
++    def test_roundtrip_no_plaintext(self):
++        cipher = SecureJSON("wxshop:app-one")
++        cipher.write(self.path, {"access_token": "synthetic-token", "refresh_token": "synthetic-refresh"})
++        raw = self.path.read_text()
++        self.assertNotIn("synthetic-token", raw)
++        self.assertNotIn("synthetic-refresh", raw)
++        self.assertEqual(json.loads(raw)["key_version"], "test-v1")
++        self.assertEqual(cipher.read(self.path)["access_token"], "synthetic-token")
++
++    def test_wrong_tenant_rejected(self):
++        SecureJSON("app-one").write(self.path, {"token": "synthetic"})
++        with patch.dict(os.environ, TOKEN_TENANT_ID="tenant-two"):
++            with self.assertRaises(RuntimeError):
++                SecureJSON("app-one").read(self.path)
++
++    def test_wrong_application_rejected(self):
++        SecureJSON("app-one").write(self.path, {"token": "synthetic"})
++        with self.assertRaises(RuntimeError):
++            SecureJSON("app-two").read(self.path)
++
++    def test_tampering_rejected(self):
++        cipher = SecureJSON("app")
++        cipher.write(self.path, {"token": "synthetic"})
++        data = json.loads(self.path.read_text())
++        data["ciphertext"] = "AAAA"
++        self.path.write_text(json.dumps(data))
++        with self.assertRaises(RuntimeError):
++            cipher.read(self.path)
++
++    def test_unknown_version_rejected(self):
++        cipher = SecureJSON("app")
++        cipher.write(self.path, {"token": "synthetic"})
++        data = json.loads(self.path.read_text())
++        data["key_version"] = "missing"
++        self.path.write_text(json.dumps(data))
++        with self.assertRaises(RuntimeError):
++            cipher.read(self.path)
++
++    def test_legacy_plaintext_requires_explicit_migration(self):
++        raw = '{"token":"synthetic"}'
++        self.path.write_text(raw)
++        with self.assertRaises(LegacyPlaintextError):
++            SecureJSON("app").read(self.path)
++        self.assertEqual(self.path.read_text(), raw)
++
++    def test_missing_key_configuration_rejected(self):
++        with patch.dict(os.environ, TOKEN_ENCRYPTION_KEY_FILE=""):
++            with self.assertRaises(RuntimeError):
++                SecureJSON("app")
++
++    def test_new_nonce_for_each_write(self):
++        cipher = SecureJSON("app")
++        cipher.write(self.path, {"token": "synthetic"})
++        old = self.path.read_text()
++        cipher.write(self.path, {"token": "synthetic"})
++        self.assertNotEqual(self.path.read_text(), old)
++
++    def test_process_owner_exclusion_and_release(self):
++        lock = self.path.with_suffix(".lock")
++        owner = ProcessOwner(lock).acquire()
++        script = "from cache.security import ProcessOwner; import sys; ProcessOwner(sys.argv[1]).acquire()"
++        try:
++            result = subprocess.run([sys.executable, "-c", script, str(lock)],
++                                    capture_output=True, timeout=10)
++            self.assertNotEqual(result.returncode, 0)
++            self.assertIn("RuntimeError", result.stderr.decode())
++        finally:
++            owner.close()
++        result = subprocess.run([sys.executable, "-c", script, str(lock)], capture_output=True, timeout=10)
++        self.assertEqual(result.returncode, 0, result.stderr.decode())
++
++    def test_key_initialization_and_offline_migration(self):
++        from tools.manage_security import init_key, migrate
++        key = Path(self.tmp.name) / "new-keys.json"
++        init_key(key, "v2")
++        with self.assertRaises(FileExistsError):
++            init_key(key, "v2")
++        self.path.write_text('{"token":"synthetic", "appid":"app"}')
++        with patch.dict(os.environ, TOKEN_ENCRYPTION_KEY_FILE=str(key), TOKEN_KEY_VERSION="v2"):
++            migrate(self.path, "access-token:app", str(self.path) + ".lock")
++            self.assertEqual(SecureJSON("access-token:app").read(self.path)["token"], "synthetic")
++            self.assertNotIn("synthetic", self.path.read_text())
++
++    def test_migration_refuses_live_owner_without_touching_file(self):
++        from tools.manage_security import migrate
++        raw = '{"token":"synthetic"}'
++        self.path.write_text(raw)
++        owner = ProcessOwner(str(self.path) + ".lock").acquire()
++        try:
++            with self.assertRaises(RuntimeError):
++                migrate(self.path, "app", str(self.path) + ".lock")
++            self.assertEqual(self.path.read_text(), raw)
++        finally:
++            owner.close()
++
++    def test_service_refuses_startup_without_api_key(self):
++        root = Path(__file__).resolve().parents[1]
++        service = next((root / "services").glob("*_token_service.py"))
++        env = dict(os.environ)
++        env.update(ADQ_TOKEN_API_KEY="", WX_TOKEN_API_KEY="")
++        result = subprocess.run([sys.executable, str(service)], env=env,
++                                capture_output=True, timeout=10)
++        self.assertNotEqual(result.returncode, 0)
++        self.assertIn(b"TOKEN_API_KEY", result.stderr)
+--- a/tests/test_token_cache.py
++++ b/tests/test_token_cache.py
+@@ -25,6 +25,9 @@
+ from pathlib import Path
+ 
+ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # 项目根目录，确保 cache 包可导入
++
++from tests.security_fixture import configure
++configure()
+ 
+ from cache.token_cache import AccessTokenCache, TokenCacheError
+ 
+@@ -259,10 +262,10 @@
+ 
+         # appid 不一致：不复用
+         fetcher3 = FakeFetcher(self.clock, ttl=7200)
+-        cache3 = AccessTokenCache(fetcher3, margin=300, persist_path=path,
+-                                  appid="wxother9999", clock=self.clock)
+-        cache3.get()
+-        self.assertEqual(fetcher3.calls, 1)
++        with self.assertRaises(RuntimeError):
++            AccessTokenCache(fetcher3, margin=300, persist_path=path,
++                             appid="wxother9999", clock=self.clock)
++        self.assertEqual(fetcher3.calls, 0)
+ 
+     def test_expired_persisted_token_not_reused(self):
+         path = str(Path(self.tmpdir.name) / "token_cache.json")
+@@ -284,14 +287,14 @@
+         self.assertEqual(cache2.get(), "reloaded-0001")
+         self.assertEqual(fetcher2.calls, 1)
+ 
+-    def test_corrupted_file_ignored(self):
++    def test_corrupted_file_rejected(self):
+         path = Path(self.tmpdir.name) / "token_cache.json"
+         path.write_text("{not json", encoding="utf-8")
+         fetcher = FakeFetcher(self.clock, ttl=7200)
+-        cache = AccessTokenCache(fetcher, margin=300, persist_path=str(path),
+-                                 appid="wxappid0001", clock=self.clock)
+-        self.assertEqual(cache.get(), "token-0001")
+-        self.assertEqual(fetcher.calls, 1)
++        with self.assertRaises(ValueError):
++            AccessTokenCache(fetcher, margin=300, persist_path=str(path),
++                             appid="wxappid0001", clock=self.clock)
++        self.assertEqual(fetcher.calls, 0)
+ 
+ 
+ class TestClockRollback(TokenCacheTestBase):
+--- /dev/null
++++ b/tests/test_token_provider_security.py
+@@ -0,0 +1,56 @@
++import os
++import threading
++import time
++import unittest
++from concurrent.futures import ThreadPoolExecutor
++from unittest.mock import Mock, patch
++from sdk.wxshop_client import DirectTokenProvider, ServiceTokenProvider, WxShopClient, WxShopError
++
++
++class ProviderSecurityTests(unittest.TestCase):
++    def test_default_uses_service_and_does_not_fetch_direct_token(self):
++        with patch.dict(os.environ, WX_TOKEN_API_KEY="synthetic", WX_TOKEN_SERVICE_URL="http://127.0.0.1:8080"), \
++             patch("sdk.wxshop_client.requests.post") as post:
++            client = WxShopClient(appid="app", appsecret="synthetic-secret")
++            self.assertIsInstance(client.token_provider, ServiceTokenProvider)
++            post.assert_not_called()
++
++    def test_service_requires_key_and_secure_transport(self):
++        for url, key in (("http://127.0.0.1:8080", ""), ("http://remote.example.test", "key")):
++            with self.assertRaises(WxShopError):
++                ServiceTokenProvider(url, api_key=key)
++
++    def test_direct_provider_respects_actual_short_ttl(self):
++        provider = DirectTokenProvider("app", "synthetic", base_url="https://api.example.test")
++        response = Mock()
++        response.json.return_value = {"access_token":"token", "expires_in":20}
++        with patch("sdk.wxshop_client.time.time", return_value=100), \
++             patch("sdk.wxshop_client.requests.post", return_value=response) as post:
++            self.assertEqual(provider.get_token(), "token")
++            self.assertEqual(provider._expires_at, 120)
++            self.assertEqual(provider.get_token(), "token")
++            self.assertEqual(post.call_count, 1)
++        with patch("sdk.wxshop_client.time.time", return_value=111), \
++             patch("sdk.wxshop_client.requests.post", return_value=response) as post:
++            provider.get_token()
++            self.assertEqual(post.call_count, 1)
++
++    def test_invalid_ttl_rejected(self):
++        for ttl in (0, -1, None, "7200", True):
++            provider = DirectTokenProvider("app", "synthetic", base_url="https://api.example.test")
++            response = Mock()
++            response.json.return_value = {"access_token":"token", "expires_in":ttl}
++            with patch("sdk.wxshop_client.requests.post", return_value=response):
++                with self.assertRaises(WxShopError):
++                    provider.get_token()
++
++    def test_concurrent_direct_get_coalesces_even_when_token_unchanged(self):
++        provider = DirectTokenProvider("app", "synthetic", base_url="https://api.example.test")
++        def fetch(force_refresh=False):
++            time.sleep(0.02)
++            return "same-stable-token", 7200
++        with patch.object(provider, "_fetch", side_effect=fetch) as get:
++            with ThreadPoolExecutor(max_workers=20) as pool:
++                values = list(pool.map(lambda _: provider.get_token(), range(20)))
++            self.assertEqual(get.call_count, 1)
++            self.assertEqual(set(values), {"same-stable-token"})
+--- a/tests/test_wxshop_sdk.py
++++ b/tests/test_wxshop_sdk.py
+@@ -102,7 +102,7 @@
+ def make_client(responses=None):
+     """构造指向假会话的客户端（不触网）。"""
+     session = FakeSession(responses)
+-    client = WxShopClient(appid="wx-test", appsecret="secret-test", session=session)
++    client = WxShopClient(allow_direct_token=True, appid="wx-test", appsecret="secret-test", session=session)
+     client.token_provider = FakeTokenProvider()
+     return client, session
+ 
+--- /dev/null
++++ b/tools/manage_security.py
+@@ -0,0 +1,71 @@
++"""Explicit offline key initialization / plaintext migration. Never prints secrets."""
++import argparse
++import base64
++import csv
++import io
++import json
++import os
++import secrets
++import subprocess
++import sys
++from pathlib import Path
++sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
++from cache.security import ProcessOwner, SecureJSON
++
++
++def init_key(path, version):
++    path = Path(path)
++    path.parent.mkdir(parents=True, exist_ok=True)
++    fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
++    try:
++        # Tighten Windows ACL before writing key material (chmod alone is insufficient).
++        if os.name == "nt":
++            result = subprocess.run(["whoami", "/user", "/fo", "csv", "/nh"],
++                                    check=True, capture_output=True, text=True)
++            sid = next(csv.reader(io.StringIO(result.stdout)))[1]
++            subprocess.run(["icacls", str(path), "/inheritance:r", "/grant:r", "*" + sid + ":(F)"],
++                           check=True, capture_output=True)
++        with os.fdopen(fd, "w", encoding="utf-8") as stream:
++            fd = None
++            json.dump({version: base64.b64encode(secrets.token_bytes(32)).decode()}, stream)
++    finally:
++        if fd is not None:
++            os.close(fd)
++
++
++def migrate(path, context, owner_lock):
++    path = Path(path)
++    cipher = SecureJSON(context)
++    owner = ProcessOwner(owner_lock).acquire()
++    try:
++        payload = json.loads(path.read_text(encoding="utf-8"))
++        if payload.get("format") == "token-aesgcm-v1":
++            payload = cipher.read(path)  # Also permits explicit re-encryption to current key version.
++        elif not (isinstance(payload, dict) and ("accounts" in payload or "token" in payload)):
++            raise RuntimeError("源文件不是已知凭据或令牌快照，拒绝覆盖")
++        cipher.write(path, payload)
++        cipher.read(path)  # Authenticate the replaced envelope before reporting success.
++    finally:
++        owner.close()
++
++
++def main():
++    parser = argparse.ArgumentParser(description=__doc__)
++    commands = parser.add_subparsers(dest="command", required=True)
++    init = commands.add_parser("init-key")
++    init.add_argument("path")
++    init.add_argument("--version", default="v1")
++    migration = commands.add_parser("migrate")
++    migration.add_argument("path")
++    migration.add_argument("--context", required=True)
++    migration.add_argument("--owner-lock", required=True)
++    args = parser.parse_args()
++    if args.command == "init-key":
++        init_key(args.path, args.version)
++    else:
++        migrate(args.path, args.context, args.owner_lock)
++    print("完成；未输出密钥或令牌")
++
++
++if __name__ == "__main__":
++    main()

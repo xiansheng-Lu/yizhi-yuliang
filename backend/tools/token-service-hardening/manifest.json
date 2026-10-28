@@ -1,0 +1,179 @@
+{
+  "format": 1,
+  "projects": {
+    "tencent-adq": [
+      {
+        "path": ".env.example",
+        "before": "6efde70742053a8ac3b9ce9881de6bdceea446611c66e218b2538e7127764923",
+        "after": "e4f884461bb514689a0e4be297f1c14901b2a8d265c96fc16bf35ce13e35d788"
+      },
+      {
+        "path": ".gitignore",
+        "before": "17a012bd61befe701cec0be8de1d38d345f4218a1b18285beb28e715a34a75ca",
+        "after": "f91ad9c618a0b3f20bc7138489091c6eee207232a1c856ba347f378299361712"
+      },
+      {
+        "path": "cache/security.py",
+        "before": null,
+        "after": "5f450a883c5f2f18a05075a2cc0cb991c345dda885ef802886a7a8f038effaf7"
+      },
+      {
+        "path": "cache/token_cache.py",
+        "before": "643108dd6b4fdd05392d2f9537c87c03c3fe4cd29e73beb4a2a861ce19f27cd5",
+        "after": "2ef3d66b418c86572e512faa028ff64deb004695005495666768f73e8e39605b"
+      },
+      {
+        "path": "docs/token-security.md",
+        "before": null,
+        "after": "1b94660f043096f5deda3287233f8cf52ec36d0673f64746193212561e3eed67"
+      },
+      {
+        "path": "README.md",
+        "before": "87f2d63abdae8c79eec5ff28e02516c1df482bb12049744248a019300a3d07dd",
+        "after": "6e4653572eca90f79a10055d1198fb142fb24115a88f307816684cd207bd401a"
+      },
+      {
+        "path": "requirements.txt",
+        "before": "04df4e6bfd986bdcfc399c95746b5aa763809b39c2d3a2f5f48d6bee0139b3aa",
+        "after": "b6f8c3526c17533d616bb31d2b16224f4cdc8c914262600d375b9dfebb6417c2"
+      },
+      {
+        "path": "services/adq_token_service.py",
+        "before": "5d190e9aa107e0d7670c8a5e83a6c13304841e118c21f58b0c5fa4732304e41a",
+        "after": "7767e7f652d7a49b517f831ff1700799f8c7c4e07bf9931c77b70443829e0fb2"
+      },
+      {
+        "path": "tests/security_fixture.py",
+        "before": null,
+        "after": "24aa7929bd29009e05aade354c88a0018003e2a195f8da9abd45929ee591e952"
+      },
+      {
+        "path": "tests/smoke_test.py",
+        "before": "9f44028a231a62ee1de318b7ee6f2ea6b29ababcf3483c2ca31bc13a17b7dbbe",
+        "after": "d4f7a752c4d3983dba6fff2c55077e7cf631d94f7d0ec59cc8c417a8fe5af0a5"
+      },
+      {
+        "path": "tests/test_oauth_security.py",
+        "before": null,
+        "after": "618af2c44840da0b7d1538fc5adb2eae49a53b4b702f60d1db142e9d9efc0547"
+      },
+      {
+        "path": "tests/test_security.py",
+        "before": null,
+        "after": "816d839d619294d56a9c4079cf332321ac4d66ab92a21bab6cc675dc2e2c04c8"
+      },
+      {
+        "path": "tests/test_token_cache.py",
+        "before": "fabb3ff1de081df2dd18c27b1dbc26bc2fb149b14f1674b5f29883700d8e2e6a",
+        "after": "261f5d25fe743fdd373d03b552ee71d82da9876d9605469e6f70fea00ac458a0"
+      },
+      {
+        "path": "tools/manage_security.py",
+        "before": null,
+        "after": "83aceb638db54a1d5e9d897e0a0a09633dce8dc22fe60fe1f3864d0d6a725c36"
+      }
+    ],
+    "wx_shop": [
+      {
+        "path": ".env.example",
+        "before": "072b395ec5eb35175d78d4bb28ece416653af7275638ffa76d6e8625d8ca418a",
+        "after": "06396a2e4cb696b28803e59c32e95daeaea31e6a3beb3fc16a822de8cc29c421"
+      },
+      {
+        "path": ".gitignore",
+        "before": "37ef27d924ef47c306af0f1658afe55555cf63b3f22fda1c432b64f49c56cfd5",
+        "after": "465cbf99d6fb95fe39656972cbb0d10c25150b32fb9aba176ecfc049a95c6ac4"
+      },
+      {
+        "path": "cache/security.py",
+        "before": null,
+        "after": "5f450a883c5f2f18a05075a2cc0cb991c345dda885ef802886a7a8f038effaf7"
+      },
+      {
+        "path": "cache/token_cache.py",
+        "before": "751722e8b13305199a9b3581b04495d532fd0a1a4e181dfda484f10a746454b2",
+        "after": "a7f36210b919a3dfd50d08883f447746ec6111166ab62ef5f5e572ffe4e33cbe"
+      },
+      {
+        "path": "dashboard/collect_data.py",
+        "before": "dd13d25e184cd22410f9b87359492c11de952d13483dbba0cc821d667d289ed6",
+        "after": "d9974da24ed35fa2d4f4d733fa836bdb444e4e1292d9774307692a900696fa6c"
+      },
+      {
+        "path": "docs/token-security.md",
+        "before": null,
+        "after": "1b94660f043096f5deda3287233f8cf52ec36d0673f64746193212561e3eed67"
+      },
+      {
+        "path": "examples/demo_wxshop.py",
+        "before": "d2c05e92ce64f7871ddb4029eea3b9a282959de4b8dee431be7e4fd1bb9301d8",
+        "after": "9bc363c7924fd7b120b25b7ae87961b021e5e8eb9df54751529ecfc77d529498"
+      },
+      {
+        "path": "examples/probe_readonly.py",
+        "before": "7f1a2edb46e3504ab1d52141a574f02b8d1d733681e5cb6c6732e22ecd3a8724",
+        "after": "b3a2a2a5df8ecb912c1c198a6e5eabbb7b3cd91a5f8dc1deff6837e79fe1055a"
+      },
+      {
+        "path": "README.md",
+        "before": "bbadedc40f648c6c73fdad84ef856b74c7479756840cb9fc0c5041af8e0d1b00",
+        "after": "f22cc86176ca4cd05414e1df595800c08b575b4547d8c72c9a80556d033356f7"
+      },
+      {
+        "path": "requirements.txt",
+        "before": "04df4e6bfd986bdcfc399c95746b5aa763809b39c2d3a2f5f48d6bee0139b3aa",
+        "after": "b6f8c3526c17533d616bb31d2b16224f4cdc8c914262600d375b9dfebb6417c2"
+      },
+      {
+        "path": "sdk/wxshop_client.py",
+        "before": "8965f612ac2decc5020df58929c6c17a3d388b23d78b5e2fd4c0a44a42de21bf",
+        "after": "f8dac0f7e752d17116d091f63bcfacd29afb9c9f08bbcb6c1c5ea2039754b5e2"
+      },
+      {
+        "path": "services/wx_token_service.py",
+        "before": "acaa3028805fe5019bf07f582bfe36f45dca830339454c8e21e48aa7210d498e",
+        "after": "5ab571ea93d485702bbf769671ed556c7a1d74e612cbd32c31cfd0a5f5d15b17"
+      },
+      {
+        "path": "tests/security_fixture.py",
+        "before": null,
+        "after": "24aa7929bd29009e05aade354c88a0018003e2a195f8da9abd45929ee591e952"
+      },
+      {
+        "path": "tests/smoke_test.py",
+        "before": "72271135efda3824719a9aaa44258862d326eee4d6ff0193e0ad648dbc7e30f7",
+        "after": "be9dbb530ed6895f973eb1c38ffa418af8d0bce531de79e53e2fa813f7055a8f"
+      },
+      {
+        "path": "tests/test_dashboard_collector.py",
+        "before": "09f0843aeaeea68a53f579d524c1d7e249d91f7ab8186814710fb8e16f81c381",
+        "after": "92412bac17dfd31c5ab0ef15e42c01092cd39304f41405e146ad3ab625c953eb"
+      },
+      {
+        "path": "tests/test_security.py",
+        "before": null,
+        "after": "816d839d619294d56a9c4079cf332321ac4d66ab92a21bab6cc675dc2e2c04c8"
+      },
+      {
+        "path": "tests/test_token_cache.py",
+        "before": "fabb3ff1de081df2dd18c27b1dbc26bc2fb149b14f1674b5f29883700d8e2e6a",
+        "after": "261f5d25fe743fdd373d03b552ee71d82da9876d9605469e6f70fea00ac458a0"
+      },
+      {
+        "path": "tests/test_token_provider_security.py",
+        "before": null,
+        "after": "c5cdfca8f329765a2b29fef0f2bf11401088cb77b33302bd3de33b2fe5b05522"
+      },
+      {
+        "path": "tests/test_wxshop_sdk.py",
+        "before": "c3ade3fa8b2a9fca261cd5350982b09a9505094990fe4440f31d36126dbbc93f",
+        "after": "37eda69410a754c0d4b34756162ad5f83a1c10aa9c3ab7df83353c323403d1e5"
+      },
+      {
+        "path": "tools/manage_security.py",
+        "before": null,
+        "after": "83aceb638db54a1d5e9d897e0a0a09633dce8dc22fe60fe1f3864d0d6a725c36"
+      }
+    ]
+  }
+}

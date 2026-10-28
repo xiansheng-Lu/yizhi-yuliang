@@ -1,0 +1,22 @@
+{
+  "date": "2026-10-28",
+  "scope": "synthetic credentials and local mock only",
+  "live_credentials_modified": false,
+  "live_services_restarted": false,
+  "results": {
+    "tencent-adq": {
+      "unit_tests": 37,
+      "unit_passed": 37,
+      "mock_assertions": 22,
+      "mock_passed": 22
+    },
+    "wx_shop": {
+      "unit_tests": 77,
+      "unit_passed": 77,
+      "mock_assertions": 13,
+      "mock_passed": 13
+    }
+  },
+  "patch_replay": "both patches applied to clean baseline copies and all after hashes verified",
+  "source_hashes": "manifest.json"
+}

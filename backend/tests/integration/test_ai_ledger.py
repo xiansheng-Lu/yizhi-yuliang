@@ -311,3 +311,83 @@ def test_m2_01a_disabled_prompt_cannot_start_call(ai_data: dict[str, Any]) -> No
         )
     with pytest.raises(DBAPIError):
         ai_data["ledger"].begin(ai_data["request"])
+
+
+@pytest.mark.parametrize("legacy_finish", [False, True])
+def test_same_tenant_ledger_uow_cannot_impersonate_another_actor(
+    ai_data: dict[str, Any], legacy_finish: bool
+) -> None:
+    ledger: InvocationLedger = ai_data["ledger"]
+    user, member = uuid4(), uuid4()
+    with psycopg.connect(ai_data["api"]["database"]["migration"]) as control:
+        control.execute("SET LOCAL ROLE app_owner")
+        control.execute(
+            "INSERT INTO users(id,email,display_name) VALUES(%s,%s,'Synthetic actor B')",
+            [user, f"{user}@example.invalid"],
+        )
+        control.execute(
+            "INSERT INTO memberships(id,tenant_id,user_id) VALUES(%s,%s,%s)",
+            [member, ledger.identity.tenant_id, user],
+        )
+    other = InvocationLedger(
+        ledger.engine, VerifiedIdentity(ledger.identity.tenant_id, member, user)
+    )
+    request = ai_data["request"].model_copy(update=dict(call_id=uuid4()))
+    with pytest.raises(DBAPIError) as denied:
+        with business_transaction(ledger.engine, ledger.identity) as session:
+            other.begin_in_transaction(session, request)
+    assert getattr(denied.value.orig, "sqlstate", None) == "42501"
+    other.begin(request)  # The exact same member and config are valid in B's own context.
+    with pytest.raises(DBAPIError) as denied:
+        with business_transaction(ledger.engine, ledger.identity) as session:
+            if legacy_finish:
+                session.execute(
+                    text(
+                        "SELECT access.ai_finish(:call,:user,'TIMEOUT','UNKNOWN','UNKNOWN',"
+                        "NULL,NULL,NULL,1,NULL,'UNKNOWN',NULL)"
+                    ),
+                    dict(call=request.call_id, user=user),
+                )
+            else:
+                other.finish_in_transaction(
+                    session, request, Completion(status="TIMEOUT", latency_ms=1)
+                )
+    assert getattr(denied.value.orig, "sqlstate", None) == "42501"
+    with business_transaction(other.engine, other.identity) as session:
+        assert (
+            session.execute(
+                text("SELECT status FROM ai_invocations WHERE call_id=:call"),
+                dict(call=request.call_id),
+            ).scalar_one()
+            == "STARTED"
+        )
+    other.finish(request, Completion(status="TIMEOUT", latency_ms=1))
+
+
+def test_ledger_uow_outer_rollback_retains_no_invocation(ai_data: dict[str, Any]) -> None:
+    ledger: InvocationLedger = ai_data["ledger"]
+    request = ai_data["request"]
+    with pytest.raises(RuntimeError, match="caller rollback"):
+        with business_transaction(ledger.engine, ledger.identity) as session:
+            ledger.begin_in_transaction(session, request)
+            ledger.finish_in_transaction(
+                session, request, Completion(status="TIMEOUT", latency_ms=1)
+            )
+            raise RuntimeError("caller rollback")
+    with business_transaction(ledger.engine, ledger.identity) as session:
+        assert (
+            session.execute(
+                text("SELECT count(*) FROM ai_invocations WHERE call_id=:call"),
+                dict(call=request.call_id),
+            ).scalar_one()
+            == 0
+        )
+        with pytest.raises(DBAPIError) as denied:
+            session.execute(
+                text(
+                    "SELECT access.ai_finish_actor_internal(:call,:user,'TIMEOUT','UNKNOWN',"
+                    "'UNKNOWN',NULL,NULL,NULL,1,NULL,'UNKNOWN',NULL)"
+                ),
+                dict(call=request.call_id, user=ledger.identity.user_id),
+            )
+        assert getattr(denied.value.orig, "sqlstate", None) == "42501"

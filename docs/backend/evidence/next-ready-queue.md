@@ -1,10 +1,10 @@
 # 最新恢复入口
 
-2026-10-28：本批SOP初始化、断点导入及规范概况已合并并推送main **591447df0a4d4b102d66143a3d5e5e4960a3be8f**，本地与远程哈希已实查一致。916集成通过、1可选重启跳过（792.45s）；893单元/契约、221源码mypy与Ruff通过。开发库0065，37相关表仅5系统模板行，其余0，迁移角色NOLOGIN。详见workflows-import-overview-verification.json。M3-17a待复核，M3-13b/M4-04仍有实际浏览器/维度/Loader缺口，不计整卡开发完成。
+2026-10-28：上一批已合并推送main **0c613c4f9dc40b87e65383844f799e59403e64ab**，远程哈希实查一致；954集成通过、1可选重启跳过（826.45s），919单元/契约及228源码mypy/Ruff通过。开发库0068，44相关表仅5系统模板，其余0，迁移角色NOLOGIN；见workflow-execution-links-verification.json。三卡整卡仍有真实生成/上传审核/全内容事件/UI等缺口，未宣布整体完成。
 
-当前本地**codex/backend-workflow-execution-links-events**已最终验证：954集成通过、1可选重启跳过（826.45s），919单元/契约、228源码mypy与Ruff通过；0066/67/68迁移及开发库0068核对通过，44相关表仅5系统模板，其余0，app_migrate NOLOGIN。三项审查缺陷均关闭并进全量。主Agent正在统一提交/合并/推送；最终远程哈希以Git实查为准。
+已立即新建本地**codex/backend-ai-content-generation**：commerce→M3-18/0069模型候选生产、beans→M3-19a/0070生成账本、reports→本地真实nginx/50TCP流SSE专项；root补CostGate/InvocationLedger同事务接口、跨actor完成槽计数公共接线及0071 job费用绑定恢复。默认不读真实模型配置、不调用真实供应商、不沿用已用6次/20分许可。源码与测试已实际落，非仅readiness。
 
-M3-17b人工执行、M3-20a交接意图、M4-09c分析/workflow事件均仅技术切片，整卡保留真实模型/生成、平台上传/审核、UI及全内容/代理负载缺口。已备下一M3-18、M3-19a和真实本地代理50连接方案，主干同步后新分支直接实际开发；仅readiness不算实现，不沿用已用尽历史付费授权。
+本批1009集成通过/1可选重启跳过（953.14s），952单元/契约及240源码mypy/Ruff通过。0069至0072迁移实际升级，48相关表仅5系统模板其余0，迁移角色NOLOGIN。AI17/GEN31/ledger21/proxy3修后专项通过；三卡整卡仍IN_PROGRESS。待中文提交合并main推送后立即新分支继续，真实模型/供应商/平台调用0。 DB已释放，下一就绪任务只读调研完成；合并后使用新本地分支实施。
 
 用户的V8只读可空契约问题仍待答复，具体reviewable方案见resource-handoff/v8-plan-contract-gap.md。当前前端冻结契约未改，不默认选项被确认；该缺口只影响完整M1-18/V8 workspace，不阻塞上列任务。M1-18/M1-19/M3-16未实现项继续IN_PROGRESS，M3-14已技术通过待人工。
 

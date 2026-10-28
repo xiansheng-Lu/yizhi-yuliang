@@ -4,7 +4,7 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "currentFocus": "M3-17b",
+  "currentFocus": "M3-18",
   "tasks": {
     "R00-01": {
       "owner": "BE",
@@ -3098,7 +3098,7 @@
     "M3-16": {
       "owner": "BE",
       "status": "IN_PROGRESS",
-      "delivery": "共享库、真实SAVE/导入/SOP根初始化及MANUAL/REVIEW执行采纳/派生守卫已验证；实际模型与生成业务入口仍待实现，整卡IN_PROGRESS",
+      "delivery": "共享SAVE/导入/根初始化/人工执行及三短场景MODEL生产采纳守卫实际验证；GENERATION完整接入仍缺，整卡IN_PROGRESS",
       "dependencyInput": "M3-13a/M3-15a/15b实际技术基线已通过；真实生成/SOP生产者后卡接线",
       "evidence": "tasks/M3-16/README.md",
       "review": {
@@ -3114,7 +3114,11 @@
         "livePlatformCalls": 0
       },
       "sopRootEntryIntegration": "PASS_REAL_HTTP_PLANNING_ROOT_CREATE; generation and later SOP execute/accept not complete",
-      "sopExecutionIntegration": "PASS_REAL_MANUAL_EXECUTE_ACCEPT_REDO; actual GENERATION and AI_ASSISTED producer still absent"
+      "sopExecutionIntegration": "PASS_REAL_MANUAL_EXECUTE_ACCEPT_REDO_AND_THREE_AI_MODEL_SCENARIOS; full GENERATION acceptance not complete",
+      "modelEntryIntegration": {
+        "result": "PASS_THREE_LOCAL_SYNTHETIC_HTTP_SCENARIOS_REAL_PG",
+        "evidence": "tasks/M3-18/verification.json"
+      }
     },
     "M1-19": {
       "owner": "BE",
@@ -3229,7 +3233,7 @@
     "M3-17b": {
       "owner": "BE",
       "status": "IN_PROGRESS",
-      "delivery": "真实人工候选/采纳、可选skip与依赖闭包redo；V1模板兼容V2提案，缺AI/生成明确拒绝",
+      "delivery": "人工候选/采纳/skip/redo及三短场景MODEL候选生产实际通过；完整生成产物采纳/其余场景及F10仍缺",
       "dependencyInput": "M3-17a与M3-14真实技术PASS、591447d完整916集成通过；Flow同事务入口本批已实际落地待PG",
       "evidence": "tasks/M3-17b/README.md",
       "review": {
@@ -3244,6 +3248,10 @@
         "paidCalls": 0,
         "livePlatformCalls": 0,
         "combinedRegression": "workflow-execution-links-verification.json"
+      },
+      "modelProducerIntegration": {
+        "result": "PASS_THREE_LOCAL_MODEL_SCENARIOS",
+        "evidence": "tasks/M3-18/verification.json"
       }
     },
     "M3-20a": {
@@ -3269,7 +3277,7 @@
     "M4-09c": {
       "owner": "BE",
       "status": "IN_PROGRESS",
-      "delivery": "分析阶段/结果变化与workflow revision真实领域事件切片；整卡内容生成/代理/F12仍未完成",
+      "delivery": "分析/workflow真实事件及本地nginx50TCP流负载/恢复/撤权通过；全内容生成事件、生产TLS及F12仍未完成",
       "dependencyInput": "M4-03与M4-09b技术PASS；analysis真实任务/冻结结果与持久事件流已实现",
       "evidence": "tasks/M4-09c/README.md",
       "review": {
@@ -3284,6 +3292,60 @@
         "paidCalls": 0,
         "livePlatformCalls": 0,
         "combinedRegression": "workflow-execution-links-verification.json"
+      },
+      "proxyLoadVerification": {
+        "result": "PASS_LOCAL_NGINX_50_TCP_STREAMS_ONE_IDENTITY",
+        "passed": 3,
+        "seconds": 77.36,
+        "streams": 50,
+        "identities": 1,
+        "durationSeconds": 65.28865,
+        "evidence": "tasks/M4-09c/verification.json",
+        "frontendF12": "PENDING",
+        "productionTls": "NOT_RUN",
+        "combinedRegression": "ai-content-generation-verification.json"
+      }
+    },
+    "M3-18": {
+      "owner": "BE",
+      "status": "IN_PROGRESS",
+      "delivery": "三内容场景真实MODEL调用账本与候选生产/采纳、版本/费用事务/跨actor与并发专项17通过；真实模型质量、未来场景及F10仍缺，整卡IN_PROGRESS",
+      "dependencyInput": "M3-17b人工候选/采纳及M2-01b/M5-02a实际技术证据；main0c613c4完整954集成通过",
+      "evidence": "tasks/M3-18/README.md",
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F10"
+      },
+      "technicalVerification": {
+        "result": "PASS_REVIEWED_LOCAL_TECHNICAL_SLICE_COMBINED_FULL",
+        "integrationPassed": 17,
+        "seconds": 17.93,
+        "head": "0072",
+        "evidence": "tasks/M3-18/verification.json",
+        "paidCalls": 0,
+        "livePlatformCalls": 0,
+        "combinedRegression": "ai-content-generation-verification.json"
+      }
+    },
+    "M3-19a": {
+      "owner": "BE",
+      "status": "IN_PROGRESS",
+      "delivery": "IMAGE/GRAPHIC实际生成账本/可信价格/确认/唯一SENT与UNKNOWN费用查询31专项通过；真实供应商/价格及视频/F10仍缺，整卡IN_PROGRESS",
+      "dependencyInput": "M3-17b/M3-15a/M5-02a实际技术证据；默认无真实供应商价格、预算或调用许可",
+      "evidence": "tasks/M3-19a/README.md",
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F10"
+      },
+      "technicalVerification": {
+        "result": "PASS_REVIEWED_LOCAL_TECHNICAL_SLICE_COMBINED_FULL",
+        "integrationPassed": 31,
+        "seconds": 26.96,
+        "head": "0072",
+        "evidence": "tasks/M3-19a/verification.json",
+        "paidCalls": 0,
+        "livePlatformCalls": 0,
+        "combinedRegression": "ai-content-generation-verification.json"
       }
     }
   },
@@ -3396,7 +3458,7 @@
     "done": "全部适用DoD与复核通过后才记DONE",
     "offline": "离线通过不等于真实依赖、前端联调或平台验收通过"
   },
-  "nextTask": "完成本批主干同步后新分支直接开发M3-18/M3-19a及本地真实代理/50连接验收；不复用已耗尽的模型付费许可",
+  "nextTask": "技术验证已通过，中文提交并合并main推送；紧接新分支推进独立topic及其他依赖就绪切片",
   "continuation": {
     "requestedOn": "2026-10-27",
     "authorization": "持续推进后端任务卡，缺资源再找用户对接",
@@ -3404,10 +3466,10 @@
     "environment": "WSL2 Ubuntu Docker; UV_PROJECT_ENVIRONMENT=/home/lenovo/.cache/yuliang-venv",
     "latestUserRequest": "继续采用多agent模式持续开发，当前任务结束直接开启下一个任务，需要资源再找用户",
     "developmentPolicy": "缺人工/外部验收时记录并继续可独立技术准备；正式门禁、平台调用和付费仍按各自证据许可",
-    "lastCompletedTechnicalTask": "M3-17b manual execution; M3-20a intent; M4-09c analysis/workflow event slices",
-    "nextTechnicalTask": "M3-18 / M3-19a / M4-09c local proxy and 50-connection test after main sync on new branch",
+    "lastCompletedTechnicalTask": "M3-18 three MODEL scenarios/M3-19a local generation ledger/M4-09c real nginx50 stream slices; final full integration",
+    "nextTechnicalTask": "M3-18 independent content_topic prompt/system planning chain and M1-19 V9 ADGROUP read query after main sync; CAMPAIGN and full M4-04 dimensions not ready",
     "executionRules": "docs/backend/evidence/execution-rules.md",
-    "checkpoint": "最终954集成通过/1可选重启跳过（826.45s），919单元/契约（9.85s）、228源码mypy与Ruff及0066/67/68迁移Ruff通过。默认开发库0068，44相关表仅5系统模板，其余0，app_migrate NOLOGIN。三技术切片仍有实际生成/平台/前端/代理负载缺口，整卡IN_PROGRESS；待主干同步后立即下一批。",
+    "checkpoint": "本批1009集成通过/1可选重启跳过（953.14s），952单元/契约及240源码mypy/Ruff通过。0069至0072迁移实际升级，48相关表仅5系统模板其余0，迁移角色NOLOGIN。AI17/GEN31/ledger21/proxy3修后专项通过；三卡整卡仍IN_PROGRESS。待中文提交合并main推送后立即新分支继续，真实模型/供应商/平台调用0。",
     "technicalPreparationQueue": [
       "M3-18",
       "M3-19a",
@@ -3434,20 +3496,19 @@
     "integrationCheckpoint": "已整合前端frontend目录重构和M1-06/07原生适配；SSE迁移改为0040，保留0039令牌续期与资源未绑定门禁",
     "multiAgentAuthorization": "2026-10-28用户明确授权多Agent持续开发，资源阻塞单列；BE负责人不变",
     "nextReadyQueue": [
-      "M3-18",
-      "M3-19a",
-      "M4-09c:local-proxy-load"
+      "M3-18:content_topic",
+      "M1-19:adgroups query"
     ],
-    "latestVerification": "workflow-execution-links-verification.json",
-    "combinedRegression": "workflow-execution-links-verification.json",
-    "activeBranch": "codex/backend-workflow-execution-links-events",
-    "lastRemoteMain": "591447df0a4d4b102d66143a3d5e5e4960a3be8f",
+    "latestVerification": "ai-content-generation-verification.json",
+    "combinedRegression": "ai-content-generation-verification.json",
+    "activeBranch": "codex/backend-ai-content-generation",
+    "lastRemoteMain": "0c613c4f9dc40b87e65383844f799e59403e64ab",
     "activeAgents": {
-      "commerce": "read-only M3-18 readiness, no source/DB",
-      "beans": "read-only M3-19a readiness, no source/DB",
-      "reports": "read-only M4-09c proxy/load readiness, no source/DB"
+      "commerce": "READ_ONLY_NEXT_CARD_REPORT_COMPLETE_NO_DB_NO_EDITS",
+      "beans": "READ_ONLY_NEXT_CARD_REPORT_COMPLETE_NO_DB_NO_EDITS",
+      "reports": "READ_ONLY_NEXT_CARD_REPORT_COMPLETE_NO_DB_NO_EDITS"
     },
-    "databaseWindow": "RELEASED_AFTER_ROOT_FINAL_FULL_AND_DEV_0068; new DB window requires current explicit grant",
+    "databaseWindow": "RELEASED_AFTER_ROOT_FINAL_FULL_AND_DEVELOPMENT_UPGRADE; no active DB owner",
     "lastAbortedCombinedRegression": {
       "passedBeforeInterrupt": 117,
       "skipped": 1,
@@ -3456,46 +3517,82 @@
       "finalResultClaimed": false
     },
     "migrationReservations": {
-      "0066": "workflow_execution; down0065_content_imports; commerce",
-      "0067": "content_account_links; down0066_workflow_execution; beans",
-      "0068": "content_analysis_events; down0067_content_account_links; reports with root public integration review"
+      "0069": "ai_content_requests; commerce; down0068",
+      "0070": "generation_jobs; beans; down0069",
+      "0071": "generation_cost_binding; root; down0070; actual chain cost27 passed",
+      "0072": "ai_ledger_actor_guard; root; down0071; actual ai-ledger21 PASS6.45s"
     },
     "currentTargetedVerification": {
-      "sopExecution": 12,
-      "sopTemplatesRegression": 8,
-      "contentFlowsRegression": 8,
-      "accountLinks": 14,
-      "analysisWorkflowEvents": 9,
-      "unitContract": 919,
-      "mypySourceFiles": 228,
-      "combined": "PASS_954_PLUS_1_OPTIONAL_SKIP",
+      "rootCostAndUow": {
+        "passed": 27,
+        "seconds": 8.11,
+        "group": "cost"
+      },
+      "rootSharedStatic": "ruff/mypy PASS; fee model unit6 PASS0.34s",
+      "combined": "PASS_COMBINED_FULL",
+      "aiContentBeforeReview": {
+        "passed": 15,
+        "seconds": 15.41
+      },
+      "generationBeforeReview": {
+        "passed": 27,
+        "seconds": 23.3
+      },
+      "proxyLoad": {
+        "passed": 3,
+        "seconds": 77.36,
+        "streams": 50,
+        "identities": 1,
+        "durationSeconds": 65.28865
+      },
+      "ledgerActorGuard": {
+        "passed": 21,
+        "seconds": 6.45
+      },
+      "finalStaticBeforeReview": {
+        "unitPassed": 952,
+        "seconds": 8.57,
+        "mypySourceFiles": 240
+      },
+      "aiContent": {
+        "passed": 17,
+        "seconds": 17.93,
+        "head": "0072",
+        "reviewFixes": "PASS_ACTUAL_PG"
+      },
+      "generation": {
+        "passed": 31,
+        "seconds": 26.96,
+        "head": "0072",
+        "reviewFixes": "PASS_ACTUAL_PG"
+      },
       "finalStatic": {
         "ruff": "PASS",
-        "mypySourceFiles": 228,
-        "unitContractPassed": 919,
-        "deselected": 957,
-        "seconds": 9.85,
-        "combined": "PASS_954_PLUS_1_OPTIONAL_SKIP"
+        "mypySourceFiles": 240,
+        "unitPassed": 952,
+        "deselected": 1012,
+        "seconds": 9.86
       }
     },
     "currentReviewFixes": {
-      "derivedCandidate": "FIXED_AND_PG_PASS: frozen derived document consumed by Flow prepared entry, same ID/version1/full payload; graphics/videos NEW prompt/node tests passed",
-      "actionHistory": "FIXED_AND_PG_PASS: current action included in immutable response/replay, 1001st write refused before state/event changes",
-      "sseFingerprint": "FIXED_AND_REAL_SSE_PASS: shop status/platform and account provider/product_line added; already-buffered unauthorized frames refused, resync closes stream",
-      "flowPrepared": "ROOT content-flows8 PASS7.84s, caller rollback/create-only/prepared original payload replays tested",
-      "fullRegression": "SESSION96111_RUNNING; prior main 591447d 916-pass not reused as this branch result"
+      "aiCrossActorKey": "PASS_AI17_ACTUAL_PG_409_AND_ROLLBACK",
+      "aiReplyLockOrder": "PASS_AI17_ACTUAL_SHARED_ASSET_BUDGET_BARRIER",
+      "generationLockOrder": "PASS_GEN31_ACTUAL_RUN_JOB_SORTED_ASSETS_BUDGET_BARRIER",
+      "dispatchActorRls": "PASS_GEN31_ACTUAL_SQL_CROSS_ACTOR_REJECTION",
+      "ledgerActor": "PASS_LEDGER21_0072_PUBLIC_BEGIN_FINISH_12_14_AND_PRIVATE_DENIED"
     },
     "pendingCombinedRegression": {
-      "session": 96111,
-      "branch": "codex/backend-workflow-execution-links-events",
-      "baseline": "591447df0a4d4b102d66143a3d5e5e4960a3be8f",
-      "result": "PASS",
-      "migrationHead": "0068_content_analysis_events",
-      "sourceFreeze": ".runtime/workflow-execution-links-source-freeze.json",
-      "finalEvidence": "workflow-execution-links-verification.json",
-      "passed": 954,
+      "branch": "codex/backend-ai-content-generation",
+      "baseline": "0c613c4f9dc40b87e65383844f799e59403e64ab",
+      "result": "PASS_COMBINED_FULL",
+      "previousCompletedEvidence": "workflow-execution-links-verification.json",
+      "migrationHeadInTests": "0072_ai_ledger_actor_guard",
+      "developmentHead": "0072_ai_ledger_actor_guard",
+      "session": 65184,
+      "sourceFreeze": ".runtime/ai-content-generation-source-freeze.json",
+      "passed": 1009,
       "skipped": 1,
-      "seconds": 826.45
+      "seconds": 953.14
     }
   },
   "frontendIntegration": {
@@ -3578,6 +3675,14 @@
       "impact": "full M1-18/V8 workspace; not other ready backend tasks",
       "requested": "nullable read fields and explicit Campaign/ADGROUP semantics, or existing signed mapping decision",
       "noFrontendContractChanged": true
+    },
+    "nexoraSource": {
+      "status": "REQUESTED_FROM_USER",
+      "requestedAt": "2026-10-28T14:38:56.858834+00:00",
+      "document": "resource-handoff/nexora-source-gap.md",
+      "missing": "accessible NEXORA/OPC source path or repository/API documentation",
+      "impact": "M3-19b/19c real supplier protocol only; other local development continues",
+      "realPaidAuthorization": "NOT_REQUESTED_OR_EXECUTED_THIS_BATCH"
     }
   }
 }

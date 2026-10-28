@@ -1,8 +1,6 @@
 """M0-12：本人资料与尚无平台数据时的合法空快照。"""
 
-from datetime import datetime
 from uuid import UUID
-from zoneinfo import ZoneInfo
 
 from fastapi import APIRouter, Request
 from pydantic import BaseModel, ConfigDict, Field, field_validator
@@ -12,6 +10,8 @@ from starlette.responses import JSONResponse
 from yuliang.modules.audit.service import record
 from yuliang.modules.identity.routes import SESSION_COOKIE, service
 from yuliang.modules.identity.service import digest
+from yuliang.modules.snapshot.models import ReportingScope
+from yuliang.modules.snapshot.service import SnapshotService
 from yuliang.platform.db import VerifiedIdentity, business_transaction
 from yuliang.platform.envelope import success
 from yuliang.platform.errors import ApiError, ErrorCode
@@ -70,50 +70,31 @@ def update_profile(value: ProfileChange, request: Request) -> JSONResponse:
     return success(request, instance.session(token))
 
 
-@router.get("/frontend/snapshot")
-def empty_snapshot(request: Request) -> JSONResponse:
+def snapshot_service(request: Request) -> SnapshotService:
     instance = service(request)
     row = instance.row(request.cookies.get(SESSION_COOKIE))
     if not row:
         raise ApiError(ErrorCode.UNAUTHENTICATED, "请先登录")
-    current = instance.identity(row)
-    if "snapshot.read" not in current["permissions"]:
-        raise ApiError(ErrorCode.FORBIDDEN, "没有工作区读取权限")
-    identity = VerifiedIdentity(row["tenant_id"], row["membership_id"], row["user_id"])
-    with business_transaction(instance.app, identity) as session:
-        tenant = session.execute(text("SELECT id,name FROM tenants")).mappings().one()
-    # 仅M0初始空快照；平台镜像与实时revision在对应M1/M4卡实现，不造平台数据。
-    collections: dict[str, list[dict[str, str]]] = {
-        key: []
-        for key in (
-            "tenants",
-            "shops",
-            "adAccounts",
-            "liveSessions",
-            "plans",
-            "products",
-            "materials",
-            "tasks",
-            "riskPolicies",
-            "replaySegments",
-            "replayReports",
-            "connectors",
-        )
-    }
-    collections["tenants"] = [{"id": str(tenant["id"]), "name": tenant["name"]}]
-    return success(
-        request,
-        {
-            **collections,
-            "schemaVersion": "command-job-v1.0",
-            "revision": 1,
-            "source": "API",
-            "scope": {
-                "shop_id": "all",
-                "live_session_id": "all",
-                "connector_id": "all",
-                "date": datetime.now(ZoneInfo("Asia/Shanghai")).strftime("%Y-%m-%d"),
-                "timezone": "Asia/Shanghai",
-            },
-        },
+    return SnapshotService(
+        instance.app, VerifiedIdentity(row["tenant_id"], row["membership_id"], row["user_id"])
     )
+
+
+@router.get("/frontend/snapshot")
+def frontend_snapshot(request: Request) -> JSONResponse:
+    if request.query_params:
+        raise ApiError(ErrorCode.INVALID_INPUT, "快照不接受客户端身份或范围覆盖参数")
+    return success(request, snapshot_service(request).get())
+
+
+@router.put("/frontend/reporting-scope")
+def reporting_scope(request: Request, value: ReportingScope) -> JSONResponse:
+    actor = snapshot_service(request)
+    instance = service(request)
+    instance.require_csrf(
+        request.cookies.get(SESSION_COOKIE, ""), request.headers.get("X-CSRF-Token", "")
+    )
+    if request.query_params:
+        raise ApiError(ErrorCode.INVALID_INPUT, "范围写入不接受附加参数")
+    actor.set_scope(value)
+    return success(request, None)

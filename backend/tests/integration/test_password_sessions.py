@@ -348,7 +348,9 @@ def test_m0_12_profile_only_self_and_legal_empty_snapshot(login_api: dict[str, A
     )
     assert all(isinstance(snapshot[key], list) for key in arrays)
     assert snapshot["tenants"][0]["id"] == str(login_api["tenant"])
-    assert all(not snapshot[key] for key in arrays if key != "tenants")
+    assert snapshot["shops"][0]["id"] == str(login_api["shop"])
+    assert all(not snapshot[key] for key in arrays if key not in {"tenants", "shops", "connectors"})
+    assert all(c["status"] == "UNKNOWN" and c["scopes"] == [] for c in snapshot["connectors"])
     client.cookies.clear()
     assert client.get("/v1/frontend/snapshot").status_code == 401
 

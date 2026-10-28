@@ -1,0 +1,17 @@
+{
+  "revision": 2,
+  "scopedJobs": 0,
+  "injectedFetchCalls": 6,
+  "result": "PASS",
+  "arrays": 12,
+  "scopedPlans": 0,
+  "visibleAccounts": 1,
+  "actualFrontendApiClient": true,
+  "visibleShops": 1,
+  "mutationsRejected": 5,
+  "command": "node .runtime/contract-tools/node_modules/tsx/dist/cli.mjs --tsconfig frontend/tsconfig.json backend/scripts/check_snapshot_frontend.mts .runtime/snapshot-frontend-fixture.json",
+  "actualReportingConsumers": true,
+  "provenance": "ACTUAL_HTTP_FROM_REAL_LOCAL_PG_WITH_SYNTHETIC_IDENTITIES_AND_DIRECTORY",
+  "realNetworkCalls": 0,
+  "browserAcceptance": "NOT_RUN"
+}

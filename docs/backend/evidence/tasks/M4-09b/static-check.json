@@ -1,0 +1,23 @@
+{
+  "result": "PASS",
+  "scope": [
+    "src",
+    "tests",
+    "scripts",
+    "alembic"
+  ],
+  "scopeReason": "不格式化另一任务新增的独立令牌服务补丁工具",
+  "formatFiles": 253,
+  "mypyFiles": 204,
+  "diffCheck": "PASS",
+  "eventKinds": 5,
+  "heartbeatSeconds": 25,
+  "sessionPollSeconds": 1,
+  "credentialOrFullBusinessPayloadInFrames": false,
+  "bindingContractRevisionChangedByNotifications": false,
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "checkedAt": "2026-10-28T03:00:50.965Z",
+  "sourceCommit": "f425af46a6571de8b06b408799cb167c30002608",
+  "integratedBaseline": "c70365467bef6ba05a3732c5249de13a6df3a1b5"
+}

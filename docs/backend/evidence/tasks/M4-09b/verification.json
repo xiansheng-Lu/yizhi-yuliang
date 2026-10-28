@@ -1,0 +1,111 @@
+{
+  "checkedAt": "2026-10-28T03:00:50.965Z",
+  "baseline": "bb208e7",
+  "integratedBaseline": "c70365467bef6ba05a3732c5249de13a6df3a1b5",
+  "implementationCommit": "f425af46a6571de8b06b408799cb167c30002608",
+  "migrationWindowFix": "07a4b39",
+  "result": "PASS_REAL_HTTP_PG_CORE_SSE_CURRENT_AUTHORIZATION_AND_DURABLE_CONNECTOR_EVENTS",
+  "checks": [
+    {
+      "command": "uv run --frozen ruff check src tests scripts alembic",
+      "result": "PASS"
+    },
+    {
+      "command": "uv run --frozen ruff format --check src tests scripts alembic",
+      "result": "PASS",
+      "count": 253
+    },
+    {
+      "command": "uv run --frozen mypy",
+      "result": "PASS",
+      "count": 204
+    },
+    {
+      "command": "uv run --frozen pytest tests/unit tests/contract -q",
+      "result": "PASS",
+      "count": 609
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --group sse --details",
+      "result": "PASS",
+      "count": 20,
+      "seconds": 44.28
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --details",
+      "result": "PASS_WITH_EXPLICIT_LIFECYCLE_SKIP",
+      "count": 651,
+      "skipped": 1,
+      "seconds": 415.83
+    },
+    {
+      "command": "uv run --frozen python scripts/migrate_local.py upgrade",
+      "result": "PASS"
+    }
+  ],
+  "database": {
+    "head": "0040_connector_events",
+    "migrationRoleCanLogin": false,
+    "developmentRows": {
+      "event_resource_heads": 0,
+      "capability_event_deadlines": 0,
+      "event_source_outbox": 0,
+      "event_stream_heads": 0,
+      "event_projections": 0,
+      "approvals": 0,
+      "approval_decisions": 0,
+      "server_approval_permits": 0,
+      "execution_recoveries": 0,
+      "execution_recovery_evidence": 0,
+      "execution_orders": 0,
+      "execution_attempts": 0,
+      "budget_job_finalizations": 0,
+      "command_jobs": 0
+    }
+  },
+  "traces": [
+    "frames-resume.json",
+    "heartbeat.json",
+    "capability-frame.json",
+    "migration-window.json"
+  ],
+  "eventKinds": 5,
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "frontendBrowser": "NOT_RUN_F12_SUBSCRIBE_NOT_WIRED",
+  "reread": "REAL_QUERY_SERVICE_NOT_MISSING_LIFECYCLE_HTTP",
+  "defects": [
+    {
+      "layer": "TEST_FIXTURE",
+      "problem": "Applications client key is a governed platform client; re-login reused session CSRF instead of preauth",
+      "resolution": "Use actual login_api TestClient and existing valid Cookie"
+    },
+    {
+      "layer": "SHARED_INFRASTRUCTURE",
+      "intermediateFull": {
+        "passed": 632,
+        "skipped": 1,
+        "setupErrors": 11
+      },
+      "problem": "Concurrent isolated test databases toggled shared app_migrate LOGIN/NOLOGIN",
+      "resolution": "Hold same 760001 advisory window as migrate_local for full fixture lifetime; do not take over unknown pre-existing window. Independent administrator probe could not acquire it; final full regression and NOLOGIN restoration pass."
+    },
+    {
+      "layer": "TEST_WINDOW_INPUT",
+      "problem": "PostgreSQL lock_timeout accepts 45s rather than interval text 45 seconds",
+      "resolution": "Correct unit; dedicated and full regression pass"
+    },
+    {
+      "layer": "TEAM_INTEGRATION",
+      "problem": "Concurrent native adapter added 0039 and router/ledger changes; imported WAITING_RESOURCE is outside registry status enum",
+      "resolution": "Preserve native adapter and frontend directory restructure, append SSE as 0040, retain both routes/tasks; normalize real-resource cards to BLOCKED with technical evidence unchanged"
+    }
+  ],
+  "status": "WAITING_REVIEW",
+  "humanSignoff": "PENDING",
+  "limits": [
+    "F12 SSE UI/proxy/polling fallback still pending",
+    "FrontendSnapshot and lifecycle HTTP remain M1-18/M2-05b technical dependencies",
+    "Platform resources remain unbound to real business tenant and distinct shops; real acceptance not executed"
+  ]
+}

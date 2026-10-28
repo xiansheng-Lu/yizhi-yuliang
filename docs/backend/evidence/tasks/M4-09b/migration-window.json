@@ -1,0 +1,8 @@
+{
+  "checkedAt": "2026-10-28T02:52:13.214892+00:00",
+  "phase": "DURING_LOCAL_PG_REGRESSION",
+  "guardKey": 760001,
+  "otherAdministratorCouldAcquireWindow": false,
+  "migrationRoleCanLoginInsideWindow": true,
+  "migrationOrRoleMutationExecutedByProbe": false
+}

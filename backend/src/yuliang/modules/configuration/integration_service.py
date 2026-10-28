@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 
 from yuliang.modules.capability.models import Binding, Evidence, Phase, aggregate
 from yuliang.modules.capability.route_sources import current_source
+from yuliang.modules.capability.service import evaluate_binding
 from yuliang.modules.configuration.integration_models import (
     IntegrationAccount,
     IntegrationContext,
@@ -173,6 +174,19 @@ class IntegrationService:
             and proof.required_scopes
             and account.authorization == "AUTHORIZED"
         )
+        shop_read_implemented = line != "wxshop" or bool(
+            binding.operation_kind == "READ"
+            and binding.http_method == "POST"
+            and (binding.normalized_path, proof.resource)
+            in {
+                ("/channels/ec/product/get", "products"),
+                ("/channels/ec/product/get", "stock"),
+                ("/channels/ec/compass/shop/overall/get", "compass"),
+            }
+            and len(shop_ids) == 1
+            and evaluate_binding(session, self.identity, shop_ids[0], binding.id)["status"]
+            == "AUTHORIZED"
+        )
         state = aggregate(
             binding, assertions, now=now, permitted=allowed, account_authorized=authorized
         )
@@ -193,7 +207,7 @@ class IntegrationService:
             reason = "对应来源阶段仍有效" if effective else "当前上下文缺少有效的阶段证据"
             if stage == "backend" and (
                 binding.operation_kind == "WRITE"
-                or line == "wxshop"
+                or not shop_read_implemented
                 or state["status"] != "AUTHORIZED"
             ):
                 effective = False
@@ -201,8 +215,8 @@ class IntegrationService:
                     "资源命令入口尚待M3-11b交付"
                     if binding.operation_kind == "WRITE"
                     else (
-                        "现有上下文未绑定店铺级操作范围，待逐请求范围核验"
-                        if line == "wxshop"
+                        "此店铺资源尚无精确只读实现或实际授权的单店范围不匹配"
+                        if not shop_read_implemented
                         else "六阶段、当前权限或产品线集成尚未全部就绪"
                     )
                 )

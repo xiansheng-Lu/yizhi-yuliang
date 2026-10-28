@@ -1,0 +1,38 @@
+{
+  "check_id": "55ab97b0-659f-4f2e-bbed-91d508d3f868",
+  "execution_id": "d374c9bb-11a7-4522-a37c-50b02b9bbd18",
+  "attempt_id": "033c609c-edf0-430b-b84f-348bfee1a1eb",
+  "write_outbound_id": "3ac5aecd-87f1-5b6a-aa72-77f4d92e78e8",
+  "read_outbound_id": "a542b463-5ce5-5693-85d8-de98da17d04e",
+  "raw_id": 10,
+  "request_id": "bb67d3f8-6f99-4bc1-94b9-ccae35214b82",
+  "contract_digest": "d021c1f6e02a5dd6f2f20b60c169df5b915b42245a1546e226b8abed578524fb",
+  "checked_at": "2026-10-28T01:17:38.821680Z",
+  "comparison": {
+    "status": "MATCHED",
+    "reason": "PARAMETER_MATCHED",
+    "observed_value": {
+      "kind": "MONEY",
+      "currency": "CNY",
+      "amount_minor": 110
+    },
+    "source_updated_at": null,
+    "fetched_at": "2026-10-28T01:17:38.816536Z",
+    "evidence_level": "E0"
+  },
+  "unavailable_cause": null,
+  "retry_at": null,
+  "input": "EXPLICIT_MOCK_WRITE_AND_INDEPENDENT_GET_REAL_PG_REDIS",
+  "jobId": "88bfd19b-f90d-4983-bba2-b845e07571bf",
+  "jobStatusBeforeAndAfter": "VERIFYING",
+  "jobVersionBeforeAndAfter": 5,
+  "heldMinorBeforeAndAfter": 10,
+  "httpMethods": [
+    "GET"
+  ],
+  "verifiedActionFacts": 0,
+  "budgetFinalizations": 0,
+  "platformCalls": 0,
+  "paidCalls": 0,
+  "humanSignoff": "PENDING"
+}

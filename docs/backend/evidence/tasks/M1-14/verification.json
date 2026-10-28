@@ -1,0 +1,18 @@
+{
+  "durationSeconds": 0.19,
+  "passed": 4,
+  "command": "/home/lenovo/.cache/yuliang-venv/bin/pytest tests/unit/test_beans_capability_boundary.py -q",
+  "ruff": "PASS_AFTER_IMPORT_SORT",
+  "platformCalls": 0,
+  "result": "PASS_LOCAL_UNIT_ONLY",
+  "environment": "WSL Python 3.13",
+  "officialInvestigation": "NOT_COMPLETED",
+  "review": "PENDING_BE_FE",
+  "date": "2026-10-28",
+  "paidCalls": 0,
+  "warnings": 1,
+  "blockedBy": [
+    "E07",
+    "E08"
+  ]
+}

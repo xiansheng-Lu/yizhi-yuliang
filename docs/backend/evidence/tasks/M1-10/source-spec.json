@@ -1,0 +1,139 @@
+{
+  "checkedAt": "2026-10-28T07:52:49.448058+00:00",
+  "repository": "https://github.com/TencentAd/marketing-api-go-sdk",
+  "revision": "81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9",
+  "authority": "PINNED_OFFICIAL_SDK_NOT_ACCOUNT_ACCEPTANCE",
+  "sources": [
+    {
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/api/api_daily_reports.go",
+      "path": "pkg/api/api_daily_reports.go",
+      "sha256": "ec08ac4d0440ca64207799c75e74934fe463fb8e31276e3897f33d135286faa1"
+    },
+    {
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/api/api_hourly_reports.go",
+      "path": "pkg/api/api_hourly_reports.go",
+      "sha256": "1e976e7e34600ea8186bac9877e9eb466dc271d8303d52c4731fc924867fc1d0"
+    },
+    {
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/model/model_daily_reports_get_list_struct.go",
+      "path": "pkg/model/model_daily_reports_get_list_struct.go",
+      "sha256": "ed042205e1429d5ab79a314cff6ad686d77e6ac74927d312e63882636af95762"
+    },
+    {
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/model/model_hourly_reports_get_list_struct.go",
+      "path": "pkg/model/model_hourly_reports_get_list_struct.go",
+      "sha256": "47e4cca3d242e3da4a7a4e70438414dff4d77e26bb0ad5aa01623061c66131f0"
+    },
+    {
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/model/model_daily_reports_get_response_data.go",
+      "path": "pkg/model/model_daily_reports_get_response_data.go",
+      "sha256": "9ec3e1f5a2515ea3ce56d243a737babd83c47e403c74f426bac9c6a5ec1545dd"
+    },
+    {
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/model/model_hourly_reports_get_response_data.go",
+      "path": "pkg/model/model_hourly_reports_get_response_data.go",
+      "sha256": "10984e59601b97b50247e800699074667f00e05c3a63f9956c68be692415f75c"
+    },
+    {
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/model/model_report_level.go",
+      "path": "pkg/model/model_report_level.go",
+      "sha256": "72f2fc61f8f4d234a19e67474db1368f0a8e19834f45d201ae050f4918825d21"
+    },
+    {
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/model/model_report_level_hourly.go",
+      "path": "pkg/model/model_report_level_hourly.go",
+      "sha256": "9d61b9d9301e36db16f3c37d8d36d1bb3aaa7990ccf6e2f344917c8a0023f52c"
+    },
+    {
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/model/model_date_range.go",
+      "path": "pkg/model/model_date_range.go",
+      "sha256": "b7359d67c6fcdb592d205dd579e37ed69fcd97c95b694327719d968f29a999f3"
+    },
+    {
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/model/model_report_date_range.go",
+      "path": "pkg/model/model_report_date_range.go",
+      "sha256": "726aa7bbe88e15656e39219ffdd5f07596af8010020fb89dcd218b64f3733467"
+    },
+    {
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/model/model_time_line.go",
+      "path": "pkg/model/model_time_line.go",
+      "sha256": "79cfe75dafd4c4d222964196c68d963158fa7a4024f013f57f47cc9ce11f7faf"
+    }
+  ],
+  "confirmed": {
+    "daily": {
+      "method": "GET",
+      "path": "/v1.3/daily_reports/get",
+      "catalogId": "e8988defa8af1a327ada",
+      "level": "REPORT_LEVEL_ADVERTISER",
+      "dateRange": "ReportDateRange",
+      "response": "data.list DailyReportsGetListStruct and page_info"
+    },
+    "hourly": {
+      "method": "GET",
+      "path": "/v1.3/hourly_reports/get",
+      "catalogId": "76a7c6d78a3a2fdbd4e4",
+      "level": "REPORT_LEVEL_ADVERTISER",
+      "dateRange": "DateRange",
+      "response": "data.list HourlyReportsGetListStruct and page_info",
+      "hourMeaning": "UNCONFIRMED"
+    },
+    "timeLine": [
+      "REQUEST_TIME",
+      "REPORTING_TIME",
+      "ACTIVE_TIME"
+    ]
+  },
+  "notConfirmed": [
+    "Actual application/version access and accepted account/field combinations",
+    "Native money units and order_amount GMV definition",
+    "Date timezone and native update/version semantics",
+    "Attribution window, refund policy and time_line mapping",
+    "Actual exclusive whole-account attribution to one shop",
+    "Native hourly encoding and completeness of hourly coverage"
+  ],
+  "livePlatformCalls": 0,
+  "paidCalls": 0,
+  "v3ComparedNotUsedForRuntime": [
+    {
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/api/v3/api_daily_reports.go",
+      "path": "pkg/api/v3/api_daily_reports.go",
+      "sha256": "5d79c55b8a02c321ede0284bfd6369144b02299bd6ff930b1084bd97fdb2d56a"
+    },
+    {
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/model/v3/model_daily_reports_get_response_data.go",
+      "path": "pkg/model/v3/model_daily_reports_get_response_data.go",
+      "sha256": "fc563e3ad6d7d8fcd049c4bff34bda976a0e0dc5dac410c685c9aeef317310ec"
+    },
+    {
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/model/v3/model_report_struct.go",
+      "path": "pkg/model/v3/model_report_struct.go",
+      "sha256": "65d3b5525aae43561fe7549b9ae39feb97e7d747e9783f83a93e871d0a858c66"
+    },
+    {
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/model/v3/model_report_date_range.go",
+      "path": "pkg/model/v3/model_report_date_range.go",
+      "sha256": "a202f75dbef5d243bca01b747fdd2e1456645b0697d15ea10a371fb7a8acbbd1"
+    },
+    {
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/model/v3/model_time_line.go",
+      "path": "pkg/model/v3/model_time_line.go",
+      "sha256": "612bab22ce8d03aedee8a32b0593305a3a1aa2321a54d350da7586aa066c7aa8"
+    },
+    {
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/examples/v3/Insights/AdInsights/GetDailyReports.go",
+      "path": "examples/v3/Insights/AdInsights/GetDailyReports.go",
+      "sha256": "6a4350658a441792ac5384a5af2593a657c567a2e6867f6972b55350e2fe4ce3"
+    },
+    {
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/api/v3/api_hourly_reports.go",
+      "path": "pkg/api/v3/api_hourly_reports.go",
+      "sha256": "aed1acde4f82a39ce6753988d2c0622ea53307e2584b43bed4859ae394ff5e33"
+    },
+    {
+      "url": "https://github.com/TencentAd/marketing-api-go-sdk/blob/81d6cc04b58d7d5a5ec9ad0137e43b3b6c52fde9/pkg/model/v3/model_hourly_reports_get_response_data.go",
+      "path": "pkg/model/v3/model_hourly_reports_get_response_data.go",
+      "sha256": "0d133a6c82b6d3240229b186e7780a545c9fe6715ec8dbd4012f6f27406c0af9"
+    }
+  ]
+}

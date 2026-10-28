@@ -1,0 +1,47 @@
+{
+  "checks": [
+    {
+      "command": "uv run --frozen ruff check src tests scripts",
+      "result": "PASS_BEFORE_COMMERCE_EDITS"
+    },
+    {
+      "result": "PASS",
+      "command": "uv run --frozen mypy src",
+      "sourceFiles": 150
+    },
+    {
+      "seconds": 7.5,
+      "command": "uv run --frozen pytest -m 'unit or contract' -q",
+      "passed": 670,
+      "deselected": 759
+    },
+    {
+      "command": "uv run --frozen python scripts/test_infrastructure.py --group adq-reports --details",
+      "passed": 23,
+      "seconds": 18.95
+    }
+  ],
+  "livePlatformCalls": 0,
+  "fullIntegration": {
+    "skipped": 1,
+    "scope": "all files discovered before commerce runtime integration",
+    "seconds": 519.75,
+    "command": "uv run --frozen python scripts/test_infrastructure.py --details",
+    "passed": 758
+  },
+  "review": "PENDING_BE_F04_F08",
+  "environment": "WSL Ubuntu; UV_PROJECT_ENVIRONMENT=/home/lenovo/.cache/yuliang-venv",
+  "baseline": "ef40e990e94bb13c377b65f005935dc7a3528156",
+  "date": "2026-10-28",
+  "paidCalls": 0,
+  "external": "E01/G0/E08 retain; upstream HTTP and contract evidence synthetic",
+  "result": "PASS_TARGETED_REAL_PG_REDIS",
+  "combinedBaseline": {
+    "unitContractPassed": 696,
+    "mypySourceFiles": 153,
+    "ruff": "PASS",
+    "executedBy": "root",
+    "seconds": 8.7,
+    "deselected": 765
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-28",
+  "review": "PENDING",
+  "result": "PASS_UNIT_ONLY",
+  "tokenServiceCalls": 0,
+  "runtimeIntegration": "NOT_IMPLEMENTED",
+  "configurationErrors": "HIDE_INPUT_IN_ERRORS_TESTED",
+  "mypy": "PASS_SOURCE",
+  "passed": 12,
+  "seconds": 0.39,
+  "ruff": "PASS",
+  "paidCalls": 0,
+  "command": "pytest tests/unit/test_external_tokens.py -q",
+  "platformCalls": 0
+}

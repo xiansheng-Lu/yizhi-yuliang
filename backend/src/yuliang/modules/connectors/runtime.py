@@ -16,6 +16,12 @@ from yuliang.modules.connectors.adq_finance_protocol import (
     FINANCE_MIRROR_POLICY,
     OperationQuery,
 )
+from yuliang.modules.connectors.adq_report_protocol import (
+    REPORT_ARCHIVE_POLICY,
+    REPORT_MIRROR_POLICY,
+    ReportQuery,
+)
+from yuliang.modules.connectors.adq_reports import AdqReportSync
 from yuliang.modules.connectors.archive import PlatformArchive, RecordedPlatformClient
 from yuliang.modules.connectors.base import GatewayContext
 from yuliang.modules.connectors.governance import PlatformGovernance, QuotaLimits
@@ -28,11 +34,15 @@ from yuliang.modules.connectors.native_reads import (
     native_signer,
 )
 from yuliang.modules.connectors.oauth import OAuthRejected, OAuthService, require_admin
+from yuliang.modules.connectors.redaction import ArchivePolicy
 from yuliang.modules.connectors.registry import GatewayRegistry
 from yuliang.modules.connectors.resources import ApplicationResource, ResourceBundle
+from yuliang.modules.connectors.shop_product_sync import ShopProductIdSync
+from yuliang.modules.connectors.shop_products import PRODUCT_ID_POLICY
 from yuliang.modules.connectors.sync_cursor import CursorCodec
 from yuliang.modules.connectors.sync_store import SyncStore
 from yuliang.modules.connectors.token_cipher import Ciphertext, TokenCipher, TokenContext
+from yuliang.modules.reporting.service import FactWriter
 from yuliang.platform.db import VerifiedIdentity, business_transaction
 from yuliang.settings import Settings
 
@@ -45,6 +55,8 @@ class PlatformRuntime:
         self.registry = GatewayRegistry()
         self.adq_assets: dict[UUID, AdqAssetSync] = {}
         self.adq_finance: dict[UUID, AdqFinanceSync] = {}
+        self.adq_reports: dict[UUID, AdqReportSync] = {}
+        self.shop_product_ids: dict[UUID, ShopProductIdSync] = {}
         self.ports = {
             item.id: NativeAuthorization(item) for item in bundle.applications if item.enabled
         }
@@ -136,6 +148,53 @@ class PlatformRuntime:
                     item.readonly_interfaces,
                     item.granted_scopes,
                 )
+                report_client = GovernedPlatformClient(
+                    RecordedPlatformClient(
+                        PlatformHttpClient(native_signer),
+                        PlatformArchive(engine, settings.auth_audit_secret),
+                        policy=REPORT_ARCHIVE_POLICY,
+                        decoder=decode_verdict,
+                    ),
+                    self.governance,
+                    item.id,
+                )
+                self.adq_reports[item.id] = AdqReportSync(
+                    SyncStore(
+                        engine,
+                        CursorCodec(keys, bundle.key_version, settings.auth_audit_secret),
+                        policy=REPORT_MIRROR_POLICY,
+                    ),
+                    report_client,
+                    self.token_for_read,
+                    FactWriter(engine, settings.auth_audit_secret),
+                    item.readonly_interfaces,
+                    item.granted_scopes,
+                )
+
+            if item.connector_id == "wxshop" and item.granted_scopes:
+                product_client = GovernedPlatformClient(
+                    RecordedPlatformClient(
+                        PlatformHttpClient(native_signer),
+                        PlatformArchive(engine, settings.auth_audit_secret),
+                        policy=ArchivePolicy(
+                            fields=frozenset({"errcode", "product_ids", "next_key"})
+                        ),
+                        decoder=decode_verdict,
+                    ),
+                    self.governance,
+                    item.id,
+                )
+                self.shop_product_ids[item.id] = ShopProductIdSync(
+                    SyncStore(
+                        engine,
+                        CursorCodec(keys, bundle.key_version, settings.auth_audit_secret),
+                        policy=PRODUCT_ID_POLICY,
+                    ),
+                    product_client,
+                    self.token_for_read,
+                    item.readonly_interfaces,
+                    item.granted_scopes,
+                )
 
     @classmethod
     def load(cls, engine: Engine, settings: Settings, path: Path) -> "PlatformRuntime":
@@ -222,6 +281,18 @@ class PlatformRuntime:
                 Ciphertext(row["key_version"], row["access_token_enc"]),
             )
 
+    async def sync_shop_product_ids(self, ctx: GatewayContext, run_id: UUID) -> dict[str, Any]:
+        await self.token_for_read(ctx)
+        with business_transaction(self.engine, ctx.identity) as session:
+            app_id = session.execute(
+                text("SELECT application_id FROM provider_authorizations WHERE id=:id"),
+                {"id": ctx.authorization_id},
+            ).scalar_one()
+        reader = self.shop_product_ids.get(app_id)
+        if reader is None:
+            raise OAuthRejected()
+        return await reader.sync(ctx, run_id)
+
     async def sync_adq_assets(
         self, ctx: GatewayContext, kind: AssetKind, run_id: UUID
     ) -> dict[str, Any]:
@@ -254,3 +325,20 @@ class PlatformRuntime:
             if query is None
             else await reader.sync_operations(ctx, run_id, query)
         )
+
+    async def sync_adq_reports(
+        self,
+        ctx: GatewayContext,
+        batch_id: UUID,
+        query: ReportQuery,
+    ) -> dict[str, Any]:
+        await self.token_for_read(ctx)
+        with business_transaction(self.engine, ctx.identity) as session:
+            app_id = session.execute(
+                text("SELECT application_id FROM provider_authorizations WHERE id=:id"),
+                dict(id=ctx.authorization_id),
+            ).scalar_one()
+        reader = self.adq_reports.get(app_id)
+        if reader is None:
+            raise OAuthRejected()
+        return await reader.sync(ctx, batch_id, query)

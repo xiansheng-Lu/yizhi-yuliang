@@ -129,7 +129,11 @@ class SyncStore:
         resource_kind: str,
         run_id: UUID,
         parameters: dict[str, Any],
+        *,
+        restart_cursor: bool = False,
     ) -> SyncLease | dict[str, Any]:
+        if type(restart_cursor) is not bool:
+            raise ValueError("重新从首页读取必须由服务端显式声明")
         if not re.fullmatch(r"[a-z][a-z0-9_.]{0,59}", resource_kind):
             raise ValueError("同步资源类型不合法")
         _check_fields(parameters)
@@ -236,6 +240,25 @@ class SyncStore:
                 )
                 page = existing["page_no"]
             else:
+                if restart_cursor and (
+                    source["cursor_enc"] is not None
+                    or session.execute(
+                        text("""SELECT EXISTS(SELECT 1 FROM sync_runs WHERE source_id=:source
+                     AND state<>'SUCCESS' AND source_version=:version)"""),
+                        {"source": source["id"], "version": source["version"]},
+                    ).scalar_one()
+                ):
+                    # 仅在上面的有效租约检查通过后重置。旧镜像/页不删除，版本栅栏阻止旧租约提交。
+                    source = (
+                        session.execute(
+                            text("""UPDATE sync_sources SET cursor_enc=NULL,
+                      cursor_key_version=NULL,cursor_digest=:cursor,version=version+1
+                      WHERE id=:id RETURNING *"""),
+                            {"cursor": self.codec.digest(None), "id": source["id"]},
+                        )
+                        .mappings()
+                        .one()
+                    )
                 session.execute(
                     text("""INSERT INTO sync_runs(id,tenant_id,source_id,user_id,
                     request_digest,source_version,state,lease_token,lease_until)

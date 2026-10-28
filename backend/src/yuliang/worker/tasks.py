@@ -44,6 +44,7 @@ def engine() -> Engine:
 def identity_probe(self: Any, payload: dict[str, Any]) -> dict[str, Any]:
     item = message(payload)
     identity = VerifiedIdentity(item.tenant_id, item.membership_id, item.user_id)
+
     with business_transaction(engine(), identity) as session:
         valid = session.execute(
             text("""
@@ -89,6 +90,45 @@ def platform_guard(payload: dict[str, Any]) -> None:
 )  # type: ignore[untyped-decorator]
 def ai_media_guard(payload: dict[str, Any]) -> None:
     unavailable(payload)
+
+
+@app.task(
+    name="yuliang.system.analysis_accept",
+    reject_on_worker_lost=True,
+    autoretry_for=(),
+    max_retries=0,
+)  # type: ignore[untyped-decorator]
+def accept_analysis(payload: dict[str, Any]) -> dict[str, Any]:
+    """仅确认持久申请投递；尚未交付计算阶段时保持queued/0。"""
+    from yuliang.infrastructure.outbox import consume
+
+    item = message(payload)
+    identity = VerifiedIdentity(item.tenant_id, item.membership_id, item.user_id)
+
+    def receive(session: Any) -> None:
+        session.execute(text("SELECT access.analysis_receive(:id)"), {"id": item.event_id})
+
+    try:
+        with business_transaction(engine(), identity) as session:
+            stored = session.execute(
+                text(
+                    "SELECT payload FROM outbox_events WHERE event_id=:id "
+                    "AND event_type='yuliang.system.analysis_accept'"
+                ),
+                {"id": item.event_id},
+            ).scalar_one_or_none()
+        if stored != item.model_dump(mode="json"):
+            raise ValueError("分析消息与原持久申请不一致")
+        changed = consume(
+            engine(),
+            identity,
+            "analysis.accept",
+            item.event_id,
+            receive,
+        )
+    except DBAPIError:
+        raise Reject("分析投递事实未提交，保持内部任务重投", requeue=True) from None
+    return {"taskId": str(item.job_id), "eventId": str(item.event_id), "deliveryRecorded": changed}
 
 
 @app.task(

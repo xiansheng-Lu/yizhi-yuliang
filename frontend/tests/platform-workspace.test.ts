@@ -168,7 +168,7 @@ test("all 1818 normalized references are retained with raw-source hashes", () =>
   assert.equal(platformApiCatalog.length, 1818);
   assert.equal(new Set(platformApiCatalog.map((r) => r.id)).size, 1818);
   for (const source of platformApiSources) {
-    const bytes = readFileSync(`docs/shared/reference/platform-api-reference/${source.file}`);
+    const bytes = readFileSync(`../docs/shared/reference/platform-api-reference/${source.file}`);
     assert.equal(
         createHash("sha256").update(bytes.toString("utf8").replace(/\r\n/g,"\n")).digest("hex"),
       source.sha256,

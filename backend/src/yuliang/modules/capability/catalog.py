@@ -56,7 +56,11 @@ def json_object(raw: str | bytes) -> dict[str, Any]:
 
 
 def load_catalog(root: Path, *, raw: bytes | None = None) -> CatalogBundle:
-    raw = raw if raw is not None else (root / "src/data/platform-api-catalog.json").read_bytes()
+    raw = (
+        raw
+        if raw is not None
+        else (root / "frontend/src/data/platform-api-catalog.json").read_bytes()
+    )
     if len(raw) > 4 * 1024 * 1024:
         raise ValueError("目录超出允许大小")
     data = json_object(raw)

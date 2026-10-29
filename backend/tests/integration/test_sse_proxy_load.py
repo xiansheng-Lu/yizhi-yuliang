@@ -30,10 +30,11 @@ from .test_analysis_admission import oauth_ready as oauth_ready
 from .test_analysis_admission import reports as reports
 from .test_cloud_documents import content_ready as content_ready
 from .test_content_workflows import request as workflow_request
+from .test_infrastructure import POSIX_NGINX_PROXY
 from .test_shop_product_details import details as details
 from .test_shop_products import products as products
 
-pytestmark = pytest.mark.integration
+pytestmark = [pytest.mark.integration, POSIX_NGINX_PROXY]
 
 
 def evidence(name: str, value: dict[str, Any]) -> None:

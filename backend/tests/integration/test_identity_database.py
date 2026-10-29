@@ -72,16 +72,15 @@ def database() -> Iterator[dict[str, str]]:
     admin = database_url(source, name)
     with psycopg.connect(source, autocommit=True) as control:
         # 与migrate_local共用集群级窗口：LOGIN是全局角色属性，不随测试库隔离。
-        # 保持管理员连接与锁直到全部夹具结束；另一测试/迁移不能中途恢复NOLOGIN。
+        # 取得锁即证明没有其他迁移窗口；先无条件把角色归一化为NOLOGIN，
+        # 这样上一轮崩溃遗留的LOGIN不会让后续每个模块的setup集体失败（自愈，
+        # 不依赖上一模块的清理是否成功）。
         control.execute("SET lock_timeout='45s'")
         control.execute("SELECT pg_advisory_lock(760001)")
-        if control.execute(
-            "SELECT rolcanlogin FROM pg_roles WHERE rolname='app_migrate'"
-        ).fetchone() != (False,):
-            raise RuntimeError("已有未受锁管理的迁移窗口，先结束其他设施验证后重试")
+        control.execute("ALTER ROLE app_migrate NOLOGIN")
         control.execute(sql.SQL("CREATE DATABASE {}").format(sql.Identifier(name)))
-        control.execute("ALTER ROLE app_migrate LOGIN")
         try:
+            control.execute("ALTER ROLE app_migrate LOGIN")
             with psycopg.connect(admin, autocommit=True) as setup:
                 setup.execute("REVOKE CREATE ON SCHEMA public FROM PUBLIC")
                 setup.execute("GRANT USAGE,CREATE ON SCHEMA public TO app_owner")

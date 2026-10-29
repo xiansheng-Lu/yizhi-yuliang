@@ -22,7 +22,7 @@ from yuliang.worker.scheduler import BeatLease
 from .test_identity_database import ROOT
 from .test_identity_database import database as database
 from .test_identity_database import seeded as seeded
-from .test_infrastructure import local_url
+from .test_infrastructure import POSIX_PREFORK_WORKER, local_url
 
 
 @pytest.fixture(scope="module")
@@ -122,6 +122,7 @@ def send(
     return result
 
 
+@POSIX_PREFORK_WORKER
 def test_m0_15_real_worker_context_is_per_task(worker: dict[str, Any]) -> None:
     first = send(worker).get(timeout=20)
     second = send(worker, tenant=2).get(timeout=20)
@@ -141,6 +142,7 @@ def test_m0_15_real_worker_context_is_per_task(worker: dict[str, Any]) -> None:
     assert send(worker).get(timeout=20)["tenantId"] == "1"
 
 
+@POSIX_PREFORK_WORKER
 def test_m0_15_three_side_effect_queues_fail_closed_without_retry(worker: dict[str, Any]) -> None:
     for name in ("yuliang.execute.guard", "yuliang.platform.guard", "yuliang.ai_media.guard"):
         result = send(worker, name)
@@ -150,6 +152,7 @@ def test_m0_15_three_side_effect_queues_fail_closed_without_retry(worker: dict[s
     assert worker["client"].conf.task_reject_on_worker_lost is False
 
 
+@POSIX_PREFORK_WORKER
 def test_m0_15_readonly_task_is_redelivered_after_child_loss(worker: dict[str, Any]) -> None:
     # 只锁测试库的成员表，让实际只读任务处于数据库等待；不增加生产测试钩子。
     with psycopg.connect(worker["database"]["admin"]) as lock:

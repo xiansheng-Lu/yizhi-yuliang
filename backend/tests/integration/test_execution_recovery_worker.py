@@ -29,7 +29,7 @@ from .test_execution_attempts import prepare
 from .test_execution_recovery import event, expire
 from .test_identity_database import ROOT
 from .test_identity_database import database as database
-from .test_infrastructure import local_url
+from .test_infrastructure import POSIX_PREFORK_WORKER, local_url
 from .test_job_applications import applications as applications
 from .test_oauth_vault import oauth_ready as oauth_ready
 from .test_password_sessions import login_api as login_api
@@ -38,7 +38,7 @@ from .test_resource_freshness import health_ready as health_ready
 from .test_risk_framework import risk_ready as risk_ready
 from .test_sync_checkpoints import sync_ready as sync_ready
 
-pytestmark = pytest.mark.integration
+pytestmark = [pytest.mark.integration, POSIX_PREFORK_WORKER]
 
 
 @pytest.fixture(scope="module")

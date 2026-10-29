@@ -56,9 +56,9 @@ from .test_execution_recovery_worker import (
     sync_ready as sync_ready,
 )
 from .test_identity_database import ROOT
-from .test_infrastructure import local_url
+from .test_infrastructure import POSIX_PREFORK_WORKER, local_url
 
-pytestmark = pytest.mark.integration
+pytestmark = [pytest.mark.integration, POSIX_PREFORK_WORKER]
 
 
 def approved_message(data: dict[str, Any]) -> WorkMessage:

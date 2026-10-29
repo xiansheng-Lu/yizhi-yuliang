@@ -1,6 +1,7 @@
 """仅在显式提供本地测试配置后运行，不建立/删除容器或任意业务数据。"""
 
 import os
+import sys
 from urllib.parse import urlsplit
 
 import httpx
@@ -8,6 +9,19 @@ import psycopg
 import pytest
 import redis
 from kombu import Connection  # type: ignore[import-untyped]
+
+# 真实Worker验收依赖celery prefork池；Windows上billiard只能以SpawnPoolWorker启动，
+# 其信号量创建即以WinError 5退出，任务不可能被执行。此类用例需在Linux/WSL运行。
+POSIX_PREFORK_WORKER = pytest.mark.skipif(
+    sys.platform == "win32",
+    reason="真实Worker验收需要celery prefork池；Windows上billiard SpawnPoolWorker无法运行",
+)
+
+# 真实反向代理验收需要本地nginx二进制与/proc进程/连接统计，Windows环境不具备。
+POSIX_NGINX_PROXY = pytest.mark.skipif(
+    sys.platform == "win32",
+    reason="真实反向代理验收需要本地nginx与/proc进程统计；Windows环境不具备",
+)
 
 
 def local_url(name: str) -> str:

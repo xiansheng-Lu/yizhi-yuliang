@@ -31,7 +31,7 @@ from yuliang.worker.app import create_celery
 from .test_identity_database import ROOT
 from .test_identity_database import database as database
 from .test_identity_database import seeded as seeded
-from .test_infrastructure import local_url
+from .test_infrastructure import POSIX_PREFORK_WORKER, local_url
 from .test_worker import worker as worker
 
 
@@ -227,6 +227,7 @@ def test_m0_16b_received_is_resumable_and_duplicates_serialize(transport: dict[s
     assert_once(transport)
 
 
+@POSIX_PREFORK_WORKER
 def test_m0_16b_actual_worker_persists_recovery_once(
     transport: dict[str, Any], worker: dict[str, Any]
 ) -> None:
@@ -377,6 +378,7 @@ def test_m0_16a_mq_disconnect_preserves_committed_event(transport: dict[str, Any
     assert_once(transport)
 
 
+@POSIX_PREFORK_WORKER
 def test_m0_16b_persistent_scan_recovers_received_without_replaying_done(
     transport: dict[str, Any], worker: dict[str, Any]
 ) -> None:

@@ -32,6 +32,7 @@ from .test_adq_reports import oauth_ready as oauth_ready
 from .test_adq_reports import reports as reports
 from .test_capability_evidence import capability as capability
 from .test_identity_database import database as database
+from .test_infrastructure import POSIX_PREFORK_WORKER
 from .test_password_sessions import challenge
 from .test_password_sessions import login_api as login_api
 
@@ -325,6 +326,7 @@ def test_http_csrf_origin_body_overrides_and_cookie_rejected(
     assert client.get(PREFIX + "/results").status_code == 401
 
 
+@POSIX_PREFORK_WORKER
 def test_real_rabbitmq_prefork_delivery_computes_once_and_freezes_result(
     analysis_worker: dict[str, Any],
 ) -> None:

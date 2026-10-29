@@ -15,6 +15,7 @@ from yuliang.modules.content.assets import AssetService
 from yuliang.modules.content.generation_models import GenerationInput
 from yuliang.modules.content.models import Document
 from yuliang.modules.content.service import ContentService
+from yuliang.modules.content.validation import validate_content
 from yuliang.modules.content.workflows_execution_rules import satisfied
 from yuliang.modules.content.workflows_execution_service import WorkflowExecution
 from yuliang.platform.errors import ApiError, ErrorCode
@@ -52,7 +53,8 @@ class GenerationRepository:
             or row["product_id"] != run["product_id"]
         ):
             raise ApiError(ErrorCode.VERSION_CONFLICT, "生成文档版本或商品/创作线范围不符")
-        return run, step, Document.model_validate(row["payload"])
+        # 生成入口与保存/SOP共用同一结构规则，非法存量正文在报价/付费前按中文字段定位拒绝。
+        return run, step, validate_content(row["payload"], purpose="GENERATION")
 
     def request(
         self, s: Session, value: GenerationInput, proofs: dict[UUID, AssetProof]

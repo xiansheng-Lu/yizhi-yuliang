@@ -1,5 +1,6 @@
 """实际PG/MinIO生成账本；所有价格/供应商/费用回执为合成，不调用真实供应商。"""
 
+import json
 from typing import Any
 from unittest.mock import patch
 from uuid import UUID, uuid4
@@ -15,7 +16,7 @@ from yuliang.modules.content.generation_service import GenerationService
 from yuliang.modules.content.workflows_models import RunCreate, TemplateDefinition
 from yuliang.modules.content.workflows_service import WorkflowService
 from yuliang.platform.db import business_transaction
-from yuliang.platform.errors import ApiError
+from yuliang.platform.errors import ApiError, ErrorCode
 
 from .test_capability_evidence import capability as capability
 from .test_cloud_documents import content_ready as content_ready
@@ -732,3 +733,56 @@ async def test_barrier_create_other_ready_step_vs_cancel_or_failed_settlement(
             ).scalar_one()
             == 2
         )
+
+
+def corrupt_document(d: dict[str, Any]) -> None:
+    """绕过保存服务写入非法存量正文，验证生成入口共用校验器的实际拦截面。"""
+    patch_value = dict(
+        nodes=[dict(id="n0", type="reference", x=0, y=0, text="", assetId="")],
+        edges=[dict(id="e0", sourceNodeId="n0", targetNodeId="n0")],
+    )
+    with d["maintenance"].begin() as owner:
+        owner.execute(text("SET LOCAL ROLE app_owner"))
+        owner.execute(
+            text(
+                "UPDATE content_documents SET payload=payload||CAST(:patch AS jsonb) "
+                "WHERE id=:id"
+            ),
+            dict(patch=json.dumps(patch_value), id=UUID(d["input"].documentId)),
+        )
+
+
+async def test_generation_entry_rejects_invalid_document_with_chinese_details(
+    generations_ready: dict[str, Any],
+) -> None:
+    d = generations_ready
+    corrupt_document(d)
+    with pytest.raises(ApiError) as error:
+        d["generation"].quote(d["input"])
+    assert error.value.code == ErrorCode.INVALID_INPUT
+    issue = next(v for v in error.value.details if v["reason"] == "节点图不能包含环")
+    assert issue["field"].startswith("document.edges.") and "edgeId" in issue
+    with business_transaction(d["engine"], d["identity"]) as s:
+        assert (
+            s.execute(
+                text("SELECT count(*) FROM ai_cost_quotes WHERE scenario='content_generation'")
+            ).scalar_one()
+            == 0
+        )
+        assert s.execute(text("SELECT count(*) FROM generation_jobs")).scalar_one() == 0
+    assert ledger(d) == (0, 0, 0) and not d["provider"].sent
+
+
+async def test_invalid_document_blocks_dispatch_before_provider_send(
+    generations_ready: dict[str, Any],
+) -> None:
+    d = generations_ready
+    job = d["generation"].create(confirmed(d))
+    identifier = UUID(job["id"])
+    corrupt_document(d)
+    with pytest.raises(ApiError) as error:
+        d["generation"].dispatch(identifier)
+    assert error.value.code == ErrorCode.INVALID_INPUT
+    assert not d["provider"].sent
+    assert d["generation"].get(identifier)["submitState"] == "NOT_SENT"
+    assert ledger(d) == (1, 0, 0)

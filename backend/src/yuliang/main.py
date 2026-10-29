@@ -49,7 +49,22 @@ def create_app(settings: Settings | None = None, mail_sender: MailSender | None 
             )
         app.state.platform_runtime = None
         app.state.blob_store = None
+        app.state.content_ai_runtime = None
         try:
+            if (
+                app.state.settings.llm_primary_endpoint is not None
+                and app.state.settings.llm_primary_key is not None
+            ):
+                from yuliang.modules.aikernel.content_gateway import ContentPort
+                from yuliang.modules.aikernel.models import ServerSecrets
+                from yuliang.modules.content.ai_content_service import ContentRuntime
+
+                app.state.content_ai_runtime = ContentRuntime(
+                    ContentPort(app.state.settings.llm_primary_endpoint),
+                    ServerSecrets(
+                        {"YULIANG_LLM_PRIMARY_KEY": app.state.settings.llm_primary_key}
+                    ),
+                )
             if app.state.settings.blob_enabled:
                 from yuliang.infrastructure.blob import BlobStore
 

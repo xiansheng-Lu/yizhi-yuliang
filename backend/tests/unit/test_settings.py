@@ -4,7 +4,7 @@ import sys
 from pathlib import Path
 
 import pytest
-from pydantic import ValidationError
+from pydantic import SecretStr, ValidationError
 
 from yuliang.main import create_app
 from yuliang.settings import Settings
@@ -38,6 +38,38 @@ def test_config_secrets_redacted_and_env_types_checked(settings: Settings) -> No
     values["database_url"] = "sqlite:///local.db"
     with pytest.raises(ValidationError):
         Settings(**values)
+
+
+def test_llm_primary_text_model_needs_exact_https_and_paired_secret(
+    settings: Settings,
+) -> None:
+    values = settings.model_dump()
+    with pytest.raises(ValidationError):
+        Settings(_env_file=None, **(values | dict(llm_primary_endpoint="https://api.test.invalid")))
+    for endpoint in ("http://api.test.invalid", "https://api.test.invalid/v1"):
+        with pytest.raises(ValidationError):
+            Settings(
+                _env_file=None,
+                **(
+                    values
+                    | dict(
+                        llm_primary_endpoint=endpoint,
+                        llm_primary_key=SecretStr("synthetic-not-real-key"),
+                    )
+                ),
+            )
+    configured = Settings(
+        _env_file=None,
+        **(
+            values
+            | dict(
+                llm_primary_endpoint="https://api.test.invalid",
+                llm_primary_key=SecretStr("synthetic-not-real-key"),
+            )
+        ),
+    )
+    assert configured.llm_primary_endpoint == "https://api.test.invalid"
+    assert "synthetic-not-real-key" not in repr(configured)
 
 
 def test_python_and_core_dependencies_import() -> None:

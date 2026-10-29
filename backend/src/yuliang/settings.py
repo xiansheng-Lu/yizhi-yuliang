@@ -41,6 +41,8 @@ class Settings(BaseSettings):
     blob_region: str = Field(default="us-east-1", pattern=r"^[a-z0-9][a-z0-9-]{0,62}$")
     blob_upload_ttl_seconds: int = Field(default=300, ge=1, le=900)
     blob_download_ttl_seconds: int = Field(default=60, ge=1, le=300)
+    llm_primary_endpoint: str | None = None
+    llm_primary_key: SecretStr | None = None
     report_public_origin: str | None = None
     report_link_secret: SecretStr | None = None
     report_public_ttl_seconds: int = Field(default=2592000, ge=60, le=31536000)
@@ -109,6 +111,21 @@ class Settings(BaseSettings):
                 or re.fullmatch(r"[a-z0-9][a-z0-9-]{1,61}[a-z0-9]", self.blob_bucket) is None
             ):
                 raise ValueError("私有存储需固定源与合法桶名；明文仅允许本地测试回环")
+        if self.llm_primary_endpoint is not None or self.llm_primary_key is not None:
+            if self.llm_primary_endpoint is None or self.llm_primary_key is None:
+                raise ValueError("文本模型需同时配置服务端地址与密钥")
+            endpoint = urlsplit(self.llm_primary_endpoint)
+            if (
+                endpoint.scheme != "https"
+                or not endpoint.hostname
+                or endpoint.username
+                or endpoint.password
+                or endpoint.path not in {"", "/"}
+                or endpoint.query
+                or endpoint.fragment
+                or not self.llm_primary_key.get_secret_value().strip()
+            ):
+                raise ValueError("文本模型地址需为精确HTTPS源，密钥不可为空")
         if self.admin_api_enabled and (
             not self.identity_api_enabled or not self.admin_allowed_networks
         ):

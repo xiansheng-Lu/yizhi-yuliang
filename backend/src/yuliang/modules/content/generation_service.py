@@ -17,6 +17,7 @@ from yuliang.modules.content.generation_provider import (
 from yuliang.modules.content.generation_repository import GenerationRepository
 from yuliang.modules.content.models import Document
 from yuliang.modules.content.service import ContentService
+from yuliang.modules.content.validation import validate_content
 from yuliang.modules.content.workflows_execution_service import WorkflowExecution
 from yuliang.platform.db import business_transaction
 from yuliang.platform.errors import ApiError, ErrorCode
@@ -189,7 +190,7 @@ class GenerationService:
             or document["revision"] != row["document_revision"]
         ):
             raise ApiError(ErrorCode.VERSION_CONFLICT, "生成输入/步骤已变化，未发送")
-        return Document.model_validate(document["payload"])
+        return validate_content(document["payload"], purpose="GENERATION")
 
     def _ensure_dispatchable(self) -> None:
         # 默认不可用在任何SENT/费用消费前失败，不能假调用后报成功。

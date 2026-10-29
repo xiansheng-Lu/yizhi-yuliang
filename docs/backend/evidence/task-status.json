@@ -3098,7 +3098,7 @@
     "M3-16": {
       "owner": "BE",
       "status": "IN_PROGRESS",
-      "delivery": "共享SAVE/导入/根初始化/人工执行及三短场景MODEL生产采纳守卫实际验证；GENERATION完整接入仍缺，整卡IN_PROGRESS",
+      "delivery": "共享SAVE/导入/根初始化/人工执行及三短场景MODEL生产采纳守卫实际验证；GENERATION入口复用同一结构校验并在报价/付费前拒绝非法正文，文本模型服务端地址与密钥按HTTPS源严格校验后装配内容运行时；真实付费模型调用与F10前端仍缺，整卡IN_PROGRESS",
       "dependencyInput": "M3-13a/M3-15a/15b实际技术基线已通过；真实生成/SOP生产者后卡接线",
       "evidence": "tasks/M3-16/README.md",
       "review": {
@@ -3106,9 +3106,9 @@
         "frontend": "PENDING"
       },
       "technicalVerification": {
-        "result": "PASS_SHARED_STRUCTURE_AND_REAL_SAVE_GUARD_SLICE",
-        "unitPassed": 21,
-        "integrationPassed": 5,
+        "result": "PASS_GENERATION_ENTRY_SHARED_VALIDATION_AND_LLM_RUNTIME_WIRING_SLICE",
+        "unitPassed": 154,
+        "integrationPassed": 75,
         "evidence": "tasks/M3-16/verification.json",
         "paidCalls": 0,
         "livePlatformCalls": 0

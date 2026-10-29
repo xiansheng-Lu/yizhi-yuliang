@@ -72,8 +72,15 @@ def unavailable(payload: dict[str, Any]) -> None:
 
 
 def approved_execution_runtime() -> Any:
-    """服务器显式装配入口；默认无生产WRITE适配，消息不能覆盖此工厂。"""
-    return None
+    """生产显式装配入口；默认返回空 DispatchRuntime（持久 BLOCKED_EXECUTOR）。
+
+    生产进程需在 worker 启动前调用 yuliang.modules.execution.write_adapter.register(...)
+    按 (action, provider, product_line) 装配 ExecutorFactory。注册表为空时 resolve() 返回 None。
+    消息不得覆盖或自动注入此工厂。
+    """
+    from yuliang.modules.execution.write_adapter import build_production_runtime
+
+    return build_production_runtime()
 
 
 @app.task(

@@ -113,7 +113,11 @@ class Settings(BaseSettings):
             not self.identity_api_enabled or not self.admin_allowed_networks
         ):
             raise ValueError("管理入口需要身份接口与明确来源网段")
-        if self.platform_resources_file is not None and not self.identity_api_enabled:
+        if (
+            self.platform_resources_file is not None
+            and not self.identity_api_enabled
+            and self.environment not in {"test", "local"}
+        ):
             raise ValueError("平台接入需要真实身份与会话接口")
         for network in self.admin_allowed_networks + self.operations_allowed_networks:
             ip_network(network)

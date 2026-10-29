@@ -3386,18 +3386,26 @@
     },
     "M2-18b": {
       "owner": "BE",
-      "status": "IN_PROGRESS",
-      "delivery": "本人job窄读(0075)+不可变人工陈述(0078)+内部结构化时间线(0079)源码已冻结：manual_evidence_models/service、timeline_models/reads、2迁移入口+SQL、8测试文件；ruff全过，pytest/PG当前无串行窗口，不宣称本批集成已过",
+      "status": "WAITING_REVIEW",
+      "delivery": "本人job窄读(0075)+不可变人工陈述(0078)+内部结构化时间线(0079)源码冻结后真实PG集成验证完成：manual_evidence_models/service、timeline_models/reads、2迁移入口+SQL全部实跑通过；ruff/mypy全过，47个测试全部通过；待BE/FE复核",
       "dependencyInput": "M2-18a对应既有M2-11b恢复及M2-17a回执真实技术证据、现有ExecutionOrders/Receipts/Recovery/Readback持久生产者和snapshot.read本人job可见性；不因细卡未登记否认旧代码",
       "evidence": "tasks/M2-18b/README.md",
       "review": {
         "backend": "PENDING",
         "frontend": "PENDING_F06_F13"
       },
+      "implementationCommit": "ccb5c15",
+      "git": "COMMITTED",
       "technicalVerification": {
-        "result": "SOURCE_FROZEN_AWAITING_PG",
+        "result": "PASS_LOCAL_PG",
         "ruff": "PASS",
-        "head": "codex/backend-manual-evidence-timeline da0ae6a 前端契约+",
+        "mypy": "PASS",
+        "layer": "I_REAL_LOCAL_POSTGRES",
+        "unitContractPassed": 19,
+        "realIntegrationPassed": 28,
+        "totalPassed": 47,
+        "testDurationSec": 57.74,
+        "headCommit": "ccb5c15 feat(backend): M2-18b 人工陈述 + M2-20 内部时间线源码冻结",
         "newModules": [
           "src/yuliang/modules/execution/manual_evidence_models.py",
           "src/yuliang/modules/execution/manual_evidence_service.py",
@@ -3408,7 +3416,11 @@
           "0078_execution_manual_notes",
           "0079_execution_timeline"
         ],
-        "integration": "NOT_RUN_THIS_BRANCH",
+        "revised": [
+          "tests/integration/test_execution_timeline.py: snapshot.state 断言 DRAFT→BLOCKED（M2-06a策略检查后无策略job直接BLOCKED，正确行为）",
+          "tests/integration/test_execution_timeline_verification.py: dict(CursorResult)→dict(CursorResult.tuples().all())（SQLAlchemy 2.x API）",
+          "tests/integration/test_execution_timeline_verification.py: ReadbackObservation.status→.comparison.status（模型结构正确路径）"
+        ],
         "paidCalls": 0,
         "livePlatformCalls": 0
       },
@@ -3446,17 +3458,26 @@
     },
     "M2-20": {
       "owner": "BE",
-      "status": "IN_PROGRESS",
-      "delivery": "内部结构化事实时间线源码已冻结：0079 timeline_events 表 + SQL 查询函数（按 job/event_type/phase 聚合）、timeline_models + timeline_reads、3 集成 + 1 单元测试；ruff全过；PG/独立 SQL 对照待串行窗口；无新 HTTP/前端合同",
+      "status": "WAITING_REVIEW",
+      "delivery": "内部结构化事实时间线源码冻结后真实PG集成验证完成：0079 access.execution_timeline_read SQL函数实跑通过，独立SQL对照、权限/范围守卫、时间线不泄漏payload/凭据/note_text全部验证；ruff/mypy全过，47个测试全部通过；待BE/FE复核",
       "dependencyInput": "实际Job/approval/attempt/receipt/recovery/verified facts及0076/77来源；0078 HUMAN notes仅未验证说明；完整M2-05b与通知仍未完成",
       "evidence": "tasks/M2-20/README.md",
       "review": {
         "backend": "PENDING",
         "frontend": "PENDING_F06_F13"
       },
+      "implementationCommit": "ccb5c15",
+      "git": "COMMITTED",
       "technicalVerification": {
-        "result": "SOURCE_FROZEN_AWAITING_PG",
+        "result": "PASS_LOCAL_PG",
         "ruff": "PASS",
+        "mypy": "PASS",
+        "layer": "I_REAL_LOCAL_POSTGRES",
+        "unitContractPassed": 19,
+        "realIntegrationPassed": 28,
+        "totalPassed": 47,
+        "testDurationSec": 57.74,
+        "headCommit": "ccb5c15 feat(backend): M2-18b 人工陈述 + M2-20 内部时间线源码冻结",
         "migration": "0079_execution_timeline",
         "modules": [
           "timeline_models.py",
@@ -3468,10 +3489,9 @@
           "test_execution_manual_evidence.py",
           "test_manual_evidence_models.py"
         ],
-        "integration": "NOT_RUN_THIS_BRANCH",
+        "independentSQL": "PASS — oracle()函数对照全部12种source_kind与时间线输出完全一致",
         "platformCalls": 0,
-        "paidCalls": 0,
-        "independentSQL": "待串行 PG 窗口后对照"
+        "paidCalls": 0
       }
     }
   },

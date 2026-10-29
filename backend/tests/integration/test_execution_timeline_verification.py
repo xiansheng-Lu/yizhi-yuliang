@@ -133,7 +133,7 @@ def assert_oracle(data: dict[str, Any], job: UUID) -> Any:
         versions = dict(
             session.execute(
                 text("SELECT id::text,job_version FROM job_events WHERE job_id=:job"), dict(job=job)
-            )
+            ).tuples().all()
         )
     for row in first.events:
         if row.source_kind == "JOB_EVENT":
@@ -257,7 +257,7 @@ async def test_independent_sql_read_transport_match_does_not_become_e2(
         attempt = session.execute(text("SELECT id FROM execution_attempts")).scalar_one()
     port, calls = reader(data, governance)
     result = await port.inspect(attempt, data["readctx"], SecretStr("synthetic"), uuid4())
-    assert result.status == "MATCHED" and calls == ["GET"]
+    assert result.comparison.status == "MATCHED" and calls == ["GET"]
     timeline = assert_oracle(data, item.job_id)
     assert any(row.source_kind == "READ_TRANSPORT" for row in timeline.events)
     assert not any(row.evidence_level == "E2" for row in timeline.events)

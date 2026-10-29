@@ -64,7 +64,7 @@ def test_actual_creation_is_not_fake_empty_or_current_snapshot_history(
     assert len(value.events) == 1 and value.events[0].source_kind == "JOB_EVENT"
     assert value.events[0].job_version == 1
     snapshot = value.current_snapshots[0]
-    assert snapshot.source_kind == "JOB" and snapshot.state == "DRAFT" and snapshot.version == 1
+    assert snapshot.source_kind == "JOB" and snapshot.state == "BLOCKED" and snapshot.version == 1
     assert snapshot.interpretation == "CURRENT_SNAPSHOT_NOT_HISTORICAL_EVENT"
 
 

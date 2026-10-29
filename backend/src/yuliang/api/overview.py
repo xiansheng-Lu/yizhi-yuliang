@@ -11,7 +11,6 @@ import time
 import uuid
 from datetime import date, timedelta
 from typing import Any, Literal
-from urllib.parse import urlencode
 from uuid import uuid4
 
 import httpx
@@ -22,8 +21,6 @@ from yuliang.modules.connectors.external_tokens import (
     ExternalTokenConfig,
     ExternalTokenProvider,
 )
-from yuliang.platform.envelope import success
-
 
 router = APIRouter()
 stub_router = APIRouter()
@@ -74,7 +71,11 @@ class OverviewReport(BaseModel):
     funnel: dict[str, Any]
     traffic: dict[str, Any]
     ai: dict[str, int | float | None] = {
-        "running": 0, "completed": 0, "exceptions": 0, "pending": 0, "successRate": None,
+        "running": 0,
+        "completed": 0,
+        "exceptions": 0,
+        "pending": 0,
+        "successRate": None,
     }
     insights: list[dict[str, Any]] = []
 
@@ -113,12 +114,14 @@ async def _list_adq_token_accounts(client: httpx.AsyncClient) -> list[dict[str, 
 async def _adq_token_for(account_id: str) -> str:
     """按 token 服务中的账号 id 取有效 access_token。"""
     cfg = _TOKEN_SERVICES["adq"]
-    provider = ExternalTokenProvider(ExternalTokenConfig(
-        base_url=cfg.base_url,
-        api_key=cfg.api_key,
-        product=cfg.product,
-        account_id=account_id,
-    ))
+    provider = ExternalTokenProvider(
+        ExternalTokenConfig(
+            base_url=cfg.base_url,
+            api_key=cfg.api_key,
+            product=cfg.product,
+            account_id=account_id,
+        )
+    )
     token = await provider.get_token()
     return token.access_token.get_secret_value()
 
@@ -154,16 +157,23 @@ async def _fetch_bm_subaccounts(bm_id: str, token_str: str, client: httpx.AsyncC
     return subs
 
 
-async def _fetch_adq_account(account_id: str, token_str: str, client: httpx.AsyncClient, day: str) -> dict[str, Any]:
+async def _fetch_adq_account(
+    account_id: str, token_str: str, client: httpx.AsyncClient, day: str
+) -> dict[str, Any]:
     """拉单个 ADQ 账号的档案 + 资金余额 + 当日实时消耗。"""
+
     async def _get(path: str, **extra: Any) -> dict[str, Any]:
-        r = await client.get(f"{_ADQ_API}/{path}", params=_adq_params(token_str, account_id=account_id, **extra))
+        r = await client.get(
+            f"{_ADQ_API}/{path}", params=_adq_params(token_str, account_id=account_id, **extra)
+        )
         return r.json()
 
     account = await _get(
         "v3.0/advertiser/get",
         fields=json.dumps(["account_id", "corporation_name", "system_status", "daily_budget"]),
-        pagination_mode="PAGINATION_MODE_NORMAL", page=1, page_size=10,
+        pagination_mode="PAGINATION_MODE_NORMAL",
+        page=1,
+        page_size=10,
     )
     funds = await _get(
         "v3.0/funds/get",
@@ -184,8 +194,10 @@ async def _fetch_adq_all(client: httpx.AsyncClient, day: str) -> dict[str, Any]:
 
     # 并发取所有账号的 token
     token_map: dict[str, str] = {}
+
     async def _load(aid: str) -> None:
         token_map[aid] = await _adq_token_for(aid)
+
     await asyncio.gather(*(_load(str(a["account_id"])) for a in ts_accounts))
 
     # 展开目标账号
@@ -207,7 +219,9 @@ async def _fetch_adq_all(client: httpx.AsyncClient, day: str) -> dict[str, Any]:
         async with sem:
             return await _fetch_adq_account(aid, tok, client, day)
 
-    results = await asyncio.gather(*(_one(aid, tok) for aid, tok in targets), return_exceptions=True)
+    results = await asyncio.gather(
+        *(_one(aid, tok) for aid, tok in targets), return_exceptions=True
+    )
     accounts = [r for r in results if isinstance(r, dict)]
     errors = [str(r)[:120] for r in results if not isinstance(r, dict)]
     return {
@@ -218,7 +232,9 @@ async def _fetch_adq_all(client: httpx.AsyncClient, day: str) -> dict[str, Any]:
     }
 
 
-async def _fetch_wxshop(provider: ExternalTokenProvider, client: httpx.AsyncClient, ds: str) -> dict[str, Any]:
+async def _fetch_wxshop(
+    provider: ExternalTokenProvider, client: httpx.AsyncClient, ds: str
+) -> dict[str, Any]:
     """拉微信小店罗盘整体概览 + 资金余额。
 
     罗盘数据 T+1，若传入的 ds 当天 data 为空，自动回退到前一天，
@@ -239,7 +255,9 @@ async def _fetch_wxshop(provider: ExternalTokenProvider, client: httpx.AsyncClie
     # 若 errcode=0 但 data 为空 dict，尝试回退一天
     if compass_data.get("errcode") == 0 and not compass_data.get("data"):
         try:
-            fallback = (date(int(ds[:4]), int(ds[4:6]), int(ds[6:8])) - timedelta(days=1)).strftime("%Y%m%d")
+            fallback = (date(int(ds[:4]), int(ds[4:6]), int(ds[6:8])) - timedelta(days=1)).strftime(
+                "%Y%m%d"
+            )
             fallback_r = await client.post(
                 "https://api.weixin.qq.com/channels/ec/compass/shop/overall/get",
                 params={"access_token": token_str},
@@ -292,7 +310,7 @@ async def get_overview(
         date.fromisoformat(start_date)
         date.fromisoformat(end_date)
     except ValueError:
-        raise HTTPException(400, "start_date / end_date 格式应为 YYYY-MM-DD")
+        raise HTTPException(400, "start_date / end_date 格式应为 YYYY-MM-DD") from None
     if start_date > end_date:
         raise HTTPException(400, "start_date 不能晚于 end_date")
 
@@ -333,7 +351,9 @@ async def get_overview(
             if cost is not None:
                 adq_total_spend += cost
                 adq_spend_known = True
-            adq_rows.append({"account_id": acc["account_id"], "name": name, "cost": cost, "balance": balance})
+            adq_rows.append(
+                {"account_id": acc["account_id"], "name": name, "cost": cost, "balance": balance}
+            )
 
     # --- wx_shop 解析 ---
     wx_ok = isinstance(wx_raw, dict) and wx_raw.get("compass", {}).get("errcode") == 0
@@ -347,7 +367,7 @@ async def get_overview(
     spend: int | None = adq_total_spend if adq_spend_known else None
     gmv = None
     orders = None
-    roi = _compute_roi(spend, gmv)
+    _compute_roi(spend, gmv)
 
     updated_at = time.strftime("%Y-%m-%dT%H:%M:%S+08:00", time.localtime())
     coverage_notes = []
@@ -364,50 +384,73 @@ async def get_overview(
         coverage_notes.append(f"ADQ 账号发现异常：{str(adq_all)[:120]}")
     if wx_ok:
         if wx_effective_ds and wx_effective_ds != ds:
-            coverage_notes.append(f"微信小店罗盘整体概览获取成功（当天数据未生成，已回退至 {wx_effective_ds}）")
+            coverage_notes.append(
+                f"微信小店罗盘整体概览获取成功（当天数据未生成，已回退至 {wx_effective_ds}）"
+            )
         else:
             coverage_notes.append("微信小店罗盘整体概览获取成功")
     else:
-        coverage_notes.append(f"微信小店接口异常：{wx_raw.get('errmsg', '未知错误') if isinstance(wx_raw, dict) else str(wx_raw)[:120]}")
+        errmsg = wx_raw.get("errmsg", "未知错误") if isinstance(wx_raw, dict) else str(wx_raw)[:120]
+        coverage_notes.append(f"微信小店接口异常：{errmsg}")
 
     channels: list[dict[str, Any]] = []
     for row in adq_rows:
         share = None
         if adq_total_spend > 0 and row["cost"] is not None:
             share = round(row["cost"] / adq_total_spend, 4)
-        channels.append({
-            "id": f"adq_{row['account_id']}", "name": "腾讯广告",
-            "detail": f"{row['name'] or '—'}（{row['account_id']}）",
-            "spend": row["cost"], "gmv": None, "roi": None,
-            "share": share,
-        })
+        channels.append(
+            {
+                "id": f"adq_{row['account_id']}",
+                "name": "腾讯广告",
+                "detail": f"{row['name'] or '—'}（{row['account_id']}）",
+                "spend": row["cost"],
+                "gmv": None,
+                "roi": None,
+                "share": share,
+            }
+        )
     if wx_ok:
         wx_overall_gmv = _fmt_cents(wx_compass_overall.get("pay_gmv"))
         wx_orders = _fmt_cents(wx_compass_overall.get("pay_order_cnt"))
-        wx_pay_uv = _fmt_cents(wx_compass_overall.get("pay_uv"))
+        _fmt_cents(wx_compass_overall.get("pay_uv"))
         display_ds = wx_effective_ds or ds
-        display_label = f"{display_ds[:4]}-{display_ds[4:6]}-{display_ds[6:8]}" if display_ds else start_date
-        channels.append({
-            "id": "wxshop", "name": "微信小店",
-            "detail": f"罗盘整体概览 · {display_label}",
-            "spend": None, "gmv": wx_overall_gmv, "orders": wx_orders, "roi": None,
-            "share": None,
-        })
+        display_label = (
+            f"{display_ds[:4]}-{display_ds[4:6]}-{display_ds[6:8]}" if display_ds else start_date
+        )
+        channels.append(
+            {
+                "id": "wxshop",
+                "name": "微信小店",
+                "detail": f"罗盘整体概览 · {display_label}",
+                "spend": None,
+                "gmv": wx_overall_gmv,
+                "orders": wx_orders,
+                "roi": None,
+                "share": None,
+            }
+        )
         if wx_overall_gmv is not None:
             gmv = wx_overall_gmv
         if wx_orders is not None:
             orders = wx_orders
-        roi = _compute_roi(spend, gmv)
+        _compute_roi(spend, gmv)
 
     total_spend = spend
     total_gmv = gmv
 
     report = OverviewReport(
         source="API",
-        filter=OverviewFilter(start_date=start_date, end_date=end_date, shop_id=shop_id, connector_id=connector_id),
+        filter=OverviewFilter(
+            start_date=start_date, end_date=end_date, shop_id=shop_id, connector_id=connector_id
+        ),
         updatedAt=updated_at,
         coverageNote="；".join(coverage_notes),
-        totals=OverviewTotals(spend=total_spend, gmv=total_gmv, orders=orders, roi=_compute_roi(total_spend, total_gmv)),
+        totals=OverviewTotals(
+            spend=total_spend,
+            gmv=total_gmv,
+            orders=orders,
+            roi=_compute_roi(total_spend, total_gmv),
+        ),
         previous=None,
         trend={"status": "unavailable", "reason": "当前仅拉取单日快照，历史趋势待接入同步事实表"},
         channels=channels,
@@ -423,9 +466,13 @@ async def get_overview(
         funnel={"status": "unavailable", "reason": "曝光-点击-进房-下单-支付漏斗口径待对齐"},
         traffic={"status": "unavailable", "reason": "流量来源统计接口待接入"},
         insights=[
-            {"id": "source", "tone": "info", "title": "真实平台数据",
-             "detail": "当前数据直接来自腾讯广告 API 和微信小店罗盘，未经过本地同步层。",
-             "href": "/app/analytics"},
+            {
+                "id": "source",
+                "tone": "info",
+                "title": "真实平台数据",
+                "detail": "当前数据直接来自腾讯广告 API 和微信小店罗盘，未经过本地同步层。",
+                "href": "/app/analytics",
+            },
         ],
     )
     return report.model_dump(mode="json")
@@ -435,6 +482,7 @@ async def get_overview(
 # 验收 stub：前端 ApiClient 在 mode=api 时需要这些接口返回合法 envelope。
 # 正式部署应由完整 identity/auth/frontend 路由提供。
 # ---------------------------------------------------------------------------
+
 
 def _envelope(data: Any) -> dict[str, Any]:
     """构造 command-job-v1.0 响应信封（ApiClient.request() 解析契约）。"""
@@ -458,7 +506,18 @@ async def stub_session() -> dict[str, Any]:
         "email": "yizhi-test@example.com",
         "shopIds": [],
         "permissions": ["overview:read", "shop:read", "account:read", "connection:read"],
-        "workspacePages": ["overview", "monitor", "products", "reports", "analytics", "tasks", "goals", "plans", "decisions", "executions"],
+        "workspacePages": [
+            "overview",
+            "monitor",
+            "products",
+            "reports",
+            "analytics",
+            "tasks",
+            "goals",
+            "plans",
+            "decisions",
+            "executions",
+        ],
         "lastLogin": time.strftime("%Y-%m-%dT%H:%M:%S+08:00", time.localtime()),
     }
     return _envelope(identity)

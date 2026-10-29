@@ -6,7 +6,7 @@ import { ArrowClockwise, ArrowRight, Bag, CalendarBlank, CaretDown, CaretRight, 
 import { connectorNames, money, type FrontendSnapshot } from "@/lib/domain";
 import type { ReportingScope } from "@/lib/command-job";
 import { overviewKey, percentChange, shanghaiDate, shiftDate, validDateRange, type OverviewFilter, type OverviewMetric, type OverviewReport, type PerformanceRow } from "@/lib/overview";
-import { loadSnapshotOverview, overviewPlatforms, type OverviewLoader } from "@/services/overview-adapter";
+import { loadApiOverview, loadSnapshotOverview, overviewPlatforms, type OverviewLoader } from "@/services/overview-adapter";
 import { invalidateSnapshotRead } from "@/services/snapshot-reader";
 import { useWorkspace } from "@/components/provider";
 import { MissingData, OverviewDonut, OverviewFunnel, OverviewTrend, Sparkline } from "@/components/overview-charts";
@@ -59,8 +59,10 @@ function OverviewMetrics({ report }: { report: OverviewReport }) {
 function OverviewSkeleton() {
   return <div className="ov-loading" role="status" aria-label="正在更新经营数据"><div className="ov-loading-kpis">{Array.from({ length: 6 }, (_, i) => <div key={i} />)}</div><div className="ov-loading-chart"><span className="loading-ring" /><p>正在更新所选范围的经营数据…</p></div></div>;
 }
-export function OverviewPage({ snapshot, loader = loadSnapshotOverview }: { snapshot: FrontendSnapshot; loader?: OverviewLoader }) {
+export function OverviewPage({ snapshot, loader }: { snapshot: FrontendSnapshot; loader?: OverviewLoader }) {
   const { service, reload, identity } = useWorkspace();
+  const apiLoader = service?.mode === "api" ? loadApiOverview : loadSnapshotOverview;
+  const activeLoader = loader ?? apiLoader;
   const router = useRouter();
   const [range, setRange] = useState({ startDate: snapshot.scope.date, endDate: snapshot.scope.date });
   const [draft, setDraft] = useState(range);
@@ -86,7 +88,7 @@ export function OverviewPage({ snapshot, loader = loadSnapshotOverview }: { snap
   }, []);
   useEffect(() => {
     const controller = new AbortController();
-    void loader({ snapshot, filter, signal: controller.signal }).then((data) => {
+    void activeLoader({ snapshot, filter, signal: controller.signal }).then((data) => {
       if (overviewKey(data.filter) !== key || data.source !== snapshot.source)
         throw new Error("返回的数据与当前筛选范围或数据来源不一致，请刷新重试。");
       if (!controller.signal.aborted) setResource({ key, snapshot, report: data });
@@ -94,7 +96,7 @@ export function OverviewPage({ snapshot, loader = loadSnapshotOverview }: { snap
       if (!controller.signal.aborted) setResource({ key, snapshot, error: e instanceof Error ? e.message : "经营数据读取失败，请重试。" });
     });
     return () => controller.abort();
-  }, [snapshot, filter, key, loader, retry]);
+  }, [snapshot, filter, key, activeLoader, retry]);
 
   async function changeScope(patch: Partial<ReportingScope>, navigateToLive = false) {
     if (!service || changing.current) return;

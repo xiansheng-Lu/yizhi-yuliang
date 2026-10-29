@@ -12,6 +12,8 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse
 
 from yuliang.api.operations import router as operations_router
+from yuliang.api.overview import router as overview_router
+from yuliang.api.overview import stub_router as stub_overview_router
 from yuliang.infrastructure.mail import MailSender
 from yuliang.platform.envelope import success
 from yuliang.platform.errors import (
@@ -54,10 +56,20 @@ def create_app(settings: Settings | None = None, mail_sender: MailSender | None 
 
                 app.state.blob_store = BlobStore.from_settings(app.state.settings)
             if app.state.settings.platform_resources_file is not None:
+                from sqlalchemy import create_engine
+
                 from yuliang.modules.connectors.runtime import PlatformRuntime
 
+                engine = (
+                    app.state.identity_service.app
+                    if app.state.settings.identity_api_enabled
+                    else create_engine(
+                        app.state.settings.database_url.get_secret_value(),
+                        hide_parameters=True,
+                    )
+                )
                 app.state.platform_runtime = PlatformRuntime.load(
-                    app.state.identity_service.app,
+                    engine,
                     app.state.settings,
                     app.state.settings.platform_resources_file,
                 )
@@ -82,6 +94,8 @@ def create_app(settings: Settings | None = None, mail_sender: MailSender | None 
     )
     app.state.settings = settings
     app.include_router(operations_router)
+    app.include_router(overview_router)
+    app.include_router(stub_overview_router)
     if settings.identity_api_enabled:
         from yuliang.api.configuration import router as configuration_router
         from yuliang.api.connections import router as connection_router

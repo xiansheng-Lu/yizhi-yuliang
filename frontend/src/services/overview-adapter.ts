@@ -119,3 +119,29 @@ export const loadSnapshotOverview: OverviewLoader = async ({ snapshot, filter, s
   signal.throwIfAborted();
   return report;
 };
+
+/** API 模式 loader：直接调后端 /v1/overview，绕过 snapshot 本地聚合。 */
+export const loadApiOverview: OverviewLoader = async ({ filter, signal }) => {
+  signal.throwIfAborted();
+  const base = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
+  if (!base) throw new ServiceError("API_NOT_CONFIGURED", "后端地址未配置。");
+  const url = `${base.replace(/\/$/, "")}/v1/overview?start_date=${filter.startDate}&end_date=${filter.endDate}&shop_id=${encodeURIComponent(filter.scope.shop_id)}&connector_id=${encodeURIComponent(filter.scope.connector_id)}`;
+  let resp: Response;
+  try {
+    resp = await fetch(url, { signal, cache: "no-store", headers: { Accept: "application/json" } });
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "AbortError") throw error;
+    throw new ServiceError("NETWORK_ERROR", "后端暂时无法访问，请稍后重试。");
+  }
+  if (!resp.ok) {
+    throw new ServiceError("NETWORK_ERROR", `后端返回 ${resp.status}。`);
+  }
+  const data = await resp.json();
+  signal.throwIfAborted();
+  if (!data || typeof data !== "object") {
+    throw new ServiceError("INVALID_RESPONSE", "后端返回数据格式不正确。");
+  }
+  // 后端 filter 字段是 snake_case（start_date/end_date），这里用调用方传入的 camelCase filter 覆盖，
+  // 避免前端 overviewKey 拿不到值；其他字段（totals/channels/trend 等）直接透传。
+  return { ...(data as OverviewReport), filter, source: "API" };
+};

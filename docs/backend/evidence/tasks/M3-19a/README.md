@@ -51,3 +51,38 @@ IN_PROGRESS：实际PG/HTTP技术链路已验证；真实供应商/价格/单位
 本轮GEN修复31唯一DB窗口已明确向root/reports释放；此后不跑新DB，源码/DDL/测试冻结。新31结果替代旧27作为当前验证结果，真实provider/paid/platform调用仍0。
 
 本批最终完整整合：1009集成通过、1可选重启跳过（953.14秒）；952单元/契约、240源码mypy/Ruff及0069至0072迁移Ruff通过，冻结源码哈希一致。开发库0072、48相关表仅5系统模板其余0，迁移角色NOLOGIN。详见../../ai-content-generation-verification.json；整卡未完成范围与BE/FE具名复核仍按上列保留。
+
+
+## 2026-10-29 视频编排骨架补齐（供应商无关）
+
+仍需IN_PROGRESS：本轮只补与供应商无关的编排骨架、适配器和任务账本，未接真实视频供应商，未声明任何真实视频价格，也未落视频产物或进入采纳。
+
+### 新增文件
+
+- `backend/src/yuliang/modules/content/video_generation_models.py`：异步任务状态机（PENDING→RUNNING→SUCCEEDED/FAILED，TIMEOUT/CANCELLED为本地终态）、按秒/按次计价模式、提交/轮询/结果DTO及边界校验。
+- `backend/src/yuliang/modules/content/video_generation_provider.py`：`start_task`/`poll_task`/`fetch_result`三段式适配器协议与默认不可用端口（只拒绝，不伪造调用）。
+- `backend/src/yuliang/modules/content/video_generation_config.py`：只读`YULIANG_VIDEOGEN_PRIMARY_ENDPOINT/MODEL/KEY/PRICE_PER_SECOND/PRICE_PER_CALL`；缺失、歧义、0价、非HTTPS端点均抛`CAPABILITY_UNAVAILABLE`“视频生成供应商未配置”，不静默降级。
+- `backend/src/yuliang/modules/content/video_generation_service.py`：复用既有图像生成报价/确认/创建/费用栅栏，仅在发送钩子写入视频任务账本，事务外调用适配器；`dispatch/query/cancel/get_task`。
+- `backend/alembic/versions/0081_video_generation_tasks.sql/.py`：价源语义允许VIDEO的`ONE_REQUEST_SECOND`、`generation_fee_start`仅放宽VIDEO按秒/按次匹配、`video_generation_tasks`账本与RLS/触发器。
+- `backend/tests/integration/fake_video_provider.py`、`backend/tests/unit/test_video_generation.py`、`backend/tests/integration/test_video_generation.py`。
+
+### 账本与状态边界
+
+- 按秒计价：报价用声明的预期时长作`input_units`，缺时长显式拒绝；成功回执按供应商返回时长记`billed_seconds`并结账。按次计价：`input_units=1`，不写`billed_seconds`。两种都由数据库可信价目来源驱动，不按环境变量估价。
+- 视频任务账本`UNIQUE(tenant,job)`且外部任务标识不可变；终态不可复活；PENDING/RUNNING→SUCCEEDED必须在同事务带结果元数据，按秒成功必须带结算秒数；伪造成功、终态复活均被触发器拒绝。
+- SENT在独立事务提交后才调用适配器；启动回执丢失保留SUBMIT=UNKNOWN与费用UNKNOWN，不按请求键重发。轮询RUNNING仅更新账本与确认态；SUCCEEDED先`fetch_result`落任务账本元数据并结账（KNOWN或UNKNOWN如实保留），但generation_jobs保持WAITING_PROVIDER，不伪造WAITING_REVIEW/资产采纳；超时在本地记TIMEOUT并将业务置FAILED，不再轮询；取消只停止本地轮询，不宣称供应商停止或退款，绝不改已发费用。
+- 环境变量未配置时在费用消费/SENT前拒绝；不读取`.env.llm.local`，本轮不发起任何真实网络或付费调用。
+
+### 实际验证数字
+
+- 单元：`uv run pytest tests/unit/test_video_generation.py` 12 PASS/0.11秒（与本卡原7项合计19 PASS）。
+- 视频集成（真实PostgreSQL/MinIO，fake provider）：`uv run python scripts/test_infrastructure.py --group video-generation --details` **11 PASS/29.48秒，head0081**；覆盖提交、轮询、成功、失败、超时、发送前/发送后取消、重复dispatch幂等、启动回执丢失、按秒/按次结账、未知费用保留、缺时长拒绝、未配置拒绝、伪造成功与终态复活两条SQL负例。
+- 图像账本回归：`--group generation-jobs` 31 PASS/42.52秒，原有31专项未回退。
+- 静态：本轮11个源码/脚本/测试文件Ruff与mypy均通过；仓库级Ruff/mypy在基线上已有与本卡无关的既有失败（如`src/yuliang/api/overview.py`、`tests/unit/test_notify.py`），本轮未改动也未掩盖。
+
+### 仍缺（不得据11 PASS宣称视频能力完成）
+
+1. 真实视频供应商端点/模型/密钥：`YULIANG_VIDEOGEN_PRIMARY_*`仍为空占位，未做任何真实调用。
+2. 真实视频供应商单价（元/秒或元/次）须经人工验证写入`generation_price_sources`，本轮未写入。
+3. 视频产物落库/采纳：需下载结果到私有MinIO、视频时长与媒体校验、confirmed video asset及WAITING_REVIEW/SUCCEEDED采纳，属后续M3-19c范围。
+4. 供应商失败回执的账单、重复轮询限速/退避、进程级调度器与F10前端接线。

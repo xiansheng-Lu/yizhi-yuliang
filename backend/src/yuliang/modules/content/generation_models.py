@@ -26,6 +26,7 @@ class GenerationInput(BaseModel):
     provider: str = Field(pattern=r"^[a-z][a-z0-9_.-]{0,39}$")
     priceKey: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9._/-]{0,79}$")
     prompt: str = Field(min_length=1, max_length=20000)
+    durationSeconds: int | None = Field(default=None, strict=True, ge=1, le=600)
 
     @model_validator(mode="after")
     def identifiers(self) -> Self:
@@ -33,6 +34,9 @@ class GenerationInput(BaseModel):
             UUID(value)
         if not self.prompt.strip():
             raise ValueError("生成提示不可为空")
+        # 时长只属于视频输入；图片/图文不得借时长伪造计价单位。
+        if self.kind != "VIDEO" and self.durationSeconds is not None:
+            raise ValueError("仅视频生成可声明时长")
         return self
 
     def digest(self) -> str:

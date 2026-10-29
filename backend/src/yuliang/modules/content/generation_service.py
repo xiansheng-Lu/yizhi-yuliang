@@ -191,10 +191,21 @@ class GenerationService:
             raise ApiError(ErrorCode.VERSION_CONFLICT, "生成输入/步骤已变化，未发送")
         return Document.model_validate(document["payload"])
 
-    def dispatch(self, identifier: UUID) -> dict[str, Any]:
+    def _ensure_dispatchable(self) -> None:
         # 默认不可用在任何SENT/费用消费前失败，不能假调用后报成功。
         if isinstance(self.provider, UnavailableGenerationProvider):
             raise ApiError(ErrorCode.CAPABILITY_UNAVAILABLE, "真实供应商默认关闭；未发送")
+
+    def _before_send(self, s: Any, row: Any, identifier: UUID) -> None:
+        """发送栅栏内钩子：视频编排在此同一事务写入任务账本，默认无。"""
+
+    def _send(self, identifier: UUID, frozen: dict[str, Any]) -> ProviderResult:
+        return self.provider.submit(
+            str(frozen["request_key"]), frozen["payload_hash"], frozen["parameters"]
+        )
+
+    def dispatch(self, identifier: UUID) -> dict[str, Any]:
+        self._ensure_dispatchable()
         with business_transaction(self.content.engine, self.content.identity) as s:
             row = self.repo.job(s, identifier)
             if row["submit_state"] != "NOT_SENT":
@@ -236,11 +247,10 @@ class GenerationService:
                 version=version+1,updated_at=clock_timestamp() WHERE id=:job"""),
                 dict(job=identifier),
             )
+            self._before_send(s, row, identifier)
             frozen = dict(row)
         try:
-            result = self.provider.submit(
-                str(frozen["request_key"]), frozen["payload_hash"], frozen["parameters"]
-            )
+            result = self._send(identifier, frozen)
         except Exception:
             result = ProviderResult("UNKNOWN")
         return self._record(identifier, result)

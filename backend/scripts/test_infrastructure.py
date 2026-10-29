@@ -130,6 +130,7 @@ def main() -> int:
             "ai-content",
             "ai-content-topic",
             "generation-jobs",
+            "video-generation",
             "sse-proxy-load",
         ),
         default="all",
@@ -235,6 +236,7 @@ def main() -> int:
         "ai-content": ["tests/integration/test_ai_content.py"],
         "ai-content-topic": ["tests/integration/test_ai_content_topic.py"],
         "generation-jobs": ["tests/integration/test_generation_jobs.py"],
+        "video-generation": ["tests/integration/test_video_generation.py"],
         "sse-proxy-load": ["tests/integration/test_sse_proxy_load.py"],
         "parser": [
             "tests/integration/test_command_parse.py",

@@ -2,7 +2,7 @@
   "task": "M3-19a",
   "status": "IN_PROGRESS",
   "baseline": "0c613c4f9dc40b87e65383844f799e59403e64ab",
-  "checkedAt": "2026-10-28T14:40:32.829025+00:00",
+  "checkedAt": "2026-10-29T06:26:00+00:00",
   "unit": {
     "result": "PASS",
     "passed": 7,
@@ -28,19 +28,53 @@
     "crossActorDispatchSqlCases": 2,
     "sharedSqlChangesDuringRun": false
   },
+  "videoOrchestration": {
+    "result": "PASS_FAKE_PROVIDER_ONLY",
+    "unit": {
+      "passed": 12,
+      "seconds": 0.11,
+      "command": "uv run pytest tests/unit/test_video_generation.py"
+    },
+    "integration": {
+      "passed": 11,
+      "seconds": 29.48,
+      "command": "python scripts/test_infrastructure.py --group video-generation --details",
+      "head": "0081",
+      "infrastructure": ["PostgreSQL", "MinIO"],
+      "fakeProvider": true
+    },
+    "generationRegression": {
+      "passed": 31,
+      "seconds": 42.52,
+      "command": "python scripts/test_infrastructure.py --group generation-jobs --details"
+    },
+    "static": {
+      "ruff": "PASS",
+      "mypy": "PASS",
+      "files": 11,
+      "repoBaselineUnrelatedFailures": true
+    },
+    "pricingModes": ["PER_SECOND", "PER_CALL"],
+    "stateMachine": ["PENDING", "RUNNING", "SUCCEEDED", "FAILED", "TIMEOUT", "CANCELLED"],
+    "videoArtifactStorage": "NOT_IMPLEMENTED",
+    "realSupplierCalls": 0,
+    "paidCalls": 0
+  },
   "realSupplier": "DEFAULT_UNAVAILABLE",
   "trustedRealGenerationPrices": "NOT_CONFIGURED",
   "actualSupplierCalls": 0,
   "paidCalls": 0,
   "platformCalls": 0,
-  "scopeLimit": "IMAGE_GRAPHIC_ONE_REQUEST_JOB_ONLY",
+  "scopeLimit": "IMAGE_GRAPHIC_ONE_REQUEST_JOB_AND_VIDEO_FAKE_ORCHESTRATION_NO_ARTIFACT",
   "notClaimed": [
     "M3-19b supplier callbacks/live query",
     "M3-19c actual result acceptance billing",
-    "F10 browser integration"
+    "video result artifact ingestion and acceptance",
+    "F10 browser integration",
+    "real video supplier endpoint, key and verified unit price"
   ],
-  "dbWindow": "RELEASED_AFTER_GEN_FIX_31",
-  "sourceFrozen": true,
+  "dbWindow": "APPLIED_0081_VIDEO_TASKS_TEST_WINDOW_RELEASED",
+  "sourceFrozen": false,
   "billingCases": [
     "FAILED business UNKNOWN fee can query",
     "KNOWN fee not repeated can progress asset",

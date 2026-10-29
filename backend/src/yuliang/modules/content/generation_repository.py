@@ -57,7 +57,7 @@ class GenerationRepository:
     def request(
         self, s: Session, value: GenerationInput, proofs: dict[UUID, AssetProof]
     ) -> tuple[BillableRequest, dict[str, Any]]:
-        if value.kind not in {"IMAGE", "GRAPHIC"}:
+        if value.kind not in {"IMAGE", "GRAPHIC", "VIDEO"}:
             raise ApiError(
                 ErrorCode.CAPABILITY_UNAVAILABLE, "当前未确认此生成类型计费/媒体规格，禁止猜单位"
             )
@@ -66,10 +66,14 @@ class GenerationRepository:
                 text("""SELECT p.* FROM generation_price_sources source
             JOIN ai_price_versions p ON (p.tenant_id,p.id)=(source.tenant_id,source.price_id)
             WHERE source.provider=:provider AND source.kind=:kind AND p.price_key=:key
-            AND source.unit_semantic='ONE_REQUEST_JOB' AND source.checked_at<=clock_timestamp()
-            AND source.expires_at>clock_timestamp() AND p.kind='GENERATION' AND p.unit='JOB'
+            AND source.checked_at<=clock_timestamp()
+            AND source.expires_at>clock_timestamp() AND p.kind='GENERATION'
             AND p.unit_scale=1 AND p.verification='VERIFIED' AND p.valid_from<=clock_timestamp()
-            AND p.valid_until>clock_timestamp() ORDER BY p.revision DESC LIMIT 1"""),
+            AND p.valid_until>clock_timestamp()
+            AND ((source.unit_semantic='ONE_REQUEST_JOB' AND p.unit='JOB')
+             OR (source.unit_semantic='ONE_REQUEST_SECOND' AND p.unit='SECOND'
+              AND :kind='VIDEO'))
+            ORDER BY p.revision DESC LIMIT 1"""),
                 dict(provider=value.provider, kind=value.kind, key=value.priceKey),
             )
             .mappings()
@@ -77,8 +81,17 @@ class GenerationRepository:
         )
         if source is None:
             raise ApiError(
-                ErrorCode.CAPABILITY_UNAVAILABLE, "缺可信供应商价格/币种/JOB单位来源，不估0费用"
+                ErrorCode.CAPABILITY_UNAVAILABLE, "缺可信供应商价格/币种/单位来源，不估0费用"
             )
+        if source["unit"] == "SECOND":
+            # 按秒计价必须有明确的预期时长；缺失时显式拒绝而不是按0秒估费。
+            if value.durationSeconds is None:
+                raise ApiError(
+                    ErrorCode.CAPABILITY_UNAVAILABLE, "按秒计价缺明确视频时长，禁止猜单位"
+                )
+            units = value.durationSeconds
+        else:
+            units = 1
         assets = {
             str(k): dict(version=v.version, sha256=v.sha256, kind=v.kind) for k, v in proofs.items()
         }
@@ -91,7 +104,7 @@ class GenerationRepository:
             kind="GENERATION",
             scenario="content_generation",
             price_key=value.priceKey,
-            input_units=1,
+            input_units=units,
             output_units=0,
             payload_hash=payload,
         )
@@ -154,10 +167,13 @@ class GenerationRepository:
             text("""SELECT 1 FROM generation_price_sources source
             JOIN ai_price_versions p ON (p.tenant_id,p.id)=(source.tenant_id,source.price_id)
             WHERE source.price_id=:price AND source.provider=:provider AND source.kind=:kind
-            AND source.unit_semantic='ONE_REQUEST_JOB' AND source.checked_at<=clock_timestamp()
-            AND source.expires_at>clock_timestamp() AND p.kind='GENERATION' AND p.unit='JOB'
+            AND source.checked_at<=clock_timestamp()
+            AND source.expires_at>clock_timestamp() AND p.kind='GENERATION'
             AND p.unit_scale=1 AND p.verification='VERIFIED' AND p.valid_from<=clock_timestamp()
-            AND p.valid_until>clock_timestamp()"""),
+            AND p.valid_until>clock_timestamp()
+            AND ((source.unit_semantic='ONE_REQUEST_JOB' AND p.unit='JOB')
+             OR (source.unit_semantic='ONE_REQUEST_SECOND' AND p.unit='SECOND'
+              AND :kind='VIDEO'))"""),
             dict(price=row["price_id"], provider=provider, kind=kind),
         ).first()
         if trusted is None:

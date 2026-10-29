@@ -17,7 +17,10 @@ router = APIRouter(prefix="/v1/content/generations")
 def generations(request: Request) -> GenerationService:
     if request.query_params:
         raise ApiError(ErrorCode.INVALID_INPUT, "生成接口不接受query身份覆盖")
-    return GenerationService(content(request))
+    scope = content(request)
+    factory = request.app.state.imagegen_provider
+    provider = factory(scope) if factory is not None else None
+    return GenerationService(scope, provider)
 
 
 @router.post("/quotes")

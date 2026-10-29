@@ -50,6 +50,7 @@ def create_app(settings: Settings | None = None, mail_sender: MailSender | None 
         app.state.platform_runtime = None
         app.state.blob_store = None
         app.state.content_ai_runtime = None
+        app.state.imagegen_provider = None
         try:
             if (
                 app.state.settings.llm_primary_endpoint is not None
@@ -69,6 +70,34 @@ def create_app(settings: Settings | None = None, mail_sender: MailSender | None 
                 from yuliang.infrastructure.blob import BlobStore
 
                 app.state.blob_store = BlobStore.from_settings(app.state.settings)
+            if (
+                app.state.blob_store is not None
+                and app.state.settings.imagegen_primary_endpoint is not None
+                and app.state.settings.imagegen_primary_model is not None
+                and app.state.settings.imagegen_primary_key is not None
+                and app.state.settings.imagegen_price_per_call_minor is not None
+            ):
+                from yuliang.modules.content.relay_image_generation_provider import (
+                    RelayImageGenerationProvider,
+                    UploadBackedImageWriter,
+                )
+                from yuliang.modules.content.service import ContentService
+
+                endpoint = app.state.settings.imagegen_primary_endpoint
+                model = app.state.settings.imagegen_primary_model
+                api_key = app.state.settings.imagegen_primary_key
+                price_minor = app.state.settings.imagegen_price_per_call_minor
+
+                def imagegen_provider(scope: ContentService) -> RelayImageGenerationProvider:
+                    return RelayImageGenerationProvider(
+                        endpoint=endpoint,
+                        model=model,
+                        api_key=api_key,
+                        price_minor=price_minor,
+                        writer=UploadBackedImageWriter(scope),
+                    )
+
+                app.state.imagegen_provider = imagegen_provider
             if app.state.settings.platform_resources_file is not None:
                 from sqlalchemy import create_engine
 

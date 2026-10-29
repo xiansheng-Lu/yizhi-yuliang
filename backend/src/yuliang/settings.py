@@ -1,13 +1,17 @@
 """进程启动配置：必填、显式校验、错误和repr隐藏凭据。"""
 
 import re
+from decimal import Decimal
 from ipaddress import ip_network
 from pathlib import Path
 from typing import Literal
 from urllib.parse import urlsplit
 
-from pydantic import Field, SecretStr, field_validator, model_validator
+from pydantic import Field, PrivateAttr, SecretStr, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+# 环境变量按“元/张”填写，账本按“分”存整数；只接受恰好到分的单价。
+_PRICE_MINOR_PER_YUAN = Decimal(100)
 
 
 class Settings(BaseSettings):
@@ -43,6 +47,11 @@ class Settings(BaseSettings):
     blob_download_ttl_seconds: int = Field(default=60, ge=1, le=300)
     llm_primary_endpoint: str | None = None
     llm_primary_key: SecretStr | None = None
+    imagegen_primary_endpoint: str | None = None
+    imagegen_primary_model: str | None = None
+    imagegen_primary_key: SecretStr | None = None
+    imagegen_primary_price_per_call: Decimal | None = None
+    _imagegen_price_per_call_minor: int | None = PrivateAttr(default=None)
     report_public_origin: str | None = None
     report_link_secret: SecretStr | None = None
     report_public_ttl_seconds: int = Field(default=2592000, ge=60, le=31536000)
@@ -126,6 +135,45 @@ class Settings(BaseSettings):
                 or not self.llm_primary_key.get_secret_value().strip()
             ):
                 raise ValueError("文本模型地址需为精确HTTPS源，密钥不可为空")
+        if any(
+            value is not None
+            for value in (
+                self.imagegen_primary_endpoint,
+                self.imagegen_primary_model,
+                self.imagegen_primary_key,
+                self.imagegen_primary_price_per_call,
+            )
+        ):
+            if not (
+                self.imagegen_primary_endpoint
+                and self.imagegen_primary_model
+                and self.imagegen_primary_key
+                and self.imagegen_primary_key.get_secret_value().strip()
+            ):
+                raise ValueError("图像生图需同时配置完整生成地址、模型、密钥与单价")
+            endpoint = urlsplit(self.imagegen_primary_endpoint)
+            if (
+                endpoint.scheme != "https"
+                or not endpoint.hostname
+                or endpoint.username
+                or endpoint.password
+                or endpoint.path in {"", "/"}
+                or endpoint.query
+                or endpoint.fragment
+                or re.fullmatch(
+                    r"https://[^/?#@\s]+/[^?#\s]+", self.imagegen_primary_endpoint
+                )
+                is None
+            ):
+                raise ValueError("图像生图地址需为精确HTTPS生成端点，不可内嵌凭据或查询")
+            price = self.imagegen_primary_price_per_call
+            if price is not None:
+                if not price.is_finite() or price <= 0:
+                    raise ValueError("图像生图单价必须为正数，不得按0元计价")
+                minor = price * _PRICE_MINOR_PER_YUAN
+                if minor != minor.to_integral_value() or minor > 9223372036854775807:
+                    raise ValueError("图像生图单价精度或范围超出账本能力")
+                self._imagegen_price_per_call_minor = int(minor)
         if self.admin_api_enabled and (
             not self.identity_api_enabled or not self.admin_allowed_networks
         ):
@@ -151,6 +199,25 @@ class Settings(BaseSettings):
             if self.email_code_secret in (self.session_secret, self.auth_audit_secret):
                 raise ValueError("邮件验证码密钥须独立于会话与审计密钥")
         return self
+
+    @field_validator(
+        "imagegen_primary_endpoint",
+        "imagegen_primary_model",
+        "imagegen_primary_key",
+        "imagegen_primary_price_per_call",
+        mode="before",
+    )
+    @classmethod
+    def imagegen_blank_is_unset(cls, value: object) -> object:
+        # 环境变量模板中的空占位必须视为未配置，不能当作空地址/空单价参与计价。
+        if isinstance(value, str) and not value.strip():
+            return None
+        return value
+
+    @property
+    def imagegen_price_per_call_minor(self) -> int | None:
+        """生图单价（分）；为空表示未配置，禁止按0元发起付费调用。"""
+        return self._imagegen_price_per_call_minor
 
     @field_validator("session_secret")
     @classmethod

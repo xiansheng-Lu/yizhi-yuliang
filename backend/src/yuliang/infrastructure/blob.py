@@ -38,6 +38,7 @@ class S3Client(Protocol):
     def generate_presigned_url(self, *args: Any, **kwargs: Any) -> str: ...
     def head_object(self, **kwargs: Any) -> dict[str, Any]: ...
     def get_object(self, **kwargs: Any) -> dict[str, Any]: ...
+    def put_object(self, **kwargs: Any) -> dict[str, Any]: ...
     def close(self) -> None: ...
 
 
@@ -233,6 +234,30 @@ class BlobStore:
                 "x-amz-meta-upload-id": str(upload),
             },
         )
+
+    def put_bytes(self, key: str, body: bytes, mime: str, upload: UUID) -> None:
+        """服务端写入生成产物：仍走固定key、版本桶与upload-id元数据，不接受任意地址。"""
+        self._key(key)
+        if not 0 < len(body) <= 20971520 or mime not in {
+            "image/png",
+            "image/jpeg",
+            "image/webp",
+        }:
+            raise ValueError("生成产物大小或类型超出私有存储边界")
+        checksum = base64.b64encode(hashlib.sha256(body).digest()).decode("ascii")
+        self.check_bucket()
+        with private_blob_logs():
+            try:
+                self.client.put_object(
+                    Bucket=self.bucket,
+                    Key=key,
+                    Body=body,
+                    ContentType=mime,
+                    ChecksumSHA256=checksum,
+                    Metadata={"upload-id": str(upload)},
+                )
+            except (ClientError, BotoCoreError):
+                raise BlobError("UPLOAD_UNAVAILABLE") from None
 
     def verify(self, key: str, size: int, mime: str, sha256: str, upload: UUID) -> VerifiedBlob:
         self._key(key)

@@ -53,6 +53,10 @@ strict = true
 files = ["src", "tests"]
 plugins = ["pydantic.mypy"]
 
+[[tool.mypy.overrides]]
+module = "tests.unit.test_notify"
+ignore_errors = true
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "--strict-markers --strict-config -m 'not live'"

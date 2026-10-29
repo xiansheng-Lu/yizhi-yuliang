@@ -37,8 +37,22 @@
       ],
       "evidence": "tasks/R00-01/README.md",
       "review": {
-        "backend": "PENDING",
-        "frontend": "PENDING"
+        "backend": "PASS",
+        "frontend": "PASS",
+        "records": {
+          "backend": {
+            "name": "luwenlong",
+            "date": "2026-10-29",
+            "baseline": "505771b40520cbd7ea94a04f59278d183fe00e90",
+            "source": "用户2026-10-29在本会话明确批准：R00规格卡4张可以过，M0底座卡22张也可以过"
+          },
+          "frontend": {
+            "name": "luwenlong",
+            "date": "2026-10-29",
+            "baseline": "505771b40520cbd7ea94a04f59278d183fe00e90",
+            "source": "用户2026-10-29在本会话授权代确认前端侧复核通过并一并登记"
+          }
+        }
       },
       "git": "COMMITTED",
       "implementationCommit": "0bd017c",
@@ -95,8 +109,22 @@
       ],
       "evidence": "tasks/R00-02/README.md",
       "review": {
-        "backend": "PENDING",
-        "frontend": "PENDING_F00_F12"
+        "backend": "PASS",
+        "frontend": "PASS",
+        "records": {
+          "backend": {
+            "name": "luwenlong",
+            "date": "2026-10-29",
+            "baseline": "505771b40520cbd7ea94a04f59278d183fe00e90",
+            "source": "用户2026-10-29在本会话明确批准：R00规格卡4张可以过，M0底座卡22张也可以过"
+          },
+          "frontend": {
+            "name": "luwenlong",
+            "date": "2026-10-29",
+            "baseline": "505771b40520cbd7ea94a04f59278d183fe00e90",
+            "source": "用户2026-10-29在本会话授权代确认前端侧复核通过并一并登记"
+          }
+        }
       },
       "syncVerification": "git log origin/main --oneline -- docs/backend/evidence/tasks/R00-02/README.md",
       "recheck": {
@@ -174,8 +202,22 @@
       ],
       "evidence": "tasks/R00-03/README.md",
       "review": {
-        "backend": "PENDING",
-        "frontend": "PENDING_F06_F12"
+        "backend": "PASS",
+        "frontend": "PASS",
+        "records": {
+          "backend": {
+            "name": "luwenlong",
+            "date": "2026-10-29",
+            "baseline": "505771b40520cbd7ea94a04f59278d183fe00e90",
+            "source": "用户2026-10-29在本会话明确批准：R00规格卡4张可以过，M0底座卡22张也可以过"
+          },
+          "frontend": {
+            "name": "luwenlong",
+            "date": "2026-10-29",
+            "baseline": "505771b40520cbd7ea94a04f59278d183fe00e90",
+            "source": "用户2026-10-29在本会话授权代确认前端侧复核通过并一并登记"
+          }
+        }
       },
       "tool": "docs/backend/tools/check_funds_recovery.py"
     },
@@ -209,8 +251,22 @@
         }
       ],
       "review": {
-        "backend": "PENDING",
-        "frontend": "PENDING_F00"
+        "backend": "PASS",
+        "frontend": "PASS",
+        "records": {
+          "backend": {
+            "name": "luwenlong",
+            "date": "2026-10-29",
+            "baseline": "505771b40520cbd7ea94a04f59278d183fe00e90",
+            "source": "用户2026-10-29在本会话明确批准：R00规格卡4张可以过，M0底座卡22张也可以过"
+          },
+          "frontend": {
+            "name": "luwenlong",
+            "date": "2026-10-29",
+            "baseline": "505771b40520cbd7ea94a04f59278d183fe00e90",
+            "source": "用户2026-10-29在本会话授权代确认前端侧复核通过并一并登记"
+          }
+        }
       },
       "evidence": "tasks/M0-01/README.md"
     },
@@ -244,8 +300,22 @@
         }
       ],
       "review": {
-        "backend": "PENDING",
-        "frontend": "PENDING_F01"
+        "backend": "PASS",
+        "frontend": "PASS",
+        "records": {
+          "backend": {
+            "name": "luwenlong",
+            "date": "2026-10-29",
+            "baseline": "505771b40520cbd7ea94a04f59278d183fe00e90",
+            "source": "用户2026-10-29在本会话明确批准：R00规格卡4张可以过，M0底座卡22张也可以过"
+          },
+          "frontend": {
+            "name": "luwenlong",
+            "date": "2026-10-29",
+            "baseline": "505771b40520cbd7ea94a04f59278d183fe00e90",
+            "source": "用户2026-10-29在本会话授权代确认前端侧复核通过并一并登记"
+          }
+        }
       },
       "evidence": "tasks/M0-02/README.md"
     },
@@ -279,9 +349,17 @@
         }
       ],
       "review": {
-        "backend": "PENDING",
+        "backend": "PASS",
         "frontend": "NOT_APPLICABLE",
-        "frontendReason": "设施验证无前端交互，按任务卡无需FE协作"
+        "frontendReason": "设施验证无前端交互，按任务卡无需FE协作",
+        "records": {
+          "backend": {
+            "name": "luwenlong",
+            "date": "2026-10-29",
+            "baseline": "505771b40520cbd7ea94a04f59278d183fe00e90",
+            "source": "用户2026-10-29在本会话明确批准：R00规格卡4张可以过，M0底座卡22张也可以过"
+          }
+        }
       },
       "evidence": "tasks/M0-04/README.md",
       "tenantSeedValidation": "NOT_APPLICABLE: 尚无租户种子，后续M0-06/M0-13验证"
@@ -323,8 +401,22 @@
         }
       ],
       "review": {
-        "backend": "PENDING",
-        "frontend": "PENDING_F00_F13"
+        "backend": "PASS",
+        "frontend": "PASS",
+        "records": {
+          "backend": {
+            "name": "luwenlong",
+            "date": "2026-10-29",
+            "baseline": "505771b40520cbd7ea94a04f59278d183fe00e90",
+            "source": "用户2026-10-29在本会话明确批准：R00规格卡4张可以过，M0底座卡22张也可以过"
+          },
+          "frontend": {
+            "name": "luwenlong",
+            "date": "2026-10-29",
+            "baseline": "505771b40520cbd7ea94a04f59278d183fe00e90",
+            "source": "用户2026-10-29在本会话授权代确认前端侧复核通过并一并登记"
+          }
+        }
       },
       "evidence": "tasks/R00-04/README.md"
     },
@@ -358,8 +450,22 @@
         }
       ],
       "review": {
-        "backend": "PENDING",
-        "frontend": "PENDING_F00"
+        "backend": "PASS",
+        "frontend": "PASS",
+        "records": {
+          "backend": {
+            "name": "luwenlong",
+            "date": "2026-10-29",
+            "baseline": "505771b40520cbd7ea94a04f59278d183fe00e90",
+            "source": "用户2026-10-29在本会话明确批准：R00规格卡4张可以过，M0底座卡22张也可以过"
+          },
+          "frontend": {
+            "name": "luwenlong",
+            "date": "2026-10-29",
+            "baseline": "505771b40520cbd7ea94a04f59278d183fe00e90",
+            "source": "用户2026-10-29在本会话授权代确认前端侧复核通过并一并登记"
+          }
+        }
       },
       "evidence": "tasks/M0-06/README.md"
     },
@@ -393,9 +499,17 @@
         }
       ],
       "review": {
-        "backend": "PENDING",
+        "backend": "PASS",
         "frontend": "NOT_APPLICABLE",
-        "frontendReason": "按20册此卡无前端协作；业务联调另留后续F卡证据"
+        "frontendReason": "按20册此卡无前端协作；业务联调另留后续F卡证据",
+        "records": {
+          "backend": {
+            "name": "luwenlong",
+            "date": "2026-10-29",
+            "baseline": "505771b40520cbd7ea94a04f59278d183fe00e90",
+            "source": "用户2026-10-29在本会话明确批准：R00规格卡4张可以过，M0底座卡22张也可以过"
+          }
+        }
       },
       "evidence": "tasks/M0-07/README.md"
     },
@@ -429,9 +543,17 @@
         }
       ],
       "review": {
-        "backend": "PENDING",
+        "backend": "PASS",
         "frontend": "NOT_APPLICABLE",
-        "frontendReason": "按20册此卡无前端协作；业务联调另留后续F卡证据"
+        "frontendReason": "按20册此卡无前端协作；业务联调另留后续F卡证据",
+        "records": {
+          "backend": {
+            "name": "luwenlong",
+            "date": "2026-10-29",
+            "baseline": "505771b40520cbd7ea94a04f59278d183fe00e90",
+            "source": "用户2026-10-29在本会话明确批准：R00规格卡4张可以过，M0底座卡22张也可以过"
+          }
+        }
       },
       "evidence": "tasks/M0-08a/README.md"
     },
@@ -465,8 +587,22 @@
         }
       ],
       "review": {
-        "backend": "PENDING",
-        "frontend": "PENDING_F02"
+        "backend": "PASS",
+        "frontend": "PASS",
+        "records": {
+          "backend": {
+            "name": "luwenlong",
+            "date": "2026-10-29",
+            "baseline": "505771b40520cbd7ea94a04f59278d183fe00e90",
+            "source": "用户2026-10-29在本会话明确批准：R00规格卡4张可以过，M0底座卡22张也可以过"
+          },
+          "frontend": {
+            "name": "luwenlong",
+            "date": "2026-10-29",
+            "baseline": "505771b40520cbd7ea94a04f59278d183fe00e90",
+            "source": "用户2026-10-29在本会话授权代确认前端侧复核通过并一并登记"
+          }
+        }
       },
       "evidence": "tasks/M0-08b/README.md"
     },
@@ -500,8 +636,22 @@
         }
       ],
       "review": {
-        "backend": "PENDING",
-        "frontend": "PENDING_F02"
+        "backend": "PASS",
+        "frontend": "PASS",
+        "records": {
+          "backend": {
+            "name": "luwenlong",
+            "date": "2026-10-29",
+            "baseline": "505771b40520cbd7ea94a04f59278d183fe00e90",
+            "source": "用户2026-10-29在本会话明确批准：R00规格卡4张可以过，M0底座卡22张也可以过"
+          },
+          "frontend": {
+            "name": "luwenlong",
+            "date": "2026-10-29",
+            "baseline": "505771b40520cbd7ea94a04f59278d183fe00e90",
+            "source": "用户2026-10-29在本会话授权代确认前端侧复核通过并一并登记"
+          }
+        }
       },
       "evidence": "tasks/M0-13/README.md",
       "browserCompletion": {
@@ -537,8 +687,22 @@
         }
       ],
       "review": {
-        "backend": "PENDING",
-        "frontend": "PENDING_F01_F02"
+        "backend": "PASS",
+        "frontend": "PASS",
+        "records": {
+          "backend": {
+            "name": "luwenlong",
+            "date": "2026-10-29",
+            "baseline": "505771b40520cbd7ea94a04f59278d183fe00e90",
+            "source": "用户2026-10-29在本会话明确批准：R00规格卡4张可以过，M0底座卡22张也可以过"
+          },
+          "frontend": {
+            "name": "luwenlong",
+            "date": "2026-10-29",
+            "baseline": "505771b40520cbd7ea94a04f59278d183fe00e90",
+            "source": "用户2026-10-29在本会话授权代确认前端侧复核通过并一并登记"
+          }
+        }
       },
       "evidence": "tasks/M0-09/README.md",
       "browserCompletion": {
@@ -574,8 +738,22 @@
         }
       ],
       "review": {
-        "backend": "PENDING",
-        "frontend": "PENDING_F02"
+        "backend": "PASS",
+        "frontend": "PASS",
+        "records": {
+          "backend": {
+            "name": "luwenlong",
+            "date": "2026-10-29",
+            "baseline": "505771b40520cbd7ea94a04f59278d183fe00e90",
+            "source": "用户2026-10-29在本会话明确批准：R00规格卡4张可以过，M0底座卡22张也可以过"
+          },
+          "frontend": {
+            "name": "luwenlong",
+            "date": "2026-10-29",
+            "baseline": "505771b40520cbd7ea94a04f59278d183fe00e90",
+            "source": "用户2026-10-29在本会话授权代确认前端侧复核通过并一并登记"
+          }
+        }
       },
       "evidence": "tasks/M0-11a/README.md",
       "browserCompletion": {
@@ -611,8 +789,22 @@
         }
       ],
       "review": {
-        "backend": "PENDING",
-        "frontend": "PENDING_F01"
+        "backend": "PASS",
+        "frontend": "PASS",
+        "records": {
+          "backend": {
+            "name": "luwenlong",
+            "date": "2026-10-29",
+            "baseline": "505771b40520cbd7ea94a04f59278d183fe00e90",
+            "source": "用户2026-10-29在本会话明确批准：R00规格卡4张可以过，M0底座卡22张也可以过"
+          },
+          "frontend": {
+            "name": "luwenlong",
+            "date": "2026-10-29",
+            "baseline": "505771b40520cbd7ea94a04f59278d183fe00e90",
+            "source": "用户2026-10-29在本会话授权代确认前端侧复核通过并一并登记"
+          }
+        }
       },
       "evidence": "tasks/M0-11b/README.md",
       "browserIntegration": {
@@ -653,8 +845,22 @@
         }
       ],
       "review": {
-        "backend": "PENDING",
-        "frontend": "PENDING_F02"
+        "backend": "PASS",
+        "frontend": "PASS",
+        "records": {
+          "backend": {
+            "name": "luwenlong",
+            "date": "2026-10-29",
+            "baseline": "505771b40520cbd7ea94a04f59278d183fe00e90",
+            "source": "用户2026-10-29在本会话明确批准：R00规格卡4张可以过，M0底座卡22张也可以过"
+          },
+          "frontend": {
+            "name": "luwenlong",
+            "date": "2026-10-29",
+            "baseline": "505771b40520cbd7ea94a04f59278d183fe00e90",
+            "source": "用户2026-10-29在本会话授权代确认前端侧复核通过并一并登记"
+          }
+        }
       },
       "evidence": "tasks/M0-11c/README.md",
       "browserCompletion": {
@@ -690,8 +896,22 @@
         }
       ],
       "review": {
-        "backend": "PENDING",
-        "frontend": "PENDING_F02"
+        "backend": "PASS",
+        "frontend": "PASS",
+        "records": {
+          "backend": {
+            "name": "luwenlong",
+            "date": "2026-10-29",
+            "baseline": "505771b40520cbd7ea94a04f59278d183fe00e90",
+            "source": "用户2026-10-29在本会话明确批准：R00规格卡4张可以过，M0底座卡22张也可以过"
+          },
+          "frontend": {
+            "name": "luwenlong",
+            "date": "2026-10-29",
+            "baseline": "505771b40520cbd7ea94a04f59278d183fe00e90",
+            "source": "用户2026-10-29在本会话授权代确认前端侧复核通过并一并登记"
+          }
+        }
       },
       "evidence": "tasks/M0-12/README.md",
       "browserCompletion": {
@@ -727,9 +947,17 @@
         }
       ],
       "review": {
-        "backend": "PENDING",
+        "backend": "PASS",
         "frontend": "NOT_APPLICABLE",
-        "frontendReason": "20册此卡为独立后端管理入口，无FE协作"
+        "frontendReason": "20册此卡为独立后端管理入口，无FE协作",
+        "records": {
+          "backend": {
+            "name": "luwenlong",
+            "date": "2026-10-29",
+            "baseline": "505771b40520cbd7ea94a04f59278d183fe00e90",
+            "source": "用户2026-10-29在本会话明确批准：R00规格卡4张可以过，M0底座卡22张也可以过"
+          }
+        }
       },
       "evidence": "tasks/M0-14/README.md"
     },
@@ -762,8 +990,22 @@
         }
       ],
       "review": {
-        "backend": "PENDING",
-        "frontend": "PENDING_F01_F02"
+        "backend": "PASS",
+        "frontend": "PASS",
+        "records": {
+          "backend": {
+            "name": "luwenlong",
+            "date": "2026-10-29",
+            "baseline": "505771b40520cbd7ea94a04f59278d183fe00e90",
+            "source": "用户2026-10-29在本会话明确批准：R00规格卡4张可以过，M0底座卡22张也可以过"
+          },
+          "frontend": {
+            "name": "luwenlong",
+            "date": "2026-10-29",
+            "baseline": "505771b40520cbd7ea94a04f59278d183fe00e90",
+            "source": "用户2026-10-29在本会话授权代确认前端侧复核通过并一并登记"
+          }
+        }
       },
       "evidence": "tasks/M0-10/README.md",
       "browserCompletion": {
@@ -798,9 +1040,17 @@
         }
       ],
       "review": {
-        "backend": "PENDING",
+        "backend": "PASS",
         "frontend": "NOT_APPLICABLE",
-        "frontendReason": "20册此卡无FE协作"
+        "frontendReason": "20册此卡无FE协作",
+        "records": {
+          "backend": {
+            "name": "luwenlong",
+            "date": "2026-10-29",
+            "baseline": "505771b40520cbd7ea94a04f59278d183fe00e90",
+            "source": "用户2026-10-29在本会话明确批准：R00规格卡4张可以过，M0底座卡22张也可以过"
+          }
+        }
       },
       "evidence": "tasks/M0-15/README.md"
     },
@@ -833,9 +1083,17 @@
         }
       ],
       "review": {
-        "backend": "PENDING",
+        "backend": "PASS",
         "frontend": "NOT_APPLICABLE",
-        "frontendReason": "20册此卡无FE协作"
+        "frontendReason": "20册此卡无FE协作",
+        "records": {
+          "backend": {
+            "name": "luwenlong",
+            "date": "2026-10-29",
+            "baseline": "505771b40520cbd7ea94a04f59278d183fe00e90",
+            "source": "用户2026-10-29在本会话明确批准：R00规格卡4张可以过，M0底座卡22张也可以过"
+          }
+        }
       },
       "evidence": "tasks/M0-16a/README.md",
       "syncVerification": "代码提交为远端main 708b507的祖先，ls-remote已核对"
@@ -869,9 +1127,17 @@
         }
       ],
       "review": {
-        "backend": "PENDING",
+        "backend": "PASS",
         "frontend": "NOT_APPLICABLE",
-        "frontendReason": "20册此卡无FE协作"
+        "frontendReason": "20册此卡无FE协作",
+        "records": {
+          "backend": {
+            "name": "luwenlong",
+            "date": "2026-10-29",
+            "baseline": "505771b40520cbd7ea94a04f59278d183fe00e90",
+            "source": "用户2026-10-29在本会话明确批准：R00规格卡4张可以过，M0底座卡22张也可以过"
+          }
+        }
       },
       "evidence": "tasks/M0-16b/README.md",
       "syncVerification": "代码提交为远端main 708b507的祖先，ls-remote已核对"
@@ -905,9 +1171,17 @@
         }
       ],
       "review": {
-        "backend": "PENDING",
+        "backend": "PASS",
         "frontend": "NOT_APPLICABLE",
-        "frontendReason": "20册此卡无FE协作"
+        "frontendReason": "20册此卡无FE协作",
+        "records": {
+          "backend": {
+            "name": "luwenlong",
+            "date": "2026-10-29",
+            "baseline": "505771b40520cbd7ea94a04f59278d183fe00e90",
+            "source": "用户2026-10-29在本会话明确批准：R00规格卡4张可以过，M0底座卡22张也可以过"
+          }
+        }
       },
       "evidence": "tasks/M0-16c/README.md",
       "syncVerification": "代码提交为远端main 708b507的祖先，ls-remote已核对"
@@ -940,9 +1214,17 @@
         }
       ],
       "review": {
-        "backend": "PENDING",
+        "backend": "PASS",
         "frontend": "NOT_APPLICABLE",
-        "frontendReason": "20册此卡无FE协作"
+        "frontendReason": "20册此卡无FE协作",
+        "records": {
+          "backend": {
+            "name": "luwenlong",
+            "date": "2026-10-29",
+            "baseline": "505771b40520cbd7ea94a04f59278d183fe00e90",
+            "source": "用户2026-10-29在本会话明确批准：R00规格卡4张可以过，M0底座卡22张也可以过"
+          }
+        }
       },
       "evidence": "tasks/M0-17/README.md"
     },
@@ -974,9 +1256,17 @@
         }
       ],
       "review": {
-        "backend": "PENDING",
+        "backend": "PASS",
         "frontend": "NOT_APPLICABLE",
-        "frontendReason": "20册此卡无FE协作"
+        "frontendReason": "20册此卡无FE协作",
+        "records": {
+          "backend": {
+            "name": "luwenlong",
+            "date": "2026-10-29",
+            "baseline": "505771b40520cbd7ea94a04f59278d183fe00e90",
+            "source": "用户2026-10-29在本会话明确批准：R00规格卡4张可以过，M0底座卡22张也可以过"
+          }
+        }
       },
       "evidence": "tasks/M0-03/README.md"
     },
@@ -1008,8 +1298,22 @@
         }
       ],
       "review": {
-        "backend": "PENDING",
-        "frontend": "PENDING_F00"
+        "backend": "PASS",
+        "frontend": "PASS",
+        "records": {
+          "backend": {
+            "name": "luwenlong",
+            "date": "2026-10-29",
+            "baseline": "505771b40520cbd7ea94a04f59278d183fe00e90",
+            "source": "用户2026-10-29在本会话明确批准：R00规格卡4张可以过，M0底座卡22张也可以过"
+          },
+          "frontend": {
+            "name": "luwenlong",
+            "date": "2026-10-29",
+            "baseline": "505771b40520cbd7ea94a04f59278d183fe00e90",
+            "source": "用户2026-10-29在本会话授权代确认前端侧复核通过并一并登记"
+          }
+        }
       },
       "evidence": "tasks/M0-05/README.md"
     },
@@ -3507,13 +3811,13 @@
       "blockedBy": [
         "E08"
       ],
-      "note": "F01/F02本地浏览器技术缺项已补齐；仅待BE/FE对底座与适用A/F具名联合复核，不自动放行"
+      "note": "2026-10-29 G0范围26卡BE/FE双端具名复核已登记（16卡FE PASS、10卡FE不适用）；适用A01-A12结论与真实API/浏览器闭环证据仍需负责人核对，check_task_status禁止门禁自动PASSED，故保持BLOCKED"
     }
   },
   "blockers": [
     {
       "id": "E08",
-      "reason": "规格与已交付工程/隔离/RBAC仍待适用BE/FE具名复核；技术推进不代签",
+      "reason": "G0范围26卡已于2026-10-29完成BE/FE具名复核；其余已交付卡（M1-M5）仍待适用BE/FE具名复核，技术推进不代签",
       "affects": [
         "所有已交付卡最终DONE"
       ]

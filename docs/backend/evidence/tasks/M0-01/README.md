@@ -19,3 +19,12 @@
 实际`ruff check`、`ruff format --check`、`mypy`全部PASS，17项unit/contract通过，另5项真实integration通过。
 本卡不计业务登录、迁移、Worker及门禁完成。无业务迁移，回滚用反向提交；本地配置和虚拟环境不入仓库。
 BE复核安装入口与配置，FE需确认公共入口/契约协作范围；人工记录均PENDING。下一项M0-04真实设施验证已独立留证。
+
+## BE具名复核记录（2026-10-29）
+
+- 角色：BE 负责人；复核人：luwenlong
+- 复核日期：2026-10-29（Asia/Shanghai）
+- 基线提交：505771b40520cbd7ea94a04f59278d183fe00e90
+- 确认来源：用户在本会话明确批准“R00 规格卡（4 张）可以过，M0 底座卡（22 张）也可以过”
+- 结论：README 记载的三条 DoD 与 verification/static-check 证据核对一致，BE 复核通过
+- 批准范围：仅本卡 BE 复核签字；不含 FE 侧 F00/F01/F02 签字、G0 门禁放行、A01-A12 全部结论及真实平台写/付费许可

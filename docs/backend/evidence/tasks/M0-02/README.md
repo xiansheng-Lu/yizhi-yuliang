@@ -19,3 +19,12 @@
 `tests/contract/test_envelope.py`覆盖10项契约用例，包含在本轮17项unit/contract PASS中；ruff/mypy通过。
 仍有一条TestClient弃用警告，未影响断言。无数据库迁移；回滚为反向提交装配/信封模块。
 FE/BE需复核错误展示及真实客户端接线；浏览器联调NOT_RUN，保持WAITING_REVIEW。
+
+## BE具名复核记录（2026-10-29）
+
+- 角色：BE 负责人；复核人：luwenlong
+- 复核日期：2026-10-29（Asia/Shanghai）
+- 基线提交：505771b40520cbd7ea94a04f59278d183fe00e90
+- 确认来源：用户在本会话明确批准“R00 规格卡（4 张）可以过，M0 底座卡（22 张）也可以过”
+- 结论：README 记载的三条 DoD 与 verification/static-check 证据核对一致，BE 复核通过
+- 批准范围：仅本卡 BE 复核签字；不含 FE 侧 F00/F01/F02 签字、G0 门禁放行、A01-A12 全部结论及真实平台写/付费许可

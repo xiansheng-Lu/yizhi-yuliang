@@ -268,7 +268,8 @@ class BlobStore:
                     if total != size or digest.hexdigest() != sha256:
                         raise BlobError("OBJECT_CHECKSUM_MISMATCH")
                     try:
-                        validate_media(file, mime, size)
+                        validate_media(file, mime, size)  # type: ignore[arg-type]
+                        # tempfile._TemporaryFileWrapper[bytes] 运行时是 BinaryIO，mypy 不认
                     except MediaMismatch:
                         raise BlobError("OBJECT_TYPE_MISMATCH") from None
                 return VerifiedBlob(version, size, mime, sha256)

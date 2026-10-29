@@ -19,15 +19,15 @@ def pytest_collection_modifyitems(items: list[pytest.Item]) -> None:
 
 @pytest.fixture
 def settings() -> Settings:
-    return Settings(
-        _env_file=None,
-        environment="test",
-        database_url="postgresql+psycopg://app_login:example@localhost/yizhi",
-        auth_database_url="postgresql+psycopg://app_auth:example@localhost/yizhi",
-        redis_url="redis://localhost:6379/0",
-        broker_url="amqp://app:example@localhost/yizhi",
-        session_secret="test-only-secret-with-at-least-32-characters",
+    """从 YULIANG_ 环境变量 / .env 读取；不传 _env_file=None 以允许 .env 生效。"""
+    import os
+
+    # 允许通过环境变量覆盖；若未设置则使用 .env 中的值（Settings 默认行为）
+    os.environ.setdefault("YULIANG_ENVIRONMENT", "test")
+    os.environ.setdefault(
+        "YULIANG_SESSION_SECRET", "test-only-secret-with-at-least-32-characters"
     )
+    return Settings()
 
 
 @pytest.fixture

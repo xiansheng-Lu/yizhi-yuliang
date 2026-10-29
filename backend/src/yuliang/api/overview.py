@@ -79,34 +79,143 @@ class OverviewReport(BaseModel):
     insights: list[dict[str, Any]] = []
 
 
-async def _fetch_adq(account_id: str, provider: ExternalTokenProvider, client: httpx.AsyncClient) -> dict[str, Any]:
-    """拉 ADQ 账户档案 + 资金余额 + 日报消耗/GMV。
+_ADQ_API = "https://api.e.qq.com"
+_BM_CACHE_TTL = 3600.0  # 商务管家子账号列表缓存 1 小时
+_bm_sub_cache: dict[str, tuple[float, list[str]]] = {}
 
-    注意：腾讯广告要求每个请求 timestamp+nonce 唯一，不能并发或复用。
+
+def _adq_params(token_str: str, **extra: Any) -> dict[str, Any]:
+    """腾讯广告全局参数：每个请求必须独立 timestamp+nonce。"""
+    return {
+        "access_token": token_str,
+        "timestamp": int(time.time()),
+        "nonce": uuid.uuid4().hex[:16],
+        **extra,
+    }
+
+
+async def _list_adq_token_accounts(client: httpx.AsyncClient) -> list[dict[str, Any]]:
+    """从 token 服务读取全部已授权 ADQ 账号（账号发现的单一事实来源）。
+
+    返回项含 account_id / account_role_type，商务管家账号的 role 含 BUSINESS。
     """
+    cfg = _TOKEN_SERVICES["adq"]
+    r = await client.get(
+        f"{cfg.base_url}/api/accounts",
+        headers={"X-API-Key": cfg.api_key.get_secret_value()},
+    )
+    data = r.json()
+    if not data.get("ok"):
+        return []
+    return [a for a in data.get("accounts", []) if a.get("account_id")]
+
+
+async def _adq_token_for(account_id: str) -> str:
+    """按 token 服务中的账号 id 取有效 access_token。"""
+    cfg = _TOKEN_SERVICES["adq"]
+    provider = ExternalTokenProvider(ExternalTokenConfig(
+        base_url=cfg.base_url,
+        api_key=cfg.api_key,
+        product=cfg.product,
+        account_id=account_id,
+    ))
     token = await provider.get_token()
-    token_str = token.access_token.get_secret_value()
-    base = dict(access_token=token_str, account_id=account_id)
+    return token.access_token.get_secret_value()
 
-    # 账户档案
-    account_r = await client.get(
-        "https://api.e.qq.com/v3.0/advertiser/get",
-        params={**base, "timestamp": int(time.time()), "nonce": uuid.uuid4().hex[:16],
-                "fields": json.dumps(["account_id", "corporation_name", "system_status", "daily_budget", "reject_message"]),
-                "pagination_mode": "PAGINATION_MODE_NORMAL", "page": 1, "page_size": 10},
+
+async def _fetch_bm_subaccounts(bm_id: str, token_str: str, client: httpx.AsyncClient) -> list[str]:
+    """枚举商务管家旗下广告主子账号（分页拉全，结果缓存 1 小时）。"""
+    now = time.time()
+    cached = _bm_sub_cache.get(bm_id)
+    if cached and now - cached[0] < _BM_CACHE_TTL:
+        return cached[1]
+    subs: list[str] = []
+    page = 1
+    while True:
+        r = await client.get(
+            f"{_ADQ_API}/v1.3/business_manager_relations/get",
+            params=_adq_params(token_str, page=page, page_size=50),
+        )
+        data = r.json()
+        if data.get("code") != 0:
+            raise RuntimeError(
+                f"business_manager_relations/get code={data.get('code')} "
+                f"msg={data.get('message_cn') or data.get('message')}"
+            )
+        items = data.get("data", {}).get("list", [])
+        for it in items:
+            aid = it.get("account_id") or (it.get("advertiser_info") or {}).get("account_id")
+            if aid:
+                subs.append(str(aid))
+        if len(items) < 50:
+            break
+        page += 1
+    _bm_sub_cache[bm_id] = (now, subs)
+    return subs
+
+
+async def _fetch_adq_account(account_id: str, token_str: str, client: httpx.AsyncClient, day: str) -> dict[str, Any]:
+    """拉单个 ADQ 账号的档案 + 资金余额 + 当日实时消耗。"""
+    async def _get(path: str, **extra: Any) -> dict[str, Any]:
+        r = await client.get(f"{_ADQ_API}/{path}", params=_adq_params(token_str, account_id=account_id, **extra))
+        return r.json()
+
+    account = await _get(
+        "v3.0/advertiser/get",
+        fields=json.dumps(["account_id", "corporation_name", "system_status", "daily_budget"]),
+        pagination_mode="PAGINATION_MODE_NORMAL", page=1, page_size=10,
     )
-    account_data = account_r.json()
-
-    # 资金余额（独立 timestamp+nonce）
-    funds_r = await client.get(
-        "https://api.e.qq.com/v3.0/funds/get",
-        params={**base, "timestamp": int(time.time()), "nonce": uuid.uuid4().hex[:16],
-                "fields": json.dumps(["balance", "realtime_cost", "fund_status", "fund_type"]),
-                "fund_type": "FUND_TYPE_CASH"},
+    funds = await _get(
+        "v3.0/funds/get",
+        fields=json.dumps(["balance", "realtime_cost", "fund_status", "fund_type"]),
+        fund_type="FUND_TYPE_CASH",
     )
-    funds_data = funds_r.json()
+    rtcost = await _get("v1.3/realtime_cost/get", level="REPORT_LEVEL_ADVERTISER", date=day)
+    return {"account_id": account_id, "account": account, "funds": funds, "rtcost": rtcost}
 
-    return {"account": account_data, "funds": funds_data}
+
+async def _fetch_adq_all(client: httpx.AsyncClient, day: str) -> dict[str, Any]:
+    """发现全部 ADQ 账号并并发拉取数据。
+
+    账号来源：token 服务已授权列表。其中商务管家账号展开为旗下全部
+    子账号（共用商务管家 token），普通广告主账号用自身 token。
+    """
+    ts_accounts = await _list_adq_token_accounts(client)
+
+    # 并发取所有账号的 token
+    token_map: dict[str, str] = {}
+    async def _load(aid: str) -> None:
+        token_map[aid] = await _adq_token_for(aid)
+    await asyncio.gather(*(_load(str(a["account_id"])) for a in ts_accounts))
+
+    # 展开目标账号
+    targets: list[tuple[str, str]] = []  # (account_id, token_str)
+    bm_sub_count = 0
+    for a in ts_accounts:
+        aid = str(a["account_id"])
+        role = (a.get("account_role_type") or "").upper()
+        if "BUSINESS" in role:
+            subs = await _fetch_bm_subaccounts(aid, token_map[aid], client)
+            bm_sub_count += len(subs)
+            targets.extend((s, token_map[aid]) for s in subs)
+        else:
+            targets.append((aid, token_map[aid]))
+
+    sem = asyncio.Semaphore(4)
+
+    async def _one(aid: str, tok: str) -> dict[str, Any]:
+        async with sem:
+            return await _fetch_adq_account(aid, tok, client, day)
+
+    results = await asyncio.gather(*(_one(aid, tok) for aid, tok in targets), return_exceptions=True)
+    accounts = [r for r in results if isinstance(r, dict)]
+    errors = [str(r)[:120] for r in results if not isinstance(r, dict)]
+    return {
+        "accounts": accounts,
+        "target_count": len(targets),
+        "bm_sub_count": bm_sub_count,
+        "errors": errors,
+    }
 
 
 async def _fetch_wxshop(provider: ExternalTokenProvider, client: httpx.AsyncClient, ds: str) -> dict[str, Any]:
@@ -188,35 +297,43 @@ async def get_overview(
         raise HTTPException(400, "start_date 不能晚于 end_date")
 
     # 并行拉两个平台
-    adq_provider = ExternalTokenProvider(_TOKEN_SERVICES["adq"])
     wx_provider = ExternalTokenProvider(_TOKEN_SERVICES["wxshop"])
     ds = start_date.replace("-", "")  # wx_shop罗盘要求 yyyymmdd
 
     async with httpx.AsyncClient(timeout=20, follow_redirects=False) as client:
-        adq_raw, wx_raw = await asyncio.gather(
-            _fetch_adq("93405469", adq_provider, client),
+        adq_all, wx_raw = await asyncio.gather(
+            _fetch_adq_all(client, end_date),
             _fetch_wxshop(wx_provider, client, ds),
             return_exceptions=True,
         )
 
-    # --- ADQ 解析 ---
-    adq_ok = isinstance(adq_raw, dict) and adq_raw.get("account", {}).get("code") == 0
-    adq_account_name = None
+    # --- ADQ 解析（多账号聚合） ---
+    adq_ok = isinstance(adq_all, dict)
+    adq_rows: list[dict[str, Any]] = []
+    adq_total_spend = 0
+    adq_spend_known = False
     if adq_ok:
-        acct_list = adq_raw["account"].get("data", {}).get("list", [])
-        if acct_list:
-            adq_account_name = acct_list[0].get("corporation_name")
-
-    adq_funds_spend = None
-    if adq_ok:
-        funds_data = adq_raw.get("funds", {})
-        funds_ok = isinstance(funds_data, dict) and funds_data.get("code") == 0
-        if funds_ok:
-            funds_list = funds_data.get("data", {}).get("list", [])
-            for f in funds_list:
-                if f.get("fund_type") == "FUND_TYPE_CASH":
-                    adq_funds_spend = _fmt_cents(f.get("realtime_cost"))
-                    break
+        for acc in adq_all["accounts"]:
+            name = None
+            if acc.get("account", {}).get("code") == 0:
+                acct_list = acc["account"].get("data", {}).get("list", [])
+                if acct_list:
+                    name = acct_list[0].get("corporation_name")
+            cost = None
+            if acc.get("rtcost", {}).get("code") == 0:
+                rl = acc["rtcost"].get("data", {}).get("list", [])
+                if rl:
+                    cost = _fmt_cents(rl[0].get("cost"))
+            balance = None
+            if acc.get("funds", {}).get("code") == 0:
+                for f in acc["funds"].get("data", {}).get("list", []):
+                    if f.get("fund_type") == "FUND_TYPE_CASH":
+                        balance = _fmt_cents(f.get("balance"))
+                        break
+            if cost is not None:
+                adq_total_spend += cost
+                adq_spend_known = True
+            adq_rows.append({"account_id": acc["account_id"], "name": name, "cost": cost, "balance": balance})
 
     # --- wx_shop 解析 ---
     wx_ok = isinstance(wx_raw, dict) and wx_raw.get("compass", {}).get("errcode") == 0
@@ -226,19 +343,25 @@ async def get_overview(
         wx_compass_overall = wx_raw["compass"].get("data", {})
 
     # --- 聚合 ---
-    # ADQ 日报接口（v1.3 daily_reports）需要 level + date_range + date
-    # 这里先用资金 realtime_cost 做 spend（单日），GMV 暂时靠后续日报接口补
-    spend = adq_funds_spend
-    gmv = None  # ADQ daily_reports 当前权限可能不足，留空等后续
+    # spend 取各账号当日实时消耗之和（realtime_cost/get），GMV 来自微信小店罗盘
+    spend: int | None = adq_total_spend if adq_spend_known else None
+    gmv = None
     orders = None
     roi = _compute_roi(spend, gmv)
 
     updated_at = time.strftime("%Y-%m-%dT%H:%M:%S+08:00", time.localtime())
     coverage_notes = []
     if adq_ok:
-        coverage_notes.append(f"ADQ 账户 93405469（{adq_account_name or '企业名称未返回'}）资金余额实时获取成功")
+        bm_cnt = adq_all["bm_sub_count"]
+        src = f"，含商务管家子账号 {bm_cnt} 个" if bm_cnt else ""
+        err_cnt = len(adq_all["errors"])
+        err_note = f"，{err_cnt} 个账号拉取失败" if err_cnt else ""
+        coverage_notes.append(
+            f"ADQ 已接入 {len(adq_rows)}/{adq_all['target_count']} 个账号{src}{err_note}，"
+            f"{end_date} 实时消耗合计 ¥{adq_total_spend / 100:.2f}"
+        )
     else:
-        coverage_notes.append(f"ADQ 账户接口异常：{adq_raw.get('message', '未知错误') if isinstance(adq_raw, dict) else str(adq_raw)[:120]}")
+        coverage_notes.append(f"ADQ 账号发现异常：{str(adq_all)[:120]}")
     if wx_ok:
         if wx_effective_ds and wx_effective_ds != ds:
             coverage_notes.append(f"微信小店罗盘整体概览获取成功（当天数据未生成，已回退至 {wx_effective_ds}）")
@@ -248,12 +371,15 @@ async def get_overview(
         coverage_notes.append(f"微信小店接口异常：{wx_raw.get('errmsg', '未知错误') if isinstance(wx_raw, dict) else str(wx_raw)[:120]}")
 
     channels: list[dict[str, Any]] = []
-    if adq_ok and spend is not None:
+    for row in adq_rows:
+        share = None
+        if adq_total_spend > 0 and row["cost"] is not None:
+            share = round(row["cost"] / adq_total_spend, 4)
         channels.append({
-            "id": "adq", "name": "腾讯广告",
-            "detail": f"账户 93405469（{adq_account_name or '—'}）",
-            "spend": spend, "gmv": gmv, "roi": roi,
-            "share": 1.0,
+            "id": f"adq_{row['account_id']}", "name": "腾讯广告",
+            "detail": f"{row['name'] or '—'}（{row['account_id']}）",
+            "spend": row["cost"], "gmv": None, "roi": None,
+            "share": share,
         })
     if wx_ok:
         wx_overall_gmv = _fmt_cents(wx_compass_overall.get("pay_gmv"))

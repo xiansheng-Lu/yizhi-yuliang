@@ -14,6 +14,7 @@ pytestmark = pytest.mark.unit
         ("yuliang.system.approved_execution", "execute"),
         ("yuliang.execute.guard", "execute"),
         ("yuliang.system.identity_probe", "system"),
+        ("yuliang.ai_media.relay_video_generate", "ai-media"),
     ],
 )
 def test_actual_celery_routing_preserves_execution_queue(

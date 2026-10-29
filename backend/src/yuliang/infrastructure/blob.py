@@ -169,9 +169,18 @@ class BlobStore:
         return f"tenants/{tenant}/shops/{shop}/uploads/{upload}"
 
     @staticmethod
+    def video_key(tenant: int, shop: UUID, call: UUID) -> str:
+        """视频生成产物使用独立命名空间，仍绑定租户与店铺，不接受任意地址。"""
+        if type(tenant) is not int or tenant <= 0:
+            raise ValueError("租户无效")
+        return f"tenants/{tenant}/shops/{shop}/videos/{call}"
+
+    @staticmethod
     def _key(key: str) -> None:
         if (
-            re.fullmatch(r"tenants/[1-9][0-9]*/shops/[0-9a-f-]{36}/uploads/[0-9a-f-]{36}", key)
+            re.fullmatch(
+                r"tenants/[1-9][0-9]*/shops/[0-9a-f-]{36}/(uploads|videos)/[0-9a-f-]{36}", key
+            )
             is None
         ):
             raise BlobError("INVALID_KEY")
@@ -238,11 +247,13 @@ class BlobStore:
     def put_bytes(self, key: str, body: bytes, mime: str, upload: UUID) -> None:
         """服务端写入生成产物：仍走固定key、版本桶与upload-id元数据，不接受任意地址。"""
         self._key(key)
-        if not 0 < len(body) <= 20971520 or mime not in {
-            "image/png",
-            "image/jpeg",
-            "image/webp",
-        }:
+        limits = {
+            "image/png": 20971520,
+            "image/jpeg": 20971520,
+            "image/webp": 20971520,
+            "video/mp4": 104857600,
+        }
+        if mime not in limits or not 0 < len(body) <= limits[mime]:
             raise ValueError("生成产物大小或类型超出私有存储边界")
         checksum = base64.b64encode(hashlib.sha256(body).digest()).decode("ascii")
         self.check_bucket()

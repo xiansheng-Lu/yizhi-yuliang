@@ -66,6 +66,63 @@ def identity_probe(self: Any, payload: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+@app.task(
+    name="yuliang.ai_media.relay_video_generate",
+    reject_on_worker_lost=True,
+    autoretry_for=(),
+    max_retries=0,
+)  # type: ignore[untyped-decorator]
+def relay_video_generate(payload: dict[str, Any]) -> dict[str, Any]:
+    """条件领取保证同一调用只执行一次；已发出的外部调用绝不自动重试。"""
+    from yuliang.infrastructure.blob import BlobStore
+    from yuliang.modules.content.relay_video_calls import PostgresVideoCallStore
+    from yuliang.modules.content.relay_video_generation_worker import (
+        execute_relay_video_call,
+    )
+    from yuliang.modules.content.video_generation_config import (
+        load_video_transport_config,
+    )
+    from yuliang.platform.errors import ApiError
+
+    item = message(payload)
+    identity = VerifiedIdentity(item.tenant_id, item.membership_id, item.user_id)
+    store = PostgresVideoCallStore(engine(), identity)
+    with business_transaction(engine(), identity) as session:
+        valid = session.execute(
+            text("""
+          SELECT m.id FROM memberships m JOIN tenants t ON t.id=m.tenant_id
+          WHERE m.id=:member AND m.user_id=:user AND m.status='ACTIVE'
+            AND t.status='ACTIVE' AND t.deleted_at IS NULL
+        """),
+            {"member": item.membership_id, "user": item.user_id},
+        ).scalar_one_or_none()
+        if not valid:
+            raise ValueError("任务身份已失效")
+    try:
+        config = load_video_transport_config()
+    except ApiError:
+        store.fail(
+            item.job_id,
+            expected="PENDING",
+            error_code="PROVIDER_UNCONFIGURED",
+            error_message="视频中转站连接配置缺失，未发起调用",
+        )
+        return {"callId": str(item.job_id), "state": "FAILED", "errorCode": "PROVIDER_UNCONFIGURED"}
+    try:
+        blob = BlobStore.from_settings(app.conf.yuliang_settings)
+    except ValueError:
+        blob = None
+    if blob is None:
+        store.fail(
+            item.job_id,
+            expected="PENDING",
+            error_code="BLOB_UNCONFIGURED",
+            error_message="私有对象存储未启用，视频产物无法落盘",
+        )
+        return {"callId": str(item.job_id), "state": "FAILED", "errorCode": "BLOB_UNCONFIGURED"}
+    return execute_relay_video_call(store=store, blob=blob, call_id=item.job_id, config=config)
+
+
 def unavailable(payload: dict[str, Any]) -> None:
     message(payload)
     raise RuntimeError("执行器尚未接入；未调用平台/供应商且不自动重试")

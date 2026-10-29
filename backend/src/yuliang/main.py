@@ -1,5 +1,6 @@
 """应用装配入口。uvicorn yuliang.main:create_app --factory。"""
 
+import os
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
@@ -51,6 +52,7 @@ def create_app(settings: Settings | None = None, mail_sender: MailSender | None 
         app.state.blob_store = None
         app.state.content_ai_runtime = None
         app.state.imagegen_provider = None
+        app.state.videogen_provider = None
         try:
             if (
                 app.state.settings.llm_primary_endpoint is not None
@@ -62,9 +64,7 @@ def create_app(settings: Settings | None = None, mail_sender: MailSender | None 
 
                 app.state.content_ai_runtime = ContentRuntime(
                     ContentPort(app.state.settings.llm_primary_endpoint),
-                    ServerSecrets(
-                        {"YULIANG_LLM_PRIMARY_KEY": app.state.settings.llm_primary_key}
-                    ),
+                    ServerSecrets({"YULIANG_LLM_PRIMARY_KEY": app.state.settings.llm_primary_key}),
                 )
             if app.state.settings.blob_enabled:
                 from yuliang.infrastructure.blob import BlobStore
@@ -98,6 +98,29 @@ def create_app(settings: Settings | None = None, mail_sender: MailSender | None 
                     )
 
                 app.state.imagegen_provider = imagegen_provider
+            from yuliang.modules.content.video_generation_config import (
+                load_video_provider_config,
+                video_generation_priced,
+            )
+
+            if app.state.blob_store is not None and video_generation_priced(os.environ):
+                from yuliang.modules.content.relay_video_calls import (
+                    PostgresVideoCallStore,
+                )
+                from yuliang.modules.content.relay_video_generation_provider import (
+                    RelayVideoGenerationProvider,
+                )
+                from yuliang.modules.content.service import ContentService
+
+                video_config = load_video_provider_config()
+
+                def videogen_provider(scope: ContentService) -> RelayVideoGenerationProvider:
+                    return RelayVideoGenerationProvider(
+                        config=video_config,
+                        calls=PostgresVideoCallStore(scope.engine, scope.identity),
+                    )
+
+                app.state.videogen_provider = videogen_provider
             if app.state.settings.platform_resources_file is not None:
                 from sqlalchemy import create_engine
 

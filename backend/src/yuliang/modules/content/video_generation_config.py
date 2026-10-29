@@ -16,6 +16,12 @@ MODEL = "YULIANG_VIDEOGEN_PRIMARY_MODEL"
 KEY = "YULIANG_VIDEOGEN_PRIMARY_KEY"
 PRICE_PER_SECOND = "YULIANG_VIDEOGEN_PRIMARY_PRICE_PER_SECOND"
 PRICE_PER_CALL = "YULIANG_VIDEOGEN_PRIMARY_PRICE_PER_CALL"
+RESOLUTION = "YULIANG_VIDEOGEN_PRIMARY_RESOLUTION"
+ASPECT_RATIO = "YULIANG_VIDEOGEN_PRIMARY_ASPECT_RATIO"
+
+# 中转站只接受这些取值；不给默认值，避免替用户静默决定分辨率与费用。
+RESOLUTIONS = frozenset({"480p", "768p", "1080p"})
+ASPECT_RATIOS = frozenset({"portrait", "landscape"})
 
 # 环境变量按“元”填写，数据库价目按minor+micro-minor保存。
 _MINOR_PER_YUAN = Decimal(100)
@@ -23,10 +29,18 @@ _MICRO_PER_MINOR = Decimal(1000000)
 
 
 @dataclass(frozen=True)
-class VideoProviderConfig:
+class VideoTransportConfig:
+    """后台执行只需连接信息；价格、分辨率等已在调用记录中冻结。"""
+
     endpoint: str
     model: str
     key: SecretStr
+
+
+@dataclass(frozen=True)
+class VideoProviderConfig(VideoTransportConfig):
+    resolution: str
+    aspect_ratio: str
     price: VideoPrice
 
 
@@ -38,6 +52,30 @@ def _text(values: Mapping[str, str], name: str) -> str:
     value = values.get(name, "").strip()
     if not value:
         raise _unconfigured(f"缺少{name}")
+    return value
+
+
+def _endpoint(values: Mapping[str, str]) -> str:
+    endpoint = _text(values, ENDPOINT)
+    parsed = urlsplit(endpoint)
+    if (
+        parsed.scheme not in {"http", "https"}
+        or not parsed.hostname
+        or parsed.username
+        or parsed.password
+        or parsed.query
+        or parsed.fragment
+        or parsed.scheme == "http"
+        and parsed.hostname not in {"127.0.0.1", "::1", "localhost"}
+    ):
+        raise _unconfigured(f"{ENDPOINT}不是可信HTTPS端点")
+    return endpoint
+
+
+def _choice(values: Mapping[str, str], name: str, allowed: frozenset[str]) -> str:
+    value = _text(values, name)
+    if value not in allowed:
+        raise _unconfigured(f"{name}取值非法，仅允许{'/'.join(sorted(allowed))}")
     return value
 
 
@@ -54,23 +92,34 @@ def _micro_minor(name: str, value: str) -> int:
     return int(converted)
 
 
-def load_video_provider_config(environ: Mapping[str, str] | None = None) -> VideoProviderConfig:
-    values = os.environ if environ is None else environ
-    endpoint = _text(values, ENDPOINT)
-    model = _text(values, MODEL)
-    token = _text(values, KEY)
-    parsed = urlsplit(endpoint)
-    if (
-        parsed.scheme not in {"http", "https"}
-        or not parsed.hostname
-        or parsed.username
-        or parsed.password
-        or parsed.query
-        or parsed.fragment
-        or parsed.scheme == "http"
-        and parsed.hostname not in {"127.0.0.1", "::1", "localhost"}
-    ):
-        raise _unconfigured(f"{ENDPOINT}不是可信HTTPS端点")
+def _environ(environ: Mapping[str, str] | None) -> Mapping[str, str]:
+    return os.environ if environ is None else environ
+
+
+def video_generation_priced(environ: Mapping[str, str] | None = None) -> bool:
+    """单价为空即视为未配置；只有显式单价才允许装配真实付费适配器。"""
+    values = _environ(environ)
+    return bool(values.get(PRICE_PER_SECOND, "").strip() or values.get(PRICE_PER_CALL, "").strip())
+
+
+def load_video_transport_config(
+    environ: Mapping[str, str] | None = None,
+) -> VideoTransportConfig:
+    values = _environ(environ)
+    return VideoTransportConfig(
+        endpoint=_endpoint(values),
+        model=_text(values, MODEL),
+        key=SecretStr(_text(values, KEY)),
+    )
+
+
+def load_video_provider_config(
+    environ: Mapping[str, str] | None = None,
+) -> VideoProviderConfig:
+    values = _environ(environ)
+    transport = load_video_transport_config(values)
+    resolution = _choice(values, RESOLUTION, RESOLUTIONS)
+    aspect_ratio = _choice(values, ASPECT_RATIO, ASPECT_RATIOS)
     per_second = values.get(PRICE_PER_SECOND, "").strip()
     per_call = values.get(PRICE_PER_CALL, "").strip()
     if per_second and per_call:
@@ -83,4 +132,11 @@ def load_video_provider_config(environ: Mapping[str, str] | None = None) -> Vide
     else:
         rate = _micro_minor(PRICE_PER_CALL, per_call)
         price = VideoPrice(mode="PER_CALL", micro_minor_per_unit=rate)
-    return VideoProviderConfig(endpoint=endpoint, model=model, key=SecretStr(token), price=price)
+    return VideoProviderConfig(
+        endpoint=transport.endpoint,
+        model=transport.model,
+        key=transport.key,
+        resolution=resolution,
+        aspect_ratio=aspect_ratio,
+        price=price,
+    )

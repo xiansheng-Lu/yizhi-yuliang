@@ -7,6 +7,7 @@ from yuliang.modules.aikernel.cost_models import BillingOutcome
 from yuliang.modules.content.generation_models import GenerationInput
 from yuliang.modules.content.video_generation_config import (
     load_video_provider_config,
+    video_generation_priced,
 )
 from yuliang.modules.content.video_generation_models import (
     VideoStartRequest,
@@ -21,6 +22,8 @@ BASE = {
     "YULIANG_VIDEOGEN_PRIMARY_MODEL": "synthetic-video-model",
     "YULIANG_VIDEOGEN_PRIMARY_KEY": "test-only-key",
     "YULIANG_VIDEOGEN_PRIMARY_PRICE_PER_SECOND": "0.5",
+    "YULIANG_VIDEOGEN_PRIMARY_RESOLUTION": "480p",
+    "YULIANG_VIDEOGEN_PRIMARY_ASPECT_RATIO": "portrait",
 }
 
 
@@ -38,10 +41,35 @@ def test_config_requires_endpoint_model_and_key() -> None:
         assert "视频生成供应商未配置" in error.value.message
 
 
+def test_config_requires_explicit_resolution_and_aspect_ratio() -> None:
+    for missing in (
+        "YULIANG_VIDEOGEN_PRIMARY_RESOLUTION",
+        "YULIANG_VIDEOGEN_PRIMARY_ASPECT_RATIO",
+    ):
+        values = dict(BASE)
+        values.pop(missing)
+        with pytest.raises(ApiError) as error:
+            load_video_provider_config(values)
+        assert error.value.code == ErrorCode.CAPABILITY_UNAVAILABLE
+        assert "视频生成供应商未配置" in error.value.message
+
+
+def test_config_rejects_unlisted_resolution_and_aspect_ratio() -> None:
+    for name, value in (
+        ("YULIANG_VIDEOGEN_PRIMARY_RESOLUTION", "720p"),
+        ("YULIANG_VIDEOGEN_PRIMARY_ASPECT_RATIO", "square"),
+    ):
+        with pytest.raises(ApiError) as error:
+            load_video_provider_config(BASE | {name: value})
+        assert error.value.code == ErrorCode.CAPABILITY_UNAVAILABLE
+
+
 def test_config_per_second_price_converts_to_micro_minor() -> None:
     config = load_video_provider_config(BASE)
     assert config.endpoint == "https://video.example.com/v1"
     assert config.model == "synthetic-video-model"
+    assert config.resolution == "480p"
+    assert config.aspect_ratio == "portrait"
     assert config.price.mode == "PER_SECOND"
     assert config.price.micro_minor_per_unit == 50000000
     assert config.price.currency == "CNY"
@@ -55,6 +83,16 @@ def test_config_per_call_price() -> None:
     config = load_video_provider_config(values)
     assert config.price.mode == "PER_CALL"
     assert config.price.micro_minor_per_unit == 200000000
+
+
+def test_config_without_price_is_not_assembled() -> None:
+    values = dict(BASE)
+    values.pop("YULIANG_VIDEOGEN_PRIMARY_PRICE_PER_SECOND")
+    assert video_generation_priced(values) is False
+    with pytest.raises(ApiError) as error:
+        load_video_provider_config(values)
+    assert error.value.code == ErrorCode.CAPABILITY_UNAVAILABLE
+    assert video_generation_priced(BASE) is True
 
 
 @pytest.mark.parametrize(

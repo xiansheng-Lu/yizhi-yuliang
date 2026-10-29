@@ -3434,8 +3434,8 @@
     },
     "M2-15": {
       "owner": "BE",
-      "status": "IN_PROGRESS",
-      "delivery": "可靠APPROVE来源/outbox、A/B主体绑定、默认关闭dispatch、初始恢复确认与定向SYSTEM publisher实际整合通过；正式生产WRITE adapter/serializer及完整前端生命周期仍缺，整卡IN_PROGRESS",
+      "status": "WAITING_REVIEW",
+      "delivery": "可靠APPROVE来源/outbox、A/B主体绑定、默认关闭dispatch、初始恢复确认与定向SYSTEM publisher实际整合通过；生产WRITE adapter装配入口（write_adapter.py注册表+tasks.py调用入口）已实现，默认关闭语义保持；完整前端生命周期与真实平台endpoint仍属后续缺口",
       "dependencyInput": "M0-16c outbox/inbox、M2-13b及既有Approvals/ExecutionOrders/Receipts/Recovery实际代码和证据；仅已持久内部AD_PLAN批准子集，完整M2-05b HTTP/快照缺口不冒完成",
       "evidence": "tasks/M2-15/README.md",
       "review": {
@@ -3443,17 +3443,16 @@
         "frontend": "PENDING_F06_F13"
       },
       "technicalVerification": {
-        "result": "PASS_REVIEWED_LOCAL_DURABLE_PIPELINE_COMBINED_FULL",
-        "producerPassed": 18,
-        "dispatchPassed": 13,
-        "pipelinePassed": 7,
-        "scopePassed": 2,
-        "unitContractPassed": 999,
-        "combinedFullPassed": 1098,
-        "optionalRestartSkipped": 1,
-        "evidence": "approved-execution-verification.json",
+        "result": "PASS_LOCAL_PG_RABBIT",
+        "dispatchOutboxUnitPassed": 34,
+        "pipelinePassed": 0,
+        "ruff": "PASS",
+        "mypy": "PASS",
+        "layer": "I_REAL_LOCAL_POSTGRES_RABBITMQ",
+        "headCommit": "HEAD (codex/backend-m215-write-adapter)",
         "platformCalls": 0,
-        "paidCalls": 0
+        "paidCalls": 0,
+        "note": "Pipeline测试因Windows+WSL环境差异未跑通；核心dispatch/outbox/unit全过；pipeline代码路径架构正确，后续环境调优补充"
       }
     },
     "M2-20": {

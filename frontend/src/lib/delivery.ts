@@ -114,7 +114,7 @@ interface DeliveryObject {
   name: string;
   version: number | null;
   status: "RUNNING" | "PAUSED" | "REVIEW" | "FAILED" | "COMPLETED" | "UNKNOWN";
-  updatedAt: string;
+  updatedAt: string | null;
   metrics: PerformanceMetrics;
   linkedObjects: LinkedObject[];
 }
@@ -122,9 +122,19 @@ export interface Campaign extends DeliveryObject {
   platform: "adq";
   kind: "CAMPAIGN";
   level: "CAMPAIGN" | "ADGROUP" | "AD";
-  budgetMinor: number;
-  bidMinor: number;
+  budgetMinor: number | null;
+  bidMinor: number | null;
   targetRoi: number | null;
+  /** 字段级原因说明：为什么该字段为 null。 */
+  fieldReasons?: Partial<Record<
+    | "budgetMinor"
+    | "bidMinor"
+    | "targetRoi"
+    | "enabled"
+    | "updatedAt"
+    | "attributionWindow",
+    string
+  >>;
   extensions: { objective?: string; startedAt?: string; endedAt?: string };
 }
 export interface PromotionOrder extends DeliveryObject {
@@ -683,7 +693,8 @@ export function filterPlans(plans: Plan[], filter: PlanFilter) {
         ? a.name.localeCompare(b.name, "zh-CN")
         : filter.sort === "spend"
           ? (a.metrics.spend ?? -1) - (b.metrics.spend ?? -1)
-          : Date.parse(a.updatedAt) - Date.parse(b.updatedAt)) *
+          : Date.parse(a.updatedAt ?? "") -
+            Date.parse(b.updatedAt ?? "")) *
       (filter.descending ? -1 : 1),
   );
 }

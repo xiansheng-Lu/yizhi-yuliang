@@ -301,7 +301,12 @@ export function adaptDeliverySnapshot(
         budgetMinor: p.budgetMinor,
         bidMinor: p.bidMinor,
         targetRoi: p.targetRoi,
-        status: p.enabled ? "RUNNING" : "PAUSED",
+        status:
+          p.enabled === null
+            ? "UNKNOWN"
+            : p.enabled
+              ? "RUNNING"
+              : "PAUSED",
         updatedAt: p.sourceUpdatedAt,
         metrics: {
           spend: dateMatches ? p.spendMinor : null,
@@ -575,7 +580,7 @@ export function validateDeliveryData(value: DeliveryData) {
       !p.metrics ||
       !Array.isArray(p.linkedObjects) ||
       !p.extensions ||
-      !Number.isFinite(Date.parse(p.updatedAt)) ||
+      (p.updatedAt !== null && !Number.isFinite(Date.parse(p.updatedAt))) ||
       !(p.status in planStatusNames) ||
       ![
         p.metrics.spend,
@@ -591,8 +596,8 @@ export function validateDeliveryData(value: DeliveryData) {
     if (
       p.kind === "CAMPAIGN"
         ? p.platform !== "adq" ||
-          !nonnegative(p.budgetMinor) ||
-          !nonnegative(p.bidMinor)
+          (p.budgetMinor !== null && !nonnegative(p.budgetMinor)) ||
+          (p.bidMinor !== null && !nonnegative(p.bidMinor))
         : p.kind !== "PROMOTION_ORDER" ||
           p.platform !== "beans" ||
           !nonnegative(p.amountBeans) ||

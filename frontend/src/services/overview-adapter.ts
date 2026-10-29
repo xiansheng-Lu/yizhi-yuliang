@@ -72,7 +72,10 @@ export function aggregateOverview(snapshot: FrontendSnapshot, filter: OverviewFi
   const failed = jobs.filter((j) => j.status === "FAILED").length;
   const pending = jobs.filter((j) => j.status === "PENDING_APPROVAL").length;
   const exceptions = jobs.filter((j) => ["FAILED", "BLOCKED", "MANUAL_REQUIRED"].includes(j.status)).length;
-  const updated = plans.map((p) => p.sourceUpdatedAt).filter((at) => Number.isFinite(Date.parse(at))).sort((a, b) => Date.parse(a) - Date.parse(b));
+  const updated = plans
+    .map((p) => p.sourceUpdatedAt)
+    .filter((at): at is string => at !== null && Number.isFinite(Date.parse(at)))
+    .sort((a, b) => Date.parse(a) - Date.parse(b));
   const completeSpend = plans.length > 0 && plans.every((p) => p.spendMinor !== null);
   const distributions = completeSpend ? [true, false].map((enabled) => ({
     id: enabled ? "enabled" : "paused", name: enabled ? "投放开启" : "投放暂停",

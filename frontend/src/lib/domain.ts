@@ -56,23 +56,43 @@ export interface LiveSession {
   totalViewers?: number | null;
   paidOrders?: number | null;
 }
+export type NativePlanLevel = "CAMPAIGN" | "ADGROUP" | "AD";
+
 export interface AdPlan {
   id: string;
   nativePlanId: string;
+  /** 平台原生层级标识，区分 CAMPAIGN / ADGROUP / AD；一个 Campaign 可能挂多个 AdGroup，不能混成一个"计划"。 */
+  nativeLevel: NativePlanLevel | null;
+  /** 父级原生 ID；ADGROUP 指向所属 Campaign，AD 指向所属 AdGroup；Campaign 本身为 null。 */
+  parentNativeId?: string | null;
   tenantId: string;
   shopId: string;
   adAccountId: string;
   liveSessionId?: string;
   name: string;
   aliases?: string[];
-  budgetMinor: number;
-  bidMinor: number;
-  targetRoi: number;
-  enabled: boolean;
+  /** 没有明确来源的字段允许 null 并附字段级原因；真实 0 仍为 0，不跨层级借值。 */
+  budgetMinor: number | null;
+  bidMinor: number | null;
+  targetRoi: number | null;
+  /** 无独立状态映射时保持 null 并显示"待同步"，null 不自动当"已暂停"。 */
+  enabled: boolean | null;
   spendMinor: number | null;
   paidGmvMinor: number | null;
-  sourceUpdatedAt: string;
-  attributionWindow: string;
+  /** 未提供的真实源字段允许 null 并显示缺失，不使用抓取时间或统计日期冒充。 */
+  sourceUpdatedAt: string | null;
+  /** 未提供时允许 null，不混用不同归因口径。 */
+  attributionWindow: string | null;
+  /** 字段级原因说明：为什么该字段为 null（例如"CAMPAIGN SDK 无出价字段"）。 */
+  fieldReasons?: Partial<Record<
+    | "budgetMinor"
+    | "bidMinor"
+    | "targetRoi"
+    | "enabled"
+    | "sourceUpdatedAt"
+    | "attributionWindow",
+    string
+  >>;
 }
 export interface Product {
   id: string;

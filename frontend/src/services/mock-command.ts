@@ -182,7 +182,10 @@ export function mockRisk(
       .filter((item) => item.tenantId === policy.tenantId)
       .reduce(
         (sum, item) =>
-          sum + (item.id === plan?.id ? amountMinor : item.budgetMinor),
+          sum +
+          (item.id === plan?.id
+            ? amountMinor
+            : item.budgetMinor ?? 0),
         0,
       );
     checks.push({
@@ -201,15 +204,18 @@ export function mockRisk(
       request.action_type === "CHANGE_DAILY_BUDGET"
         ? plan.budgetMinor
         : plan.bidMinor;
-    const percent =
-      previous > 0
-        ? (Math.abs(request.new_value.amount_minor - previous) / previous) * 100
-        : Infinity;
-    checks.push({
-      code: "CHANGE_LIMIT",
-      passed: percent <= policy.maxChangePercent,
-      message: `本次变动 ${Number.isFinite(percent) ? percent.toFixed(1) : "未知"}% / 允许 ${policy.maxChangePercent}%。`,
-    });
+    if (previous !== null) {
+      const percent =
+        previous > 0
+          ? (Math.abs(request.new_value.amount_minor - previous) / previous) *
+            100
+          : Infinity;
+      checks.push({
+        code: "CHANGE_LIMIT",
+        passed: percent <= policy.maxChangePercent,
+        message: `本次变动 ${Number.isFinite(percent) ? percent.toFixed(1) : "未知"}% / 允许 ${policy.maxChangePercent}%。`,
+      });
+    }
   }
   const last = snapshot.tasks.find(
     (job) => job.target_id === request.target_id && job.status === "SUCCEEDED",

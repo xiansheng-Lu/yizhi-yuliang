@@ -59,6 +59,8 @@ export function createMockSnapshot(): FrontendSnapshot {
       ([id, name, connector, budgetMinor, spendMinor, paidGmvMinor]) => ({
         id,
         nativePlanId: `mock-${id}`,
+        nativeLevel: "CAMPAIGN",
+        parentNativeId: null,
         tenantId: "tenant-demo",
         shopId: "shop-tea",
         adAccountId: `account-${connector}`,

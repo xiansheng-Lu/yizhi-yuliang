@@ -887,7 +887,9 @@ function Operation({ plan, close }: { plan: Plan; close: () => void }) {
       restore
         ? draft!.value!
         : plan.kind === "CAMPAIGN"
-          ? String(plan.budgetMinor / 100)
+          ? plan.budgetMinor !== null
+            ? String(plan.budgetMinor / 100)
+            : ""
           : "",
     );
   const [preview, setPreview] = useState<RiskPreview | null>(null),
@@ -934,11 +936,9 @@ function Operation({ plan, close }: { plan: Plan; close: () => void }) {
     idempotencyKey: key,
   };
   const reset = (newAction: keyof typeof operationMap) => {
-    const nextValue = String(
-      (newAction === "bid"
-        ? (plan as Campaign).bidMinor
-        : (plan as Campaign).budgetMinor) / 100,
-    );
+    const sourceValue =
+      newAction === "bid" ? (plan as Campaign).bidMinor : (plan as Campaign).budgetMinor;
+    const nextValue = sourceValue !== null ? String(sourceValue / 100) : "";
     setAction(newAction);
     setValue(nextValue);
     setPreview(null);

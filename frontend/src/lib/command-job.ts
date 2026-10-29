@@ -153,13 +153,21 @@ export function isHandoff(action: CommandAction) {
 export function currentPlanValue(
   plan: AdPlan,
   action: CommandAction,
-): JobValue {
-  if (action === "CHANGE_DAILY_BUDGET")
+): JobValue | null {
+  if (action === "CHANGE_DAILY_BUDGET") {
+    if (plan.budgetMinor === null) return null;
     return { kind: "MONEY", currency: "CNY", amount_minor: plan.budgetMinor };
-  if (action === "CHANGE_BID")
+  }
+  if (action === "CHANGE_BID") {
+    if (plan.bidMinor === null) return null;
     return { kind: "MONEY", currency: "CNY", amount_minor: plan.bidMinor };
-  if (action === "SET_ROI_TARGET")
+  }
+  if (action === "SET_ROI_TARGET") {
+    if (plan.targetRoi === null) return null;
     return { kind: "RATIO", value: plan.targetRoi };
+  }
+  // PAUSE / RESUME 使用当前启停状态；未知时不记录旧值
+  if (plan.enabled === null) return null;
   return { kind: "BOOLEAN", value: plan.enabled };
 }
 export function formatJobValue(value: JobValue | null) {

@@ -110,17 +110,38 @@ async def _fetch_adq(account_id: str, provider: ExternalTokenProvider, client: h
 
 
 async def _fetch_wxshop(provider: ExternalTokenProvider, client: httpx.AsyncClient, ds: str) -> dict[str, Any]:
-    """拉微信小店罗盘整体概览 + 资金余额。"""
+    """拉微信小店罗盘整体概览 + 资金余额。
+
+    罗盘数据 T+1，若传入的 ds 当天 data 为空，自动回退到前一天，
+    并通过 effective_ds 返回实际生效的日期，供前端展示。
+    """
     token = await provider.get_token()
     token_str = token.access_token.get_secret_value()
 
-    # 罗盘整体概览（POST）
+    # 先试主日期
     compass_r = await client.post(
         "https://api.weixin.qq.com/channels/ec/compass/shop/overall/get",
         params={"access_token": token_str},
         json={"ds": ds},
     )
     compass_data = compass_r.json()
+
+    effective_ds = ds
+    # 若 errcode=0 但 data 为空 dict，尝试回退一天
+    if compass_data.get("errcode") == 0 and not compass_data.get("data"):
+        try:
+            fallback = (date(int(ds[:4]), int(ds[4:6]), int(ds[6:8])) - timedelta(days=1)).strftime("%Y%m%d")
+            fallback_r = await client.post(
+                "https://api.weixin.qq.com/channels/ec/compass/shop/overall/get",
+                params={"access_token": token_str},
+                json={"ds": fallback},
+            )
+            fallback_data = fallback_r.json()
+            if fallback_data.get("errcode") == 0 and fallback_data.get("data"):
+                compass_data = fallback_data
+                effective_ds = fallback
+        except (ValueError, IndexError):
+            pass
 
     # 资金余额（POST）
     funds_r = await client.post(
@@ -130,7 +151,7 @@ async def _fetch_wxshop(provider: ExternalTokenProvider, client: httpx.AsyncClie
     )
     funds_data = funds_r.json()
 
-    return {"compass": compass_data, "funds": funds_data}
+    return {"compass": compass_data, "funds": funds_data, "effective_ds": effective_ds}
 
 
 def _fmt_cents(value: Any) -> int | None:
@@ -200,14 +221,16 @@ async def get_overview(
     # --- wx_shop 解析 ---
     wx_ok = isinstance(wx_raw, dict) and wx_raw.get("compass", {}).get("errcode") == 0
     wx_compass_overall = {}
+    wx_effective_ds = wx_raw.get("effective_ds") if isinstance(wx_raw, dict) else None
     if wx_ok:
-        wx_compass_overall = wx_raw["compass"].get("overall_data", {})
+        wx_compass_overall = wx_raw["compass"].get("data", {})
 
     # --- 聚合 ---
     # ADQ 日报接口（v1.3 daily_reports）需要 level + date_range + date
     # 这里先用资金 realtime_cost 做 spend（单日），GMV 暂时靠后续日报接口补
     spend = adq_funds_spend
     gmv = None  # ADQ daily_reports 当前权限可能不足，留空等后续
+    orders = None
     roi = _compute_roi(spend, gmv)
 
     updated_at = time.strftime("%Y-%m-%dT%H:%M:%S+08:00", time.localtime())
@@ -217,7 +240,10 @@ async def get_overview(
     else:
         coverage_notes.append(f"ADQ 账户接口异常：{adq_raw.get('message', '未知错误') if isinstance(adq_raw, dict) else str(adq_raw)[:120]}")
     if wx_ok:
-        coverage_notes.append("微信小店罗盘整体概览获取成功")
+        if wx_effective_ds and wx_effective_ds != ds:
+            coverage_notes.append(f"微信小店罗盘整体概览获取成功（当天数据未生成，已回退至 {wx_effective_ds}）")
+        else:
+            coverage_notes.append("微信小店罗盘整体概览获取成功")
     else:
         coverage_notes.append(f"微信小店接口异常：{wx_raw.get('errmsg', '未知错误') if isinstance(wx_raw, dict) else str(wx_raw)[:120]}")
 
@@ -231,26 +257,31 @@ async def get_overview(
         })
     if wx_ok:
         wx_overall_gmv = _fmt_cents(wx_compass_overall.get("pay_gmv"))
+        wx_orders = _fmt_cents(wx_compass_overall.get("pay_order_cnt"))
+        wx_pay_uv = _fmt_cents(wx_compass_overall.get("pay_uv"))
+        display_ds = wx_effective_ds or ds
+        display_label = f"{display_ds[:4]}-{display_ds[4:6]}-{display_ds[6:8]}" if display_ds else start_date
         channels.append({
             "id": "wxshop", "name": "微信小店",
-            "detail": f"罗盘整体概览 · {start_date}",
-            "spend": None, "gmv": wx_overall_gmv, "roi": None,
+            "detail": f"罗盘整体概览 · {display_label}",
+            "spend": None, "gmv": wx_overall_gmv, "orders": wx_orders, "roi": None,
             "share": None,
         })
+        if wx_overall_gmv is not None:
+            gmv = wx_overall_gmv
+        if wx_orders is not None:
+            orders = wx_orders
+        roi = _compute_roi(spend, gmv)
 
     total_spend = spend
     total_gmv = gmv
-    for c in channels:
-        if c["spend"] is not None and (total_spend is None or c["id"] != "wxshop"):
-            pass  # ADQ 已经有了；wxshop 暂时没有广告消耗
-    total_gmv = total_gmv or next((c["gmv"] for c in channels if c["gmv"] is not None), None)
 
     report = OverviewReport(
         source="API",
         filter=OverviewFilter(start_date=start_date, end_date=end_date, shop_id=shop_id, connector_id=connector_id),
         updatedAt=updated_at,
         coverageNote="；".join(coverage_notes),
-        totals=OverviewTotals(spend=total_spend, gmv=total_gmv, roi=_compute_roi(total_spend, total_gmv)),
+        totals=OverviewTotals(spend=total_spend, gmv=total_gmv, orders=orders, roi=_compute_roi(total_spend, total_gmv)),
         previous=None,
         trend={"status": "unavailable", "reason": "当前仅拉取单日快照，历史趋势待接入同步事实表"},
         channels=channels,

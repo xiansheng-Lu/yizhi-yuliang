@@ -19,12 +19,14 @@ export type ErrorCode =
   | "INVALID_RESPONSE"
   | "INVALID_INPUT"
   | "RATE_LIMITED"
+  | "LOCKED"
   | "CONFLICT";
 export class ServiceError extends Error {
   constructor(
     public code: ErrorCode,
     message: string,
     public retryAfterSeconds?: number,
+    public details?: Record<string, string>[],
   ) {
     super(message);
     this.name = "ServiceError";
@@ -44,7 +46,7 @@ export interface ApiSuccess<T> {
   schemaVersion: "command-job-v1.0";
 }
 export interface ApiFailure {
-  error: { code: ErrorCode; message: string };
+  error: { code: ErrorCode; message: string; details?: Record<string, string>[] };
   requestId: string;
 }
 export interface FrontendService {

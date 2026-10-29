@@ -141,6 +141,24 @@ export class ApiClient implements FrontendService {
         this.authInvalidated = true;
         this.listeners.forEach((listener) => listener());
       }
+      // 读取受控错误信封：页面需要展示后端中文业务原因与字段级 details。
+      let envelope: { message?: unknown; details?: unknown } | undefined;
+      try {
+        const payload: unknown = await response.json();
+        const error = payload && typeof payload === "object" ? (payload as { error?: unknown }).error : undefined;
+        if (error && typeof error === "object") envelope = error as { message?: unknown; details?: unknown };
+      } catch {
+        envelope = undefined;
+      }
+      const reason =
+        envelope && typeof envelope.message === "string" && envelope.message.trim() && envelope.message.length <= 300
+          ? envelope.message
+          : undefined;
+      const rawDetails = envelope?.details;
+      const details =
+        Array.isArray(rawDetails) && rawDetails.length <= 50 && rawDetails.every((item) => item !== null && typeof item === "object" && !Array.isArray(item))
+          ? (rawDetails as Record<string, string>[])
+          : undefined;
       const code =
         response.status === 401
           ? "UNAUTHENTICATED"
@@ -150,6 +168,8 @@ export class ApiClient implements FrontendService {
               ? "NO_DATA"
                 : response.status === 429
                   ? "RATE_LIMITED"
+                : response.status === 423
+                ? "LOCKED"
                 : response.status === 409
                 ? "CONFLICT"
                 : response.status === 400 || response.status === 422
@@ -159,13 +179,14 @@ export class ApiClient implements FrontendService {
         UNAUTHENTICATED: "登录已失效或凭证不正确，请重新登录。",
         FORBIDDEN: "当前账号没有此项操作权限。",
         RATE_LIMITED: "操作过于频繁，请稍后重试。",
+        LOCKED: "资源正在处理中，请稍后核对结果，勿重复提交。",
         INVALID_INPUT: "提交的信息不正确，请检查后重试。",
         NO_DATA: "暂时没有找到相关数据。",
         CONFLICT: "信息已更新，请刷新后重试。",
         NETWORK_ERROR: "服务暂时不可用，请稍后重试。",
       };
       const retryAfter = Number(response.headers.get("Retry-After"));
-      throw new ServiceError(code, messages[code], Number.isFinite(retryAfter) && retryAfter > 0 ? Math.min(Math.ceil(retryAfter), 3600) : undefined);
+      throw new ServiceError(code, reason ?? messages[code], Number.isFinite(retryAfter) && retryAfter > 0 ? Math.min(Math.ceil(retryAfter), 3600) : undefined, details);
     }
     let payload: ApiSuccess<T>;
     try {

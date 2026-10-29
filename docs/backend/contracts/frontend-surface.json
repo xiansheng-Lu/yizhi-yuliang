@@ -277,7 +277,7 @@
     },
     {
       "source": "src/services/api-client.ts",
-      "line": 191,
+      "line": 212,
       "class": "ApiClient",
       "method": "getIdentity",
       "prefix": "",
@@ -290,7 +290,7 @@
     },
     {
       "source": "src/services/api-client.ts",
-      "line": 217,
+      "line": 238,
       "class": "ApiClient",
       "method": "analysisRequest",
       "prefix": "",
@@ -303,7 +303,7 @@
     },
     {
       "source": "src/services/api-client.ts",
-      "line": 221,
+      "line": 242,
       "class": "ApiClient",
       "method": "deliveryRequest",
       "prefix": "",
@@ -316,7 +316,7 @@
     },
     {
       "source": "src/services/api-client.ts",
-      "line": 229,
+      "line": 250,
       "class": "ApiClient",
       "method": "login",
       "prefix": "",
@@ -329,7 +329,7 @@
     },
     {
       "source": "src/services/api-client.ts",
-      "line": 237,
+      "line": 258,
       "class": "ApiClient",
       "method": "requestEmailCode",
       "prefix": "",
@@ -342,7 +342,7 @@
     },
     {
       "source": "src/services/api-client.ts",
-      "line": 245,
+      "line": 266,
       "class": "ApiClient",
       "method": "updateProfile",
       "prefix": "",
@@ -355,7 +355,7 @@
     },
     {
       "source": "src/services/api-client.ts",
-      "line": 250,
+      "line": 271,
       "class": "ApiClient",
       "method": "logout",
       "prefix": "",
@@ -368,7 +368,7 @@
     },
     {
       "source": "src/services/api-client.ts",
-      "line": 255,
+      "line": 276,
       "class": "ApiClient",
       "method": "getHistory",
       "prefix": "",
@@ -381,7 +381,7 @@
     },
     {
       "source": "src/services/api-client.ts",
-      "line": 262,
+      "line": 283,
       "class": "ApiClient",
       "method": "createProject",
       "prefix": "",
@@ -394,7 +394,7 @@
     },
     {
       "source": "src/services/api-client.ts",
-      "line": 266,
+      "line": 287,
       "class": "ApiClient",
       "method": "moveConversation",
       "prefix": "",
@@ -407,20 +407,20 @@
     },
     {
       "source": "src/services/api-client.ts",
-      "line": 271,
+      "line": 292,
       "class": "ApiClient",
       "method": "sendMessage",
       "prefix": "",
       "path": "\"/v1/conversation-messages\"",
       "httpMethod": "\"POST\"",
       "body": "{ ...input, text: input.text.trim() }",
-      "requestType": "{ text: string; conversationId?: string; projectId?: string | null; source: import(\"D:/codex/yizhi-yuliang/src/lib/command-job\").JobSource; scope: ReportingScope; idempotencyKey: string; }",
+      "requestType": "{ text: string; conversationId?: string; projectId?: string | null; source: import(\"src/lib/command-job\").JobSource; scope: ReportingScope; idempotencyKey: string; }",
       "responseType": "ConversationTurn",
       "forwardingHelper": false
     },
     {
       "source": "src/services/api-client.ts",
-      "line": 279,
+      "line": 300,
       "class": "ApiClient",
       "method": "attachConversationJob",
       "prefix": "",
@@ -433,7 +433,7 @@
     },
     {
       "source": "src/services/api-client.ts",
-      "line": 283,
+      "line": 304,
       "class": "ApiClient",
       "method": "assignTaskProject",
       "prefix": "",
@@ -446,7 +446,7 @@
     },
     {
       "source": "src/services/api-client.ts",
-      "line": 286,
+      "line": 307,
       "class": "ApiClient",
       "method": "getSnapshot",
       "prefix": "",
@@ -459,7 +459,7 @@
     },
     {
       "source": "src/services/api-client.ts",
-      "line": 317,
+      "line": 338,
       "class": "ApiClient",
       "method": "interpretCommand",
       "prefix": "",
@@ -472,7 +472,7 @@
     },
     {
       "source": "src/services/api-client.ts",
-      "line": 324,
+      "line": 345,
       "class": "ApiClient",
       "method": "job",
       "prefix": "",
@@ -485,7 +485,7 @@
     },
     {
       "source": "src/services/api-client.ts",
-      "line": 336,
+      "line": 357,
       "class": "ApiClient",
       "method": "createJob",
       "prefix": "",
@@ -498,7 +498,7 @@
     },
     {
       "source": "src/services/api-client.ts",
-      "line": 339,
+      "line": 360,
       "class": "ApiClient",
       "method": "confirmJob",
       "prefix": "",
@@ -511,7 +511,7 @@
     },
     {
       "source": "src/services/api-client.ts",
-      "line": 345,
+      "line": 366,
       "class": "ApiClient",
       "method": "reviewJob",
       "prefix": "",
@@ -524,7 +524,7 @@
     },
     {
       "source": "src/services/api-client.ts",
-      "line": 351,
+      "line": 372,
       "class": "ApiClient",
       "method": "cancelJob",
       "prefix": "",
@@ -537,7 +537,7 @@
     },
     {
       "source": "src/services/api-client.ts",
-      "line": 368,
+      "line": 389,
       "class": "ApiClient",
       "method": "updatePolicy",
       "prefix": "",
@@ -550,7 +550,7 @@
     },
     {
       "source": "src/services/api-client.ts",
-      "line": 375,
+      "line": 396,
       "class": "ApiClient",
       "method": "setScope",
       "prefix": "",
@@ -563,7 +563,7 @@
     },
     {
       "source": "src/services/delivery-service.ts",
-      "line": 765,
+      "line": 770,
       "class": "DeliveryService",
       "method": "load",
       "prefix": "/v1/delivery/",
@@ -576,7 +576,7 @@
     },
     {
       "source": "src/services/delivery-service.ts",
-      "line": 793,
+      "line": 798,
       "class": "DeliveryService",
       "method": "preview",
       "prefix": "/v1/delivery/",
@@ -589,7 +589,7 @@
     },
     {
       "source": "src/services/delivery-service.ts",
-      "line": 828,
+      "line": 833,
       "class": "DeliveryService",
       "method": "changePlan",
       "prefix": "/v1/delivery/",
@@ -602,7 +602,7 @@
     },
     {
       "source": "src/services/delivery-service.ts",
-      "line": 862,
+      "line": 867,
       "class": "DeliveryService",
       "method": "create",
       "prefix": "/v1/delivery/",
@@ -615,7 +615,7 @@
     },
     {
       "source": "src/services/delivery-service.ts",
-      "line": 869,
+      "line": 874,
       "class": "DeliveryService",
       "method": "goal",
       "prefix": "/v1/delivery/",
@@ -628,7 +628,7 @@
     },
     {
       "source": "src/services/delivery-service.ts",
-      "line": 876,
+      "line": 881,
       "class": "DeliveryService",
       "method": "budget",
       "prefix": "/v1/delivery/",
@@ -641,7 +641,7 @@
     },
     {
       "source": "src/services/delivery-service.ts",
-      "line": 879,
+      "line": 884,
       "class": "DeliveryService",
       "method": "allocate",
       "prefix": "/v1/delivery/",
@@ -654,7 +654,7 @@
     },
     {
       "source": "src/services/delivery-service.ts",
-      "line": 882,
+      "line": 887,
       "class": "DeliveryService",
       "method": "analyze",
       "prefix": "/v1/delivery/",
@@ -667,7 +667,7 @@
     },
     {
       "source": "src/services/delivery-service.ts",
-      "line": 885,
+      "line": 890,
       "class": "DeliveryService",
       "method": "review",
       "prefix": "/v1/delivery/",
@@ -680,7 +680,7 @@
     },
     {
       "source": "src/services/delivery-service.ts",
-      "line": 892,
+      "line": 897,
       "class": "DeliveryService",
       "method": "approval",
       "prefix": "/v1/delivery/",
@@ -693,7 +693,7 @@
     },
     {
       "source": "src/services/delivery-service.ts",
-      "line": 899,
+      "line": 904,
       "class": "DeliveryService",
       "method": "policy",
       "prefix": "/v1/delivery/",
@@ -706,7 +706,7 @@
     },
     {
       "source": "src/services/delivery-service.ts",
-      "line": 902,
+      "line": 907,
       "class": "DeliveryService",
       "method": "verify",
       "prefix": "/v1/delivery/",
@@ -719,7 +719,7 @@
     },
     {
       "source": "src/services/delivery-service.ts",
-      "line": 909,
+      "line": 914,
       "class": "DeliveryService",
       "method": "retry",
       "prefix": "/v1/delivery/",
@@ -1102,89 +1102,89 @@
       "source": "src/lib/delivery.ts",
       "line": 121,
       "name": "Campaign",
-      "definition": "export interface Campaign extends DeliveryObject {\n  platform: \"adq\";\n  kind: \"CAMPAIGN\";\n  level: \"CAMPAIGN\" | \"ADGROUP\" | \"AD\";\n  budgetMinor: number;\n  bidMinor: number;\n  targetRoi: number | null;\n  extensions: { objective?: string; startedAt?: string; endedAt?: string };\n}"
+      "definition": "export interface Campaign extends DeliveryObject {\n  platform: \"adq\";\n  kind: \"CAMPAIGN\";\n  level: \"CAMPAIGN\" | \"ADGROUP\" | \"AD\";\n  budgetMinor: number | null;\n  bidMinor: number | null;\n  targetRoi: number | null;\n  /** 字段级原因说明：为什么该字段为 null。 */\n  fieldReasons?: Partial<Record<\n    | \"budgetMinor\"\n    | \"bidMinor\"\n    | \"targetRoi\"\n    | \"enabled\"\n    | \"updatedAt\"\n    | \"attributionWindow\",\n    string\n  >>;\n  extensions: { objective?: string; startedAt?: string; endedAt?: string };\n}"
     },
     {
       "source": "src/lib/delivery.ts",
-      "line": 130,
+      "line": 140,
       "name": "PromotionOrder",
       "definition": "export interface PromotionOrder extends DeliveryObject {\n  platform: \"beans\";\n  kind: \"PROMOTION_ORDER\";\n  contentType: \"VIDEO\" | \"LIVE\";\n  contentId: string;\n  heatingGoal: string;\n  amountBeans: number;\n  progress: number | null;\n  startsAt: string | null;\n  endsAt: string | null;\n  extensions: { views: number | null; interactions: number | null };\n}"
     },
     {
       "source": "src/lib/delivery.ts",
-      "line": 142,
+      "line": 152,
       "name": "Plan",
       "definition": "export type Plan = Campaign | PromotionOrder;"
     },
     {
       "source": "src/lib/delivery.ts",
-      "line": 143,
+      "line": 153,
       "name": "GoalBreakdown",
       "definition": "export interface GoalBreakdown {\n  id: string;\n  type: \"SHOP\" | \"PLATFORM\" | \"ACCOUNT\" | \"PLAN\" | \"LIVE\";\n  targetId: string;\n  name: string;\n  amountMinor: number;\n}"
     },
     {
       "source": "src/lib/delivery.ts",
-      "line": 150,
+      "line": 160,
       "name": "TrendPoint",
       "definition": "export interface TrendPoint {\n  date: string;\n  actualGmvMinor: number | null;\n  targetGmvMinor: number | null;\n  spend: number | null;\n  budget: number | null;\n  roi: number | null;\n  targetRoi: number | null;\n  forecastGmvMinor?: number | null;\n}"
     },
     {
       "source": "src/lib/delivery.ts",
-      "line": 160,
+      "line": 170,
       "name": "BusinessGoal",
       "definition": "export interface BusinessGoal {\n  id: string;\n  nativeId: string | null;\n  shopId: string;\n  platform: PlatformScope;\n  accountId: string | null;\n  name: string;\n  period: \"DAY\" | \"WEEK\" | \"MONTH\" | \"LIVE\" | \"SHOP\";\n  start: string;\n  end: string;\n  status: \"DRAFT\" | \"ACTIVE\" | \"CLOSED\";\n  version: number;\n  gmvTargetMinor: number;\n  budget: number;\n  currency: \"CNY\" | \"BEAN\";\n  roiFloor: number | null;\n  actualBusinessGmvMinor: number | null;\n  spent: number | null;\n  actualRoi: number | null;\n  breakdown: GoalBreakdown[];\n  trends: TrendPoint[];\n  history: {\n    at: string;\n    actor: string;\n    before: string;\n    after: string;\n    version: number;\n  }[];\n}"
     },
     {
       "source": "src/lib/delivery.ts",
-      "line": 189,
+      "line": 199,
       "name": "BudgetAllocation",
       "definition": "export interface BudgetAllocation {\n  id: string;\n  shopId: string;\n  platform: Platform;\n  accountId: string;\n  planId: string | null;\n  version: number;\n  currency: \"CNY\" | \"BEAN\";\n  limit: number;\n  allocated: number;\n  spent: number | null;\n  internalStatus: \"DRAFT\" | \"PENDING_APPROVAL\" | \"APPROVED\" | \"REJECTED\";\n  platformStatus: \"NOT_SUBMITTED\" | \"PENDING\" | \"ACCEPTED\" | \"FAILED\";\n  verificationStatus: \"PENDING\" | \"MATCHED\" | \"UNKNOWN\";\n  approvalId: string | null;\n  executionId: string | null;\n}"
     },
     {
       "source": "src/lib/delivery.ts",
-      "line": 206,
+      "line": 216,
       "name": "AccountFunds",
       "definition": "export interface AccountFunds {\n  accountId: string;\n  balance: number | null;\n  currency: \"CNY\" | \"BEAN\";\n  syncedAt: string | null;\n  warning: string | null;\n}"
     },
     {
       "source": "src/lib/delivery.ts",
-      "line": 223,
+      "line": 233,
       "name": "AIDecision",
       "definition": "export interface AIDecision {\n  id: string;\n  platform: Platform;\n  shopId: string;\n  accountId: string;\n  planId: string;\n  goalId: string | null;\n  type: keyof typeof decisionTypes;\n  title: string;\n  explanation: string;\n  recommendation: string;\n  risk: \"LOW\" | \"MEDIUM\" | \"HIGH\";\n  status:\n    | \"OPEN\"\n    | \"DEFERRED\"\n    | \"PENDING_APPROVAL\"\n    | \"ACCEPTED\"\n    | \"REJECTED\"\n    | \"EXECUTED\";\n  discoveredAt: string;\n  version: number;\n  evidence: { label: string; value: string; sourceId: string }[];\n  observation: {\n    start: string;\n    end: string;\n    sampleSize: number | null;\n    delayMinutes: number | null;\n    confidence: string;\n    limitations: string[];\n  };\n  proposedAction:\n    | \"CHANGE_DAILY_BUDGET\"\n    | \"CHANGE_BID\"\n    | \"PAUSE_AD_PLAN\"\n    | \"RESUME_AD_PLAN\"\n    | null;\n  proposedValue: number | boolean | null;\n  impact: string | null;\n  approvalId: string | null;\n  executionId: string | null;\n  outcome: string | null;\n  history?: { at: string; actorId: string; status: string; comment: string }[];\n}"
     },
     {
       "source": "src/lib/delivery.ts",
-      "line": 266,
+      "line": 276,
       "name": "ApprovalRequest",
       "definition": "export interface ApprovalRequest {\n  id: string;\n  accountId: string;\n  before: unknown;\n  after: unknown;\n  reason: string;\n  decisionId: string | null;\n  budgetId: string | null;\n  executionId: string | null;\n  status: \"PENDING\" | \"APPROVED\" | \"REJECTED\";\n  actorId: string | null;\n  version: number;\n}"
     },
     {
       "source": "src/lib/delivery.ts",
-      "line": 291,
+      "line": 301,
       "name": "ExecutionTask",
       "definition": "export interface ExecutionTask {\n  id: string;\n  nativeId: string | null;\n  platform: Platform;\n  shopId: string;\n  accountId: string;\n  planId: string;\n  goalId: string | null;\n  decisionId: string | null;\n  budgetId: string | null;\n  approvalId: string | null;\n  action: string;\n  initiator: \"MANUAL\" | \"AI\" | \"RULE\";\n  actorId: string | null;\n  approverId: string | null;\n  status: keyof typeof executionStates;\n  before: unknown;\n  after: unknown;\n  version: number;\n  createdAt: string;\n  updatedAt: string;\n  requestStatus: string;\n  response: unknown;\n  verification: string;\n  failure: string | null;\n  safeRetry: boolean;\n  idempotencyKey: string | null;\n  history: { at: string; status: string; detail: string }[];\n  legacyJobId?: string;\n}"
     },
     {
       "source": "src/lib/delivery.ts",
-      "line": 321,
+      "line": 331,
       "name": "SyncStatus",
       "definition": "export interface SyncStatus {\n  state:\n    | \"READY\"\n    | \"LOADING\"\n    | \"EMPTY\"\n    | \"UNAUTHORIZED\"\n    | \"NOT_INTEGRATED\"\n    | \"STALE\"\n    | \"FAILED\"\n    | \"FORBIDDEN\";\n  source: \"API\" | \"MOCK\";\n  syncedAt: string | null;\n  statisticStart: string;\n  statisticEnd: string;\n  message: string;\n}"
     },
     {
       "source": "src/lib/delivery.ts",
-      "line": 337,
+      "line": 347,
       "name": "RiskBoundaries",
       "definition": "export interface RiskBoundaries {\n  accountId: string;\n  dailyLimit: number;\n  singleChangeLimit: number;\n  approvalThreshold: number;\n  minObservationMinutes: number;\n  maxChangesPerDay: number;\n  currency: \"CNY\" | \"BEAN\";\n  version: number;\n}"
     },
     {
       "source": "src/lib/delivery.ts",
-      "line": 347,
+      "line": 357,
       "name": "DeliveryData",
       "definition": "export interface DeliveryData {\n  contractVersion: \"delivery-v8.0\";\n  scope: DeliveryScope;\n  source: \"API\" | \"MOCK\";\n  shops: Shop[];\n  accounts: AdAccount[];\n  capabilities: PlatformCapabilities[];\n  plans: Plan[];\n  goals: BusinessGoal[];\n  decisions: AIDecision[];\n  budgets: BudgetAllocation[];\n  funds: AccountFunds[];\n  executions: ExecutionTask[];\n  approvals: ApprovalRequest[];\n  boundaries: RiskBoundaries[];\n  trends: { planId: string; points: TrendPoint[] }[];\n  budgetTrends: { currency: \"CNY\" | \"BEAN\"; points: TrendPoint[] }[];\n  sync: SyncStatus;\n}"
     },
     {
       "source": "src/lib/delivery.ts",
-      "line": 649,
+      "line": 659,
       "name": "PlanFilter",
       "definition": "export interface PlanFilter {\n  search: string;\n  status: string;\n  level: string;\n  sort: \"name\" | \"spend\" | \"updated\";\n  descending: boolean;\n  page: number;\n  pageSize: number;\n  columns: string[];\n}"
     },
@@ -1221,54 +1221,60 @@
     {
       "source": "src/lib/domain.ts",
       "line": 59,
-      "name": "AdPlan",
-      "definition": "export interface AdPlan {\n  id: string;\n  nativePlanId: string;\n  tenantId: string;\n  shopId: string;\n  adAccountId: string;\n  liveSessionId?: string;\n  name: string;\n  aliases?: string[];\n  budgetMinor: number;\n  bidMinor: number;\n  targetRoi: number;\n  enabled: boolean;\n  spendMinor: number | null;\n  paidGmvMinor: number | null;\n  sourceUpdatedAt: string;\n  attributionWindow: string;\n}"
+      "name": "NativePlanLevel",
+      "definition": "export type NativePlanLevel = \"CAMPAIGN\" | \"ADGROUP\" | \"AD\";"
     },
     {
       "source": "src/lib/domain.ts",
-      "line": 77,
+      "line": 61,
+      "name": "AdPlan",
+      "definition": "export interface AdPlan {\n  id: string;\n  nativePlanId: string;\n  /** 平台原生层级标识，区分 CAMPAIGN / ADGROUP / AD；一个 Campaign 可能挂多个 AdGroup，不能混成一个\"计划\"。 */\n  nativeLevel: NativePlanLevel | null;\n  /** 父级原生 ID；ADGROUP 指向所属 Campaign，AD 指向所属 AdGroup；Campaign 本身为 null。 */\n  parentNativeId?: string | null;\n  tenantId: string;\n  shopId: string;\n  adAccountId: string;\n  liveSessionId?: string;\n  name: string;\n  aliases?: string[];\n  /** 没有明确来源的字段允许 null 并附字段级原因；真实 0 仍为 0，不跨层级借值。 */\n  budgetMinor: number | null;\n  bidMinor: number | null;\n  targetRoi: number | null;\n  /** 无独立状态映射时保持 null 并显示\"待同步\"，null 不自动当\"已暂停\"。 */\n  enabled: boolean | null;\n  spendMinor: number | null;\n  paidGmvMinor: number | null;\n  /** 未提供的真实源字段允许 null 并显示缺失，不使用抓取时间或统计日期冒充。 */\n  sourceUpdatedAt: string | null;\n  /** 未提供时允许 null，不混用不同归因口径。 */\n  attributionWindow: string | null;\n  /** 字段级原因说明：为什么该字段为 null（例如\"CAMPAIGN SDK 无出价字段\"）。 */\n  fieldReasons?: Partial<Record<\n    | \"budgetMinor\"\n    | \"bidMinor\"\n    | \"targetRoi\"\n    | \"enabled\"\n    | \"sourceUpdatedAt\"\n    | \"attributionWindow\",\n    string\n  >>;\n}"
+    },
+    {
+      "source": "src/lib/domain.ts",
+      "line": 97,
       "name": "Product",
       "definition": "export interface Product {\n  id: string;\n  tenantId: string;\n  shopId: string;\n  skuId: string;\n  name: string;\n  priceMinor: number;\n  stock: number | null;\n  clicks: number | null;\n  paidOrders: number | null;\n  speechAdvice: string;\n}"
     },
     {
       "source": "src/lib/domain.ts",
-      "line": 89,
+      "line": 109,
       "name": "Material",
       "definition": "export interface Material {\n  id: string;\n  tenantId: string;\n  productId: string;\n  name: string;\n  version: string;\n  kind: \"VIDEO\" | \"IMAGE\" | \"SCRIPT\";\n  status: \"DRAFT\" | \"REVIEW\" | \"READY\";\n}"
     },
     {
       "source": "src/lib/domain.ts",
-      "line": 98,
+      "line": 118,
       "name": "RiskPolicy",
       "definition": "export interface RiskPolicy {\n  id: string;\n  tenantId: string;\n  dailyBudgetMinor: number;\n  targetRoi: number;\n  maxChangePercent: number;\n  cooldownMinutes: number;\n  mode: \"MANUAL\" | \"COPILOT\" | \"AUTOPILOT\";\n  version: number;\n}"
     },
     {
       "source": "src/lib/domain.ts",
-      "line": 108,
+      "line": 128,
       "name": "ReplaySegment",
       "definition": "export interface ReplaySegment {\n  id: string;\n  liveSessionId: string;\n  productId: string;\n  startSeconds: number;\n  endSeconds: number;\n  transcript: string;\n  advice: string;\n  videoUrl: string | null;\n}"
     },
     {
       "source": "src/lib/domain.ts",
-      "line": 118,
+      "line": 138,
       "name": "ReplayReport",
       "definition": "export interface ReplayReport {\n  id: string;\n  liveSessionId: string;\n  source: \"MOCK\" | \"API\";\n  sections: { title: string; evidenceIds: string[]; text: string }[];\n}"
     },
     {
       "source": "src/lib/domain.ts",
-      "line": 124,
+      "line": 144,
       "name": "Connector",
       "definition": "export interface Connector {\n  id: ConnectorId;\n  status: \"UNKNOWN\" | \"READ_ONLY\" | \"SUPPORTED\" | \"UNSUPPORTED\" | \"DEGRADED\";\n  scopes: string[];\n  checkedAt: string | null;\n}"
     },
     {
       "source": "src/lib/domain.ts",
-      "line": 130,
+      "line": 150,
       "name": "FrontendSnapshot",
       "definition": "export interface FrontendSnapshot {\n  schemaVersion: \"command-job-v1.0\";\n  revision: number;\n  source: \"MOCK\" | \"API\";\n  tenants: Tenant[];\n  shops: Shop[];\n  adAccounts: AdAccount[];\n  liveSessions: LiveSession[];\n  plans: AdPlan[];\n  products: Product[];\n  materials: Material[];\n  tasks: CommandJob[];\n  scope: ReportingScope;\n  riskPolicies: RiskPolicy[];\n  replaySegments: ReplaySegment[];\n  replayReports: ReplayReport[];\n  connectors: Connector[];\n}"
     },
     {
       "source": "src/lib/domain.ts",
-      "line": 148,
+      "line": 168,
       "name": "Identity",
       "definition": "export interface Identity {\n  userId: string;\n  displayName: string;\n  email?: string;\n  workspacePages?: string[];\n  tenantId: string;\n  shopIds: string[];\n  permissions: string[];\n  mode: \"MOCK\" | \"API\";\n}"
     },
@@ -1420,41 +1426,41 @@
       "source": "src/services/contracts.ts",
       "line": 12,
       "name": "ErrorCode",
-      "definition": "export type ErrorCode =\n  | \"UNAUTHENTICATED\"\n  | \"FORBIDDEN\"\n  | \"NO_DATA\"\n  | \"API_NOT_CONFIGURED\"\n  | \"NETWORK_ERROR\"\n  | \"TIMEOUT\"\n  | \"INVALID_RESPONSE\"\n  | \"INVALID_INPUT\"\n  | \"RATE_LIMITED\"\n  | \"CONFLICT\";"
+      "definition": "export type ErrorCode =\n  | \"UNAUTHENTICATED\"\n  | \"FORBIDDEN\"\n  | \"NO_DATA\"\n  | \"API_NOT_CONFIGURED\"\n  | \"NETWORK_ERROR\"\n  | \"TIMEOUT\"\n  | \"INVALID_RESPONSE\"\n  | \"INVALID_INPUT\"\n  | \"RATE_LIMITED\"\n  | \"LOCKED\"\n  | \"CONFLICT\";"
     },
     {
       "source": "src/services/contracts.ts",
-      "line": 33,
+      "line": 35,
       "name": "LoginRequest",
       "definition": "export type LoginRequest =\n  | { email: string; password: string; method?: \"password\" }\n  | { email: string; code: string; challengeId: string; method: \"email_code\" };"
     },
     {
       "source": "src/services/contracts.ts",
-      "line": 36,
+      "line": 38,
       "name": "EmailLoginChallenge",
       "definition": "export interface EmailLoginChallenge {\n  challengeId: string;\n  expiresAt: string;\n  retryAfterSeconds: number;\n}"
     },
     {
       "source": "src/services/contracts.ts",
-      "line": 41,
+      "line": 43,
       "name": "ApiSuccess",
       "definition": "export interface ApiSuccess<T> {\n  data: T;\n  requestId: string;\n  schemaVersion: \"command-job-v1.0\";\n}"
     },
     {
       "source": "src/services/contracts.ts",
-      "line": 46,
+      "line": 48,
       "name": "ApiFailure",
-      "definition": "export interface ApiFailure {\n  error: { code: ErrorCode; message: string };\n  requestId: string;\n}"
+      "definition": "export interface ApiFailure {\n  error: { code: ErrorCode; message: string; details?: Record<string, string>[] };\n  requestId: string;\n}"
     },
     {
       "source": "src/services/contracts.ts",
-      "line": 50,
+      "line": 52,
       "name": "FrontendService",
       "definition": "export interface FrontendService {\n  readonly mode: DataMode;\n  getIdentity(): Promise<Identity | null>;\n  login(input: LoginRequest): Promise<Identity>;\n  requestEmailCode(input: { email: string }): Promise<EmailLoginChallenge>;\n  updateProfile(input: { displayName: string }): Promise<Identity>;\n  logout(): Promise<void>;\n  getSnapshot(options?: { signal?: AbortSignal }): Promise<FrontendSnapshot>;\n  getHistory(): Promise<HistorySnapshot>;\n  createProject(input: { name: string }): Promise<WorkProject>;\n  moveConversation(input: { conversationId: string; projectId: string | null }): Promise<Conversation>;\n  sendMessage(input: SendMessageRequest): Promise<ConversationTurn>;\n  attachConversationJob(input: { conversationId: string; messageId: string; jobId: string }): Promise<Conversation>;\n  assignTaskProject(input: { jobId: string; projectId: string | null }): Promise<void>;\n  interpretCommand(input: {\n    text: string;\n    scope: ReportingScope;\n  }): Promise<CommandInterpretation>;\n  createJob(\n    input: CreateJobRequest,\n    scenario?: MockScenario,\n  ): Promise<CommandJob>;\n  confirmJob(input: JobVersionRequest): Promise<CommandJob>;\n  reviewJob(\n    input: JobVersionRequest & { decision: \"APPROVE\" | \"REJECT\" },\n  ): Promise<CommandJob>;\n  cancelJob(input: JobVersionRequest): Promise<CommandJob>;\n  advanceMockJob(input: JobVersionRequest): Promise<CommandJob>;\n  expireMockJob(input: JobVersionRequest): Promise<CommandJob>;\n  updatePolicy(input: RiskPolicy): Promise<RiskPolicy>;\n  setScope(input: ReportingScope): Promise<void>;\n  subscribe(onChange: () => void): () => void;\n  resetDemo?(): Promise<void>;\n}"
     },
     {
       "source": "src/services/contracts.ts",
-      "line": 84,
+      "line": 86,
       "name": "Resource",
       "definition": "export type Resource<T> =\n  | { status: \"loading\" }\n  | { status: \"ready\"; data: T }\n  | { status: \"error\"; error: ServiceError };"
     },

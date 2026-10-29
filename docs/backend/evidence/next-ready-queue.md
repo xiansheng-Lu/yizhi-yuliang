@@ -1,10 +1,10 @@
 # 最新恢复入口
 
-2026-10-29：最新main **94834e2b4247058e44bc9a13e6c73f602b0577f0**已合并推送并核远程一致，query-evidence-verification.json有989单元/244源码mypy、分页13+旧查询14/reader16/相关25及TS12页1101条实际证据；默认库0075，50相关表仅5系统模板其余0，NOLOGIN。
+2026-10-29：最新main **e71d0eb1571bfb2079f962a56e66ce432e36d9ee**已合并推送并核远程一致，approved-execution-verification.json记录完整1098/1跳过1144.62s、999单元/247源码mypy/Ruff，以及真实Rabbit/Inspector/双job隔离。默认库0077，52相关表仅5系统模板其余0、NOLOGIN，旧审批私有core不可由应用执行。
 
-**codex/backend-approved-execution-outbox**本批完整技术验证通过：本批完整1098集成/1可选重启跳过1144.62s，999单元/契约9.68s、247源码mypy/Ruff通过；producer18/dispatch-handoff13/真实Rabbit与Inspector7/双job2已验证并纳最新full。开发库0077、52相关表仅5系统模板其余0、迁移角色NOLOGIN，旧审批core应用不可执行。默认生产WRITE registry仍空、平台/paid0。准备中文提交合并main推送后新分支继续人工依据/结构化时间线。
+已立即新建**codex/backend-manual-evidence-timeline**：beans0078本人task.create追加未验证人工说明与审计；commerce0079本人snapshot.read内部结构化事实时间线；reports独立SQL/权限/来源语义验证。root统一runner/台账/Git，当前无DB/设施授权，源码冻结后串行0078→0079。既有06/12各2新增仍未夹带；已合并的本轮四个local feature refs已正常删除，提交仍完整在main。
 
-下一实际输入已核：M2-18b可追加本人未验证人工说明并同事务审计，不能作为E1/E2或解冻依据；M2-20可读已有持久事实构造内部结构化时间线，无冻结FE新接口时不冒接线。M2-19虽然有FE原key合同与守卫，真实失败全部retryable=false，尚无生产阳性分类依据，不能静默开放按钮或把NOT_SENT升级为可重试。
+人工note不能作为E1/E2或改变成功/资金/隔离；可变row不当历史事件/版本，SENT不等平台受理、READ transport不冒E2。无新冻结前端接口则只交内部真实服务，不造HTTP声称已接；通知/真实SMTP单列，M0-15队列不误称邮件。M2-19当前真实错误retryable全false且无生产阳性分类，不静默开放重试或换创建键。
 
 用户的V8只读可空契约问题仍待答复，具体reviewable方案见resource-handoff/v8-plan-contract-gap.md。当前前端冻结契约未改，不默认选项被确认；该缺口只影响完整M1-18/V8 workspace，不阻塞上列任务。M1-18/M1-19/M3-16未实现项继续IN_PROGRESS，M3-14已技术通过待人工。
 

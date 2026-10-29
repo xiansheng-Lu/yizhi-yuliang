@@ -143,3 +143,7 @@ main30ec5f5已实际合并推送；新本地codex/backend-query-continuation正�
 main94834e2已推送，立即新本地codex/backend-approved-execution-outbox；beans0076/commerce0077/reports真实设施管线，root共享Worker与execute队列路由/runner/台账/Git。原actor A与审批B严格区分；默认生产registry空且持久阻断，消息不授发送权。旧内核真实复用，SENT后丢内存ticket不重新WRITE，HTTP出consume事务。当前没有DB/MQ/process授权，冻结后串行；28日授权跨本地29日延续，不重置历史付费许可。06/12伙伴各2新增保留。
 
 本批最终完整实证：本批完整1098集成/1可选重启跳过1144.62s，999单元/契约9.68s、247源码mypy/Ruff通过；producer18/dispatch-handoff13/真实Rabbit与Inspector7/双job2已验证并纳最新full。开发库0077、52相关表仅5系统模板其余0、迁移角色NOLOGIN，旧审批core应用不可执行。默认生产WRITE registry仍空、平台/paid0。准备中文提交合并main推送后新分支继续人工依据/结构化时间线。初始恢复必须ACK前确认发布；后继只处理当前recovery，不能批扫另一撤权job再误标当前任务。真实Inspector证明E1/UNKNOWN；所有未执行/失败历史在子证据保留。
+
+## 人工说明与内部时间线下一批
+
+main e71d0eb已实际合并推送，1098完整集成/999单元通过。立即新本地codex/backend-manual-evidence-timeline：beans0078 immutable HUMAN notes，commerce0079内部事实时间线，reports独立验证，当前无设施窗口。写用现有task.create及两端同permission scope；读用snapshot.read；只本人job、不新role、不借CLAIM。人工说明不构成E1/E2或财务依据，当前可变行不推历史版本；无冻结FE合同不假装新HTTP接线。旧合并feature refs安全删除，06/12伙伴各2新增保留。

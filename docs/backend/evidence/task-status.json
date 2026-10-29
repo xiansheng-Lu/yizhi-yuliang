@@ -4,7 +4,7 @@
   "authorization": "用户要求自检、提交git，然后依任务清单逐项开发并验收",
   "defaultTaskStatus": "NOT_STARTED",
   "defaultGateStatus": "NOT_PASSED",
-  "currentFocus": "M2-15",
+  "currentFocus": "M2-18b",
   "tasks": {
     "R00-01": {
       "owner": "BE",
@@ -3387,7 +3387,7 @@
     "M2-18b": {
       "owner": "BE",
       "status": "IN_PROGRESS",
-      "delivery": "独立snapshot.read本人AD_PLAN任务脱敏内部执行证据服务已实现，0075窄读函数/模型/真实旧生产者测试；PG待串行窗口，不宣称HTTP/前端或人工定性已接",
+      "delivery": "本人job窄读(0075)+不可变人工陈述(0078)+内部结构化时间线(0079)源码已冻结：manual_evidence_models/service、timeline_models/reads、2迁移入口+SQL、8测试文件；ruff全过，pytest/PG当前无串行窗口，不宣称本批集成已过",
       "dependencyInput": "M2-18a对应既有M2-11b恢复及M2-17a回执真实技术证据、现有ExecutionOrders/Receipts/Recovery/Readback持久生产者和snapshot.read本人job可见性；不因细卡未登记否认旧代码",
       "evidence": "tasks/M2-18b/README.md",
       "review": {
@@ -3395,25 +3395,29 @@
         "frontend": "PENDING_F06_F13"
       },
       "technicalVerification": {
-        "result": "PASS_INTERNAL_READ_SLICE_TARGETED_AND_RELATED",
-        "unitPassed": 8,
-        "unitSeconds": 0.29,
+        "result": "SOURCE_FROZEN_AWAITING_PG",
         "ruff": "PASS",
-        "mypyFiles": 5,
+        "head": "codex/backend-manual-evidence-timeline da0ae6a 前端契约+",
+        "newModules": [
+          "src/yuliang/modules/execution/manual_evidence_models.py",
+          "src/yuliang/modules/execution/manual_evidence_service.py",
+          "src/yuliang/modules/execution/timeline_models.py",
+          "src/yuliang/modules/execution/timeline_reads.py"
+        ],
+        "migrations": [
+          "0078_execution_manual_notes",
+          "0079_execution_timeline"
+        ],
         "integration": "NOT_RUN_THIS_BRANCH",
         "paidCalls": 0,
-        "livePlatformCalls": 0,
-        "integrationPassed": 16,
-        "seconds": 16.01,
-        "head": "0075_execution_evidence_reads",
-        "evidence": "tasks/M2-18b/verification.json",
-        "combinedRegression": "query-evidence-verification.json"
+        "livePlatformCalls": 0
       },
       "scopeLimits": [
         "own job only; no cross actor visibility expansion",
         "current snapshot.read and existing dual scope, no CLAIM or EXECUTE",
         "no new HTTP or frozen frontend attempts contract",
-        "no manual success, budget release or quarantine bypass"
+        "no manual success, budget release or quarantine bypass",
+        "PG集成待串行窗口后执行，不复用旧0075成绩"
       ]
     },
     "M2-15": {
@@ -3438,6 +3442,36 @@
         "evidence": "approved-execution-verification.json",
         "platformCalls": 0,
         "paidCalls": 0
+      }
+    },
+    "M2-20": {
+      "owner": "BE",
+      "status": "IN_PROGRESS",
+      "delivery": "内部结构化事实时间线源码已冻结：0079 timeline_events 表 + SQL 查询函数（按 job/event_type/phase 聚合）、timeline_models + timeline_reads、3 集成 + 1 单元测试；ruff全过；PG/独立 SQL 对照待串行窗口；无新 HTTP/前端合同",
+      "dependencyInput": "实际Job/approval/attempt/receipt/recovery/verified facts及0076/77来源；0078 HUMAN notes仅未验证说明；完整M2-05b与通知仍未完成",
+      "evidence": "tasks/M2-20/README.md",
+      "review": {
+        "backend": "PENDING",
+        "frontend": "PENDING_F06_F13"
+      },
+      "technicalVerification": {
+        "result": "SOURCE_FROZEN_AWAITING_PG",
+        "ruff": "PASS",
+        "migration": "0079_execution_timeline",
+        "modules": [
+          "timeline_models.py",
+          "timeline_reads.py"
+        ],
+        "tests": [
+          "test_execution_timeline.py",
+          "test_execution_timeline_verification.py",
+          "test_execution_manual_evidence.py",
+          "test_manual_evidence_models.py"
+        ],
+        "integration": "NOT_RUN_THIS_BRANCH",
+        "platformCalls": 0,
+        "paidCalls": 0,
+        "independentSQL": "待串行 PG 窗口后对照"
       }
     }
   },
@@ -3550,7 +3584,7 @@
     "done": "全部适用DoD与复核通过后才记DONE",
     "offline": "离线通过不等于真实依赖、前端联调或平台验收通过"
   },
-  "nextTask": "本批技术通过后合并main推送，立即新分支推进人工依据追加与内部时间线，不开放生产WRITE或代签DONE",
+  "nextTask": "0078→0079源码冻结后串行实际PG、独立SQL对照与必要回归；验证后合并main推送继续，不代签整卡",
   "continuation": {
     "requestedOn": "2026-10-27",
     "authorization": "持续推进后端任务卡，缺资源再找用户对接",
@@ -3559,12 +3593,12 @@
     "latestUserRequest": "继续采用多agent模式持续开发，当前任务结束直接开启下一个任务，需要资源再找用户",
     "developmentPolicy": "缺人工/外部验收时记录并继续可独立技术准备；正式门禁、平台调用和付费仍按各自证据许可",
     "lastCompletedTechnicalTask": "M2-15 durable approved source/outbox/execute worker and initial recovery handoff, real process faults and scoped recovery publication",
-    "nextTechnicalTask": "M2-18b append-only own-job human evidence notes and M2-20 internal structured factual timeline",
+    "nextTechnicalTask": "M2-18b own-job immutable unverified manual notes and M2-20 internal structured factual timeline",
     "executionRules": "docs/backend/evidence/execution-rules.md",
-    "checkpoint": "本批完整1098集成/1可选重启跳过1144.62s，999单元/契约9.68s、247源码mypy/Ruff通过；producer18/dispatch-handoff13/真实Rabbit与Inspector7/双job2已验证并纳最新full。开发库0077、52相关表仅5系统模板其余0、迁移角色NOLOGIN，旧审批core应用不可执行。默认生产WRITE registry仍空、平台/paid0。准备中文提交合并main推送后新分支继续人工依据/结构化时间线。",
+    "checkpoint": "main e71d0eb已合并推送且远程精确核对：1098集成/1可选重启跳过1144.62s，999单元/247源码mypy/Ruff；开发库0077、52相关表仅5系统模板其余0，NOLOGIN，旧审批core应用不可执行。立即新本地分支做人工说明与内部时间线，目前无本批PG PASS，不复用旧成绩。06/12伙伴各2新增保留。",
     "technicalPreparationQueue": [
-      "M2-18b:manual unverified notes",
-      "M2-20:structured internal execution timeline"
+      "M2-18b:manual notes",
+      "M2-20:internal timeline"
     ],
     "routingReason": "重新核对149卡，M1-06/07原生适配已有实际技术证据，M1-08与后续镜像可做本地实现与合成端口/真实PG集成；按持续授权不等待实际租户/店铺绑定，但P验收必须保留E01/E02，不能把合成测试当真平台",
     "deferredTechnicalDependencies": [
@@ -3587,19 +3621,19 @@
     "integrationCheckpoint": "已整合前端frontend目录重构和M1-06/07原生适配；SSE迁移改为0040，保留0039令牌续期与资源未绑定门禁",
     "multiAgentAuthorization": "2026-10-28用户明确授权多Agent持续开发，资源阻塞单列；BE负责人不变",
     "nextReadyQueue": [
-      "M2-18b:manual unverified notes",
-      "M2-20:structured internal execution timeline"
+      "M2-18b:manual notes",
+      "M2-20:internal timeline"
     ],
     "latestVerification": "approved-execution-verification.json",
     "combinedRegression": "approved-execution-verification.json",
-    "activeBranch": "codex/backend-approved-execution-outbox",
-    "lastRemoteMain": "94834e2b4247058e44bc9a13e6c73f602b0577f0",
+    "activeBranch": "codex/backend-manual-evidence-timeline",
+    "lastRemoteMain": "e71d0eb1571bfb2079f962a56e66ce432e36d9ee",
     "activeAgents": {
-      "beans": "READ_ONLY_NEXT_SLICE_DESIGN_COMPLETE_SOURCE_FROZEN_NO_FACILITIES",
-      "commerce": "READ_ONLY_NEXT_SLICE_DESIGN_COMPLETE_SOURCE_FROZEN_NO_FACILITIES",
-      "reports": "READ_ONLY_NEXT_SLICE_DESIGN_COMPLETE_SOURCE_FROZEN_NO_FACILITIES"
+      "beans": "0078 own-job append-only unverified human notes",
+      "commerce": "0079 internal typed factual timeline",
+      "reports": "independent timeline SQL/permissions/provenance verification"
     },
-    "databaseWindow": "RELEASED_AFTER_ROOT_FINAL_ALL1098_AND_DEFAULT_DEV0077; no active DB/MQ/process window",
+    "databaseWindow": "NONE_GRANTED_NEW_BRANCH; implement/unit/static then freeze0078→0079",
     "lastAbortedCombinedRegression": {
       "passedBeforeInterrupt": 117,
       "skipped": 1,
@@ -3608,8 +3642,8 @@
       "finalResultClaimed": false
     },
     "migrationReservations": {
-      "0076": "approval_execution_events; beans; down0075_execution_evidence_reads",
-      "0077": "approved_dispatch_worker; commerce; down0076_approval_execution_events"
+      "0078": "execution_manual_notes; beans; down0077_approved_dispatch_worker",
+      "0079": "execution_timeline; commerce; down0078_execution_manual_notes"
     },
     "previousBatchTargetedVerification": {
       "rootCostAndUow": {
@@ -3670,13 +3704,7 @@
       "dispatchActorRls": "PASS_GEN31_ACTUAL_SQL_CROSS_ACTOR_REJECTION",
       "ledgerActor": "PASS_LEDGER21_0072_PUBLIC_BEGIN_FINISH_12_14_AND_PRIVATE_DENIED"
     },
-    "currentReviewFixes": {
-      "sourceAggregate": "FIXED_COMMAND_JOB_PAIRING",
-      "safeRedisRecovery": "PASS_REAL_PG_SECRET_STAYS_DB_NO_RAW_OUTCOME",
-      "inactiveOriginalActor": "ORIGIN_ONLY_AND_NARROW_BLOCKED_FACT_NO_SEND_PERMISSION",
-      "initialRecoveryPublication": "PASS_HANDOFF13_REAL_MQ7_INSPECTOR_AND_LATEST_FULL1098",
-      "crossJobRecoveryPublisher": "PASS_DUAL_JOB2_AND_LATEST_SOURCE_FULL1098_WITH_PIPELINE7_AND_OLD_WORKERS"
-    },
+    "currentReviewFixes": {},
     "previousCombinedRegression": {
       "branch": "codex/backend-ai-content-generation",
       "baseline": "0c613c4f9dc40b87e65383844f799e59403e64ab",
@@ -3777,7 +3805,20 @@
       "previousCompletedEvidence": "topic-adgroup-verification.json",
       "evidence": "query-evidence-verification.json"
     },
-    "currentTargetedVerification": {
+    "nextAfterCurrentFull": [
+      {
+        "task": "M2-18b",
+        "slice": "append-only own-job unverified manual evidence notes",
+        "input": "real attempts/UNKNOWN/recovery producers and existing task.create metadata-write+snapshot.read policies; no new HTTP or cross actor"
+      },
+      {
+        "task": "M2-20",
+        "slice": "internal structured factual execution timeline",
+        "input": "actual job events/approval/attempt/receipt/recovery/verified facts/0076-77; frontend history not expanded without contract"
+      }
+    ],
+    "deferredSafeRetryInputs": "M2-19 kernel plan identified but all real FAILED sources currently retryable=false; no production positive classification assumed, UNKNOWN and money retries remain closed",
+    "previousApprovedExecutionVerification": {
       "approvalProducer": {
         "passed": 18,
         "seconds": 16.4,
@@ -3848,7 +3889,7 @@
         "sourceFrozen": true
       }
     },
-    "pendingCombinedRegression": {
+    "previousApprovedExecutionRegression": {
       "branch": "codex/backend-approved-execution-outbox",
       "baseline": "94834e2b4247058e44bc9a13e6c73f602b0577f0",
       "result": "PASS_COMBINED_FULL",
@@ -3862,19 +3903,18 @@
       "seconds": 1144.62,
       "evidence": "approved-execution-verification.json"
     },
-    "nextAfterCurrentFull": [
-      {
-        "task": "M2-18b",
-        "slice": "append-only own-job unverified manual evidence notes",
-        "input": "real attempts/UNKNOWN/recovery producers and existing task.create metadata-write+snapshot.read policies; no new HTTP or cross actor"
-      },
-      {
-        "task": "M2-20",
-        "slice": "internal structured factual execution timeline",
-        "input": "actual job events/approval/attempt/receipt/recovery/verified facts/0076-77; frontend history not expanded without contract"
-      }
-    ],
-    "deferredSafeRetryInputs": "M2-19 kernel plan identified but all real FAILED sources currently retryable=false; no production positive classification assumed, UNKNOWN and money retries remain closed"
+    "currentTargetedVerification": {
+      "manualNotes": "IMPLEMENTING_NOT_VERIFIED",
+      "timeline": "IMPLEMENTING_NOT_VERIFIED",
+      "independentTimeline": "PREPARING_NOT_RUN"
+    },
+    "pendingCombinedRegression": {
+      "branch": "codex/backend-manual-evidence-timeline",
+      "baseline": "e71d0eb1571bfb2079f962a56e66ce432e36d9ee",
+      "result": "NOT_STARTED",
+      "developmentHead": "0077_approved_dispatch_worker",
+      "previousCompletedEvidence": "approved-execution-verification.json"
+    }
   },
   "frontendIntegration": {
     "F01": {

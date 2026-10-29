@@ -19,6 +19,11 @@ venv/
 __pycache__/
 *.py[cod]
 
+# Python tool caches
+.ruff_cache/
+.mypy_cache/
+.pytest_cache/
+
 # Frontend runtime and Next.js output
 .runtime/
 .next/
